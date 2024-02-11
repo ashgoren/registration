@@ -76,7 +76,7 @@ export function AdditionalPersonReceipt({ order }) {
   )
 }
 
-export function SharedReceipt() {
+function SharedReceipt() {
   return (
     <>
       <Typography component='p' sx={{ mt: 2 }}>

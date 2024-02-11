@@ -9,16 +9,16 @@ import Header from 'components/Header';
 import IntroHeader from 'components/Header/IntroHeader';
 import OrderSummary from "components/OrderSummary";
 import Receipt from "components/Receipt";
-import { cache, cached, websiteLink } from 'utils';
-import { Box, Checkbox } from "@mui/material";
-import { StyledPaper, StyledLink, Paragraph } from 'components/Layout/SharedStyles';
+import { cache, cached } from 'utils';
+import { Typography, Button } from "@mui/material";
+import { StyledPaper, Paragraph } from 'components/Layout/SharedStyles';
 import config from 'config';
-const { PAYMENT_METHODS, PAYPAL_OPTIONS, ORDER_DEFAULTS, TITLE, EVENT_TITLE, CONFIRMATION_CHECK_TITLE, CONFIRMATION_PAYPAL_TITLE, SANDBOX_MODE, SHOW_PRE_REGISTRATION, COVID_POLICY_URL, SAFETY_POLICY_URL } = config;
+const { PAYMENT_METHODS, PAYPAL_OPTIONS, ORDER_DEFAULTS, TITLE, CONFIRMATION_CHECK_TITLE, CONFIRMATION_PAYPAL_TITLE, SANDBOX_MODE, SHOW_PRE_REGISTRATION } = config;
 
 export default function Registration() {
   const [registering, setRegistering] = useState(false);
   return (
-    SHOW_PRE_REGISTRATION ? (
+    SHOW_PRE_REGISTRATION || SANDBOX_MODE ? (
       registering ? <RealRegistration /> : <PreRegistration setRegistering={setRegistering} />
     ) : <RealRegistration />
   );
@@ -27,16 +27,11 @@ export default function Registration() {
 const PreRegistration = ({ setRegistering }) => {
   return(
     <StyledPaper>
-      <p>Please read the Covid Policy and Safety Policy for the {EVENT_TITLE}:</p>
-      <ul>
-        <li><StyledLink to={websiteLink(COVID_POLICY_URL)}>Covid Policy</StyledLink> (will open in a new tab)</li>
-        <li><StyledLink to={websiteLink(SAFETY_POLICY_URL)}>Safety Policy</StyledLink> (will open in a new tab)</li>
-      </ul>
-
+      <Typography variant="h4" color="red" sx={{ fontWeight: "bold"}}>TEST MODE ONLY</Typography>
+      <Typography variant="h6">DO NOT USE FOR ACTUAL REGISTRATION</Typography>
       <Paragraph sx={{ lineHeight: 2, mt: 4 }}>
-        I acknowledge that I have read and agree to follow both the Covid Policy and the Safety Policy for the {EVENT_TITLE}. 
-        If I am registering two people, I acknowledge that both have read and agreed to these policies.
-        <Checkbox onChange={() => setRegistering(true)} />
+      <Button variant='contained' color='secondary' onClick={() => setRegistering(true)}>Continue</Button>
+        {/* <Checkbox onChange={() => setRegistering(true)} /> */}
       </Paragraph>
     </StyledPaper>
   );
@@ -44,6 +39,7 @@ const PreRegistration = ({ setRegistering }) => {
 
 const RealRegistration = () => {
   const [order, setOrder] = useState(cached('order') || ORDER_DEFAULTS);
+  // const [order, setOrder] = useOrder();
   const [currentPage, setCurrentPage] = useState(cached('currentPage') || 1);
   const [error, setError] = useState(null);
   const CONFIRMATION_TITLE = order.paymentId === 'check' ? CONFIRMATION_CHECK_TITLE : CONFIRMATION_PAYPAL_TITLE;
@@ -53,12 +49,11 @@ const RealRegistration = () => {
 
   const content = (
     <>
-      {SANDBOX_MODE &&
+      {/* {SANDBOX_MODE &&
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '3rem', backgroundColor: 'var(--color-error)' }}>
           TEST MODE ONLY - DO NOT USE FOR REAL REGISTRATION
         </Box>
-      }
-
+      } */}
       {error && <Error error={error} />}
 
       <Header

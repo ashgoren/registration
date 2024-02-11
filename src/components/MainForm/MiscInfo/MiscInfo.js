@@ -1,20 +1,22 @@
 import { useEffect } from 'react';
 import { scrollToTop } from 'utils.js';
 import { Input, CheckboxInput } from '../Input';
-import { StyledPaper, Title } from 'components/Layout/SharedStyles';
+import { Title } from 'components/Layout/SharedStyles';
 import { Box } from '@mui/material';
 import config from 'config';
 const { SCHOLARSHIP_OPTIONS, VOLUNTEER_OPTIONS, SHARE_OPTIONS, YES_NO_OPTIONS } = config;
 
-export default function MiscInfo() {
+export default function MiscInfo({ index }) {
   useEffect(() => { scrollToTop(); },[])
+
   return (
-    <StyledPaper className='MiscInfo'>
+    <Box className='MiscInfo' sx={{ mt: 4 }}>
       <Box sx={{ mb: 6 }}>
         <Title>What information do you want in the roster?</Title>
         <CheckboxInput
-          name='share'
+          name={`people[${index}].share`}
           options={SHARE_OPTIONS}
+          key={`${index}-share`}
         />
       </Box>
 
@@ -22,8 +24,9 @@ export default function MiscInfo() {
         <Title>Carpool</Title>
         <CheckboxInput
           label='Do you want your city, state, zip, and email shared for carpooling?'
-          name='carpool'
+          name={`people[${index}].carpool`}
           options={YES_NO_OPTIONS}
+          key={`${index}-carpool`}
         />
       </Box>
 
@@ -31,8 +34,9 @@ export default function MiscInfo() {
         <Title>Volunteering</Title>
         <CheckboxInput
           label='Do you want to volunteer to help out over the weekend?  Jobs might include sweeping or checking paper products stashed in the bathrooms.'
-          name='volunteer'
+          name={`people[${index}].volunteer`}
           options={VOLUNTEER_OPTIONS}
+          key={`${index}-volunteer`}
         />
       </Box>
 
@@ -40,17 +44,19 @@ export default function MiscInfo() {
         <Title>Scholarships (limited availability)</Title>
         <CheckboxInput
           label="We feel we've kept the price of camp remarkably low.  However, if you are limited financially, we have a small number of half price scholarships available for camp. If you'd like to be considered for one of these, please let us know."
-          name='scholarship'
+          name={`people[${index}].scholarship`}
           options={SCHOLARSHIP_OPTIONS}
+          key={`${index}-scholarship`}
         />
       </Box>
 
       <Title>Comments</Title>
       <Input
         type='textarea'
-        name='comments'
-        label="Please tell us any special requests or information we should know regarding your registration. This might include non-dancers who want to attend camp but want a badge or other special needs, for example."
+        name={`people[${index}].comments`}
+        label="Please tell us any special requests or information we should know regarding your registration."
+        key={`${index}-comments`}
       />
-    </StyledPaper>
+    </Box>
   );
 }

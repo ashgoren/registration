@@ -29,8 +29,8 @@ bash clear-old-settings.sh
 
 ## Set configuration options:
 
-- Update site title in `public/index.html`
-- Update values in `src/config.js`
+- Update site title and meta content description in `public/index.html`
+- Update values in `config` folder files
 - Update favicon (can use [this site](https://www.favicon-generator.org) to generate them)
 - Copy desired logo to `public/logo.png` and set to desired height (likely <= 80px)
 - Update `MiscInfo`, `OrderSummary`, `Receipt` and other pages as needed

@@ -18,12 +18,10 @@ export default function MainForm({ order, setOrder, currentPage, setCurrentPage 
   }, []);
 
   // it doesn't get here until all validations are passing
-  function handleNextPage(values, actions) {
-    const submittedOrder = Object.assign({}, values);
-    const trimmedOrder = removeExtraPeople(submittedOrder);
+  function submitForm() {
+    const trimmedOrder = removeExtraPeople(order);
     const sanitizedOrder = sanitizeObject(trimmedOrder);
     const orderWithCountry = { ...sanitizedOrder, people: sanitizedOrder.people.map(updateCountry) };
-    // console.log(orderWithCountry);
     setOrder(orderWithCountry);
     setCurrentPage(currentPage === NUM_PAGES ? 'checkout' : currentPage + 1);
   }
@@ -32,11 +30,12 @@ export default function MainForm({ order, setOrder, currentPage, setCurrentPage 
     <Formik
       initialValues={order}
       validationSchema={validationSchema({ currentPage, admissionQuantity })}
-      onSubmit={ (values, actions) => {handleNextPage(values, actions);} }
+      onSubmit={ (values, actions) => {submitForm(values, actions);} }
     >
       <FormContents
         admissionQuantity={admissionQuantity} setAdmissionQuantity={setAdmissionQuantity}
         currentPage={currentPage} setCurrentPage={setCurrentPage}
+        order={order} setOrder={setOrder}
       />
     </Formik>
   );

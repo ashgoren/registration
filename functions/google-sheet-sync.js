@@ -7,17 +7,17 @@ import { fieldOrder } from './fields.js';
 
 const SERVICE_ACCOUNT_KEYS = functions.config().sheets.googleapi_service_account;
 const SHEET_ID = functions.config().sheets.sheet_id;
+const PAYMENT_ID_COLUMN = functions.config().sheets.payment_id_column;
 const DATA_PATH = '/orders';
 const RANGE = 'A:AP';
-const PAYMENT_ID_COLUMN = functions.config().sheets.payment_id_column;
 const MAX_RETRIES = 3;
-const RETRY_DELAY = 500; // ms
+const RETRY_DELAY_MS = 500;
 
-if (admin.apps.length === 0) {
-  admin.initializeApp();
-}
-
+if (admin.apps.length === 0) admin.initializeApp();
 const client = new google.auth.JWT(SERVICE_ACCOUNT_KEYS.client_email, null, SERVICE_ACCOUNT_KEYS.private_key, ['https://www.googleapis.com/auth/spreadsheets']);
+
+
+// ******** ADD LINE(S) TO SPREADSHEET ********
 
 export const appendrecordtospreadsheet = functions.database.ref(`${DATA_PATH}/{ITEM}`).onCreate(
   async (snap) => {
@@ -28,10 +28,30 @@ export const appendrecordtospreadsheet = functions.database.ref(`${DATA_PATH}/{I
       const promises = orders.map(orderLine => appendPromise(orderLine));
       await Promise.all(promises);
     } catch (err) {
-      handleError(`Error in appendrecordtospreadsheet for ${newRecord.emailConfirmation}`, err);
+      handleError(`Error in appendrecordtospreadsheet for ${snap.val().emailConfirmation}`, err);
     }
   }
 );
+
+const mapOrderToSpreadsheetLines = (order) => {
+  const orders = []
+  const createdAt = new Date(order.createdAt).toLocaleDateString();
+  const purchaser = `${order.people[0].first} ${order.people[0].last}`;
+  const owed = order.total - order.deposit;
+  const updatedOrder = joinArrays(order);
+  const { people, ...orderFields } = updatedOrder
+  for (const person of people) {
+    if (person.email === '') continue; // this should never trigger, but skip empty person objects just in case
+    const address = person.apartment ? `${person.address} ${person.apartment}` : person.address;
+    const isPurchaser = person.index === 0;
+    const updatedPerson = person.share ? joinArrays(person) : { ...joinArrays(person), share: 'do not share' };
+    const personFieldsBuilder = isPurchaser ? { ...updatedPerson, ...orderFields, owed } : updatedPerson;
+    const personFields = { ...personFieldsBuilder, address, purchaser, createdAt };
+    const line = fieldOrder.map(field => personFields[field] || '');
+    orders.push(line);
+  }
+  return orders;
+};
 
 async function appendPromise(orderLine, attempt = 0) {
   try {
@@ -47,7 +67,7 @@ async function appendPromise(orderLine, attempt = 0) {
     });
   } catch (err) {
     if (attempt < MAX_RETRIES) {
-      const delay = RETRY_DELAY * Math.pow(2, attempt);
+      const delay = RETRY_DELAY_MS * Math.pow(2, attempt);
       await new Promise(resolve => setTimeout(resolve, delay));
       return appendPromise(orderLine, attempt + 1);
     } else {
@@ -55,6 +75,9 @@ async function appendPromise(orderLine, attempt = 0) {
     }
   }
 }
+
+
+// ******** UPDATE SPREADSHEET LINE ********
 
 export const updaterecordinspreadsheet = functions.database.ref(`${DATA_PATH}/{ITEM}`).onUpdate(
   async (change) => {
@@ -107,6 +130,9 @@ async function updateSpreadsheetRow({ row, value }) {
   }
 }
 
+
+// ******** GOOGLE SHEETS API ********
+
 async function googleSheetsOperation({ operation, params }) {
   try {
     const operationParams = {
@@ -133,38 +159,17 @@ async function googleSheetsOperation({ operation, params }) {
   }
 }
 
-const mapOrderToSpreadsheetLines = (order) => {
-  const orders = []
-  const createdAt = new Date(order.createdAt).toLocaleDateString();
-  const purchaser = `${order.people[0].first} ${order.people[0].last}`;
-  const owed = order.total - order.deposit;
-  const updatedOrder = joinOrderArrays(order);
-  const { people, ...orderFields } = updatedOrder
-  for (const person of people) {
-    if (person.first !== '') { // skip person with no data
-      const address = person.apartment ? `${person.address} ${person.apartment}` : person.address;
-      let personFields = { ...person, address, purchaser, createdAt };
-      if (person.index === 0) {
-        personFields = { ...personFields, ...orderFields, owed, createdAt };
-      }
-      const line = fieldOrder.map(field => personFields[field] || '');
-      orders.push(line);
-    }
-  }
-  return orders;
-};
 
-const joinOrderArrays = (order) => {
-  // technically this also modifies original order object, but that's ok in this case
-  for (let key in order) {
-    if (key !== 'people' && Array.isArray(order[key])) {
-      order[key] = order[key].join(', ');
+// ******** HELPERS ********
+
+const joinArrays = (obj) => {
+  const newObj = { ...obj };
+  for (let key in obj) {
+    if (key !== 'people' && Array.isArray(obj[key])) {
+      newObj[key] = obj[key].join(', ');
     }
   }
-  if (!order.share) {
-    order['share'] = 'do not share';
-  }
-  return order;
+  return newObj;
 };
 
 function handleError(message, err) {

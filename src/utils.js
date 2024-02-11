@@ -1,8 +1,7 @@
 import DOMPurify from 'dompurify';
 import preval from 'preval.macro'
 import config from 'config';
-const { ORDER_DEFAULTS, PERSON_INPUTS } = config;
-
+const { ORDER_DEFAULTS, FIRST_PERSON_CONTACT_FIELDS } = config;
 
 export const clamp = (value, range) => Math.min(Math.max(value, range[0]), range[1]);
 
@@ -72,7 +71,7 @@ export const getFirstInvalidFieldName = (errors) => {
   return null;
 };
 const emailConfirmationIsFirstInvalidField = (errors) => {
-  const fields = PERSON_INPUTS[0].fields;
+  const fields = FIRST_PERSON_CONTACT_FIELDS;
   const fieldsBeforeEmailConfirmation = fields.slice(0, fields.indexOf('emailConfirmation'));
   return !errors.people || !errors.people[0] || !fieldsBeforeEmailConfirmation.some(field => errors.people[0][field]);
 };

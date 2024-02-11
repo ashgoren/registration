@@ -13,7 +13,6 @@ export const fieldOrder = [
   'zip',
   'country',
   'volunteer',
-  'hospitality',
   'scholarship',
   'share',
   'carpool',

@@ -20,7 +20,8 @@ export default function App() {
         <ScrollToAnchor />
         <MaterialLayout>
           <Routes>
-            <Route exact path="/" element=<Home /> />
+            {/* <Route exact path="/" element=<Home /> /> */}
+            <Route exact path="/" element=<Registration /> />
             <Route exact path="/about" element=<About /> />
             <Route exact path="/staff" element=<Staff /> />
             <Route exact path="/schedule" element=<Schedule /> />

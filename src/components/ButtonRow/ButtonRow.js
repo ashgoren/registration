@@ -1,6 +1,5 @@
-import { StyledPaper } from 'components/Layout/SharedStyles.js';
 import { Box, Button } from '@mui/material';
-import { StyledGreyButton } from "components/Layout/SharedStyles.js";
+import { StyledPaper, StyledGreyButton } from "components/Layout/SharedStyles.js";
 
 function BackButton({ onClick, text, ...props }) {
   return (
@@ -18,7 +17,23 @@ function NextButton({ onClick, text, ...props }) {
   );
 }
 
-export default function ButtonRow({ backButtonProps, nextButtonProps, centerButtonProps }) {
+function CancelButton({ onClick, text, ...props }) {
+  return (
+    <Button variant='contained' color='inherit' onClick={onClick} {...props}>
+      {text}
+    </Button>
+  );
+}
+
+function SaveButton({ onClick, text, ...props }) {
+  return (
+    <Button variant='contained' color='primary' onClick={onClick} {...props}>
+      {text}
+    </Button>
+  );
+}
+
+export default function ButtonRow({ backButtonProps, nextButtonProps, centerButtonProps, cancelButtonProps, saveButtonProps }) {
   return (
     <StyledPaper>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -35,6 +50,24 @@ export default function ButtonRow({ backButtonProps, nextButtonProps, centerButt
               type='button'
               onClick={centerButtonProps.onClick}
               text={centerButtonProps.text}
+            />
+            <div />
+          </>
+        }
+        {cancelButtonProps &&
+          <>
+            <CancelButton
+              onClick={cancelButtonProps.onClick}
+              text={cancelButtonProps.text}
+            />
+            <div />
+          </>
+        }
+        {saveButtonProps &&
+          <>
+            <SaveButton
+              onClick={saveButtonProps.onClick}
+              text={saveButtonProps.text}
             />
             <div />
           </>
