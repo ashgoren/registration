@@ -8,21 +8,21 @@ export const StyledPaper = ({ extraStyles = {}, ...props }) => {
   return <Paper sx={paperStyle(theme, extraStyles)} {...props} />;
 };
 
-export const StyledGreyButton = styled(Button)(({ theme }) => ({
-  borderColor: theme.palette.backButton.main,
-  color: theme.palette.backButton.main,
+export const StyledButton = styled(Button)(({ theme, palette }) => ({
+  borderColor: theme.palette[palette].main,
+  color: theme.palette[palette].main,
   '&:hover': { 
-    borderColor: theme.palette.backButton.hover,
-    color: theme.palette.backButton.hover,
-    backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[200],
+    borderColor: theme.palette[palette].hover,
+    color: theme.palette[palette].hover,
+    backgroundColor: theme.palette[palette].background,
   },
   '&:active': { 
-    borderColor: theme.palette.backButton.active,
-    color: theme.palette.backButton.active,
+    borderColor: theme.palette[palette].active,
+    color: theme.palette[palette].active,
   },
   '&:focus': {
-    borderColor: theme.palette.backButton.hover,
-    color: theme.palette.backButton.hover,
+    borderColor: theme.palette[palette].hover,
+    color: theme.palette[palette].hover,
   },
 }));
 

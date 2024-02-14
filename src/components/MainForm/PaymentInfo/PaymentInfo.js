@@ -8,11 +8,11 @@ import { useFormikContext } from 'formik';
 import config from 'config';
 const { ADMISSION_COST_RANGE, DONATION_OPTION, DONATION_RANGE } = config;
 
-export default function PaymentInfo({ donate, setDonate, clampValue, admissionQuantity }) {
+export default function PaymentInfo({ order, donate, setDonate, clampValue }) {
   const { values } = useFormikContext();
 
   useEffect(() => { scrollToTop(); },[])
-  
+
   return (
     <section className='PaymentInfo'>
 
@@ -25,7 +25,7 @@ export default function PaymentInfo({ donate, setDonate, clampValue, admissionQu
                 <Title>Sliding scale</Title>
                 <RightAlignedInput
                   sx={{ width: '5em' }}
-                  label={`How much are you able to pay${admissionQuantity > 1 ? ' *per person*' : ''}? ($${ADMISSION_COST_RANGE[0]}-${ADMISSION_COST_RANGE[1]})`}
+                  label={`How much are you able to pay${order.people.length > 1 ? ' *per person*' : ''}? ($${ADMISSION_COST_RANGE[0]}-${ADMISSION_COST_RANGE[1]})`}
                   name="admissionCost"
                   pattern='###'
                   range={ADMISSION_COST_RANGE}
@@ -41,11 +41,11 @@ export default function PaymentInfo({ donate, setDonate, clampValue, admissionQu
               <>
               <Title>Admission cost</Title>
                 <p>
-                  Number of admissions: {admissionQuantity}<br />
+                  Number of admissions: {order.people.length}<br />
                   Price per admission: ${ADMISSION_COST_RANGE[0]}
                 </p>
                 <p>
-                  Admissions total: ${admissionQuantity * ADMISSION_COST_RANGE[0]}
+                  Admissions total: ${order.people.length * ADMISSION_COST_RANGE[0]}
                 </p>
               </>
             }

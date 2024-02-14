@@ -37,18 +37,20 @@ const mapOrderToSpreadsheetLines = (order) => {
   const orders = []
   const createdAt = new Date(order.createdAt).toLocaleDateString();
   const purchaser = `${order.people[0].first} ${order.people[0].last}`;
+  const admissionQuantity = order.people.length;
   const owed = order.total - order.deposit;
   const updatedOrder = joinArrays(order);
   const { people, ...orderFields } = updatedOrder
+  let isPurchaser = true;
   for (const person of people) {
     if (person.email === '') continue; // this should never trigger, but skip empty person objects just in case
     const address = person.apartment ? `${person.address} ${person.apartment}` : person.address;
-    const isPurchaser = person.index === 0;
     const updatedPerson = person.share ? joinArrays(person) : { ...joinArrays(person), share: 'do not share' };
-    const personFieldsBuilder = isPurchaser ? { ...updatedPerson, ...orderFields, owed } : updatedPerson;
+    const personFieldsBuilder = isPurchaser ? { ...updatedPerson, ...orderFields, owed, admissionQuantity } : updatedPerson;
     const personFields = { ...personFieldsBuilder, address, purchaser, createdAt };
     const line = fieldOrder.map(field => personFields[field] || '');
     orders.push(line);
+    isPurchaser = false;
   }
   return orders;
 };

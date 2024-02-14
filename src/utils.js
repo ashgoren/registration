@@ -1,7 +1,7 @@
 import DOMPurify from 'dompurify';
 import preval from 'preval.macro'
 import config from 'config';
-const { ORDER_DEFAULTS, FIRST_PERSON_CONTACT_FIELDS } = config;
+const { FIRST_PERSON_CONTACT_FIELDS } = config;
 
 export const clamp = (value, range) => Math.min(Math.max(value, range[0]), range[1]);
 
@@ -39,18 +39,6 @@ export const warnBeforeUserLeavesSite = event => {
   event.preventDefault();
   event.returnValue = '';
 };
-
-
-export const removeExtraPeople = (order) => {
-  return {
-    ...order,
-    people: order.people.map(
-      (person) => person.index < order.admissionQuantity
-        ? person
-        : ORDER_DEFAULTS.people[person.index]
-    )
-  };
-}
 
 // helpers for scrolling to first invalid field
 export const getFirstInvalidFieldName = (errors) => {

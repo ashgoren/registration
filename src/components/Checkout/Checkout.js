@@ -60,7 +60,7 @@ export default function Checkout({ order, setOrder, setError, setCurrentPage }) 
     }
   }, [order, updateOrderInFirebase]);
 
-  const total = order.admissionCost * order.admissionQuantity + order.donation;
+  const total = order.admissionCost * order.people.length + order.donation;
 
   const handleClickBackButton = () => {
     setError(null);
@@ -74,7 +74,7 @@ export default function Checkout({ order, setOrder, setError, setCurrentPage }) 
 
     const initialOrder = {
       ...order,
-      people: order.people.slice(0, order.admissionQuantity).map(updateApartment),
+      people: order.people.map(updateApartment),
       total,
       deposit: paymentMethod === 'check' ? 0 : total,
       paymentId: 'PENDING'
@@ -150,7 +150,9 @@ export default function Checkout({ order, setOrder, setError, setCurrentPage }) 
       {!paying && !processing &&
         <>
           <Hidden smDown>
-            <ButtonRow backButtonProps = {{ onClick: handleClickBackButton }} />
+            <StyledPaper>
+              <ButtonRow backButtonProps = {{ onClick: handleClickBackButton, text: 'Back' }} />
+            </StyledPaper>
           </Hidden>
 
           <Hidden smUp>

@@ -1,5 +1,6 @@
 import { clearCache } from 'utils';
 import ButtonRow from 'components/ButtonRow';
+import { StyledPaper } from 'components/Layout/SharedStyles';
 import config from 'config';
 const { ORDER_DEFAULTS } = config;
 
@@ -11,6 +12,8 @@ export default function Confirmation({ setOrder, setCurrentPage }) {
   }
 
   return (
-    <ButtonRow centerButtonProps = {{ onClick: startOver, text: 'Start another registration' }} />
+    <StyledPaper>
+      <ButtonRow centerButtonProps = {{ onClick: startOver, text: 'Start another registration' }} />
+    </StyledPaper>
   );
 }

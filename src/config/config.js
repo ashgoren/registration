@@ -10,16 +10,15 @@ import { VOLUNTEER_OPTIONS, SCHOLARSHIP_OPTIONS, SHARE_OPTIONS, YES_NO_OPTIONS, 
 // update these as needed
 const ADMISSION_COST_RANGE = [100, 150];
 const ADMISSION_COST_DEFAULT = 100;
-const ADMISSION_QUANTITY_MAX = 2;
+const ADMISSION_QUANTITY_MAX = 4;
 const DONATION_OPTION = true;
 const DONATION_RANGE = [0, 999];
 
 // config for this particular registration instance; update this as needed!
 const PERSON_CONTACT_FIELDS = ['first', 'last', 'nametag', 'pronouns', 'email', 'phone', 'address', 'apartment', 'city', 'state', 'zip', 'country'];
 const PERSON_MISC_FIELDS = ['share', 'carpool', 'volunteer', 'scholarship', 'comments'];
-const ORDER_MISC_FIELDS = {
+const ORDER_MISC_DEFAULTS = {
   emailConfirmation: '',
-  admissionQuantity: 1,
   admissionCost: ADMISSION_COST_DEFAULT,
   donation: DONATION_RANGE[0]
 };
@@ -28,12 +27,10 @@ const ORDER_MISC_FIELDS = {
 const i = PERSON_CONTACT_FIELDS.indexOf('phone');
 const FIRST_PERSON_CONTACT_FIELDS = [ ...PERSON_CONTACT_FIELDS.slice(0, i), 'emailConfirmation', ...PERSON_CONTACT_FIELDS.slice(i) ];
 const PERSON_FIELDS = [...PERSON_CONTACT_FIELDS, ...PERSON_MISC_FIELDS];
+const PERSON_DEFAULTS = PERSON_FIELDS.reduce((obj, field) => ({ ...obj, [field]: FIELD_CONFIG[field].defaultValue }), {});
 const ORDER_DEFAULTS = {
-  ...ORDER_MISC_FIELDS,
-  people: Array.from({ length: ADMISSION_QUANTITY_MAX }, (_, index) => ({
-    ...PERSON_FIELDS.reduce((obj, field) => ({ ...obj, [field]: FIELD_CONFIG[field].defaultValue }), {}),
-    index
-  })),
+  ...ORDER_MISC_DEFAULTS,
+  people: [PERSON_DEFAULTS]
 }
 
 // *********************************************************************************************
@@ -71,6 +68,7 @@ const config = {
   PERSON_CONTACT_FIELDS,
   FIRST_PERSON_CONTACT_FIELDS,
   PERSON_MISC_FIELDS,
+  PERSON_DEFAULTS,
   PERSON_INPUT_LABELS,
   ORDER_DEFAULTS,
   VOLUNTEER_OPTIONS,
