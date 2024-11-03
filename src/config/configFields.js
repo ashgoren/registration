@@ -40,7 +40,7 @@ export const FIELD_CONFIG = {
     width: 12
   },
   nametag: {
-    label: 'Name for roster',
+    label: 'Name for roster', // to handle aggressive autocomplete use 'First name for button' if only want first name
     validation: NAME_VALIDATION.required('Please enter name for roster.'),
     defaultValue: '',
     required: true,
@@ -74,7 +74,7 @@ export const FIELD_CONFIG = {
     width: 12,
     // width: 4,
     required: true,
-    autoComplete: 'tel'
+    autoComplete: 'tel-national'
   },
   address: {
     label: 'Street address',
@@ -99,7 +99,7 @@ export const FIELD_CONFIG = {
     width: 6,
     // width: 5,
     required: true,
-    autoComplete: 'city'
+    autoComplete: 'address-level2'
   },
   state: {
     label: 'State / Province',
@@ -107,7 +107,7 @@ export const FIELD_CONFIG = {
     defaultValue: '',
     width: 3,
     required: true,
-    autoComplete: 'state'
+    autoComplete: 'address-level1'
   },
   zip: {
     label: 'Zip / Postal code',
