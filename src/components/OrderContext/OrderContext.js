@@ -5,7 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import Receipt from 'components/Receipt';
 import { cache, cached } from 'utils';
 import config from 'config';
-const { getOrderDefaults, PAYMENT_METHODS, EMAIL_CONTACT } = config;
+const { getOrderDefaults, PAYMENT_METHODS, TECH_CONTACT } = config;
 const functions = getFunctions();
 const firebaseFunctionDispatcher = httpsCallable(functions, 'firebaseFunctionDispatcher');
 
@@ -106,7 +106,7 @@ export const useOrderOperations = () => {
       return true
     } catch (err) {
       console.error(`error updating firebase record`, err);
-      setError(`Your payment was processed successfully. However, we encountered an error updating your registration. Please contact ${EMAIL_CONTACT}.`);
+      setError(`Your payment was processed successfully. However, we encountered an error updating your registration. Please contact ${TECH_CONTACT}.`);
       return false;
     }
   };

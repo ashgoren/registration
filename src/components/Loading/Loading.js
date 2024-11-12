@@ -1,7 +1,7 @@
 import { TailSpin } from 'react-loading-icons'
 import { Box, Typography } from '@mui/material';
 import config from 'config';
-const { EMAIL_CONTACT } = config;
+const { TECH_CONTACT } = config;
 
 export default function Loading({ text='Thinking...', isHeading=true, processing=false }) {
   return (
@@ -13,7 +13,7 @@ export default function Loading({ text='Thinking...', isHeading=true, processing
       {processing &&
         <Typography sx={{ mt: 2 }}>
           Do not refresh or navigate away.<br />
-          Email {EMAIL_CONTACT} if you do not see a confirmation page.
+          Email {TECH_CONTACT} if you do not see a confirmation page.
         </Typography>
       }
     </Box>

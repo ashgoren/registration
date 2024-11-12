@@ -4,7 +4,7 @@ import {useStripe, useElements, PaymentElement} from '@stripe/react-stripe-js';
 import { Box, Button } from '@mui/material';
 import { fullName } from 'utils';
 import config from 'config';
-const { EMAIL_CONTACT } = config;
+const { TECH_CONTACT } = config;
 const functions = getFunctions();
 const firebaseFunctionDispatcher = httpsCallable(functions, 'firebaseFunctionDispatcher');
 
@@ -87,16 +87,16 @@ export default function StripeCheckoutForm({ processCheckout, amount }) {
       console.error(error);
       switch(error.name) {
         case 'PaymentInitializationError':
-          setError(`There was a problem initializing the payment: ${error.message}. Please try again or contact ${EMAIL_CONTACT}.`);
+          setError(`There was a problem initializing the payment: ${error.message}. Please try again or contact ${TECH_CONTACT}.`);
           break;
         case 'PaymentProcessingError':
           setError(`There was a problem processing the payment: ${error.message}. Please verify your payment details and try again.`);
           break;
         case 'PaymentConfirmationError':
-          setError(`There was a problem confirming the payment: ${error.message}. Please contact ${EMAIL_CONTACT}.`);
+          setError(`There was a problem confirming the payment: ${error.message}. Please contact ${TECH_CONTACT}.`);
           break;
         default:
-          setError(`Unexpected payment processing error: ${error.message}. Please contact ${EMAIL_CONTACT}.`);
+          setError(`Unexpected payment processing error: ${error.message}. Please contact ${TECH_CONTACT}.`);
       }
       setProcessing(false);
     }
@@ -105,7 +105,7 @@ export default function StripeCheckoutForm({ processCheckout, amount }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!stripe || !elements) {
-      setError(`Stripe payment processing is not available. Please try again or contact ${EMAIL_CONTACT} with this error message.`);
+      setError(`Stripe payment processing is not available. Please try again or contact ${TECH_CONTACT} with this error message.`);
       return;
     }
     setError(null);

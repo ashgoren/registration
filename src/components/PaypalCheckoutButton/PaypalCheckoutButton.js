@@ -4,7 +4,7 @@ import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import Loading from 'components/Loading';
 import { Typography, Box } from "@mui/material";
 import config from 'config';
-const { SANDBOX_MODE, EMAIL_CONTACT, EVENT_TITLE } = config;
+const { SANDBOX_MODE, TECH_CONTACT, EVENT_TITLE } = config;
 
 const PaypalCheckoutButton = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, total, setPaying, processCheckout }) => {
 	const { processing, setError } = useOrder();
@@ -35,7 +35,7 @@ const PaypalCheckoutButton = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, tot
 			return paypalOrder.payer.email_address
 		} catch (err) {
 			setPaying(false);
-			setError(`PayPal encountered an error: ${err}. Please try again or contact ${EMAIL_CONTACT}.`);
+			setError(`PayPal encountered an error: ${err}. Please try again or contact ${TECH_CONTACT}.`);
 		}
 	};
 
@@ -61,7 +61,7 @@ const PaypalCheckoutButton = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, tot
 
 	const onError = (err) => {
 		setPaying(false);
-		setError(`PayPal encountered an error: ${err}. Please try again or contact ${EMAIL_CONTACT}.`);
+		setError(`PayPal encountered an error: ${err}. Please try again or contact ${TECH_CONTACT}.`);
 	};
 
 	const onCancel=() => {

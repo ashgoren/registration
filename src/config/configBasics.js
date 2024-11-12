@@ -19,6 +19,7 @@ const config = {
   CONFIRMATION_PAYPAL_TITLE: 'Example Dance Weekend Confirmation',
   CONFIRMATION_CHECK_TITLE: 'Example Dance Weekend Registration',
   EMAIL_CONTACT: 'contact@example.com',
+  TECH_CONTACT: 'tech@example.com',
   COVID_POLICY_URL: 'example.com/covid',
   SAFETY_POLICY_URL: 'example.com/safety',
   DIRECT_PAYMENT_URL: 'example.com/directpayment',

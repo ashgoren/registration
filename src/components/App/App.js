@@ -13,7 +13,7 @@ import { PaymentExplanation } from 'components/Static/PaymentExplanation';
 import ScrollToAnchor from 'components/ScrollToAnchor';
 import { OrderProvider } from 'components/OrderContext';
 import config from 'config';
-const { EVENT_TITLE, EMAIL_CONTACT } = config;
+const { EVENT_TITLE, TECH_CONTACT } = config;
 
 export default function App() {
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function App() {
               <Route exact path="/contact" element=<Contact /> />
               <Route exact path="/paymentinfo" element=<PaymentExplanation /> />
               <Route path="/registration" element=<Registration /> />
-              <Route exact path="/error-contact-support" element=<Error error={`Unexpected payment processing error. Please email ${EMAIL_CONTACT}`} /> />
+              <Route exact path="/error-contact-support" element=<Error error={`Unexpected payment processing error. Please email ${TECH_CONTACT}`} /> />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </OrderProvider>
