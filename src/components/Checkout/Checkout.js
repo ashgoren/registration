@@ -16,6 +16,7 @@ export default function Checkout() {
   const { prepOrderForFirebase, savePendingOrderToFirebase, saveFinalOrderToFirebase, sendReceipts } = useOrderOperations();
   const [paying, setPaying] = useState(null);
   const [paypalButtonsLoaded, setPaypalButtonsLoaded] = useState(false);
+  const total = order.total + order.fees;
 
   useEffect(() => { scrollToTop() },[]);
 
@@ -25,10 +26,6 @@ export default function Checkout() {
       return () => window.removeEventListener('beforeunload', warnBeforeUserLeavesSite);
     }
   }, []);
-
-  const admissionsTotal = order.people.reduce((total, person) => total + person.admission, 0);
-  const totalBeforeDonation = order.deposit > 0 ? order.deposit : admissionsTotal;
-  const total = totalBeforeDonation + order.donation;
 
   const handleClickBackButton = () => {
     setError(null);

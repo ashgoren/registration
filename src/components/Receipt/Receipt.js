@@ -10,12 +10,19 @@ const { COVID_POLICY_URL, CHECK_TO, CHECK_ADDRESS, EVENT_TITLE, PAYMENT_DUE_DATE
 export default function Receipt({ order, person, isPurchaser }) {
   const isCheckPayment = order.paymentId === 'check';
   const isElectronicPayment = !isCheckPayment;
-  const total = order.people.reduce((total, person) => total + person.admission, 0) + order.donation;
-  const paid = isCheckPayment ? 0 : order.deposit || total;
   const isDeposit = order.deposit > 0;
   const isFullPayment = !isDeposit;
-  const firstPersonName = order.people[0].first;
-  
+  const purchaserName = order.people[0].first;
+
+  let paid;
+  if (isCheckPayment) {
+    paid = 0;
+  } else if (isDeposit) {
+    paid = order.deposit + order.fees;
+  } else {
+    paid = order.total + order.fees;
+  }
+
   useEffect(() => { scrollToTop() },[]);
 
   const purchaserCheckPaymentContent = (
@@ -25,7 +32,7 @@ export default function Receipt({ order, person, isPurchaser }) {
       </Typography>
       <Typography component='p'>
         Paying on time can increase your chance of being accepted.<br />
-        Please send a check for {isDeposit ? `at least $${order.deposit} to hold` : `$${total} to secure`} your spot.<br />
+        Please send a check for {isDeposit ? `at least $${order.deposit} to hold` : `$${order.total} to secure`} your spot.<br />
         (Or you can still pay electronically <StyledLink to={websiteLink(DIRECT_PAYMENT_URL)}>here</StyledLink>.)
       </Typography>
       <Typography component='p' sx={{ mt: 2 }}>
@@ -68,7 +75,7 @@ export default function Receipt({ order, person, isPurchaser }) {
     <>
       {isPurchaser ?
         <>
-          <Typography component='p'>Thanks, {firstPersonName}!</Typography>
+          <Typography component='p'>Thanks, {purchaserName}!</Typography>
           {isCheckPayment ? purchaserCheckPaymentContent : purchaserElectronicPaymentContent}
         </>
       :

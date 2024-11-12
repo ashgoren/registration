@@ -1,5 +1,5 @@
 import 'firebase.js'; // initializes firebase
-import { createContext, useState, useReducer, useContext, useEffect } from 'react';
+import { createContext, useState, useReducer, useContext, useEffect, useCallback } from 'react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { renderToStaticMarkup } from 'react-dom/server';
 import Receipt from 'components/Receipt';
@@ -31,7 +31,6 @@ export const OrderProvider = ({ children }) => {
   const [processingMessage, setProcessingMessage] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState(PAYMENT_METHODS[0]);
   const [error, setError] = useState(null);
-  const [lastUpdatedTotal, setLastUpdatedTotal] = useState(null);
   const [warmedUp, setWarmedUp] = useState(false);
 
   useEffect(() => { cache('order', order) }, [order]);
@@ -43,14 +42,13 @@ export const OrderProvider = ({ children }) => {
     if (order.status === 'checkout') setCurrentPage('checkout');
   }, [order.status]);
 
-  const updateOrder = (updates) => dispatch({ type: 'UPDATE_ORDER', payload: updates });
+  const updateOrder = useCallback((updates) => dispatch({ type: 'UPDATE_ORDER', payload: updates }), []);
 
   const startOver = () => {
     dispatch({ type: 'RESET_ORDER' });
     setPaymentIntentId(null);
     setPaymentMethod(PAYMENT_METHODS[0]);
     setProcessingMessage(null);
-    setLastUpdatedTotal(null);
     setCurrentPage(1);
   }
 
@@ -63,7 +61,6 @@ export const OrderProvider = ({ children }) => {
     processingMessage, setProcessingMessage,
     error, setError,
     paymentMethod, setPaymentMethod,
-    lastUpdatedTotal, setLastUpdatedTotal,
     warmedUp, setWarmedUp
   };
   return <OrderContext.Provider value={value}>{children}</OrderContext.Provider>;

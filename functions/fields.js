@@ -28,6 +28,7 @@ export const fieldOrder = [
   'donation',
   'total',
   'deposit',
+  'fees',
   'paid',
   'status',
   'purchaser',

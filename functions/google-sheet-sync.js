@@ -49,10 +49,10 @@ const mapOrderToSpreadsheetLines = (order) => {
       paid = 0;
       status = 'awaiting check';
     } else if (deposit > 0) {
-      paid = isPurchaser ? deposit + order.donation : deposit;
+      paid = isPurchaser ? deposit + order.donation + order.fees : deposit;
       status = 'deposit';
     } else {
-      paid = total;
+      paid = isPurchaser ? total + order.fees : total;
       status = 'paid';
     }
     const firstPersonPurchaserField = people.length > 1 ? `self (+${people.length - 1})` : 'self';

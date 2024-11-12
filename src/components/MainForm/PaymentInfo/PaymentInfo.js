@@ -3,29 +3,43 @@ import { useOrder } from 'components/OrderContext';
 import { scrollToTop, clamp } from 'utils';
 import { RightAlignedInput } from '../Input';
 import { StyledPaper, Title, Paragraph } from 'components/Layout/SharedStyles';
-import { InputAdornment, Box, Tab, Tabs } from '@mui/material';
+import { InputAdornment, Box, Tab, Tabs, FormControlLabel, Checkbox } from '@mui/material';
 import { TabPanel, TabContext } from '@mui/lab';
 import { useFormikContext } from 'formik';
 import { PaymentExplanation } from 'components/Static/PaymentExplanation';
 import config from 'config';
-const { DEPOSIT_OPTION, DEPOSIT_COST, ADMISSION_COST_RANGE, DONATION_OPTION, DONATION_MAX, PAYMENT_DUE_DATE } = config;
+const { DEPOSIT_OPTION, COVER_FEES_OPTION, DEPOSIT_COST, ADMISSION_COST_RANGE, DONATION_OPTION, DONATION_MAX, PAYMENT_DUE_DATE } = config;
 
 export default function PaymentInfo() {
-  const { order } = useOrder();
+  const { order, updateOrder } = useOrder();
+  const { values, setFieldValue, handleBlur } = useFormikContext();
   const priceRange = [ADMISSION_COST_RANGE[0], ADMISSION_COST_RANGE[1]];
   const isSlidingScale = priceRange[0] < priceRange[1];
   const isMultiplePeople = order.people.length > 1;
   const [payingMax, setPayingMax] = useState(order.people[0].admission === ADMISSION_COST_RANGE[1]);
-  const { values, setFieldValue, handleBlur } = useFormikContext();
-  const [donate, setDonate] = useState(values.donation > 0);
+  const [donate, setDonate] = useState(order.donation > 0);
+  const [donationTotal, setDonationTotal] = useState(order.donation);
+  const [coverFees, setCoverFees] = useState(order.fees > 0);
   const [paymentTab, setPaymentTab] = useState(order.deposit > 0 ? 'deposit' : 'fullpayment');
+  const [admissionTotal, setAdmissionTotal] = useState(order.people.reduce((total, person) => total + parseInt(person.admission), 0));
+  const depositTotal = paymentTab === 'deposit' ? DEPOSIT_COST * order.people.length : 0;
+  const total = depositTotal || admissionTotal + donationTotal;
+  const fees = (0.0245 * total + 0.5).toFixed(2);
+
+  useEffect(() => { scrollToTop(); },[])
+
+  useEffect(() => {
+    updateOrder({
+      total,
+      fees: coverFees ? parseFloat(fees) : 0
+    });
+  }, [total, fees, coverFees, updateOrder]);
 
   const handlePaymentTab = (_, newTab) => {
     setFieldValue('deposit', newTab === 'deposit' ? order.people.length * DEPOSIT_COST : 0);
     setPaymentTab(newTab);
+    if (newTab === 'deposit') setFieldValue('donation', 0);
   };
-
-  useEffect(() => { scrollToTop(); },[])
 
   function clampValue({ event, range }) {
     const [field, value] = [event.target.name, parseInt(event.target.value) || range[0]];
@@ -37,6 +51,13 @@ export default function PaymentInfo() {
   function updateAdmissionCostValue(event) {
     clampValue({ event: event, range: priceRange})
     setPayingMax(clamp(values['people'][0]['admission'], priceRange) === ADMISSION_COST_RANGE[1] ? true : false)
+    setAdmissionTotal(values.people.reduce((total, person) => total + clamp(parseInt(person.admission), priceRange), 0));
+    handleBlur(event); // bubble up to formik
+  }
+
+  function updateDonationValue(event) {
+    clampValue({ event: event, range: [0, DONATION_MAX]})
+    setDonationTotal(parseInt(values['donation']));
     handleBlur(event); // bubble up to formik
   }
 
@@ -109,7 +130,7 @@ export default function PaymentInfo() {
 
         </StyledPaper>
 
-        {DONATION_OPTION && (payingMax || values['donation'] > 0) &&
+        {DONATION_OPTION && paymentTab === 'fullpayment' && (payingMax || values['donation'] > 0) &&
           <StyledPaper className='donation-section'>
             <Title>Additional contribution</Title>
             {!donate && 
@@ -130,7 +151,7 @@ export default function PaymentInfo() {
                 type='pattern'
                 pattern='###'
                 range={[0, DONATION_MAX]}
-                onBlur={(event) => clampValue({ event: event, range: [0, DONATION_MAX]})}
+                onBlur={(event) => updateDonationValue(event)}
                 InputProps={{ startAdornment: <InputAdornment position='start'>$</InputAdornment> }}
                 autoFocus={values['donation'] === 0}
                 // onFocus={(e) => e.target.select()}
@@ -138,6 +159,16 @@ export default function PaymentInfo() {
             }
           </StyledPaper>
         }
+
+        {COVER_FEES_OPTION &&
+          <StyledPaper>
+            <FormControlLabel
+              control={<Checkbox checked={coverFees} onChange={(e) => setCoverFees(e.target.checked)} />}
+              label={`I would like to add ${fees} to cover the transaction fees.`}
+            />
+          </StyledPaper>
+        }
+
       </div>
     </section>
   );

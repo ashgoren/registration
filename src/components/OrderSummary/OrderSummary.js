@@ -9,7 +9,6 @@ export default function OrderSummary({ order }) {
   const admissionsTotal = admissions.reduce((total, admission) => total + admission, 0);
   const isDeposit = order.deposit > 0;
   const isFullPayment = !isDeposit;
-  const isPaid = order.paymentId && order.paymentId !== 'PENDING' && order.paymentId !== 'check';
 
   return (
     <>
@@ -40,17 +39,10 @@ export default function OrderSummary({ order }) {
               ${admissionsTotal}<br />
             </>
           }
-
-          {isDeposit &&
-            <>
-              Deposit {isPaid ? 'paid' : 'due now'}: ${order.deposit}<br />
-              <strong><font color='orange'>The balance of your registration fee is due by {PAYMENT_DUE_DATE}.</font></strong><br />
-            </>
-          }
-
-          {order.donation > 0 &&
-            <>Additional donation: ${order.donation}<br /></>
-          }
+          {isDeposit && <>Deposit: ${order.deposit}<br /></>}
+          {order.donation > 0 && <>Additional donation: ${order.donation}<br /></>}
+          {order.fees > 0 && <>Payment processor fees: ${order.fees}<br /></>}
+          {isDeposit && <><strong><font color='orange'>The balance of your registration fee is due by {PAYMENT_DUE_DATE}.</font></strong><br /></>}
         </Typography>
       </Box>
     </>

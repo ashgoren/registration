@@ -26,7 +26,9 @@ export default function MainForm() {
     const sanitizedOrder = sanitizeObject(submittedOrder);
     const updatedOrder = {
       ...sanitizedOrder,
-      deposit: sanitizedOrder.deposit ? sanitizedOrder.people.length * DEPOSIT_COST : 0
+      deposit: sanitizedOrder.deposit ? sanitizedOrder.people.length * DEPOSIT_COST : 0,
+      total: order.total,
+      fees: order.fees
     };
     if (currentPage === NUM_PAGES) {
       updateOrder({ ...updatedOrder, status: 'checkout' });
