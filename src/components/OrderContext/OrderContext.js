@@ -97,7 +97,7 @@ export const useOrderOperations = () => {
       const startTime = new Date();
       await firebaseFunctionDispatcher({
         action: 'saveFinalOrder',
-        data: order
+        data: { ...order, status: 'final' }
       });
       console.log('Final order saved in', new Date() - startTime, 'ms');
       return true

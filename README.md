@@ -209,3 +209,4 @@ npm start
 - Update Stripe Publishable Key to production mode *ON GITHUB* and redeploy to Firebase
 - Update Stripe Secret Key to production mode in `functions/.env` and redeploy Firebase Functions
 - Make registration link live on homepage & navbar
+- Clear spreadsheet
