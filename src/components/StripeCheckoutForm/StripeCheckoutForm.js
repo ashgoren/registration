@@ -1,11 +1,14 @@
 import { useOrder } from 'components/OrderContext';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import {useStripe, useElements, PaymentElement} from '@stripe/react-stripe-js';
+import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
 import { Box, Button } from '@mui/material';
 import { fullName } from 'utils';
 import config from 'config';
 const { TECH_CONTACT } = config;
 const functions = getFunctions();
+
+// import { connectFunctionsEmulator } from 'firebase/functions';
+// if (process.env.NODE_ENV === 'development') connectFunctionsEmulator(functions, 'localhost', 5001);
 const firebaseFunctionDispatcher = httpsCallable(functions, 'firebaseFunctionDispatcher');
 
 export default function StripeCheckoutForm({ processCheckout, amount }) {

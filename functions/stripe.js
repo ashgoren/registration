@@ -1,7 +1,8 @@
 // errors are handled in the calling function
 import stripeModule from "stripe";
 
-const stripe = stripeModule(process.env.STRIPE_SECRET_KEY);
+const isEmulator = !!process.env.FIREBASE_AUTH_EMULATOR_HOST || !!process.env.FIRESTORE_EMULATOR_HOST;
+const stripe = stripeModule(isEmulator ? process.env.STRIPE_SECRET_KEY_DEV : process.env.STRIPE_SECRET_KEY);
 const statement_descriptor_suffix = process.env.STRIPE_STATEMENT_DESCRIPTOR_SUFFIX; // appended to statement descriptor set in Stripe dashboard
 
 export const getStripePaymentIntent = async ({ email, name, amount, idempotencyKey, paymentIntentId }) => {
