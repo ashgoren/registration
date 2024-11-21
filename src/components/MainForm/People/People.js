@@ -5,7 +5,7 @@ import { Box, Button, Typography, Accordion, AccordionSummary, AccordionDetails 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PersonForm from '../PersonForm';
 import NavButtons from 'components/NavButtons';
-import { StyledPaper } from 'components/Layout/SharedStyles';
+import { StyledPaper, Paragraph } from 'components/Layout/SharedStyles';
 import config from 'config';
 import { PersonSummary } from 'components/OrderSummary';
 const { ADMISSION_QUANTITY_MAX, PERSON_DEFAULTS } = config;
@@ -51,6 +51,9 @@ export default function People() {
     <>
       {(order.people.length > 1 || order.people[0].email || editIndex === null) &&
         <StyledPaper>
+          <Paragraph sx={{ mb: 4 }}>
+            Please review your information. {order.people.length < ADMISSION_QUANTITY_MAX && 'You may also register an additional person below.'}
+          </Paragraph>
           {order.people.map((person, index) => (
             <Box key={index}>
               {index !== editIndex && person.email && 
