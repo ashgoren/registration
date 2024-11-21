@@ -59,7 +59,7 @@ export default function StripeCheckoutForm({ processCheckout, amount }) {
         throw new Error('No result returned');
       } else if (!result.error && !result.paymentIntent) {
         throw new Error('Invalid result returned');
-      } else if (result.paymentIntent.status !== 'succeeded') {
+      } else if (result.paymentIntent && result.paymentIntent.status !== 'succeeded') {
         // e.g. paymentIntent.status === 'requires_action'
         // this should never trigger for cards or apple/google pay
         // may also try to redirect to return_url, which is not yet setup
@@ -72,6 +72,7 @@ export default function StripeCheckoutForm({ processCheckout, amount }) {
     const { paymentIntent, error } = result;
     if (error) {
       // e.g. card denied; this results in record left in pendingOrders db
+      // tho could also be no such payment intent error
       throw new PaymentProcessingError(error.message);
     }
 
@@ -87,7 +88,11 @@ export default function StripeCheckoutForm({ processCheckout, amount }) {
       console.error(error);
       switch(error.name) {
         case 'PaymentInitializationError':
-          setError(`There was a problem initializing the payment: ${error.message}. Please try again or contact ${TECH_CONTACT}.`);
+          if (error.message === 'Unauthenticated') {
+            setError(`There was a problem initializing the payment. Please try again or contact ${TECH_CONTACT}. If resubmitting fails, try closing the browser tab and starting over.`);
+          } else {
+            setError(`There was a problem initializing the payment: ${error.message}. Please try again or contact ${TECH_CONTACT}.`);
+          }
           break;
         case 'PaymentProcessingError':
           setError(`There was a problem processing the payment: ${error.message}. Please verify your payment details and try again.`);

@@ -6,21 +6,26 @@ const statement_descriptor_suffix = process.env.STRIPE_STATEMENT_DESCRIPTOR_SUFF
 
 export const getStripePaymentIntent = async ({ email, name, amount, idempotencyKey, paymentIntentId }) => {
   let paymentIntent;
-  if (paymentIntentId) {
-    paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-    if (paymentIntent.amount !== amount) {
-      paymentIntent = await stripe.paymentIntents.update(paymentIntentId, { amount });
+  try {
+    if (paymentIntentId) {
+      paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+      if (paymentIntent.amount !== amount) {
+        paymentIntent = await stripe.paymentIntents.update(paymentIntentId, { amount });
+      }
+    } else {
+      paymentIntent = await stripe.paymentIntents.create(
+        {
+          amount,
+          currency: "usd",
+          customer: await findOrCreateCustomer(email, name),
+          ...(statement_descriptor_suffix && { statement_descriptor_suffix })
+        },
+        { idempotencyKey }
+      );
     }
-  } else {
-    paymentIntent = await stripe.paymentIntents.create(
-      {
-        amount,
-        currency: "usd",
-        customer: await findOrCreateCustomer(email, name),
-        ...(statement_descriptor_suffix && { statement_descriptor_suffix })
-      },
-      { idempotencyKey }
-    );
+  } catch (error) {
+    console.error("Error in getStripePaymentIntent:", error, email, name, amount, idempotencyKey, paymentIntentId);
+    throw error;
   }
   return {
     clientSecret: paymentIntent.client_secret,
