@@ -1,6 +1,6 @@
 import { styled } from '@mui/material/styles';
 import { useTheme } from '@mui/system';
-import { Button, Paper, Link, Typography, Divider } from '@mui/material';
+import { Button, Paper, Link, Typography, Divider, FormLabel, Box } from '@mui/material';
 import { paperStyle } from './LayoutStyles';
 
 export const StyledPaper = ({ extraStyles = {}, ...props }) => {
@@ -79,4 +79,15 @@ export const SectionDivider = ({ children, ...props }) => {
   return (
     <Divider component="hr" sx={{borderBottomWidth: 4, my: 4 }}/>
   )
+}
+
+export const Label  = ({ children, name, required=false, sx={} }) => {
+  return (
+    <Box sx={sx}>
+      <FormLabel component='legend' htmlFor={name}>
+        <Typography component='span' color='text.primary'>{children}</Typography>
+        {required && <Typography component='span' color='error'> *</Typography>}
+      </FormLabel>
+    </Box>
+  );
 }

@@ -2,31 +2,49 @@ import React from 'react';
 import { Input } from '../Input';
 import { Grid } from '@mui/material';
 import config from 'config';
-const { FIELD_CONFIG } = config;
+const { FIELD_CONFIG, INCLUDE_LAST_ON_NAMETAG } = config;
 
-function ContactInfoInputs({ fields, index }) {
-
+function ContactInfoInputs({ fields, index, formikRef }) {
   console.log('ContactInfoInputs rendered');
+
+  const triggerSetNametagField = `people[${index}].${INCLUDE_LAST_ON_NAMETAG ? 'last' : 'first'}`;
+  const setNametag = (e) => {
+    const { values, setFieldValue, handleBlur } = formikRef.current;
+    handleBlur(e);  // bubble up to default Formik onBlur handler
+    const { first, last, nametag } = values.people[index];
+    if (nametag) return;
+    const fieldsFilled = INCLUDE_LAST_ON_NAMETAG ? first && last : first;
+    const newNametag = INCLUDE_LAST_ON_NAMETAG ? `${first} ${last}` : first;
+    if (fieldsFilled) {
+      setFieldValue(`people[${index}].nametag`, newNametag);
+    }
+  };
 
   return (
     <Grid container spacing={2}>
-      {fields.map((field) => (
-        <Grid item xs={12} sm={FIELD_CONFIG[field].width} key={`${index}-${field}`}>
-          <Input
-            label={FIELD_CONFIG[field].label}
-            name={`people[${index}].${field}`}
-            type={FIELD_CONFIG[field].type || 'text'}
-            pattern={FIELD_CONFIG[field].pattern}
-            placeholder={FIELD_CONFIG[field].placeholder}
-            autoComplete={FIELD_CONFIG[field].autoComplete}
-            fullWidth
-            required={FIELD_CONFIG[field].required}
-            mask='_'
-            variant='standard'
-            hidden={FIELD_CONFIG[field].hidden}
-          />
-        </Grid>
-      ))}
+      {fields.map((field) => {
+        const fieldConfig = FIELD_CONFIG[field];
+        const { label, type, pattern, placeholder, autoComplete, required, hidden, width } = fieldConfig;
+        const fieldName = `people[${index}].${field}`;
+        return (
+          <Grid item xs={12} sm={width} key={`${index}-${field}`}>
+            <Input
+              label={label}
+              name={fieldName}
+              type={type || 'text'}
+              pattern={pattern}
+              placeholder={placeholder}
+              autoComplete={autoComplete}
+              fullWidth
+              required={required}
+              mask='_'
+              variant='standard'
+              hidden={hidden}
+              onBlur={fieldName === triggerSetNametagField ? setNametag : undefined}
+            />
+          </Grid>
+        );
+      })}
     </Grid>
   );
 }

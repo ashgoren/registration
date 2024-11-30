@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useOrder } from 'components/OrderContext';
-import { useFormikContext } from 'formik';
 import { Box, Button, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PersonForm from '../PersonForm';
@@ -10,19 +9,19 @@ import config from 'config';
 import { PersonSummary } from 'components/OrderSummary';
 const { ADMISSION_QUANTITY_MAX, PERSON_DEFAULTS } = config;
 
-export default function People() {
+export default function People({ formikRef }) {
+  console.log('People rendered');
+
   const { order, updateOrder } = useOrder();
   const [editIndex, setEditIndex] = useState(order.people[0].email === '' ? 0 : null);
   const [isNewPerson, setIsNewPerson] = useState(false);
 
-  const formik = useFormikContext();
-  const { values, setFieldValue } = formik;
-
   const resetForm = () => {
-    formik.resetForm({ values: order });
+    formikRef.current.resetForm({ values: order });
   };
 
   const handleAddNew = () => {
+    const { values, setFieldValue } = formikRef.current;
     const people = [...values.people, PERSON_DEFAULTS];
     setEditIndex(order.people.length);
     setFieldValue('people', people); // update formik field array
@@ -43,7 +42,7 @@ export default function People() {
         resetForm();
       }
       updateOrder({ people });
-      setFieldValue('people', people); // update formik field array
+      formikRef.current.setFieldValue('people', people); // update formik field array
     }
   };
 
@@ -85,6 +84,7 @@ export default function People() {
               editIndex={editIndex} setEditIndex={setEditIndex}
               isNewPerson={isNewPerson} setIsNewPerson={setIsNewPerson}
               resetForm={resetForm}
+              formikRef={formikRef}
             />
           </StyledPaper>
         </>

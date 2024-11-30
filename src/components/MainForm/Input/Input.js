@@ -1,220 +1,236 @@
-import { useEffect } from 'react';
-import { isMobile } from "react-device-detect";
-import { Field, useFormikContext, getIn, useField, FastField } from 'formik';
-import { PatternFormat } from 'react-number-format';
-import { Box, Typography, TextField, Button, Checkbox, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText } from '@mui/material';
-import { usePlacesWidget } from "react-google-autocomplete";
-import config from 'config';
-const { INCLUDE_LAST_ON_NAMETAG } = config;
+// memoizing isn't accomplishing anything since useField causes re-renders anyway
 
-export const Input = (props) => {
-  const inputComponentMapping = {
-    button: ButtonInput,
-    checkbox: CheckboxInput,
-    radio: RadioButtons,
-    pattern: NumericInput,
-    textarea: TextArea,
-    address: AddressAutocompleteInput,
-    email: TextInput,
-    text: TextInput,
-  };
+import { useEffect, memo } from 'react';
+import { isMobile } from "react-device-detect";
+import { useField } from 'formik';
+import { PatternFormat } from 'react-number-format';
+import { Box, TextField, Button, Checkbox, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText } from '@mui/material';
+import { usePlacesWidget } from "react-google-autocomplete";
+import { Label } from 'components/Layout/SharedStyles';
+
+export const Input = memo((props) => {
   const { type = 'text' } = props;
   const Component = inputComponentMapping[type];
   return <Component {...props} />;
-};
+});
 
+// not memoized because not used on the main form page,
 export const RightAlignedInput = ({ label, ...props }) => {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-      <Typography variant='body1' sx={{ mr: '.5rem' }}>{label}</Typography>
+      <Label name={props.name} sx={{ mr: '.5rem' }}>{label}</Label>
+      {/* <Typography variant='body1' sx={{ mr: '.5rem' }}>{label}</Typography> */}
       <Input {...props} />
     </Box>
   );
 };
 
+// not memoized because not used on the main form page
 const ButtonInput = ({ buttonText, onClick }) => {
   return (
     <Button variant='contained' size='large' color='info' onClick={onClick}>
-      <Typography variant='body1' sx={{ mr: '.5rem' }}>{buttonText}</Typography>
+      <Label sx={{ mr: '.5rem' }}>{buttonText}</Label>
+      {/* <Typography variant='body1' sx={{ mr: '.5rem' }}>{buttonText}</Typography> */}
     </Button>
   );
 };
 
-const TextInput = ({ label, name, type, hidden, ...props }) => {
-  const [,,helpers] = useField(name);
-  const { touched, errors, values, setFieldValue, handleBlur } = useFormikContext();
-  const handleBlurAndSetNametag = (e) => {
-    handleBlur(e);  // bubble up to default Formik onBlur handler
-    const triggerField = INCLUDE_LAST_ON_NAMETAG ? 'last' : 'first';
-    if (name.includes(triggerField)) {
-      const personIndex = name.split('[')[1].split(']')[0];
-      const existingNametag = getIn(values, `people[${personIndex}].nametag`);
-      if (existingNametag) return;
-      const first = getIn(values, `people[${personIndex}].first`);
-      const last = getIn(values, `people[${personIndex}].last`);
-      const fieldsFilled = INCLUDE_LAST_ON_NAMETAG ? first && last : first;
-      const newNametag = INCLUDE_LAST_ON_NAMETAG ? `${first} ${last}` : first;
-      if (fieldsFilled) {
-        setFieldValue(`people[${personIndex}].nametag`, newNametag);
-      }
-    }
+const TextInput = memo(({ label, name, type, hidden, onBlur, ...props }) => {
+  // console.log('render TextInput:', name);
+  const [field, { touched, error }, { setError }] = useField(name);
+
+  const handleFocus = () => setError('');
+  const handleBlur = onBlur || field.onBlur;
+
+  const textFieldStyles = {
+    mb: '.3rem',
+    display: hidden ? 'none' : undefined,
+    ...(props.width && { width: props.width })
   };
+  
   return (
-    <FastField name={name}>
-      {({ field }) => {
-        const fieldError = getIn(errors, name);
-        const isTouched = getIn(touched, name);
-        return (
-          <Box >
-            <TextField
-              sx={{
-                mb: '.3rem',
-                display: hidden ? 'none' : undefined,
-                ...(props.width && { width: props.width })
-              }}
-              type={type}
-              label={label}
-              variant='standard'
-              error={Boolean(isTouched && fieldError)}
-              helperText={isTouched && fieldError}
-              {...field}
-              onBlur={handleBlurAndSetNametag}
-              onFocus={() => helpers.setError('')}
-              {...props}
-            />
-          </Box>
-        )
-      }}
-    </FastField>
+    <Box>
+      <TextField
+        sx={textFieldStyles}
+        {...field}
+        type={type}
+        label={label}
+        variant='standard'
+        error={Boolean(touched && error)}
+        helperText={touched && error}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        {...props}
+      />
+    </Box>
   );
-};
+});
 
-const NumericInput = ({ variant, label, name, type, pattern, range, ...props }) => {
-  const [,,helpers] = useField(name);
-  const { touched, errors, setFieldValue } = useFormikContext();
+const NumericInput = memo(({ variant, label, name, type, pattern, range, onBlur, ...props }) => {
+  // console.log('render NumericInput:', name);
+  const isPhoneInput = pattern === '###-###-####'; // replace with more generalizable solution
+  const [field, { touched, error }, { setError }] = useField(name);
   return (
-    <FastField name={name}>
-      {({ field }) => {
-        const isPhoneInput = name.includes('phone');
-        const fieldError = isPhoneInput && getIn(errors, name);
-        const isTouched = isPhoneInput && getIn(touched, name);
-        return (
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <PatternFormat
-              type={isMobile ? 'tel' : 'text'}
-              customInput={TextField}
-              label={label}
-              format={pattern}
-              onValueChange={({value}) => setFieldValue(name, isPhoneInput ? value : parseInt(value))}
-              inputMode='numeric'
-              variant={variant || 'outlined'}
-              error={Boolean(isTouched && fieldError)}
-              helperText={isTouched && fieldError}
-              {...field}
-              onFocus={() => helpers.setError('')}
-              {...props}
-            />
-          </Box>
-        )
-      }}
-    </FastField>
+    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <PatternFormat
+        {...field}
+        type={isMobile ? 'tel' : 'text'}
+        customInput={TextField}
+        label={label}
+        format={pattern}
+        // onValueChange={() => setValue(isPhoneInput ? field.value : parseInt(field.value))}
+        inputMode='numeric'
+        variant={variant || 'outlined'}
+        error={Boolean(isPhoneInput && touched && error)}
+        helperText={isPhoneInput && touched && error}
+        onFocus={() => setError('')}
+        onBlur={onBlur || field.onBlur}
+        {...props}
+      />
+    </Box>
   );
-};
+});
 
-const TextArea = ({ label, name, rows }) => {
+const TextArea = memo(({ label, name, rows }) => {
+  // console.log('render TextArea:', name);
+  const [field] = useField(name);
   return (
     <>
-      <Typography gutterBottom sx={{ mb: 2 }} htmlFor={name}>
-        {label}
-      </Typography>
-      <Field
-        as={TextField}
-        name={name}
+      <Label name={name} sx={{ mb: 2 }}>{label}</Label>
+      <TextField
+        {...field}
         multiline
         rows={rows}
         sx={{ width: '100%', '& textarea': { resize: 'vertical' } }}
       />
     </>
   );
-};
+});
 
-const CheckboxInput = ({ name, label, options, ...props }) => {
+const CheckboxOption = memo(({ name, option, onChange, ...props }) => {
+  const [field] = useField(name);
+  return (
+    <FormControlLabel
+      control={
+        <Checkbox
+          {...field}
+          id={option.value}
+          checked={field.value.includes(option.value)}
+          value={option.value}
+          color="secondary"
+          onChange={onChange || field.onChange}
+          {...props}
+        />
+      }
+      label={option.label}
+    />
+  );
+});
+
+const CheckboxInput = memo(({ name, label, options, onChange, ...props }) => {
+  // console.log('render CheckboxInput:', name);
   return (
     <>
-      {label && <Typography gutterBottom htmlFor={name}>{label}</Typography>}
-      {options.map(option => (
+      <Label name={name} sx={{ mb: 1 }}>{label}</Label>
+      {options.map((option) => (
         <div key={option.value}>
-          <Field name={name}>
-            {({ field }) => (
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    id={option.value}
-                    checked={field.value.includes(option.value)}
-                    {...field}
-                    value={option.value}
-                    color="secondary"
-                    {...props}
-                  />
-                }
-                label={option.label}
-              />
-            )}
-          </Field>
+          <CheckboxOption name={name} option={option} onChange={onChange} {...props} />
         </div>
       ))}
     </>
   );
-};
+});
 
-const RadioButtons = ({ name, label, options, field, index, required }) => {
-  const { values, errors, touched, setFieldValue } = useFormikContext();
-  const fieldError = getIn(errors, name);
-  const isTouched = getIn(touched, name);
+const RadioButtons = memo(({ name, label, options, required, ...props }) => {
+  // console.log('render RadioButtons:', name);
+  const [field, { touched, error }, { setError }] = useField(name);
+
+  const handleChange = (e) => {
+    field.onChange(e);
+    setError('');
+  };
 
   return (
-    <FormControl error={Boolean(fieldError)}>
-      {label && <Typography gutterBottom htmlFor={name}>
-        {label}
-        {required && <Typography component="span" color='error'> *</Typography>}
-      </Typography>}
+    <FormControl error={Boolean(touched && error)}>
+      {label &&
+        <Label name={name} required={true} sx={{ mb: 1 }}>{label}</Label>
+      }
       <RadioGroup
+        {...field}
         name={name}
-        value={values.people[index][field]}
-        onChange={ (e) => {
-          setFieldValue(name, e.currentTarget.value, true);
-        } }>
-        {options.map((option) => (
+        value={field.value}
+        onChange={props.onChange || handleChange}
+      >
+        {options.map(option => (
           <FormControlLabel
             key={option.value}
             label={option.label}
             value={option.value}
-            labelPlacement="end"
+            labelPlacement='end'
             control={<Radio />}
           />
         ))}
       </RadioGroup>
-      {isTouched && fieldError && <FormHelperText sx={{ mt: 2 }}>{fieldError}</FormHelperText>}
+      {touched && error && <FormHelperText sx={{ mt: 2 }}>{error}</FormHelperText>}
     </FormControl>
   );
+});
+
+const useAddressFields = (index) => {
+  const [,,{ setValue: setAddressValue, setError: setAddressError }] = useField(`people[${index}].address`);
+  const [,,{ setValue: setCityValue, setError: setCityError }] = useField(`people[${index}].city`);
+  const [,,{ setValue: setStateValue, setError: setStateError }] = useField(`people[${index}].state`);
+  const [,,{ setValue: setZipValue, setError: setZipError }] = useField(`people[${index}].zip`);
+  const [,,{ setValue: setCountryValue, setError: setCountryError }] = useField(`people[${index}].country`);
+  return {
+    setAddressValue,
+    setCityValue,
+    setStateValue,
+    setZipValue,
+    setCountryValue,
+    setAddressError,
+    setCityError,
+    setStateError,
+    setZipError,
+    setCountryError,
+  };
 };
 
-const AddressAutocompleteInput = ({ label, ...props }) => {
-  const [,,helpers] = useField(props.name);
-  const { setFieldValue, setFieldError } = useFormikContext();
-  const [field, meta] = useField(props);
+const AddressAutocompleteInput = memo(({ label, name, ...props }) => {
+  // console.log('render AddressAutocompleteInput:', name);
+  const [field, { touched, error }, { setError }] = useField(name);
+  const personIndex = name.split('[')[1].split(']')[0];
+  const {
+    setAddressValue, setCityValue, setStateValue, setZipValue, setCountryValue,
+    setAddressError, setCityError, setStateError, setZipError, setCountryError
+  } = useAddressFields(personIndex);
+
+  // fix for errors on these fields not disappearing after browser autofill
+  useEffect(() => {
+    if (field.value) {
+      setError('');
+      setCityError('');
+      setStateError('');
+      setZipError('');
+    }
+  }, [field.value, setError, setCityError, setStateError, setZipError]);
+
+  const getComponentValue = (addressComponents, componentTypes) => {
+    return componentTypes.map(type => {
+      const component = addressComponents.find(c => c.types.includes(type));
+      return component?.short_name || component?.long_name || '';
+    }).join(' ').trim();
+  };
+
   const { ref } = usePlacesWidget({
     apiKey: process.env.REACT_APP_GOOGLE_PLACES_API_KEY,
     onPlaceSelected: (place) => {
-      if (!place?.address_components) return;
 
-      // console.log('place', place)
-      const addressComponents = place.address_components;
-      // console.log(addressComponents);
+      const { address_components } = place;
+      if (!address_components) return;
 
       const fieldToComponentMapping = {
         address: ['street_number', 'route'],
-        apartment: ['apartment', 'subpremise'],
         city: ['locality', 'sublocality_level_1'],
         state: ['administrative_area_level_1'],
         zip: ['postal_code'],
@@ -222,24 +238,22 @@ const AddressAutocompleteInput = ({ label, ...props }) => {
       };
 
       const fieldValues = Object.keys(fieldToComponentMapping).reduce((acc, field) => {
-        const values = fieldToComponentMapping[field].map(componentType => {
-          const component = addressComponents.find(c => c.types.includes(componentType));
-          return component?.long_name;
-        });
-        return {
-          ...acc,
-          [field]: values.join(' ').trim(),
-        };
+        const componentTypes = fieldToComponentMapping[field];
+        const value = getComponentValue(address_components, componentTypes);
+        return { ...acc, [field]: value };
       }, {});
 
-      // console.log(fieldValues);
+      setAddressValue(fieldValues['address'] || '');
+      setCityValue(fieldValues['city'] || '');
+      setStateValue(fieldValues['state'] || '');
+      setZipValue(fieldValues['zip'] || '');
+      setCountryValue(fieldValues['country'] || '');
 
-      const personIndex = field.name.split('[')[1].split(']')[0];
-      Object.keys(fieldValues).forEach(async(key) => {
-        const fieldName = `people[${personIndex}][${key}]`;
-        await setFieldValue(fieldName, fieldValues[key]);
-        setFieldError(fieldName, '');
-      });
+      setAddressError('');
+      setCityError('');
+      setStateError('');
+      setZipError('');
+      setCountryError('');
     },
     options: {
       types: ['address'],
@@ -250,21 +264,33 @@ const AddressAutocompleteInput = ({ label, ...props }) => {
 
   useEffect(() => {
     const listener = (e) => {
-      if (e.key === "Enter") e.preventDefault();
+      if (e.key === 'Enter') e.preventDefault();
     };
-    document.addEventListener("keydown", listener);
-    return () => document.removeEventListener("keydown", listener);
+    document.addEventListener('keydown', listener);
+    return () => document.removeEventListener('keydown', listener);
   }, []);
 
   return (
     <TextField
-      label={label}
       {...field}
-      onFocus={() => helpers.setError('')}
-      {...props}
       inputRef={ref}
-      error={Boolean(meta.touched && meta.error)}
-      helperText={meta.touched && meta.error ? meta.error : ''}
+      label={label}
+      onFocus={() => setError('')}
+      error={Boolean(touched && error)}
+      helperText={touched && error ? error : ''}
+      {...props}
+      onBlur={field.onBlur}
     />
   );
+});
+
+const inputComponentMapping = {
+  button: ButtonInput,
+  checkbox: CheckboxInput,
+  radio: RadioButtons,
+  pattern: NumericInput,
+  textarea: TextArea,
+  address: AddressAutocompleteInput,
+  email: TextInput,
+  text: TextInput,
 };
