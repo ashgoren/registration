@@ -6,7 +6,7 @@ import { Title } from 'components/Layout/SharedStyles';
 import config from 'config';
 const { PERSON_INPUT_LABELS, PERSON_CONTACT_FIELDS } = config;
 
-function ContactInfo({ index }) {
+function ContactInfo({ index, formikRef }) {
   useEffect(() => { scrollToTop(); },[])
 
   console.log('ContactInfo rendered');
@@ -17,6 +17,7 @@ function ContactInfo({ index }) {
       <ContactInfoInputs
         index={index}
         fields={PERSON_CONTACT_FIELDS}
+        formikRef={formikRef}
       />
     </section>
   );

@@ -12,17 +12,15 @@ export default function FormContents({ formikRef }) {
   console.log('FormContents rendered');
 
   function handleClickBackButton() {
-    if (formikRef.current) {
-      const values = formikRef.current.values;
-      updateOrder(values);
-      formikRef.current.setSubmitting(false);
-      setCurrentPage(currentPage - 1);
-    }
+    const { values, setSubmitting } = formikRef.current;
+    updateOrder(values);
+    setSubmitting(false);
+    setCurrentPage(currentPage - 1);
   }
 
   return(
     <Form spellCheck='false'>
-      {currentPage === 1 && <People />}
+      {currentPage === 1 && <People formikRef={formikRef} />}
       {currentPage === 2 && <PaymentInfo />}
 
       {currentPage > 1 &&

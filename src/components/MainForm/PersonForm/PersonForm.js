@@ -1,5 +1,4 @@
 import { useOrder } from 'components/OrderContext';
-import { useFormikContext } from 'formik';
 import { Box, Button } from '@mui/material';
 import ContactInfo from '../ContactInfo';
 import MiscInfo from '../MiscInfo';
@@ -9,17 +8,16 @@ import { getFunctions, httpsCallable } from 'firebase/functions';
 const functions = getFunctions();
 const firebaseFunctionDispatcher = httpsCallable(functions, 'firebaseFunctionDispatcher');
 
-export default function PersonForm({ editIndex, setEditIndex, isNewPerson, setIsNewPerson, resetForm }) {
-  const { order, updateOrder, warmedUp, setWarmedUp } = useOrder();
-  const formik = useFormikContext();
-  const { values, setFieldValue } = formik;
+export default function PersonForm({ editIndex, setEditIndex, isNewPerson, setIsNewPerson, resetForm, formikRef }) {
+  console.log('PersonForm rendered');
 
-  // console.log('PersonForm rendered');
+  const { order, updateOrder, warmedUp, setWarmedUp } = useOrder();
 
   async function validatePersonForm() {
-    const errors = await formik.validateForm();
+    const { validateForm, setTouched } = formikRef.current;
+    const errors = await validateForm();
     if (Object.keys(errors).length > 0) {
-      formik.setTouched(errors, true); // show errors
+      setTouched(errors, true); // show errors
       // scroll to first invalid field; refactor to use ref instead of directly accessing DOM
       const firstInvalidFieldName = getFirstInvalidFieldName(errors);
       if (firstInvalidFieldName) {
@@ -34,6 +32,7 @@ export default function PersonForm({ editIndex, setEditIndex, isNewPerson, setIs
   }
 
   function saveUpdatedOrder() {
+    const { values } = formikRef.current;
     const submittedOrder = Object.assign({}, values);
     const sanitizedOrder = sanitizeObject(submittedOrder);
     const orderWithCountry = {
@@ -59,6 +58,7 @@ export default function PersonForm({ editIndex, setEditIndex, isNewPerson, setIs
   }
 
   function handleCancelButton() {
+    const { values, setFieldValue } = formikRef.current;
     setEditIndex(null);
     resetForm();
     if (isNewPerson) {
@@ -70,8 +70,8 @@ export default function PersonForm({ editIndex, setEditIndex, isNewPerson, setIs
 
   return (
     <>
-      <ContactInfo index={editIndex} />
-      <MiscInfo index={editIndex} />
+      <ContactInfo index={editIndex} formikRef={formikRef} />
+      <MiscInfo index={editIndex} formikRef={formikRef} />
       <Box sx={{ mt: 5, mb: 2 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           { order.people[0].email !== '' ?
