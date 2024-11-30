@@ -19,7 +19,7 @@ React app that uses Firebase for database, hosting, and serverless functions bac
 ## Copy template project
 
 - ME: `cp -R [TEMPLATE_DIR] [DESTINATION_DIR] && cd [DESTINATION_DIR] && git remote rm origin && gh repo create [NAME] [--public|private] --source=. --remote=origin`
-- ANYONE ELSE: Fork [template project](https://github.com/mgoren/registration-template) and clone it to a local directory
+- ANYONE ELSE: Fork [template project](https://github.com/ashgoren/registration-template) and clone it to a local directory
 
 ## Erase settings from old project:
 
