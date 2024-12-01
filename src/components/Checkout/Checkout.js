@@ -41,7 +41,13 @@ export default function Checkout() {
     setProcessing(true);
 
     const preppedOrder = prepOrderForFirebase();
-    savePendingOrderToFirebase(preppedOrder); // fire-and-forget
+
+    const pendingSuccess = await savePendingOrderToFirebase(preppedOrder);
+    if (!pendingSuccess) {
+      setProcessing(false);
+      setPaying(false);
+      return;
+    }
 
     setProcessingMessage('Processing payment...');
     const paymentId = await paymentProcessorFn(paymentParams);
@@ -55,6 +61,8 @@ export default function Checkout() {
       setPaying(false);
       setProcessing(false);
       setCurrentPage('confirmation');
+    } else {
+      setProcessing(false);
     }
   };
 

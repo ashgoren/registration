@@ -81,15 +81,22 @@ export const useOrderOperations = () => {
     return { ...order, ...updates };
   };
 
-  // fire-and-forget; save bkup in case user closes browser halfway thru payment processing
-  const savePendingOrderToFirebase = (order) => {
-    log('Saving pending order to firebase', { email, order });
+  const savePendingOrderToFirebase = async (order) => {
     setProcessingMessage('Saving registration...');
-    firebaseFunctionDispatcher({
-      action: 'savePendingOrder',
-      data: order,
-      metadata: { email, userAgent: navigator.userAgent }
-    });
+    log('Saving pending order to firebase', { email, order });
+    try {
+      await firebaseFunctionDispatcher({
+        action: 'savePendingOrder',
+        data: order,
+        metadata: { email, userAgent: navigator.userAgent }
+      });
+      log('Pending order saved', { email });
+      return true;
+    } catch (error) {
+      logError('Error saving pending order to firebase', { email, error, userAgent: navigator.userAgent });
+      setError(`We're sorry, but we experienced an issue saving your registration. You have not been charged. If you use the uBlock origin extension, try disabling it for this page. You can also try reloading the page. If that doesn't work, please close this tab and start over. If this error persists, please contact ${TECH_CONTACT}.`);
+      return false;
+    }
   };
 
   const saveFinalOrderToFirebase = async (order) => {
