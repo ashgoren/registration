@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useOrder, useOrderOperations } from 'components/OrderContext';
 import { scrollToTop, warnBeforeUserLeavesSite, fullName, formatCurrency } from 'utils';
 import PaypalCheckoutButton from 'components/PaypalCheckoutButton';
@@ -9,11 +9,12 @@ import TogglePaymentMode from 'components/TogglePaymentMode';
 import NavButtons from 'components/NavButtons/index.js';
 import { StyledPaper, Title } from 'components/Layout/SharedStyles';
 import StripeCheckoutWrapper from "components/StripeCheckoutWrapper";
+import Error from 'components/Error';
 import config from 'config';
 const { NUM_PAGES } = config;
 
 export default function Checkout() {
-  const { order, updateOrder, setCurrentPage, processing, setProcessing, processingMessage, setProcessingMessage, setError, paymentMethod } = useOrder();
+  const { order, updateOrder, setCurrentPage, processing, setProcessing, processingMessage, setProcessingMessage, error, setError, paymentMethod } = useOrder();
   const { prepOrderForFirebase, savePendingOrderToFirebase, saveFinalOrderToFirebase, sendReceipts } = useOrderOperations();
   const [paying, setPaying] = useState(null);
   const [paypalButtonsLoaded, setPaypalButtonsLoaded] = useState(false);
@@ -62,6 +63,7 @@ export default function Checkout() {
       <StyledPaper align='center'>
 
         {processing && <Loading processing={true} text={processingMessage} />}
+        {error && <Box sx={{ mb: 4 }}><Error /></Box>}
 
         {!processing &&
           <>

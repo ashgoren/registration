@@ -8,7 +8,7 @@ export default function Error() {
   
   useEffect(() => { scrollToTop() },[]);
   return (
-    <Box sx={{ p: 2, backgroundColor: 'var(--color-error)', display: 'flex', justifyContent: 'center', alignItems: 'center'  }}>
+    <Box sx={{ mb: 2, p: 2, backgroundColor: 'var(--color-error)', display: 'flex', justifyContent: 'center', alignItems: 'center'  }}>
       {error}
     </Box>
   );
