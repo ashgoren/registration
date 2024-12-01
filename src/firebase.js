@@ -1,5 +1,6 @@
 import { initializeApp, getApps } from "firebase/app";
-import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider, onTokenChanged } from "firebase/app-check";
+import { getFunctions, connectFunctionsEmulator, httpsCallable } from "firebase/functions";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -11,10 +12,41 @@ const firebaseConfig = {
   databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL
 }
 
+// window.self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+
+let appCheck;
+
+// initial setup of Firebase app and AppCheck
 if (!getApps().length) {
   const app = initializeApp(firebaseConfig);
-  initializeAppCheck(app, {
+  appCheck = initializeAppCheck(app, {
     provider: new ReCaptchaEnterpriseProvider(process.env.REACT_APP_RECAPTCHA_SITE_KEY),
     isTokenAutoRefreshEnabled: true
   });
 }
+
+// log AppCheck token changes, for debugging
+if (appCheck) {
+  onTokenChanged(appCheck, (tokenResult) => {
+    if (tokenResult.error) {
+    } else {
+    }
+  });
+}
+
+// initial setup of Firebase functions
+const functions = getFunctions();
+if (process.env.NODE_ENV === 'development' && process.env.REACT_APP_USE_FIREBASE_EMULATOR === 'true') {
+  console.log('Using Firebase Emulator');
+  connectFunctionsEmulator(functions, 'localhost', 5001);
+} else if (process.env.NODE_ENV === 'development') {
+  console.warn('%cNOT using Firebase Emulator', 'background: orange; font-size: 1.1em; font-weight: bold; padding: 2px 4px;');
+}
+
+// centralize calling Firebase functions
+const firebaseFunctionDispatcher = async (data) => {
+  const callable = httpsCallable(functions, 'firebaseFunctionDispatcher');
+  return await callable(data);
+};
+
+export { firebaseFunctionDispatcher };

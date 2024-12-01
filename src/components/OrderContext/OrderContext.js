@@ -1,13 +1,10 @@
-import 'firebase.js'; // initializes firebase
 import { createContext, useState, useReducer, useContext, useEffect, useCallback } from 'react';
-import { getFunctions, httpsCallable } from 'firebase/functions';
+import { firebaseFunctionDispatcher } from 'firebase.js';
 import { renderToStaticMarkup } from 'react-dom/server';
 import Receipt from 'components/Receipt';
 import { cache, cached } from 'utils';
 import config from 'config';
 const { getOrderDefaults, PAYMENT_METHODS, TECH_CONTACT } = config;
-const functions = getFunctions();
-const firebaseFunctionDispatcher = httpsCallable(functions, 'firebaseFunctionDispatcher');
 
 const OrderContext = createContext();
 

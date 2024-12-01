@@ -4,9 +4,7 @@ import ContactInfo from '../ContactInfo';
 import MiscInfo from '../MiscInfo';
 import { getFirstInvalidFieldName, sanitizeObject } from 'utils';
 import countryMapping from 'countryMapping';
-import { getFunctions, httpsCallable } from 'firebase/functions';
-const functions = getFunctions();
-const firebaseFunctionDispatcher = httpsCallable(functions, 'firebaseFunctionDispatcher');
+import { firebaseFunctionDispatcher } from 'firebase.js';
 
 export default function PersonForm({ editIndex, setEditIndex, isNewPerson, setIsNewPerson, resetForm, formikRef }) {
   console.log('PersonForm rendered');

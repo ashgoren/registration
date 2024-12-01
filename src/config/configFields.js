@@ -46,7 +46,8 @@ export const FIELD_CONFIG = {
     validation: NAME_VALIDATION.required('Please enter name for roster.'),
     defaultValue: '',
     required: true,
-    width: 12
+    width: 12,
+    // autoComplete: 'nickname'
   },
   email: {
     label: 'Email',
