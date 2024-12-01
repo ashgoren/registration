@@ -66,8 +66,10 @@ const mapOrderToSpreadsheetLines = (order) => {
       status = 'paid';
     }
     const firstPersonPurchaserField = people.length > 1 ? `self (+${people.length - 1})` : 'self';
+    const key = isPurchaser ? order.key : '-';
     const personFieldsBuilder = {
       ...updatedPerson,
+      key,
       createdAt,
       address,
       admission,
