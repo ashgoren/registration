@@ -2,7 +2,7 @@ import * as Yup from 'yup';
 import { StyledLink } from 'components/Layout/SharedStyles';
 import { websiteLink } from 'utils';
 import configBasics from './configBasics';
-const { ADMISSION_COST_DEFAULT, ADMISSION_COST_RANGE, EVENT_TITLE, SAFETY_POLICY_URL } = configBasics;
+const { ADMISSION_COST_DEFAULT, ADMISSION_COST_RANGE, EVENT_TITLE, SAFETY_POLICY_URL, SKIP_MANDATORY_FIELDS } = configBasics;
 
 const NAME_REGEX = "^[^<>&@]+$";
 const PRONOUNS_REGEX = "^[^<>&@]+$";
@@ -14,7 +14,9 @@ const PHONE_VALIDATION = Yup.string().matches(PHONE_REGEX, 'Please enter a valid
 
 // config for this particular registration instance; update this as needed!
 export const PERSON_CONTACT_FIELDS = ['first', 'last', 'nametag', 'pronouns', 'email', 'emailConfirmation', 'phone', 'address', 'apartment', 'city', 'state', 'zip', 'country'];
-export const PERSON_MISC_FIELDS = ['share', 'dietaryPreferences', 'dietaryRestrictions', 'allergies', 'carpool', 'bedding', 'volunteer', 'housing', 'roommate', 'photo', 'photoComments', 'agreement', 'comments'];
+const PERSON_MISC_FIELDS_REAL = ['share', 'dietaryPreferences', 'dietaryRestrictions', 'allergies', 'carpool', 'bedding', 'volunteer', 'housing', 'roommate', 'photo', 'photoComments', 'agreement', 'comments'];
+const PERSON_MISC_FIELDS_TESTING = ['share', 'dietaryRestrictions', 'allergies', 'carpool', 'bedding', 'volunteer', 'housing', 'roommate', 'comments'];
+export const PERSON_MISC_FIELDS = SKIP_MANDATORY_FIELDS ? PERSON_MISC_FIELDS_TESTING : PERSON_MISC_FIELDS_REAL;
 export const PERSON_PAYMENT_FIELDS = ['admission'];
 
 // this can include config for fields not used in this particular registration instance

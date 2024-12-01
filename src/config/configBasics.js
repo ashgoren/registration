@@ -1,5 +1,6 @@
 const config = {
   SANDBOX_MODE: true, // for testing only
+  SKIP_MANDATORY_FIELDS: true, // for testing only
   SHOW_PRE_REGISTRATION: false,
   REGISTRATION_ONLY: false,
   ADMISSION_QUANTITY_MAX: 4,
