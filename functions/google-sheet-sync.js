@@ -30,7 +30,17 @@ export const appendrecordtospreadsheet = onDocumentCreated(`${CONFIG_DATA_COLLEC
 
 const mapOrderToSpreadsheetLines = (order) => {
   const orders = []
-  const createdAt = order.createdAt.toDate().toLocaleDateString();
+  // const createdAt = order.createdAt.toDate().toLocaleDateString(); // just date
+  const createdAt = order.createdAt.toDate().toLocaleString('sv-SE', {
+    timeZone: 'America/Los_Angeles',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
+
   const updatedOrder = joinArrays(order);
   const { people, ...orderFields } = updatedOrder
   let isPurchaser = true;
