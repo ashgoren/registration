@@ -2,6 +2,7 @@
 
 import { logger } from 'firebase-functions/v2';
 import nodemailer from 'nodemailer';
+const testDomains = process.env.EMAIL_IGNORE_TEST_DOMAINS ? process.env.EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
 
 // Configure the email transport using Sendgrid with SMTP
 const mailTransport = nodemailer.createTransport({
@@ -23,7 +24,11 @@ export const sendEmailConfirmations = async (emailReceiptPairs) => {
       html: receipt,
       ...(process.env.EMAIL_REPLY_TO && {replyTo: process.env.EMAIL_REPLY_TO})
     };
-    await mailTransport.sendMail(mailOptions);
-    logger.info(`Receipt sent to:`, email);
+    if (testDomains.includes(email.split('@')[1])) {
+      logger.info(`SKIPPING RECEIPT SEND: ${email}`);
+    } else {
+      await mailTransport.sendMail(mailOptions);
+      logger.info(`RECEIPT SENT TO: ${email}`);
+    }
   }
 };
