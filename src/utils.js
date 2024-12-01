@@ -16,7 +16,7 @@ export const clearCache = (name) => name ? sessionStorage.removeItem(name) : ses
 
 export const isEmptyOrder = ({ people: [{ email }] }) => email === '';
 
-const sanitizeValue = (value) => typeof value === 'string' ? DOMPurify.sanitize(value) : value;
+const trimAndSanitizeValue = (value) => typeof value === 'string' ? DOMPurify.sanitize(value.trim()) : value;
 export const sanitizeObject = (obj) => {
   if (obj === null) return null;
   if (Array.isArray(obj)) return obj.map(item => sanitizeObject(item));
@@ -26,11 +26,11 @@ export const sanitizeObject = (obj) => {
         if (typeof value === 'object' || Array.isArray(value)) {
           return [key, sanitizeObject(value)];
         }
-        return [key, sanitizeValue(value)];
+        return [key, trimAndSanitizeValue(value)];
       })
     );
   }
-  return sanitizeValue(obj);
+  return trimAndSanitizeValue(obj);
 };
 
 export const warnBeforeUserLeavesSite = event => {
