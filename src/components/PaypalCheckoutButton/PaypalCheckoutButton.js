@@ -9,7 +9,7 @@ const { SANDBOX_MODE, TECH_CONTACT, EVENT_TITLE } = config;
 
 const PaypalCheckoutButton = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, total, setPaying, processCheckout }) => {
 	const { processing, setError, order } = useOrder();
-	const { email } = order.people[0];
+	const { email } = order.people[0]; // for logging
 	const [, isResolved] = usePayPalScriptReducer();
 
 	// this feels hella hacky, but sometimes the buttons don't render despite isResolved

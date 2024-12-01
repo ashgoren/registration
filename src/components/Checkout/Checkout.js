@@ -18,7 +18,7 @@ export default function Checkout() {
   const { prepOrderForFirebase, savePendingOrderToFirebase, saveFinalOrderToFirebase, sendReceipts } = useOrderOperations();
   const [paying, setPaying] = useState(null);
   const [paypalButtonsLoaded, setPaypalButtonsLoaded] = useState(false);
-  const total = order.total + order.fees;
+  const total = parseInt(order.total) + parseFloat(order.fees);
 
   if (!isValidTotal(order)) {
     setError('Possible payment amount discrepancy. Please verify total is correct!');
