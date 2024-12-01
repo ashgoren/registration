@@ -20,6 +20,10 @@ export default function Checkout() {
   const [paypalButtonsLoaded, setPaypalButtonsLoaded] = useState(false);
   const total = order.total + order.fees;
 
+  if (!isValidTotal(order)) {
+    setError('Possible payment amount discrepancy. Please verify total is correct!');
+  }
+
   useEffect(() => { scrollToTop() },[]);
 
   useEffect(() => {
@@ -117,4 +121,14 @@ export default function Checkout() {
       }
     </section>
   );
+}
+
+function isValidTotal(order) {
+  const orderTotal = parseInt(order.total) + parseFloat(order.fees);
+  const isDeposit = order.deposit > 0;
+  const admissions = order.people.map(person => person.admission);
+  const admissionsTotal = admissions.reduce((total, admission) => total + admission, 0);
+  const donation = order.donation;
+  const fees = order.fees;
+  return isDeposit || orderTotal === admissionsTotal + donation + fees;
 }

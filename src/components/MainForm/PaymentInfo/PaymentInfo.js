@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useOrder } from 'components/OrderContext';
 import { scrollToTop, clamp } from 'utils';
 import { RightAlignedInput } from '../Input';
@@ -10,23 +10,35 @@ import { PaymentExplanation } from 'components/Static/PaymentExplanation';
 import config from 'config';
 const { DEPOSIT_OPTION, COVER_FEES_OPTION, DEPOSIT_COST, ADMISSION_COST_RANGE, DONATION_OPTION, DONATION_MAX, PAYMENT_DUE_DATE } = config;
 
+const isSlidingScale = ADMISSION_COST_RANGE[0] < ADMISSION_COST_RANGE[1];
+
 export default function PaymentInfo() {
   const { order, updateOrder } = useOrder();
   const { values, setFieldValue, handleBlur } = useFormikContext();
-  const priceRange = [ADMISSION_COST_RANGE[0], ADMISSION_COST_RANGE[1]];
-  const isSlidingScale = priceRange[0] < priceRange[1];
-  const isMultiplePeople = order.people.length > 1;
   const [payingMax, setPayingMax] = useState(order.people[0].admission === ADMISSION_COST_RANGE[1]);
   const [donate, setDonate] = useState(order.donation > 0);
   const [donationTotal, setDonationTotal] = useState(order.donation);
   const [coverFees, setCoverFees] = useState(order.fees > 0);
   const [paymentTab, setPaymentTab] = useState(order.deposit > 0 ? 'deposit' : 'fullpayment');
-  const [admissionTotal, setAdmissionTotal] = useState(order.people.reduce((total, person) => total + parseInt(person.admission), 0));
-  const depositTotal = paymentTab === 'deposit' ? DEPOSIT_COST * order.people.length : 0;
-  const total = depositTotal || admissionTotal + donationTotal;
-  const fees = (0.0245 * total + 0.5).toFixed(2);
+  const isMultiplePeople = order.people.length > 1;
 
   useEffect(() => { scrollToTop(); },[])
+
+  const admissionTotal = useMemo(() => {
+    return values.people.reduce((total, person) => total + clampAdmission(person.admission), 0);
+  }, [values.people]);
+
+  const depositTotal = useMemo(() => {
+    return DEPOSIT_COST * order.people.length;
+  }, [order.people.length]);
+
+  const total = useMemo(() => {
+    return paymentTab === 'deposit' ? depositTotal : admissionTotal + donationTotal;
+  }, [paymentTab, depositTotal, admissionTotal, donationTotal]);
+
+  const fees = useMemo(() => {
+    return (0.0245 * total + 0.5).toFixed(2);
+  }, [total]);
 
   useEffect(() => {
     updateOrder({
@@ -41,24 +53,18 @@ export default function PaymentInfo() {
     if (newTab === 'deposit') setFieldValue('donation', 0);
   };
 
-  function clampValue({ event, range }) {
-    const [field, value] = [event.target.name, parseInt(event.target.value) || range[0]];
-    const clampedValue = clamp(value, range);
-    setFieldValue(field, clampedValue);
+  function updateAdmissionValue(event) {
+    const { name, value } = event.target;
+    setFieldValue(name, clampAdmission(value));
     handleBlur(event); // bubble up to formik
-  };
-
-  function updateAdmissionCostValue(event) {
-    clampValue({ event: event, range: priceRange})
-    setPayingMax(clamp(values['people'][0]['admission'], priceRange) === ADMISSION_COST_RANGE[1] ? true : false)
-    setAdmissionTotal(values.people.reduce((total, person) => total + clamp(parseInt(person.admission), priceRange), 0));
-    handleBlur(event); // bubble up to formik
+    setPayingMax(clampAdmission(values['people'][0]['admission']) === ADMISSION_COST_RANGE[1] ? true : false)
   }
 
   function updateDonationValue(event) {
-    clampValue({ event: event, range: [0, DONATION_MAX]})
-    setDonationTotal(parseInt(values['donation']));
+    const { name, value } = event.target;
+    setFieldValue(name, clampDonation(value));
     handleBlur(event); // bubble up to formik
+    setDonationTotal(parseInt(values['donation'] || 0));
   }
 
   const setAdmissionCostContent = (
@@ -85,8 +91,8 @@ export default function PaymentInfo() {
           name={`people[${index}].admission`}
           type='pattern'
           pattern='###'
-          range={priceRange}
-          onBlur={(event) => updateAdmissionCostValue(event)}
+          range={ADMISSION_COST_RANGE}
+          onBlur={updateAdmissionValue}
           InputProps={{ startAdornment: <InputAdornment position='start'>$</InputAdornment> }}
         />
       )}
@@ -151,7 +157,7 @@ export default function PaymentInfo() {
                 type='pattern'
                 pattern='###'
                 range={[0, DONATION_MAX]}
-                onBlur={(event) => updateDonationValue(event)}
+                onBlur={updateDonationValue}
                 InputProps={{ startAdornment: <InputAdornment position='start'>$</InputAdornment> }}
                 autoFocus={values['donation'] === 0}
                 // onFocus={(e) => e.target.select()}
@@ -173,3 +179,6 @@ export default function PaymentInfo() {
     </section>
   );
 }
+
+const clampAdmission = (value) => clamp(value || ADMISSION_COST_RANGE[0], ADMISSION_COST_RANGE);
+const clampDonation = (value) => clamp(value || 0, [0, DONATION_MAX]);
