@@ -1,6 +1,8 @@
 import * as Yup from 'yup';
+import { StyledLink } from 'components/Layout/SharedStyles';
+import { websiteLink } from 'utils';
 import configBasics from './configBasics';
-const { ADMISSION_COST_DEFAULT, ADMISSION_COST_RANGE } = configBasics;
+const { ADMISSION_COST_DEFAULT, ADMISSION_COST_RANGE, EVENT_TITLE, SAFETY_POLICY_URL } = configBasics;
 
 const NAME_REGEX = "^[^<>&@]+$";
 const PRONOUNS_REGEX = "^[^<>&@]+$";
@@ -12,7 +14,7 @@ const PHONE_VALIDATION = Yup.string().matches(PHONE_REGEX, 'Please enter a valid
 
 // config for this particular registration instance; update this as needed!
 export const PERSON_CONTACT_FIELDS = ['first', 'last', 'nametag', 'pronouns', 'email', 'emailConfirmation', 'phone', 'address', 'apartment', 'city', 'state', 'zip', 'country'];
-export const PERSON_MISC_FIELDS = ['share', 'dietaryPreferences', 'dietaryRestrictions', 'allergies', 'scent', 'carpool', 'bedding', 'volunteer', 'housing', 'roommate', 'photo', 'photoComments', 'comments'];
+export const PERSON_MISC_FIELDS = ['share', 'dietaryPreferences', 'dietaryRestrictions', 'allergies', 'carpool', 'bedding', 'volunteer', 'housing', 'roommate', 'photo', 'photoComments', 'agreement', 'comments'];
 export const PERSON_PAYMENT_FIELDS = ['admission'];
 
 // this can include config for fields not used in this particular registration instance
@@ -34,7 +36,7 @@ export const FIELD_CONFIG = {
     autoComplete: 'family-name'
   },
   pronouns: {
-    label: 'Pronouns (not shared)',
+    label: 'Pronouns',
     validation: PRONOUNS_VALIDATION,
     defaultValue: '',
     width: 12
@@ -131,17 +133,18 @@ export const FIELD_CONFIG = {
     label: "What information do you want shared in the roster?",
     options: [
       { label: 'Include my name in the roster', value: 'name' },
+      { label: 'Include my pronouns in the roster', value: 'pronouns' },
       { label: 'Include my email in the roster', value: 'email' },
       { label: 'Include my phone number in the roster', value: 'phone' },
       { label: 'Include my address in the roster', value: 'address' },
     ],
     validation: Yup.array(),
-    defaultValue: ['name', 'email', 'phone', 'address'],
+    defaultValue: ['name', 'pronouns', 'email', 'phone', 'address'],
   },
   carpool: {
     type: 'checkbox',
-    title: "Transportation",
-    label: "If you check any of these boxes we will be in touch closer to camp to coordinate. We will do our best to meet everyone's carpool needs. For housing, we will put people directly in touch with possible matches if there are any.  NOTE: historically, carpools and housing are tight. If you are able to offer a ride, please check the box!",
+    title: "Transportation and Hosting",
+    label: "If you check any of these boxes we will be in touch closer to camp to coordinate. We will do our best to meet everyone's carpool needs. For housing, we will put people directly in touch with possible matches if there are any.  NOTE: historically, carpools and housing are tight. If you are able to offer a ride or a place to stay, please check the box!",
     options: [
       { label: "I can offer a ride to camp", value: 'offer-ride' },
       { label: "I might be able to give a ride to camp", value: 'offer-ride-maybe' },
@@ -159,10 +162,10 @@ export const FIELD_CONFIG = {
     title: "Volunteering",
     label: "Everyone will be asked to help with camp, but we need a few people who can commit in advance or in larger ways.",
     options: [
-      { label: "I can come early to help with camp set up", value: 'before' },
-      { label: "I can stay late to help with camp take down", value: 'after' },
+      { label: "I can come early to help with camp set up", value: 'setup' },
+      { label: "I can stay late to help with camp take down", value: 'strike' },
       { label: "I can take on a lead volunteer role during camp (e.g. button maker or snack coordinator)", value: 'lead' },
-      { label: "I can help coordinate in the months before camp (e.g. bedding)", value: 'bedding' },
+      { label: "I can help coordinate in the months before camp", value: 'pre' },
     ],
     validation: Yup.array(),
     defaultValue: [],
@@ -184,7 +187,7 @@ export const FIELD_CONFIG = {
   dietaryRestrictions: {
     type: 'checkbox',
     title: "Additional Dietary Restrictions",
-    label: "Please note, we will try out best to accommodate you with the prepared meals, but the kitchen has limited options. They do their best,  but if you're very worried about your restrictions (if highly allergic, or highly specific requirements) we recommend bringing your own food as well. We have a refrigerator and storage space available for personal use that many campers use. There's room to elaborate on allergies or safety needs below.",
+    label: "Please note, we will try out best to accommodate you with the prepared meals, but the kitchen has limited options. They do their best,  but if you're very worried about your restrictions (if highly allergic, or highly specific requirements) we recommend bringing your own food as well. We have a refrigerator and storage space available for personal use that campers who need it may use. There's room to elaborate on allergies or safety needs below.",
     options: [
       { label: 'Gluten-free', value: 'gluten' },
       { label: 'Soy-free', value: 'soy' },
@@ -220,18 +223,6 @@ export const FIELD_CONFIG = {
     defaultValue: '',
     rows: 2
   },
-  scent: {
-    type: 'radio',
-    title: "Do you experience chemical/scent sensitivity?",
-    label: "We are currently a scent conscious but not scent free event, and will do our best to meet your needs.",
-    options: [
-      { label: 'Yes, intensely', value: 'Yes, intensely' },
-      { label: 'Yes, somewhat', value: 'Yes, somewhat' },
-      { label: 'No', value: 'No' },
-    ],
-    validation: Yup.string(),
-    defaultValue: '',
-  },
   photo: {
     type: 'radio',
     title: "Photo Consent",
@@ -240,7 +231,7 @@ export const FIELD_CONFIG = {
       { label: "Photos are fine!", value: 'Yes' },
       { label: "Photos are fine, but I don't want to be tagged online", value: 'No tags' },
       { label: "Please do not post photos of me.", value: 'No' },
-      { label: "Other (please explain in comments below)", value: 'Other' },
+      { label: "Other", value: 'Other' },
     ],
     required: true,
     validation: Yup.string().required('Please select photo consent preference.'),
@@ -260,7 +251,7 @@ export const FIELD_CONFIG = {
     options: [
       { label: 'I can offer bedding and a towel to a camper from out of town', value: 'offer-bedding' },
       { label: 'I might be able to offer bedding and a towel', value: 'offer-bedding-maybe' },
-      { label: 'I am coming from out of town and will need bedding and a towel', value: 'need-bedding' },
+      { label: 'I am coming from out of town and will need help finding bedding and a towel', value: 'need-bedding' },
       { label: 'I might need bedding and a towel', value: 'need-bedding-maybe' },
     ],
     validation: Yup.array(),
@@ -294,6 +285,17 @@ export const FIELD_CONFIG = {
     validation: Yup.string(),
     defaultValue: '',
     rows: 5,
+  },
+  agreement: {
+    type: 'radio',
+    title: 'Values and Expectations',
+    label: <>Do you agree to follow {EVENT_TITLE}'s <StyledLink to={websiteLink(SAFETY_POLICY_URL)}>values and expectations</StyledLink>?</>,
+    options: [
+      { label: 'Yes', value: true }
+    ],
+    required: true,
+    validation: Yup.boolean().oneOf([true], 'Please agree to the terms.'),
+    defaultValue: false,
   },
   admission: {
     validation: Yup.number().min(ADMISSION_COST_RANGE[0]).max(ADMISSION_COST_RANGE[1]).required(),

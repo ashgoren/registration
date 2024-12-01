@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import { Typography } from '@mui/material';
 import { useOrder, useOrderOperations } from 'components/OrderContext';
-import { scrollToTop, warnBeforeUserLeavesSite, fullName } from 'utils';
+import { scrollToTop, warnBeforeUserLeavesSite, fullName, formatCurrency } from 'utils';
 import PaypalCheckoutButton from 'components/PaypalCheckoutButton';
 import Check from "components/Check";
 import Loading from 'components/Loading';
@@ -63,7 +64,11 @@ export default function Checkout() {
         {processing && <Loading processing={true} text={processingMessage} />}
 
         {!processing &&
-          <Title>Amount due: ${total}</Title>
+          <>
+            <Typography variant='h6' gutterBottom><em>Please confirm the amount shown is correct!</em></Typography>
+            <Title>Amount due: ${formatCurrency(total)}</Title>
+          </>
+
         }
 
         {paymentMethod === 'stripe' &&

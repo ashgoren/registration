@@ -128,7 +128,7 @@ firebase init hosting:github # answer no to questions, as this is already config
 rm .github/workflows/firebase-hosting-pull-request.yml
 ```
 
-- Update `firebaseServiceAccount` value in ``.github/workflows/firebase-hosting-merge.yml`` to name of GitHub secret set by previous step.
+- Update `firebaseServiceAccount` value in `.github/workflows/firebase-hosting-merge.yml` to name of GitHub secret set by previous step.
 
 ## Setup Google Sheets integration:
 

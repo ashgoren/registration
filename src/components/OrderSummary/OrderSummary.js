@@ -1,4 +1,5 @@
 import { Box, Typography } from '@mui/material';
+import { formatCurrency } from 'utils';
 import config from 'config';
 const { ORDER_SUMMARY_OPTIONS, ADMISSION_COST_RANGE, PAYMENT_DUE_DATE, INCLUDE_PRONOUNS_ON_NAMETAG } = config;
 
@@ -13,7 +14,7 @@ export default function OrderSummary({ order }) {
   return (
     <>
       <Typography variant="body" gutterBottom>
-        <strong>{order.people.length > 1 ? 'Admissions' : 'Your info'}</strong>
+        <strong>{order.people.length > 1 ? 'Registration' : 'Your info'}</strong>
       </Typography>
 
       {order.people.map((person, index) => person.email && (
@@ -30,7 +31,7 @@ export default function OrderSummary({ order }) {
         <Typography component='p' style={{ marginTop: '1em' }}>
           {isFullPayment &&
             <>
-              Admissions:&nbsp;
+              Registration:&nbsp;
               {admissions.length > 1 && admissions.map((cost, index) => (
                 <span key={index}>
                   ${cost} {index < admissions.length - 1 ? '+ ' : '= '}
@@ -41,7 +42,7 @@ export default function OrderSummary({ order }) {
           }
           {isDeposit && <>Deposit: ${order.deposit}<br /></>}
           {order.donation > 0 && <>Additional donation: ${order.donation}<br /></>}
-          {order.fees > 0 && <>Payment processor fees: ${order.fees}<br /></>}
+          {order.fees > 0 && <>Payment processor fees: ${formatCurrency(order.fees)}<br /></>}
           {isDeposit && <><strong><font color='orange'>The balance of your registration fee is due by {PAYMENT_DUE_DATE}.</font></strong><br /></>}
         </Typography>
       </Box>
@@ -81,6 +82,8 @@ function renderConditionalData ({ person, property, label, mapping, defaultValue
     content = formatNametag(person);
   } else if (property === 'address') {
     content = formatAddress(person);
+  } else if (property === 'photo') {
+    content = person.photo === 'Other' ? person.photoComments : person.photo;
   } else if (Array.isArray(data)) {
     content = formatArray(data, defaultValue, mapping);
   } else if (data) {

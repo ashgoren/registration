@@ -40,7 +40,8 @@ export default function StripeCheckoutForm({ processCheckout, amount }) {
       setPaymentIntentId(data.paymentIntentId);
       return data.clientSecret;
     } catch (error) {
-      throw new PaymentInitializationError(error.message);
+      const errorCode = error.message === 'Unauthenticated' ? 'PAYMENT_UNAUTH_ERROR' : 'PAYMENT_INIT_ERROR';
+      throw new PaymentError(error.message, errorCode);
     }
   };
 
@@ -69,14 +70,14 @@ export default function StripeCheckoutForm({ processCheckout, amount }) {
         throw new Error(`Payment failed with status: ${result.paymentIntent.status}`);
       }
     } catch (error) {
-      throw new PaymentConfirmationError(error.message);
+      throw new PaymentError(error.message, 'PAYMENT_CONFIRM_ERROR');
     }
 
     const { paymentIntent, error } = result;
     if (error) {
       // e.g. card denied; this results in record left in pendingOrders db
       // tho could also be no such payment intent error
-      throw new PaymentProcessingError(error.message);
+      throw new PaymentError(error.message, 'PAYMENT_PROCESS_ERROR');
     }
 
     return paymentIntent;
@@ -89,23 +90,8 @@ export default function StripeCheckoutForm({ processCheckout, amount }) {
       return paymentIntent.id;
     } catch (error) {
       console.error(error);
-      switch(error.name) {
-        case 'PaymentInitializationError':
-          if (error.message === 'Unauthenticated') {
-            setError(`There was a problem initializing the payment. Please try again or contact ${TECH_CONTACT}. If resubmitting fails, try closing the browser tab and starting over.`);
-          } else {
-            setError(`There was a problem initializing the payment: ${error.message}. Please try again or contact ${TECH_CONTACT}.`);
-          }
-          break;
-        case 'PaymentProcessingError':
-          setError(`There was a problem processing the payment: ${error.message}. Please verify your payment details and try again.`);
-          break;
-        case 'PaymentConfirmationError':
-          setError(`There was a problem confirming the payment: ${error.message}. Please contact ${TECH_CONTACT}.`);
-          break;
-        default:
-          setError(`Unexpected payment processing error: ${error.message}. Please contact ${TECH_CONTACT}.`);
-      }
+      const errorMessage = mapPaymentError(error);
+      setError(errorMessage);
       setProcessing(false);
     }
   };
@@ -136,23 +122,19 @@ export default function StripeCheckoutForm({ processCheckout, amount }) {
   );
 }
 
-class PaymentInitializationError extends Error {
-  constructor(message) {
+class PaymentError extends Error {
+  constructor(message, code) {
     super(message);
-    this.name = "PaymentInitializationError";
+    this.code = code;
   }
 }
 
-class PaymentProcessingError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "PaymentProcessingError";
-  }
-}
-
-class PaymentConfirmationError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "PaymentConfirmationError";
-  }
+const mapPaymentError = (error) => {
+  const errorMessages = {
+    PAYMENT_UNAUTH_ERROR: `There was a problem initializing the payment: ${error.message}. Please try again or contact ${TECH_CONTACT}. If resubmitting fails, try closing the browser tab and starting over.`,
+    PAYMENT_INIT_ERROR: `There was a problem initializing the payment: ${error.message}. Please try again or contact ${TECH_CONTACT}.`,
+    PAYMENT_PROCESS_ERROR: `There was a problem processing the payment: ${error.message}. Please verify your payment details and try again.`,
+    PAYMENT_CONFIRM_ERROR: `There was a problem confirming the payment: ${error.message}. Please contact ${TECH_CONTACT}.`,
+  };
+  return errorMessages[error.code] || `Unexpected payment processing error: ${error.message}. Please contact ${TECH_CONTACT}.`;
 }

@@ -4,7 +4,7 @@ import OrderSummary, { PersonSummary } from 'components/OrderSummary';
 import { Divider, Typography } from '@mui/material';
 import { StyledLink } from 'components/Layout/SharedStyles';
 import config from 'config';
-const { COVID_POLICY_URL, CHECK_TO, CHECK_ADDRESS, EVENT_TITLE, PAYMENT_DUE_DATE, DIRECT_PAYMENT_URL } = config;
+const { CHECK_TO, CHECK_ADDRESS, EVENT_TITLE, PAYMENT_DUE_DATE, DIRECT_PAYMENT_URL } = config;
 
 // relies on passing order as prop to ensure is updated
 export default function Receipt({ order, person, isPurchaser }) {
@@ -28,10 +28,10 @@ export default function Receipt({ order, person, isPurchaser }) {
   const purchaserCheckPaymentContent = (
     <>
       <Typography component='p' color='error' sx={{ mt: 2 }}>
-        <strong>You are not yet registered!</strong>
+        <strong>You are not yet registered.</strong>
       </Typography>
       <Typography component='p'>
-        Paying on time can increase your chance of being accepted.<br />
+        We must receive a check from you in the next two weeks to hold your spot.<br />
         Please send a check for {isDeposit ? `at least $${order.deposit} to hold` : `$${order.total} to secure`} your spot.<br />
         (Or you can still pay electronically <StyledLink to={websiteLink(DIRECT_PAYMENT_URL)}>here</StyledLink>.)
       </Typography>
@@ -40,7 +40,7 @@ export default function Receipt({ order, person, isPurchaser }) {
         {CHECK_ADDRESS}
       </Typography>
       <Typography component='p' sx={{ mt: 2 }}>
-        We will be in touch soon to confirm your acceptance into camp, once we receive your payment!
+        Once we receive your payment we will be in touch to confirm your acceptance into camp!
       </Typography>
     </>
   );
@@ -75,26 +75,15 @@ export default function Receipt({ order, person, isPurchaser }) {
     <>
       {isPurchaser ?
         <>
-          <Typography component='p'>Thanks, {purchaserName}!</Typography>
+          <Typography component='p'>Thanks {purchaserName}!</Typography>
           {isCheckPayment ? purchaserCheckPaymentContent : purchaserElectronicPaymentContent}
         </>
       :
         additionalPersonPaymentContent
       }
 
-      <Divider component="hr" sx={{borderBottomWidth: 4, my: 4}}/>
-
       <Typography component='p' sx={{ mt: 2 }}>
-        See <StyledLink to={websiteLink(COVID_POLICY_URL)}>here</StyledLink> for the full Covid policy.<br />
-      </Typography>
-
-      <Typography component='p' sx={{ mt: 2 }}>
-        {EVENT_TITLE} is a fragrance-free event.<br />
-        Please use only fragrance-free products.
-      </Typography>
-
-      <Typography component='p' sx={{ mt: 2 }}>
-        Hope to dance with you soon at the {EVENT_TITLE}!
+        We look forward to dancing with you at {EVENT_TITLE}!
       </Typography>
 
       <Divider component="hr" sx={{borderBottomWidth: 4, my: 4}}/>

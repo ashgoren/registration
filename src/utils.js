@@ -1,9 +1,9 @@
 import DOMPurify from 'dompurify';
-import preval from 'preval.macro'
 
 export const clamp = (value, range) => Math.min(Math.max(value, range[0]), range[1]);
 
-export const logBuildDate = () => console.log('last build', new Date(preval`module.exports = new Date();`).toLocaleString());
+export const formatCurrency = (num) => Number.isInteger(num) ? num : num.toFixed(2);
+
 export const scrollToTop = () => window.scrollTo(0,0);
 // export const wait = (msec) => new Promise((resolve, _) => setTimeout(resolve, msec));
 

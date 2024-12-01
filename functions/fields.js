@@ -16,7 +16,6 @@ export const fieldOrder = [
   'dietaryPreferences',
   'dietaryRestrictions',
   'allergies',
-  'scent',
   'carpool',
   'bedding',
   'volunteer',
