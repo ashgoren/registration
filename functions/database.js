@@ -1,10 +1,11 @@
 // errors are handled in the calling function
+import { logger } from 'firebase-functions/v2';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { validFields } from './fields.js';
 const firestore = getFirestore();
 
-// client does not await execution, so not returning anything
 export const savePendingOrder = async (order) => {
+  logger.info(`SAVING PENDING ORDER: ${order.people[0].email}`, order);
   const filteredOrder = filterObject(order, validFields);
   const orderWithTimestamp = { ...filteredOrder, createdAt: FieldValue.serverTimestamp() };
   const pendingCollection = firestore.collection('pendingOrders');
@@ -14,13 +15,17 @@ export const savePendingOrder = async (order) => {
   } else {
     await pendingCollection.doc(existingOrder.docs[0].id).set(orderWithTimestamp);
   }
+  logger.info(`PENDING ORDER SAVED: ${order.people[0].email}`);
+  return { status: 'success' };
 };
 
 export const saveFinalOrder = async (order) => {
+  logger.info(`SAVING FINAL ORDER: ${order.people[0].email}`, order);
   const filteredOrder = filterObject(order, validFields);
   const orderWithTimestamp = { ...filteredOrder, createdAt: FieldValue.serverTimestamp() };
   const ordersCollection = firestore.collection('orders');
   await ordersCollection.add(orderWithTimestamp);
+  logger.info(`FINAL ORDER SAVED: ${order.people[0].email}`);
   return { status: 'success' };
 };
 

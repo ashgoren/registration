@@ -1,5 +1,6 @@
 'use strict';
 
+import { logger } from 'firebase-functions/v2';
 import { initializeApp, getApps } from 'firebase-admin/app';
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 import { google } from 'googleapis';
@@ -18,6 +19,7 @@ const client = new google.auth.JWT(process.env.SHEETS_SERVICE_ACCOUNT_CLIENT_EMA
 
 export const appendrecordtospreadsheet = onDocumentCreated(`${CONFIG_DATA_COLLECTION}/{ITEM}`, async (event) => {
   const snap = event.data;
+  logger.info(`APPEND TO SPREADSHEET: ${snap.id}`);
   try {
     const order = { ...snap.data(), key: snap.id };
     const orders = mapOrderToSpreadsheetLines(order);
