@@ -21,8 +21,7 @@ export const appendrecordtospreadsheet = onDocumentCreated(`${CONFIG_DATA_COLLEC
   try {
     const order = { ...snap.data(), key: snap.id };
     const orders = mapOrderToSpreadsheetLines(order);
-    const promises = orders.map(orderLine => appendPromise(orderLine));
-    await Promise.all(promises);
+    await appendAllLines(orders);
   } catch (err) {
     handleError(`Error in appendrecordtospreadsheet for ${snap.data().people[0].email}`, err);
   }
@@ -87,7 +86,7 @@ const mapOrderToSpreadsheetLines = (order) => {
   return orders;
 };
 
-async function appendPromise(orderLine, attempt = 0) {
+async function appendAllLines(orderLines, attempt = 0) {
   try {
     return await googleSheetsOperation({
       operation: 'append',
@@ -95,7 +94,7 @@ async function appendPromise(orderLine, attempt = 0) {
         valueInputOption: 'USER_ENTERED',
         insertDataOption: 'INSERT_ROWS',
         resource: {
-          values: [orderLine]
+          values: orderLines
         }
       }
     });
@@ -103,9 +102,9 @@ async function appendPromise(orderLine, attempt = 0) {
     if (attempt < MAX_RETRIES) {
       const delay = RETRY_DELAY_MS * Math.pow(2, attempt);
       await new Promise(resolve => setTimeout(resolve, delay));
-      return appendPromise(orderLine, attempt + 1);
+      return appendAllLines(orderLines, attempt + 1);
     } else {
-      handleError(`Error appending orderLine ${orderLine} to spreadsheet`, err);
+      handleError(`Error appending order to spreadsheet`, err);
     }
   }
 }
