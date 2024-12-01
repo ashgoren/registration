@@ -1,3 +1,4 @@
+import { logger } from 'firebase-functions/v2';
 import { onCall } from 'firebase-functions/v2/https';
 import { initializeApp, getApps } from 'firebase-admin/app';
 import { handleError } from './helpers.js';
@@ -11,7 +12,14 @@ const getStripePaymentIntent = process.env.STRIPE_SECRET_KEY ? stripeImport : un
 if (!getApps().length) initializeApp();
 
 // combining into one callable function to reduce slow cold start preflight checks
-export const firebaseFunctionDispatcher = onCall({ enforceAppCheck: true }, async (request) => {
+export const firebaseFunctionDispatcher = onCall({ enforceAppCheck: false }, async (request) => {
+
+  const { app } = request;
+  logger.info('App Check Context:', app);
+  if (!app?.token) {
+    logger.warn('No App Check token provided.');
+  }
+
   const { action, data, metadata } = request.data;
   if (metadata) {
     logger.info(`METADATA: ${metadata.email}`, metadata);
