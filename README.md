@@ -115,6 +115,12 @@ gcloud recaptcha keys create --display-name="recaptcha-enterprise" --integration
   - choose Recaptcha Enterprise option
   - use site key value from previous step
 
+## Enable Papertrail for client-side logging (routed through firebase function)
+
+- Create log destination on [papertrail](https://papertrailapp.com/account/destinations)
+- Copy token value to `PAPERTRAIL_TOKEN` in `functions/.env`
+
+
 ## Copy `.env` file values over to GitHub Secrets for workflow use:
 
 ```sh

@@ -13,7 +13,6 @@ export default function StripeCheckoutForm({ processCheckout, amount }) {
 
   const getPaymentIntent = async () => {
     try {
-      const timer = new Date();
       const { data }  = await firebaseFunctionDispatcher({
         action: 'getStripePaymentIntent',
         data: {
@@ -24,7 +23,6 @@ export default function StripeCheckoutForm({ processCheckout, amount }) {
           ...(paymentIntentId && { paymentIntentId })
         }
       });
-      console.log('Stripe payment intent retrieved in', new Date() - timer, 'ms');
 
       if (!data) {
         throw new Error('No data returned');
@@ -43,7 +41,6 @@ export default function StripeCheckoutForm({ processCheckout, amount }) {
   const confirmPayment = async ({ clientSecret }) => {
     let result;
     try {
-      const timer = new Date();
       result = await stripe.confirmPayment({
         elements,
         clientSecret,
@@ -52,7 +49,6 @@ export default function StripeCheckoutForm({ processCheckout, amount }) {
           return_url: "http://localhost:3000/error-contact-support", // not needed for cards or apple/google pay
         },
       });
-      console.log('Stripe payment confirmed in', new Date() - timer, 'ms');
 
       if (!result) {
         throw new Error('No result returned');

@@ -1,13 +1,15 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import { useOrder } from 'components/OrderContext';
-import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
+import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
+import { log } from 'logger';
 import Loading from 'components/Loading';
 import { Typography, Box } from "@mui/material";
 import config from 'config';
 const { SANDBOX_MODE, TECH_CONTACT, EVENT_TITLE } = config;
 
 const PaypalCheckoutButton = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, total, setPaying, processCheckout }) => {
-	const { processing, setError } = useOrder();
+	const { processing, setError, order } = useOrder();
+	const { email } = order.people[0];
 	const [, isResolved] = usePayPalScriptReducer();
 
 	// this feels hella hacky, but sometimes the buttons don't render despite isResolved
@@ -29,16 +31,20 @@ const PaypalCheckoutButton = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, tot
 		});
 	}, [setPaypalButtonsLoaded]);
 
+	// this actually processes the payment
 	const processPayment = async ({ actions }) => {
+		log('PayPal processing payment', { email });
 		try {
 			const paypalOrder = await actions.order.capture();
 			return paypalOrder.payer.email_address
-		} catch (err) {
+		} catch (error) {
 			setPaying(false);
-			setError(`PayPal encountered an error: ${err}. Please try again or contact ${TECH_CONTACT}.`);
+			log('PayPal process payment error', { email, error });
+			setError(`PayPal encountered an error: ${error}. Please try again or contact ${TECH_CONTACT}.`);
 		}
 	};
 
+	// when user clicks one of the paypal buttons, createOrder launches the PayPal Checkout window
 	const createOrder = (data, actions) => {
 		return actions.order.create({
 			purchase_units: [
@@ -55,13 +61,16 @@ const PaypalCheckoutButton = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, tot
 		});
 	};
 
+	// when user submits payment details (this does not process the payment yet)
 	const onApprove = async (data, actions) => {
+		log('User submitted payment details', { email });
 		processCheckout({ paymentProcessorFn: processPayment, paymentParams: { actions } });
 	};
 
-	const onError = (err) => {
+	const onError = (error) => {
+		log('PayPal onError', { email, error });
 		setPaying(false);
-		setError(`PayPal encountered an error: ${err}. Please try again or contact ${TECH_CONTACT}.`);
+		setError(`PayPal encountered an error: ${error}. Please try again or contact ${TECH_CONTACT}.`);
 	};
 
 	const onCancel=() => {

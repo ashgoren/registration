@@ -1,4 +1,5 @@
 import { createContext, useState, useReducer, useContext, useEffect, useCallback } from 'react';
+import { log, logError, logDivider } from 'logger';
 import { firebaseFunctionDispatcher } from 'firebase.js';
 import { renderToStaticMarkup } from 'react-dom/server';
 import Receipt from 'components/Receipt';
@@ -67,6 +68,7 @@ export const useOrder = () => useContext(OrderContext);
 
 export const useOrderOperations = () => {
   const { order, updateOrder, paymentMethod, setError, setProcessingMessage } = useOrder();
+  const { email } = order.people[0]; // for logging
 
   const prepOrderForFirebase = () => {
     const updates = {
@@ -81,25 +83,28 @@ export const useOrderOperations = () => {
 
   // fire-and-forget; save bkup in case user closes browser halfway thru payment processing
   const savePendingOrderToFirebase = (order) => {
+    log('Saving pending order to firebase', { email, order });
     setProcessingMessage('Saving registration...');
     firebaseFunctionDispatcher({
       action: 'savePendingOrder',
-      data: order
+      data: order,
+      metadata: { email, userAgent: navigator.userAgent }
     });
   };
 
   const saveFinalOrderToFirebase = async (order) => {
+    log('Saving final order to firebase', { email });
     setProcessingMessage(order.paymentId === 'check' ? 'Updating registration...' : 'Payment successful. Updating registration...');
     try {
-      const startTime = new Date();
       await firebaseFunctionDispatcher({
         action: 'saveFinalOrder',
         data: { ...order, status: 'final' }
       });
-      console.log('Final order saved in', new Date() - startTime, 'ms');
-      return true
-    } catch (err) {
-      console.error(`error updating firebase record`, err);
+      log('Final order saved', { email });
+      setTimeout(() => logDivider(), 1000);
+      return true;
+    } catch (error) {
+      logError('Error saving final order to firebase', { email, error, order });
       setError(`Your payment was processed successfully. However, we encountered an error updating your registration. Please contact ${TECH_CONTACT}.`);
       return false;
     }

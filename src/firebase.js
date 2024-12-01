@@ -1,6 +1,7 @@
 import { initializeApp, getApps } from "firebase/app";
 import { initializeAppCheck, ReCaptchaEnterpriseProvider, onTokenChanged } from "firebase/app-check";
 import { getFunctions, connectFunctionsEmulator, httpsCallable } from "firebase/functions";
+import { log, logWarn } from 'logger.js';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -29,7 +30,9 @@ if (!getApps().length) {
 if (appCheck) {
   onTokenChanged(appCheck, (tokenResult) => {
     if (tokenResult.error) {
+      logWarn('AppCheck token error', { error: tokenResult.error });
     } else {
+      log('AppCheck token refreshed');
     }
   });
 }
