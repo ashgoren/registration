@@ -1,36 +1,59 @@
 import { createTheme } from '@mui/material';
-import { cyan, grey } from '@mui/material/colors';
 import { responsiveFontSizes } from '@mui/material/styles';
+import { cyan, grey, green } from '@mui/material/colors';
+import config from 'config/configBasics';
+const { PALETTE } = config;
+
+const palettes = {
+  default: {
+    light: {
+      primary: { main: '#1976d2' },
+      secondary: { main: '#9c27b0' },
+      background: { default: '#ffffff', paper: '#f5f5f5' }
+    },
+    dark: {
+      primary: cyan,
+      secondary: cyan,
+      background: { default: '#000000', paper: '#424242' }
+    }
+  },
+  green: {
+    light: {
+      primary: { main: green[900] },
+      secondary: { main: green[900] },
+      background: { default: green[50], paper: '#f5f5f5' }
+    },
+    dark: {
+      primary: green,
+      secondary: green,
+      background: { default: '#212e22', paper: '#424242' }
+    }
+  },
+};
+
+const greyButtonColors = {
+  light: { main: grey[800], hover: grey[900], active: grey[900], background: grey[200] },
+  dark: { main: grey[300], hover: grey[200], active: grey[200], background: grey[800] }
+};
 
 const breakpoints = {
   values: { xs: 0, sm: 674, md: 900, lg: 1190, xl: 1536 }
 };
 
-let lightTheme = createTheme({
-  breakpoints,
-  palette: {
-    mode: 'light',
-    background: { default: '#ffffff', paper: '#f5f5f5' },
-    // error: { main: red[800] },
-    // warning: { main: orange[800] },
-    greyButton: { main: grey[800], hover: grey[900], active: grey[900], background: grey[200] },
-  },
-});
-lightTheme = responsiveFontSizes(lightTheme);
+const createCustomTheme = ({ mode, palette }) => {
+  let theme = createTheme({
+    breakpoints,
+    palette: {
+      mode,
+      greyButton: greyButtonColors[mode],
+      ...palette[mode]
+    },
+  });
+  return responsiveFontSizes(theme);
+};
 
-let darkTheme = createTheme({
-  breakpoints,
-  palette: {
-    mode: 'dark',
-    primary: cyan,
-    secondary: cyan,
-    background: { default: '#000000', paper: '#424242' },
-    // error: { main: red[200] },
-    // warning: { main: orange[200] },
-    greyButton: { main: grey[300], hover: grey[200], active: grey[200], background: grey[800] },
-  },
-});
-darkTheme = responsiveFontSizes(darkTheme);
+const lightTheme = createCustomTheme({ mode: 'light', palette: palettes[PALETTE] });
+const darkTheme = createCustomTheme({ mode: 'dark', palette: palettes[PALETTE] });
 
 const rootStyle = (theme) => ({
   width: 'auto',

@@ -1,8 +1,9 @@
 const config = {
   SANDBOX_MODE: true, // for testing only
-  SKIP_MANDATORY_FIELDS: true, // for testing only
+  SKIP_MANDATORY_FIELDS: false, // for testing only
   SHOW_PRE_REGISTRATION: false,
   REGISTRATION_ONLY: false,
+  PALETTE: 'default', // options defined in LayoutStyles.js
   ADMISSION_QUANTITY_MAX: 4,
   ADMISSION_COST_RANGE: [125, 999],
   ADMISSION_COST_DEFAULT: 380,

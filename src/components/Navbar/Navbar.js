@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { AppBar, Toolbar, Typography, Container, ListItem, Box, IconButton, Menu, Link } from '@mui/material';
+// import { green } from '@mui/material/colors';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link as RouterLink } from 'react-router-dom';
 import ColorModeToggle from 'components/ColorModeToggle';
@@ -112,7 +113,7 @@ export default function Navbar({ toggleColorMode }) {
   );
 
   return (
-    // <AppBar position="relative" color="default" sx={{ height: '100px' }}>
+    // <AppBar position="relative" sx={{ background: green[900] }}>
     <AppBar position="relative" color="default">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
