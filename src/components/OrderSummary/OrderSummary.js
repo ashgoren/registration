@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import { formatCurrency } from 'utils';
 import config from 'config';
-const { ORDER_SUMMARY_OPTIONS, ADMISSION_COST_RANGE, PAYMENT_DUE_DATE, INCLUDE_PRONOUNS_ON_NAMETAG } = config;
+const { ORDER_SUMMARY_OPTIONS, ADMISSION_COST_RANGE, PAYMENT_DUE_DATE, INCLUDE_PRONOUNS_ON_NAMETAG, WAITLIST_MODE } = config;
 
 // NOTE: this component uses some vanilla html becuase it's used in the confirmation email
 // NOTE: order is passed as prop to be sure it is most up-to-date when this is used in receipt generation
@@ -25,42 +25,44 @@ export default function OrderSummary({ order }) {
         </Box>
       ))}
 
-      <Box style={{ marginTop: '2em' }}>
-        <Typography variant="body" gutterBottom>
-          <strong>Payment</strong>
-        </Typography>
+      {!WAITLIST_MODE &&
+        <Box style={{ marginTop: '2em' }}>
+          <Typography variant="body" gutterBottom>
+            <strong>Payment</strong>
+          </Typography>
 
-        <Typography component='p' style={{ marginTop: '1em' }}>
-          {isFullPayment &&
-            <>
-              Registration:&nbsp;
-              {admissions.length > 1 && admissions.map((cost, index) => (
-                <span key={index}>
-                  ${cost} {index < admissions.length - 1 ? '+ ' : '= '}
-                </span>
-              ))}
-              ${admissionsTotal}<br />
-            </>
-          }
-          {order.donation > 0 &&
-            <>Additional donation: ${order.donation}<br /></>
-          }
+          <Typography component='p' style={{ marginTop: '1em' }}>
+            {isFullPayment &&
+              <>
+                Registration:&nbsp;
+                {admissions.length > 1 && admissions.map((cost, index) => (
+                  <span key={index}>
+                    ${cost} {index < admissions.length - 1 ? '+ ' : '= '}
+                  </span>
+                ))}
+                ${admissionsTotal}<br />
+              </>
+            }
+            {order.donation > 0 &&
+              <>Additional donation: ${order.donation}<br /></>
+            }
 
-          {isDeposit &&
-            <>
-              Deposit {isPaid ? 'paid' : 'due now'}: ${order.deposit}<br />
-            </>
-          }
+            {isDeposit &&
+              <>
+                Deposit {isPaid ? 'paid' : 'due now'}: ${order.deposit}<br />
+              </>
+            }
 
-          {fees > 0 &&
-            <>PayPal fees: ${formatCurrency(fees)}<br /></>
-          }
+            {fees > 0 &&
+              <>PayPal fees: ${formatCurrency(fees)}<br /></>
+            }
 
-          {isDeposit &&
-            <><strong><font color='orange'>The balance of your registration fee is due by {PAYMENT_DUE_DATE}.</font></strong><br /></>
-          }
-        </Typography>
-      </Box>
+            {isDeposit &&
+              <><strong><font color='orange'>The balance of your registration fee is due by {PAYMENT_DUE_DATE}.</font></strong><br /></>
+            }
+          </Typography>
+        </Box>
+      }
     </>
   );
 }

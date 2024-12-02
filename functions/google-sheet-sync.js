@@ -56,7 +56,12 @@ const mapOrderToSpreadsheetLines = (order) => {
       total = isPurchaser ? admission + order.donation : admission;
     }
     let paid, status;
-    if (order.paymentMethod === 'check') {
+    if (order.paymentMethod === 'waitlist') {
+      admission = 0;
+      total = 0;
+      paid = 0;
+      status = 'waitlist';
+    } else if (order.paymentMethod === 'check') {
       paid = 0;
       status = 'awaiting check';
     } else if (deposit > 0) {

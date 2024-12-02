@@ -101,7 +101,10 @@ export const useOrderOperations = () => {
 
   const saveFinalOrderToFirebase = async (order) => {
     log('Saving final order to firebase', { email });
-    setProcessingMessage(order.paymentId === 'check' ? 'Updating registration...' : 'Payment successful. Updating registration...');
+    setProcessingMessage(order.paymentId === 'check' || order.paymentMethod === 'waitlist'
+      ? 'Updating registration...'
+      : 'Payment successful. Updating registration...'
+    );
     try {
       await firebaseFunctionDispatcher({
         action: 'saveFinalOrder',

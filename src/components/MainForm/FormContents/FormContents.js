@@ -2,9 +2,9 @@ import { useOrder } from 'components/OrderContext';
 import { Form } from 'formik';
 import People from '../People';
 import PaymentInfo from '../PaymentInfo';
-import NavButtons from 'components/NavButtons';
+import Waitlist from '../Waitlist';
 import config from 'config';
-const { NUM_PAGES } = config;
+const { WAITLIST_MODE } = config;
 
 export default function FormContents({ formikRef }) {
   const { updateOrder, currentPage, setCurrentPage } = useOrder();
@@ -21,14 +21,8 @@ export default function FormContents({ formikRef }) {
   return(
     <Form spellCheck='false'>
       {currentPage === 1 && <People formikRef={formikRef} />}
-      {currentPage === 2 && <PaymentInfo />}
-
-      {currentPage > 1 &&
-        <NavButtons
-          backButtonProps = {{ text: 'Back', onClick: handleClickBackButton }}
-          nextButtonProps = {{ text: currentPage === NUM_PAGES ? 'Checkout' : 'Next...'}}
-        />
-      }
+      {currentPage === 2 && WAITLIST_MODE && <Waitlist handleClickBackButton={handleClickBackButton} />}
+      {currentPage === 2 && !WAITLIST_MODE && <PaymentInfo handleClickBackButton={handleClickBackButton} />}
     </Form>
   );
 }
