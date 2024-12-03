@@ -33,7 +33,10 @@ export default function StripeCheckoutForm({ processCheckout, amount }) {
       setPaymentIntentId(data.paymentIntentId);
       return data.clientSecret;
     } catch (error) {
-      const errorCode = error.message === 'Unauthenticated' ? 'PAYMENT_UNAUTH_ERROR' : 'PAYMENT_INIT_ERROR';
+      // console.log('error.code', error.code);
+      // console.log('error.message', error.message);
+      // console.log('error.details', error.details);
+      const errorCode = error.code?.includes('out-of-range') ? 'PAYMENT_AMOUNT_ERROR' : 'PAYMENT_INIT_ERROR';
       throw new PaymentError(error.message, errorCode);
     }
   };
@@ -122,7 +125,7 @@ class PaymentError extends Error {
 
 const mapPaymentError = (error) => {
   const errorMessages = {
-    PAYMENT_UNAUTH_ERROR: `There was a problem initializing the payment: ${error.message}. Please try again or contact ${TECH_CONTACT}. If resubmitting fails, try closing the browser tab and starting over.`,
+    PAYMENT_AMOUNT_ERROR: `There was a problem initializing the payment: Amount out of range. Please contact ${TECH_CONTACT}.`,
     PAYMENT_INIT_ERROR: `There was a problem initializing the payment: ${error.message}. Please try again or contact ${TECH_CONTACT}.`,
     PAYMENT_PROCESS_ERROR: `There was a problem processing the payment: ${error.message}. Please verify your payment details and try again.`,
     PAYMENT_CONFIRM_ERROR: `There was a problem confirming the payment: ${error.message}. Please contact ${TECH_CONTACT}.`,
