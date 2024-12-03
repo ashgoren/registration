@@ -1,6 +1,6 @@
 const config = {
   SANDBOX_MODE: true, // for testing only
-  SKIP_MANDATORY_FIELDS: false, // for testing only
+  SKIP_MANDATORY_FIELDS: true, // for testing only
   WAITLIST_MODE: false,
   SHOW_PRE_REGISTRATION: false,
   REGISTRATION_ONLY: false,

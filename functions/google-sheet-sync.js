@@ -5,7 +5,7 @@ import { initializeApp, getApps } from 'firebase-admin/app';
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 import { google } from 'googleapis';
 import { fieldOrder } from './fields.js';
-import { handleError, joinArrays } from './helpers.js';
+import { joinArrays } from './helpers.js';
 
 const SHEET_ID = process.env.SHEETS_SHEET_ID;
 const CONFIG_DATA_COLLECTION = 'orders';
@@ -25,7 +25,7 @@ export const appendrecordtospreadsheet = onDocumentCreated(`${CONFIG_DATA_COLLEC
     const orders = mapOrderToSpreadsheetLines(order);
     await appendAllLines(orders);
   } catch (err) {
-    handleError(`Error in appendrecordtospreadsheet for ${snap.data().people[0].email}`, err);
+    logger.error(`Error in appendrecordtospreadsheet for ${snap.data().people[0].email}`, err);
   }
 });
 
@@ -111,7 +111,8 @@ async function appendAllLines(orderLines, attempt = 0) {
       await new Promise(resolve => setTimeout(resolve, delay));
       return appendAllLines(orderLines, attempt + 1);
     } else {
-      handleError(`Error appending order to spreadsheet`, err);
+      logger.error(`Error appending order to spreadsheet`, err);
+      throw err;
     }
   }
 }
@@ -138,6 +139,7 @@ async function googleSheetsOperation({ operation, params }) {
         throw new Error('Invalid operation');
     }
   } catch (err) {
-    handleError(`Google Sheets API operation (${operation}) failed`, err);
+    logger.error(`Google Sheets API operation (${operation}) failed`, err);
+    throw err;
   }
 }

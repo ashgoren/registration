@@ -1,7 +1,6 @@
 import { logger } from 'firebase-functions/v2';
-import { onCall } from 'firebase-functions/v2/https';
+import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { initializeApp, getApps } from 'firebase-admin/app';
-import { handleError } from './helpers.js';
 import { appendrecordtospreadsheet } from './google-sheet-sync.js';
 import { savePendingOrder, saveFinalOrder } from './database.js';
 import { sendEmailConfirmations } from './email-confirmation.js';
@@ -36,7 +35,12 @@ export const firebaseFunctionDispatcher = onCall({ enforceAppCheck: false }, asy
       default: return { error: 'Invalid action' };
     }
   } catch (err) {
-    handleError(`An error occurred in ${action}`, {error: err.message, data: JSON.stringify(data)});
+    logger.error(err, { action, data });
+    throw new HttpsError(
+      err.message === 'Invalid Amount' ? 'out-of-range' : 'internal',
+      `An error occurred in ${action}`,
+      { msg: err.message }
+    );
   }
 });
 

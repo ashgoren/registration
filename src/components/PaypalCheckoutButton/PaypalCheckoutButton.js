@@ -46,6 +46,7 @@ const PaypalCheckoutButton = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, tot
 
 	// when user clicks one of the paypal buttons, createOrder launches the PayPal Checkout window
 	const createOrder = (data, actions) => {
+		if (total > 999 * order.people.length) throw new Error('out-of-range');
 		return actions.order.create({
 			purchase_units: [
 				{

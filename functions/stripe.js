@@ -6,6 +6,13 @@ const stripe = stripeModule(isEmulator ? process.env.STRIPE_SECRET_KEY_DEV : pro
 const statement_descriptor_suffix = process.env.STRIPE_STATEMENT_DESCRIPTOR_SUFFIX; // appended to statement descriptor set in Stripe dashboard
 
 export const getStripePaymentIntent = async ({ email, name, amount, idempotencyKey, paymentIntentId }) => {
+
+  // sanity check
+  if (amount > 999_00) { // though this doesn't account for people paying for multiples! <------ TODO
+    console.error(`Error in getStripePaymentIntent: Invalid amount ${amount} for ${email}`);
+    throw new Error("Invalid Amount");
+  }
+
   let paymentIntent;
   try {
     if (paymentIntentId) {
