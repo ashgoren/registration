@@ -33,7 +33,8 @@ const logger = (level, msg, metadata = {}) => {
 
     firebaseFunctionDispatcher({
       action: 'logToPapertrail',
-      data: payload
+      data: payload,
+      ...email && { email }
     });
   }
 };

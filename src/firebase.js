@@ -47,9 +47,13 @@ if (process.env.NODE_ENV === 'development' && process.env.REACT_APP_USE_FIREBASE
 }
 
 // centralize calling Firebase functions
-const firebaseFunctionDispatcher = async (data) => {
+const firebaseFunctionDispatcher = async ({ action, data, email }) => {
+  const metadata = {
+    userAgent: navigator.userAgent,
+    ...(email && { email })
+  };
   const callable = httpsCallable(functions, 'firebaseFunctionDispatcher');
-  return await callable(data);
+  return await callable({ action, data, metadata });
 };
 
 export { firebaseFunctionDispatcher };

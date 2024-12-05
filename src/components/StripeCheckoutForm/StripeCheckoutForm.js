@@ -21,7 +21,8 @@ export default function StripeCheckoutForm({ processCheckout, amount }) {
           email: order.people[0].email,
           idempotencyKey: order.idempotencyKey,
           ...(paymentIntentId && { paymentIntentId })
-        }
+        },
+        email: order.people[0].email
       });
 
       if (!data) {

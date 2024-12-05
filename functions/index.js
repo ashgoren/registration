@@ -12,17 +12,16 @@ if (!getApps().length) initializeApp();
 
 // combining into one callable function to reduce slow cold start preflight checks
 export const firebaseFunctionDispatcher = onCall({ enforceAppCheck: false }, async (request) => {
-
-  const { app } = request;
-  logger.info('App Check Context:', app);
-  if (!app?.token) {
-    logger.warn('No App Check token provided.');
-  }
-
+  const hasToken = !!request.app?.token;
   const { action, data, metadata } = request.data;
-  if (metadata) {
-    logger.info(`METADATA: ${metadata.email}`, metadata);
-  }
+
+  if (action !== 'caffeinate' && action !== 'logToPapertrail') {
+    const email = metadata?.email;
+    logger[hasToken ? 'info' : 'warn'](
+      'AppCheck ' + (hasToken ? 'success' : 'fail') + (email ? `: ${email}` : ''),
+      { ...metadata, action }
+    );
+  };
 
   try {
     switch(action) {

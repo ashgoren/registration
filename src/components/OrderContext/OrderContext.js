@@ -88,7 +88,7 @@ export const useOrderOperations = () => {
       await firebaseFunctionDispatcher({
         action: 'savePendingOrder',
         data: order,
-        metadata: { email, userAgent: navigator.userAgent }
+        email
       });
       log('Pending order saved', { email });
       return true;
@@ -108,7 +108,8 @@ export const useOrderOperations = () => {
     try {
       await firebaseFunctionDispatcher({
         action: 'saveFinalOrder',
-        data: { ...order, status: 'final' }
+        data: { ...order, status: 'final' },
+        email
       });
       log('Final order saved', { email });
       setTimeout(() => logDivider(), 1000);
@@ -126,7 +127,8 @@ export const useOrderOperations = () => {
     const emailReceiptPairs = generateReceipts({ order });
     firebaseFunctionDispatcher({
       action: 'sendEmailConfirmations',
-      data: emailReceiptPairs
+      data: emailReceiptPairs,
+      email
     });
   };
 

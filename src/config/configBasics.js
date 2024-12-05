@@ -15,7 +15,7 @@ const config = {
   DONATION_MAX: 999,
   INCLUDE_PRONOUNS_ON_NAMETAG: false,
   INCLUDE_LAST_ON_NAMETAG: true,
-  PAYMENT_METHODS: ['stripe', 'check'], // options are stripe|paypal|check (first is default)
+  PAYMENT_METHODS: ['paypal', 'check'], // options are stripe|paypal|check (first is default)
   EVENT_TITLE: 'Example Contra Weekend',
   EVENT_LOCATION: 'Example place, Example place',
   EVENT_LOCATION_2: 'Example address',
