@@ -3,7 +3,7 @@ import { StyledPaper } from 'components/Layout/SharedStyles';
 import { Typography, Box } from "@mui/material";
 import { MyStepper } from 'components/MyStepper';
 import config from 'config';
-const { TITLE, REGISTRATION_ONLY } = config;
+const { TITLE, REGISTRATION_ONLY, WAITLIST_MODE } = config;
 
 export default function Header({ titleText = TITLE, children }) {
   const { currentPage } = useOrder();
@@ -16,7 +16,7 @@ export default function Header({ titleText = TITLE, children }) {
         </Typography>
       }
 
-      {currentPage !== 'confirmation' &&
+      {currentPage !== 'confirmation' && !WAITLIST_MODE &&
         <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
           <MyStepper currentPage={currentPage} />
         </Box>
