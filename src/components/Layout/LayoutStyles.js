@@ -1,7 +1,7 @@
 import { createTheme } from '@mui/material';
 import { responsiveFontSizes } from '@mui/material/styles';
-import { cyan, grey, green } from '@mui/material/colors';
-import config from 'config/configBasics';
+import { cyan, grey, green, yellow } from '@mui/material/colors';
+import config from 'config/configTheme';
 const { PALETTE } = config;
 
 const palettes = {
@@ -9,24 +9,24 @@ const palettes = {
     light: {
       primary: { main: '#1976d2' },
       secondary: { main: '#9c27b0' },
-      background: { default: '#ffffff', paper: '#f5f5f5' }
+      background: { default: '#ffffff', paper: '#f5f5f5', sticky: yellow[500] }
     },
     dark: {
       primary: cyan,
       secondary: cyan,
-      background: { default: '#000000', paper: '#424242' }
+      background: { default: '#000000', paper: '#424242', sticky: yellow[900] }
     }
   },
   green: {
     light: {
       primary: { main: green[900] },
       secondary: { main: green[900] },
-      background: { default: green[50], paper: '#f5f5f5' }
+      background: { default: green[50], paper: '#f5f5f5', sticky: green[500] }
     },
     dark: {
       primary: green,
       secondary: green,
-      background: { default: '#212e22', paper: '#424242' }
+      background: { default: '#212e22', paper: '#424242', sticky: green[900] }
     }
   },
 };

@@ -6,6 +6,7 @@
 
 import configPaypal from './configPaypal';
 import configBasics from './configBasics';
+import configTheme from './configTheme';
 import configContent from './configContent';
 import configOrderSummary from './configOrderSummary';
 import { FIELD_CONFIG, PERSON_CONTACT_FIELDS, PERSON_MISC_FIELDS, PERSON_PAYMENT_FIELDS } from './configFields';
@@ -25,6 +26,7 @@ const getOrderDefaults = () => ({
 const config = {
   ...configPaypal,
   ...configBasics,
+  ...configTheme,
   ...configContent,
   ...configOrderSummary,
   FIELD_CONFIG,

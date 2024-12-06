@@ -4,7 +4,6 @@ const config = {
   WAITLIST_MODE: false,
   SHOW_PRE_REGISTRATION: false,
   REGISTRATION_ONLY: false,
-  PALETTE: 'default', // options defined in LayoutStyles.js
   ADMISSION_QUANTITY_MAX: 4,
   ADMISSION_COST_RANGE: [125, 999],
   ADMISSION_COST_DEFAULT: 380,

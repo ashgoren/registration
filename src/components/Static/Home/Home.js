@@ -1,10 +1,12 @@
-import { Typography, Box, } from '@mui/material';
+import { useTheme } from '@mui/system';
+import { Typography, Box } from '@mui/material';
 import { StyledLink, StyledPaper, PageTitle, SectionDivider, Paragraph } from 'components/Layout/SharedStyles';
 import { mailtoLink} from 'utils';
 import config from 'config';
-const { EMAIL_CONTACT, EVENT_TITLE, EVENT_LOCATION, EVENT_DATE } = config;
+const { EMAIL_CONTACT, EVENT_TITLE, EVENT_LOCATION, EVENT_DATE, WAITLIST_MODE } = config;
 
 export default function Home() {
+  const theme = useTheme();
 
   return (
     <StyledPaper extraStyles={{ maxWidth: 750 }} align="center">
@@ -17,6 +19,12 @@ export default function Home() {
       <Box mt={-5} mb={4}>
         <img src={process.env.PUBLIC_URL + '/some_event/dancer.jpg'} alt='' style={{ width: "100%", height: "auto" }} />
       </Box>
+
+      {WAITLIST_MODE &&
+        <Box sx={{ my: 4, p: 2, backgroundColor: theme.palette.background.sticky, display: 'flex', justifyContent: 'center', alignItems: 'center'  }}>
+          <strong>{EVENT_TITLE} is full. Sign up for the waitlist below.</strong>
+        </Box>
+      }
 
       <Typography variant="h6" sx={{ mb: 2 }}>
         We are a zesty, high-energy dance weekend for experienced dancers.<br />

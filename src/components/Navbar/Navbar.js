@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { AppBar, Toolbar, Typography, Container, ListItem, Box, IconButton, Menu, Link } from '@mui/material';
-// import { green } from '@mui/material/colors';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link as RouterLink } from 'react-router-dom';
 import ColorModeToggle from 'components/ColorModeToggle';
 import config from 'config';
-const { TITLE, REGISTRATION_ONLY } = config;
+const { TITLE, REGISTRATION_ONLY, NAVBAR_COLOR, NAVBAR_COLOR_DARK, NAVBAR_BACKGROUND_OVERRIDE } = config;
 
 const pages = [
   { title: 'Home', path: '/' },
@@ -113,8 +112,7 @@ export default function Navbar({ toggleColorMode }) {
   );
 
   return (
-    // <AppBar position="relative" sx={{ background: green[900] }}>
-    <AppBar position="relative" color="default">
+    <AppBar position="relative" color={NAVBAR_COLOR} enableColorOnDark={NAVBAR_COLOR_DARK} sx={{ background: NAVBAR_BACKGROUND_OVERRIDE }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
 
