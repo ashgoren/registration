@@ -10,7 +10,9 @@ export const getStripePaymentIntent = async ({ email, name, amount, idempotencyK
   // sanity check
   if (amount > 999_00) { // though this doesn't account for people paying for multiples! <------ TODO
     console.error(`Error in getStripePaymentIntent: Invalid amount ${amount} for ${email}`);
-    throw new Error("Invalid Amount");
+    const error = new Error("Invalid Amount");
+    error.type = "INVALID_AMOUNT";
+    throw error;
   }
 
   let paymentIntent;

@@ -7,3 +7,7 @@ export const joinArrays = (obj) => {
   }
   return newObj;
 };
+
+export const formatCurrency = (amount) => {
+  return Number(amount).toFixed(2);
+}

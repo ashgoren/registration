@@ -13,6 +13,7 @@
   },
   "main": "index.js",
   "dependencies": {
+    "@paypal/paypal-server-sdk": "^0.5.1",
     "firebase-admin": "^12.1.1",
     "firebase-functions": "^5.0.1",
     "googleapis": "^140.0.0",
