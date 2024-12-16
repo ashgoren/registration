@@ -108,11 +108,14 @@ export default function Checkout() {
     }
 
     setProcessingMessage('Processing payment...');
-    const paymentId = await paymentProcessorFn(paymentParams);
-    console.log('paymentId', paymentId);
-    if (!paymentId) return;
-    updateOrder({ paymentId });
-    const finalOrder = { ...preppedOrder, paymentId };
+    const { id, amount } = await paymentProcessorFn(paymentParams);
+    if (!id) return;
+    updateOrder({ paymentId: id, paid: amount });
+    const finalOrder = {
+      ...preppedOrder,
+      paymentId: id,
+      paid: amount
+    };
 
     const success = await saveFinalOrderToFirebase(finalOrder);
     if (success) {

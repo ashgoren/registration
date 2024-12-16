@@ -44,9 +44,8 @@ const PaypalCheckoutButton = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, set
 				}
 			});
 			if (!response?.data) throw new Error('No data returned');
-			const { paypalEmail, rawResult } = response.data;
-			log('PayPal payment processed', { rawResult });
-			return paypalEmail;
+			const { id, amount } = response.data;
+			return { id, amount: Number(amount) };
 		} catch (error) {
 			setPaying(false);
 			log('PayPal process payment error', { email, error });

@@ -29,6 +29,7 @@ export const fieldOrder = [
   'deposit',
   'fees',
   'paid',
+  'charged',
   'status',
   'purchaser',
   'createdAt',

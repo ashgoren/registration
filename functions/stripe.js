@@ -6,16 +6,6 @@ const isEmulator = !!process.env.FIREBASE_AUTH_EMULATOR_HOST || !!process.env.FI
 const stripe = Stripe(isEmulator ? process.env.STRIPE_SECRET_KEY_DEV : process.env.STRIPE_SECRET_KEY);
 const statement_descriptor_suffix = process.env.STRIPE_STATEMENT_DESCRIPTOR_SUFFIX; // appended to statement descriptor set in Stripe dashboard
 
-export const confirmStripePayment = async ({ email, id, idempotencyKey }) => {
-  try {
-    const paymentIntent = await stripe.paymentIntents.confirm(id, { idempotencyKey });
-    return { id: paymentIntent.id, amount: paymentIntent.amount / 100 }; // client-side handles amount in dollars
-  } catch (error) {
-    console.error("Error in confirmStripePayment:", error, email, id, idempotencyKey);
-    throw error;
-  }
-}
-
 export const getStripePaymentIntent = async ({ email, name, amount, idempotencyKey, id }) => {
   const amountInCents = Math.round(amount * 100); // client-side handles amount in dollars
   let paymentIntent;

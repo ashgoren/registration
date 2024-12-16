@@ -14,15 +14,6 @@ export default function Receipt({ order, person, isPurchaser }) {
   const isFullPayment = !isDeposit;
   const purchaserName = order.people[0].first;
 
-  let paid;
-  if (isCheckPayment) {
-    paid = 0;
-  } else if (isDeposit) {
-    paid = order.deposit + order.fees;
-  } else {
-    paid = order.total + order.fees;
-  }
-
   useEffect(() => { scrollToTop() },[]);
 
   const purchaserCheckPaymentContent = (
@@ -48,7 +39,7 @@ export default function Receipt({ order, person, isPurchaser }) {
   const purchaserElectronicPaymentContent = (
     <Typography component='p' sx={{ mt: 2 }}>
       Thank you for registering for the {EVENT_TITLE}!<br />
-      Your payment for ${paid} has been successfully processed.<br />
+      Your payment for ${order.paid} has been successfully processed.<br />
       {isDeposit &&
         <strong>
           Your balance is due by {PAYMENT_DUE_DATE}.<br />

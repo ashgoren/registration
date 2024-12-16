@@ -49,8 +49,8 @@ export default function StripeCheckoutForm({ processCheckout }) {
     try {
       const { clientSecret } = paymentInfo;
       if (!clientSecret) throw new Error('Missing clientSecret for payment processing');
-      const { id } = await confirmPayment({ clientSecret });
-      return id;
+      const { id, amount } = await confirmPayment({ clientSecret });
+      return { id, amount: Number(amount) / 100}; // amount comes back from stripe in cents
     } catch (error) {
       console.error(error);
       const errorMessage = mapPaymentError(error);

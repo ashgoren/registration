@@ -29,7 +29,7 @@ export const capturePaypalOrder = async ({ id, idempotencyKey }) => {
       prefer: 'return=minimal'
     });
     if (statusCode < 200 || statusCode >= 300) throw new Error(`Failed to capture order: ${statusCode}`);
-    return { paypalEmail: result.payer.emailAddress, rawResult: result };
+    return validateOrderResponse(result);
   } catch (error) {
     handlePaypalError(error, 'capturePaypalOrder');
   }
@@ -126,8 +126,14 @@ const getOrder = async (id) => {
 // helpers for validations and error handling
 
 const validateOrderResponse = (result, expectedId = null, expectedAmount = null) => {
-  const id = result?.id;
-  const amount = result?.purchaseUnits[0]?.amount?.value;
+  let id, amount;
+  if (result?.status === 'COMPLETED') {
+    id = result.payer?.emailAddress; // or transaction id: result.purchaseUnits[0].payments.captures[0].id
+    amount = result.purchaseUnits[0]?.payments?.captures[0]?.amount?.value;
+  } else {
+    id = result?.id;
+    amount = result?.purchaseUnits[0]?.amount?.value;
+  }
 
   if (!id) throw createError(
     ErrorType.VALIDATION_MISSING_ID,

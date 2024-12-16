@@ -10,7 +10,6 @@ export default function OrderSummary({ order }) {
   const admissionsTotal = admissions.reduce((total, admission) => total + admission, 0);
   const isDeposit = order.deposit > 0;
   const isFullPayment = !isDeposit;
-  const isPaid = order.paymentId && order.paymentId !== 'PENDING' && order.paymentId !== 'check';
   const fees = parseFloat(order.fees);
 
   return (
@@ -49,7 +48,7 @@ export default function OrderSummary({ order }) {
 
             {isDeposit &&
               <>
-                Deposit {isPaid ? 'paid' : 'due now'}: ${order.deposit}<br />
+                Deposit {order.paid ? 'paid' : 'due now'}: ${order.deposit}<br />
               </>
             }
 

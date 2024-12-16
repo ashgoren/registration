@@ -72,16 +72,16 @@ const mapOrderToSpreadsheetLines = (order) => {
       status = 'paid';
     }
     const firstPersonPurchaserField = people.length > 1 ? `self (+${people.length - 1})` : 'self';
-    const key = isPurchaser ? order.key : '-';
     const personFieldsBuilder = {
       ...updatedPerson,
-      key,
+      key: isPurchaser ? order.key : '-',
       createdAt,
       address,
       admission,
       total,
       deposit,
       paid,
+      charged: isPurchaser ? order.paid : '-',
       status,
       purchaser: isPurchaser ? firstPersonPurchaserField : `${people[0].first} ${people[0].last}`
     };

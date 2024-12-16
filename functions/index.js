@@ -6,7 +6,7 @@ import { appendrecordtospreadsheet } from './google-sheet-sync.js';
 import { savePendingOrder, saveFinalOrder } from './database.js';
 import { sendEmailConfirmations } from './email-confirmation.js';
 import { logToPapertrail } from './logger.js';
-import { getStripePaymentIntent, confirmStripePayment } from './stripe.js';
+import { getStripePaymentIntent } from './stripe.js';
 import { createOrUpdatePaypalOrder, capturePaypalOrder } from './paypal.js';
 
 if (!getApps().length) initializeApp();
@@ -28,7 +28,6 @@ const firebaseFunctionDispatcher = onCall({ enforceAppCheck: false }, async (req
     switch(action) {
       case 'caffeinate': return { status: 'awake' };
       case 'getStripePaymentIntent': return await getStripePaymentIntent(data);
-      case 'confirmStripePayment': return await confirmStripePayment(data);
       case 'createOrUpdatePaypalOrder': return await createOrUpdatePaypalOrder(data);
       case 'capturePaypalOrder': return await capturePaypalOrder(data);
       case 'savePendingOrder': return await savePendingOrder(data);
