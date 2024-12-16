@@ -15,7 +15,7 @@ import config from 'config';
 const { NUM_PAGES, EVENT_TITLE, TECH_CONTACT } = config;
 
 export default function Checkout() {
-  const { order, updateOrder, setCurrentPage, processing, setProcessing, processingMessage, setProcessingMessage, error, setError, paymentMethod, paymentIntentId, setPaymentIntentId } = useOrder();
+  const { order, updateOrder, setCurrentPage, processing, setProcessing, processingMessage, setProcessingMessage, error, setError, paymentMethod, paymentInfo, setPaymentInfo } = useOrder();
   const { prepOrderForFirebase, savePendingOrderToFirebase, saveFinalOrderToFirebase, sendReceipts } = useOrderOperations();
   const [paying, setPaying] = useState(null);
   const [paypalButtonsLoaded, setPaypalButtonsLoaded] = useState(false);
@@ -47,39 +47,47 @@ export default function Checkout() {
     setCurrentPage(NUM_PAGES);
   };
 
-  // prep paypal order (will also handle stripe like this)
+  // prep paypal / stripe order
 	const createOrder = useCallback(async () => {
 		if (orderCreationAttempted.current) {
 			console.log('orderCreationAttempted', orderCreationAttempted.current);
 			return;
 		}
-		console.log(paymentIntentId ? 'updating existing order' : 'creating new order');
+		console.log(paymentInfo.id ? 'updating existing order' : 'creating new order');
 		orderCreationAttempted.current = true;
 
 		try {
-			const response = await firebaseFunctionDispatcher({
-				action: 'createOrUpdatePaypalOrder',
-				email: order.people[0].email,
-				data: {
-          id: paymentIntentId,
-					description: `${EVENT_TITLE}`,
-					amount: total,
-					idempotencyKey: paymentIntentId ? updateIdempotencyKey : order.idempotencyKey
-				}
-			});
-			if (!response?.data) throw new Error('No data returned');
-			const { id, amount } = response.data;
-			console.log('id', id, 'amount', amount, 'idempotencyKey', order.idempotencyKey);
+      const response = await firebaseFunctionDispatcher({
+        action: paymentMethod === 'paypal' ? 'createOrUpdatePaypalOrder' : 'getStripePaymentIntent',
+        email: order.people[0].email,
+        data: {
+          description: `${EVENT_TITLE}`, // only used by paypal
+          name: fullName(order.people[0]), // only used by stripe
+          email: order.people[0].email, // only used by stripe
+          id: paymentInfo.id,
+          amount: total,
+          idempotencyKey: paymentInfo.id ? updateIdempotencyKey : order.idempotencyKey
+        }
+      });
+      const { id, amount, clientSecret } = response?.data || {};
+
+      if (!id || !amount) throw new Error('Missing data from payment processor');
+      if (paymentMethod === 'stripe' && !clientSecret) throw new Error('Missing clientSecret from Stripe');
       if (amount > 999 * order.people.length) throw new Error('out-of-range');
-			setPaymentIntentId(id); // save order id for use with onApprove (capture)
-			setAmount(amount); // to show user the actual total from paypal before they enter payment info
+
+      setPaymentInfo({ id, clientSecret }); // clientSecret only used by stripe
+      setAmount(amount); // to show user the actual total from paypal before they enter payment info
+
 		} catch (error) {
+      // console.log('error.code', error.code);
+      // console.log('error.message', error.message);
+      // console.log('error.details', error.details);
 			console.log('createOrder error', error);
 			orderCreationAttempted.current = false; // allow retry on fail
-			setError(`PayPal encountered an error. ${error}. Please try again or contact ${TECH_CONTACT}.`);
+			setError(`${paymentMethod} encountered an error. ${error}. Please try again or contact ${TECH_CONTACT}.`);
 		}
 
-	}, [order, total, paymentIntentId, setPaymentIntentId, setError, updateIdempotencyKey]);
+	}, [order, total, paymentMethod, paymentInfo, setPaymentInfo, setError, updateIdempotencyKey]);
 
 	useEffect(() => {
 		createOrder();
@@ -122,7 +130,7 @@ export default function Checkout() {
       <>
         <StyledPaper align='center'>
           {error && <Box sx={{ mb: 4 }}><Error /></Box>}
-          <Loading text='Retrieving total from PayPal...' />
+          <Loading text={`Retrieving total from ${paymentMethod}...`} />
         </StyledPaper>
         <NavButtons backButtonProps = {{ onClick: handleClickBackButton, text: 'Back' }} />
       </>
@@ -147,8 +155,6 @@ export default function Checkout() {
         {paymentMethod === 'stripe' &&
           <StripeCheckoutWrapper
             total={total}
-            name={fullName(order.people[0])}
-            email={order.people[0].email}
             processCheckout={processCheckout}
           />
         }
@@ -156,18 +162,13 @@ export default function Checkout() {
         {paymentMethod === 'paypal' &&
           <PaypalCheckoutButton 
             paypalButtonsLoaded={paypalButtonsLoaded} setPaypalButtonsLoaded={setPaypalButtonsLoaded}
-            total={total} 
             setPaying={setPaying} 
             processCheckout={processCheckout}
           />
         }
 
         {paymentMethod === 'check' && 
-          <>
-            <Check 
-                processCheckout={processCheckout}
-              />
-          </>
+          <Check processCheckout={processCheckout} />
         }
 
         {!paying && !processing && (paymentMethod === 'check' || paymentMethod === 'stripe' || paypalButtonsLoaded) &&

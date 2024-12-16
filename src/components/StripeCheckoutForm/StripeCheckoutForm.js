@@ -1,46 +1,13 @@
 import { useOrder } from 'components/OrderContext';
-import { firebaseFunctionDispatcher } from 'firebase.js';
 import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
 import { Box, Button } from '@mui/material';
-import { fullName } from 'utils';
 import config from 'config';
 const { TECH_CONTACT } = config;
 
-export default function StripeCheckoutForm({ processCheckout, amount }) {
-  const { order, processing, setProcessing, setError, paymentIntentId, setPaymentIntentId } = useOrder();
+export default function StripeCheckoutForm({ processCheckout }) {
+  const { processing, setProcessing, setError, paymentInfo } = useOrder();
   const stripe = useStripe();
   const elements = useElements();
-
-  const getPaymentIntent = async () => {
-    try {
-      const { data }  = await firebaseFunctionDispatcher({
-        action: 'getStripePaymentIntent',
-        data: {
-          amount,
-          name: fullName(order.people[0]),
-          email: order.people[0].email,
-          idempotencyKey: order.idempotencyKey,
-          ...(paymentIntentId && { paymentIntentId })
-        },
-        email: order.people[0].email
-      });
-
-      if (!data) {
-        throw new Error('No data returned');
-      } else if (!data.paymentIntentId || !data.clientSecret) {
-        throw new Error('Missing paymentIntentId and/or clientSecret');
-      }
-
-      setPaymentIntentId(data.paymentIntentId);
-      return data.clientSecret;
-    } catch (error) {
-      // console.log('error.code', error.code);
-      // console.log('error.message', error.message);
-      // console.log('error.details', error.details);
-      const errorCode = error.code?.includes('out-of-range') ? 'PAYMENT_AMOUNT_ERROR' : 'PAYMENT_INIT_ERROR';
-      throw new PaymentError(error.message, errorCode);
-    }
-  };
 
   const confirmPayment = async ({ clientSecret }) => {
     let result;
@@ -80,9 +47,10 @@ export default function StripeCheckoutForm({ processCheckout, amount }) {
 
   const processPayment = async () => {
     try {
-      const clientSecret = await getPaymentIntent();
-      const paymentIntent = await confirmPayment({ clientSecret });
-      return paymentIntent.id;
+      const { clientSecret } = paymentInfo;
+      if (!clientSecret) throw new Error('Missing clientSecret for payment processing');
+      const { id } = await confirmPayment({ clientSecret });
+      return id;
     } catch (error) {
       console.error(error);
       const errorMessage = mapPaymentError(error);

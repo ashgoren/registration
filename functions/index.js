@@ -6,14 +6,13 @@ import { appendrecordtospreadsheet } from './google-sheet-sync.js';
 import { savePendingOrder, saveFinalOrder } from './database.js';
 import { sendEmailConfirmations } from './email-confirmation.js';
 import { logToPapertrail } from './logger.js';
-import { getStripePaymentIntent as stripeImport } from './stripe.js';
+import { getStripePaymentIntent, confirmStripePayment } from './stripe.js';
 import { createOrUpdatePaypalOrder, capturePaypalOrder } from './paypal.js';
-const getStripePaymentIntent = process.env.STRIPE_SECRET_KEY ? stripeImport : undefined;
 
 if (!getApps().length) initializeApp();
 
 // combining into one callable function to reduce slow cold start preflight checks
-export const firebaseFunctionDispatcher = onCall({ enforceAppCheck: false }, async (request) => {
+const firebaseFunctionDispatcher = onCall({ enforceAppCheck: false }, async (request) => {
   const hasToken = !!request.app?.token;
   const { action, data, metadata } = request.data;
 
@@ -29,6 +28,7 @@ export const firebaseFunctionDispatcher = onCall({ enforceAppCheck: false }, asy
     switch(action) {
       case 'caffeinate': return { status: 'awake' };
       case 'getStripePaymentIntent': return await getStripePaymentIntent(data);
+      case 'confirmStripePayment': return await confirmStripePayment(data);
       case 'createOrUpdatePaypalOrder': return await createOrUpdatePaypalOrder(data);
       case 'capturePaypalOrder': return await capturePaypalOrder(data);
       case 'savePendingOrder': return await savePendingOrder(data);
@@ -42,4 +42,4 @@ export const firebaseFunctionDispatcher = onCall({ enforceAppCheck: false }, asy
   }
 });
 
-export { appendrecordtospreadsheet };
+export { firebaseFunctionDispatcher, appendrecordtospreadsheet };

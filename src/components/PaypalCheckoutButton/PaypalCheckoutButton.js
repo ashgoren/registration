@@ -8,8 +8,8 @@ import { Typography, Box } from "@mui/material";
 import config from 'config';
 const { SANDBOX_MODE, TECH_CONTACT } = config;
 
-const PaypalCheckoutButton = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, total, setPaying, processCheckout, setAmount }) => {
-	const { processing, setError, order, paymentIntentId } = useOrder();
+const PaypalCheckoutButton = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, setPaying, processCheckout }) => {
+	const { processing, setError, order, paymentInfo } = useOrder();
 	const { email } = order.people[0]; // for logging
 	const [, isResolved] = usePayPalScriptReducer();
 	const [captureIdempotencyKey, setCaptureIdempotencyKey] = useState(null);
@@ -29,7 +29,7 @@ const PaypalCheckoutButton = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, tot
 
 	// this actually processes the payment
 	const processPayment = async () => {
-		if (!paymentIntentId) {
+		if (!paymentInfo.id) {
 			setPaying(false);
 			setError('No payment intent ID found. Please try again or contact support.');
 			return;
@@ -39,7 +39,7 @@ const PaypalCheckoutButton = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, tot
 				action: 'capturePaypalOrder',
 				email,
 				data: {
-					orderId: paymentIntentId,
+					id: paymentInfo.id,
 					idempotencyKey: captureIdempotencyKey
 				}
 			});
@@ -84,14 +84,14 @@ const PaypalCheckoutButton = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, tot
 					<p>(If this takes more than a few seconds, please refresh the page.)</p>
 				</Box>
 			}
-			{isResolved && paymentIntentId && (
+			{isResolved && paymentInfo.id && (
 				<Box sx={ processing ? { display: 'none' } : {} }>
 					{SANDBOX_MODE && paypalButtonsLoaded && !processing &&
 						<Typography color='error' sx={{ mb: 1 }}>Test card: 4012000077777777</Typography>
 					}
 					<PayPalButtons className={processing ? 'd-none' : ''}
 						style={{ height: 48, tagline: false, shape: "pill" }}
-						createOrder={(data, actions) => Promise.resolve(paymentIntentId)}
+						createOrder={(data, actions) => Promise.resolve(paymentInfo.id)}
 						onApprove={(data, actions) => onApprove(data, actions)}
 						onClick={(data, actions) => onClick(data, actions)}
 						onError={(err) => onError(err)}

@@ -22,7 +22,7 @@ export default function StripeCheckoutWrapper({ total, processCheckout }) {
       }
 
       <Elements stripe={stripePromise} options={options}>
-        <StripeCheckoutForm processCheckout={processCheckout} amount={options.amount} />
+        <StripeCheckoutForm processCheckout={processCheckout} />
       </Elements>
     </>
   );

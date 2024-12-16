@@ -20,11 +20,11 @@ const client = new Client({
 
 const ordersController = new OrdersController(client);
 
-export const capturePaypalOrder = async ({ orderId, idempotencyKey }) => {
-  logger.info('capturePaypalOrder', { orderId });
+export const capturePaypalOrder = async ({ id, idempotencyKey }) => {
+  logger.info('capturePaypalOrder', { id });
   try {
     const { result, statusCode } = await ordersController.ordersCapture({
-      id: orderId,
+      id,
       paypalRequestId: idempotencyKey,
       prefer: 'return=minimal'
     });
