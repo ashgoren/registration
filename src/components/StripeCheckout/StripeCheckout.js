@@ -1,10 +1,26 @@
 import { useOrder } from 'components/OrderContext';
-import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
+import { Elements, useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 import { Box, Button } from '@mui/material';
+import { TestCardBox } from 'components/Layout/SharedStyles';
 import config from 'config';
-const { TECH_CONTACT } = config;
+const { SANDBOX_MODE, PAYMENT_METHODS, TECH_CONTACT } = config;
+const stripePromise = PAYMENT_METHODS.includes('stripe') ? loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY) : null;
 
-export default function StripeCheckoutForm({ processCheckout }) {
+// this wrapper is required to use the Stripe Elements component
+export default function StripeCheckout({ total, processCheckout }) {
+  const options = { mode: 'payment', currency: 'usd', amount: total * 100 };
+  return (
+    <>
+      {SANDBOX_MODE && <TestCardBox number='4242424242424242' />}
+      <Elements stripe={stripePromise} options={options}>
+        <StripeCheckoutForm processCheckout={processCheckout} />
+      </Elements>
+    </>
+  );
+}
+
+function StripeCheckoutForm({ processCheckout }) {
   const { processing, setProcessing, setError, paymentInfo } = useOrder();
   const stripe = useStripe();
   const elements = useElements();

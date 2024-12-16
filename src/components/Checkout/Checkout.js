@@ -2,13 +2,13 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { Box, Typography } from '@mui/material';
 import { useOrder, useOrderOperations } from 'components/OrderContext';
 import { scrollToTop, warnBeforeUserLeavesSite, fullName, formatCurrency } from 'utils';
-import PaypalCheckoutButton from 'components/PaypalCheckoutButton';
+import PaypalCheckout from 'components/PaypalCheckout';
 import Check from "components/Check";
 import Loading from 'components/Loading';
 import TogglePaymentMode from 'components/TogglePaymentMode';
 import NavButtons from 'components/NavButtons/index.js';
 import { StyledPaper, Title } from 'components/Layout/SharedStyles';
-import StripeCheckoutWrapper from "components/StripeCheckoutWrapper";
+import StripeCheckout from 'components/StripeCheckout';
 import { firebaseFunctionDispatcher } from 'firebase.js';
 import Error from 'components/Error';
 import config from 'config';
@@ -156,16 +156,16 @@ export default function Checkout() {
         }
 
         {paymentMethod === 'stripe' &&
-          <StripeCheckoutWrapper
+          <StripeCheckout
             total={total}
             processCheckout={processCheckout}
           />
         }
 
         {paymentMethod === 'paypal' &&
-          <PaypalCheckoutButton 
+          <PaypalCheckout
             paypalButtonsLoaded={paypalButtonsLoaded} setPaypalButtonsLoaded={setPaypalButtonsLoaded}
-            setPaying={setPaying} 
+            setPaying={setPaying}
             processCheckout={processCheckout}
           />
         }

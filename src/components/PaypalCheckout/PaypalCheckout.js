@@ -4,11 +4,12 @@ import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { firebaseFunctionDispatcher } from 'firebase.js';
 import { log } from 'logger';
 import Loading from 'components/Loading';
-import { Typography, Box } from "@mui/material";
+import { Box } from "@mui/material";
+import { TestCardBox } from 'components/Layout/SharedStyles';
 import config from 'config';
 const { SANDBOX_MODE, TECH_CONTACT } = config;
 
-const PaypalCheckoutButton = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, setPaying, processCheckout }) => {
+const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, setPaying, processCheckout }) => {
 	const { processing, setError, order, paymentInfo } = useOrder();
 	const { email } = order.people[0]; // for logging
 	const [, isResolved] = usePayPalScriptReducer();
@@ -86,7 +87,7 @@ const PaypalCheckoutButton = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, set
 			{isResolved && paymentInfo.id && (
 				<Box sx={ processing ? { display: 'none' } : {} }>
 					{SANDBOX_MODE && paypalButtonsLoaded && !processing &&
-						<Typography color='error' sx={{ mb: 1 }}>Test card: 4012000077777777</Typography>
+						<TestCardBox number='4012000077777777' />
 					}
 					<PayPalButtons className={processing ? 'd-none' : ''}
 						style={{ height: 48, tagline: false, shape: "pill" }}
@@ -102,4 +103,4 @@ const PaypalCheckoutButton = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, set
 	);
 };
 
-export default PaypalCheckoutButton;
+export default PaypalCheckout;

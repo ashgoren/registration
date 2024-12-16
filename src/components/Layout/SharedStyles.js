@@ -91,3 +91,9 @@ export const Label  = ({ children, name, required=false, sx={} }) => {
     </Box>
   );
 }
+
+export const TestCardBox = ({ number }) => (
+  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '3rem', my: 2, backgroundColor: 'var(--color-error)' }}>
+    Testing: {number} / any future expiration / any cvc / any zip
+  </Box>
+);
