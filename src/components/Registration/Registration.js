@@ -39,6 +39,7 @@ const RealRegistration = () => {
   const { order, currentPage, error } = useOrder();
   const CONFIRMATION_TITLE = order.paymentId === 'check' ? CONFIRMATION_CHECK_TITLE : CONFIRMATION_PAYPAL_TITLE;
 
+  console.log('currentPage', currentPage);
   const content = (
     <>
       {error && <Error />}

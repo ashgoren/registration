@@ -16,7 +16,7 @@ const { NUM_PAGES, EVENT_TITLE, TECH_CONTACT } = config;
 
 export default function Checkout() {
   const { order, updateOrder, setCurrentPage, processing, setProcessing, processingMessage, setProcessingMessage, error, setError, paymentMethod, paymentInfo, setPaymentInfo } = useOrder();
-  const { prepOrderForFirebase, savePendingOrderToFirebase, saveFinalOrderToFirebase, sendReceipts } = useOrderOperations();
+  const { savePendingOrderToFirebase, saveFinalOrderToFirebase, sendReceipts } = useOrderOperations();
   const [paying, setPaying] = useState(null);
   const [paypalButtonsLoaded, setPaypalButtonsLoaded] = useState(false);
   const [amount, setAmount] = useState(null);
@@ -98,26 +98,29 @@ export default function Checkout() {
     setError(null);
     setProcessing(true);
 
-    const preppedOrder = prepOrderForFirebase();
-
-    const pendingSuccess = await savePendingOrderToFirebase(preppedOrder);
+    // move this part to backend to happen at same time we create initial payment intent?
+  
+    const pendingSuccess = await savePendingOrderToFirebase(order);
     if (!pendingSuccess) {
       setProcessing(false);
       setPaying(false);
       return;
     }
 
+
+
     setProcessingMessage('Processing payment...');
     const { id, amount } = await paymentProcessorFn(paymentParams);
     if (!id) return;
-    updateOrder({ paymentId: id, paid: amount });
-    const finalOrder = {
-      ...preppedOrder,
-      paymentId: id,
-      paid: amount
-    };
+  
+  
+    // and move this part to backend to happen at same time we confirm payment?
+
+    updateOrder({ paymentId: id, charged: amount });
+    const finalOrder = { ...order, paymentId: id, charged: amount };
 
     const success = await saveFinalOrderToFirebase(finalOrder);
+  
     if (success) {
       sendReceipts(finalOrder); // fire-and-forget
       setPaying(false);

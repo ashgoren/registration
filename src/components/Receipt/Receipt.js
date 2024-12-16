@@ -39,7 +39,7 @@ export default function Receipt({ order, person, isPurchaser }) {
   const purchaserElectronicPaymentContent = (
     <Typography component='p' sx={{ mt: 2 }}>
       Thank you for registering for the {EVENT_TITLE}!<br />
-      Your payment for ${order.paid} has been successfully processed.<br />
+      Your payment for ${order.charged} has been successfully processed.<br />
       {isDeposit &&
         <strong>
           Your balance is due by {PAYMENT_DUE_DATE}.<br />

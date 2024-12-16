@@ -46,7 +46,6 @@ const mapOrderToSpreadsheetLines = (order) => {
   const { people, ...orderFields } = updatedOrder
   let isPurchaser = true;
   for (const person of people) {
-    const address = person.apartment ? `${person.address} ${person.apartment}` : person.address;
     let admission, total, deposit;
     const updatedPerson = person.share ? joinArrays(person) : { ...joinArrays(person), share: 'do not share' };
     if (order.deposit) {
@@ -56,12 +55,12 @@ const mapOrderToSpreadsheetLines = (order) => {
       total = isPurchaser ? admission + order.donation : admission;
     }
     let paid, status;
-    if (order.paymentMethod === 'waitlist') {
+    if (order.paymentId === 'waitlist') {
       admission = 0;
       total = 0;
       paid = 0;
       status = 'waitlist';
-    } else if (order.paymentMethod === 'check') {
+    } else if (order.paymentId === 'check') {
       paid = 0;
       status = 'awaiting check';
     } else if (deposit > 0) {
@@ -76,12 +75,13 @@ const mapOrderToSpreadsheetLines = (order) => {
       ...updatedPerson,
       key: isPurchaser ? order.key : '-',
       createdAt,
-      address,
+      address: updateAddress(person),
+      photo: updatePhoto(person),
       admission,
       total,
       deposit,
       paid,
-      charged: isPurchaser ? order.paid : '-',
+      charged: isPurchaser ? order.charged : '-',
       status,
       purchaser: isPurchaser ? firstPersonPurchaserField : `${people[0].first} ${people[0].last}`
     };
@@ -143,3 +143,14 @@ async function googleSheetsOperation({ operation, params }) {
     throw err;
   }
 }
+
+const updateAddress = (person) => {
+  const { address, apartment } = person;
+  if (!apartment) return address;
+  return address + ' ' + (/^\d/.test(apartment) ? `#${apartment}` : apartment);
+};
+
+const updatePhoto = (person) => {
+  const { photo, photoComments } = person;
+  return photo === 'Other' ? photoComments : photo;
+};

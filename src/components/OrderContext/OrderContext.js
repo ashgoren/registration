@@ -5,7 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import Receipt from 'components/Receipt';
 import { cache, cached } from 'utils';
 import config from 'config';
-const { getOrderDefaults, PAYMENT_METHODS, TECH_CONTACT } = config;
+const { getOrderDefaults, PAYMENT_METHODS, TECH_CONTACT, WAITLIST_MODE } = config;
 
 const OrderContext = createContext();
 
@@ -27,9 +27,11 @@ export const OrderProvider = ({ children }) => {
   const [currentPage, setCurrentPage] = useState(cached('currentPage') || 1);
   const [processing, setProcessing] = useState(null);
   const [processingMessage, setProcessingMessage] = useState(null);
-  const [paymentMethod, setPaymentMethod] = useState(PAYMENT_METHODS[0]);
+  const [paymentMethod, setPaymentMethod] = useState(WAITLIST_MODE ? 'waitlist' : PAYMENT_METHODS[0]);
   const [error, setError] = useState(null);
   const [warmedUp, setWarmedUp] = useState(false);
+
+  const updateOrder = useCallback((updates) => dispatch({ type: 'UPDATE_ORDER', payload: updates }), []);
 
   useEffect(() => { cache('order', order) }, [order]);
   useEffect(() => { cache('paymentInfo', paymentInfo) }, [paymentInfo]);
@@ -40,12 +42,10 @@ export const OrderProvider = ({ children }) => {
     if (order.status === 'checkout') setCurrentPage('checkout');
   }, [order.status]);
 
-  const updateOrder = useCallback((updates) => dispatch({ type: 'UPDATE_ORDER', payload: updates }), []);
-
   const startOver = () => {
     dispatch({ type: 'RESET_ORDER' });
     setPaymentInfo({ id: null, clientSecret: null });
-    setPaymentMethod(PAYMENT_METHODS[0]);
+    setPaymentMethod(WAITLIST_MODE ? 'waitlist' : PAYMENT_METHODS[0]);
     setProcessingMessage(null);
     setCurrentPage(1);
   }
@@ -67,22 +67,12 @@ export const OrderProvider = ({ children }) => {
 export const useOrder = () => useContext(OrderContext);
 
 export const useOrderOperations = () => {
-  const { order, updateOrder, paymentMethod, setError, setProcessingMessage } = useOrder();
+  const { order, updateOrder, setError, setProcessingMessage } = useOrder();
   const { email } = order.people[0]; // for logging
-
-  const prepOrderForFirebase = () => {
-    const updates = {
-      people: order.people.map(updateApartment).map(updatePhoto),
-      paymentMethod,
-      paymentId: 'PENDING',
-      status: 'pendingInitialSave'
-    };
-    updateOrder(updates);
-    return { ...order, ...updates };
-  };
 
   const savePendingOrderToFirebase = async (order) => {
     setProcessingMessage('Saving registration...');
+    updateOrder({ status: 'pending', paymentId: 'PENDING' });
     log('Saving pending order to firebase', { email, order });
     try {
       await firebaseFunctionDispatcher({
@@ -101,16 +91,17 @@ export const useOrderOperations = () => {
 
   const saveFinalOrderToFirebase = async (order) => {
     log('Saving final order to firebase', { email });
-    setProcessingMessage(order.paymentId === 'check' || order.paymentMethod === 'waitlist'
+    setProcessingMessage(order.paymentId === 'check' || order.paymentId === 'waitlist'
       ? 'Updating registration...'
       : 'Payment successful. Updating registration...'
     );
     try {
       await firebaseFunctionDispatcher({
         action: 'saveFinalOrder',
-        data: { ...order, status: 'final' },
+        data: order,
         email
       });
+      updateOrder({ status: 'final' });
       log('Final order saved', { email });
       setTimeout(() => logDivider(), 1000);
       return true;
@@ -132,16 +123,8 @@ export const useOrderOperations = () => {
     });
   };
 
-  return { prepOrderForFirebase, savePendingOrderToFirebase, saveFinalOrderToFirebase, sendReceipts };
+  return { savePendingOrderToFirebase, saveFinalOrderToFirebase, sendReceipts };
 };
-
-function updateApartment(person) {
-  return (person.apartment && /^\d/.test(person.apartment)) ? { ...person, apartment: `#${person.apartment}` } : person;
-}
-
-function updatePhoto(person) {
-  return person.photo === 'Other' ? { ...person, photo: person.photoComments } : person;
-}
 
 function generateReceipts({ order }) {
   return order.people.map((person, i) => {

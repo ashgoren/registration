@@ -4,27 +4,43 @@ import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { validFields } from './fields.js';
 const firestore = getFirestore();
 
+const pendingCollection = firestore.collection('pendingOrders');
+const ordersCollection = firestore.collection('orders');
+
 export const savePendingOrder = async (order) => {
   logger.info(`SAVING PENDING ORDER: ${order.people[0].email}`, order);
+
   const filteredOrder = filterObject(order, validFields);
-  const orderWithTimestamp = { ...filteredOrder, createdAt: FieldValue.serverTimestamp() };
-  const pendingCollection = firestore.collection('pendingOrders');
-  const existingOrder = await pendingCollection.where('idempotencyKey', '==', order.idempotencyKey).get();
-  if (existingOrder.empty) {
-    await pendingCollection.add(orderWithTimestamp);
+  const preppedOrder = {
+    ...filteredOrder,
+    createdAt: FieldValue.serverTimestamp(),
+    paymentId: 'PENDING',
+    status: 'pending'
+  };
+
+  const existingOrders = await pendingCollection.where('idempotencyKey', '==', order.idempotencyKey).get();
+  if (existingOrders.empty) {
+    await pendingCollection.add(preppedOrder);
   } else {
-    await pendingCollection.doc(existingOrder.docs[0].id).set(orderWithTimestamp);
+    await pendingCollection.doc(existingOrders.docs[0].id).set(preppedOrder);
   }
+
   logger.info(`PENDING ORDER SAVED: ${order.people[0].email}`);
   return { status: 'success' };
 };
 
 export const saveFinalOrder = async (order) => {
   logger.info(`SAVING FINAL ORDER: ${order.people[0].email}`, order);
+
   const filteredOrder = filterObject(order, validFields);
-  const orderWithTimestamp = { ...filteredOrder, createdAt: FieldValue.serverTimestamp() };
-  const ordersCollection = firestore.collection('orders');
-  await ordersCollection.add(orderWithTimestamp);
+  const preppedOrder = {
+    ...filteredOrder,
+    createdAt: FieldValue.serverTimestamp(),
+    status: 'final'
+  };
+
+  await ordersCollection.add(preppedOrder);
+
   logger.info(`FINAL ORDER SAVED: ${order.people[0].email}`);
   return { status: 'success' };
 };

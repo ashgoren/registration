@@ -48,7 +48,7 @@ export default function OrderSummary({ order }) {
 
             {isDeposit &&
               <>
-                Deposit {order.paid ? 'paid' : 'due now'}: ${order.deposit}<br />
+                Deposit {order.charged ? 'paid' : 'due now'}: ${order.deposit}<br />
               </>
             }
 

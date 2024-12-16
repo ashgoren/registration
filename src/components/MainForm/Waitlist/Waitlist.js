@@ -11,7 +11,7 @@ const { SANDBOX_MODE } = config;
 
 export default function Waitlist({ handleClickBackButton }) {
   const { order, error, setError, processing, setProcessing, processingMessage, setProcessingMessage } = useOrder();
-  const { prepOrderForFirebase, savePendingOrderToFirebase, saveFinalOrderToFirebase } = useOrderOperations();
+  const { savePendingOrderToFirebase, saveFinalOrderToFirebase } = useOrderOperations();
   const [ready, setReady] = useState(SANDBOX_MODE);
   const [confirmed, setConfirmed] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -25,15 +25,13 @@ export default function Waitlist({ handleClickBackButton }) {
     setProcessing(true);
     setProcessingMessage('Adding to waitlist...');
 
-    const preppedOrder = prepOrderForFirebase();
-
-    const pendingSuccess = await savePendingOrderToFirebase({...preppedOrder, paymentMethod: 'waitlist' });
+    const pendingSuccess = await savePendingOrderToFirebase(order);
     if (!pendingSuccess) {
       setProcessing(false);
       return;
     }
 
-    const success = await saveFinalOrderToFirebase({ ...preppedOrder, paymentMethod: 'waitlist', paymentId: '' });
+    const success = await saveFinalOrderToFirebase({ ...order, paymentId: 'waitlist' });
     if (success) {
       setProcessing(false);
       setSubmitted(true);

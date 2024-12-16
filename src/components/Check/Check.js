@@ -14,7 +14,7 @@ export default function Check({ processCheckout }) {
   }, 5000);
 
   const processPayment = () => {
-    return 'check'; // paymentId
+    return { id: 'check', amount: 0 };
   };
 
   const handleRegister = async () => {
