@@ -54,5 +54,3 @@ export const getFirstInvalidFieldName = (errors) => {
   }
   return null;
 };
-
-export const fullName = (person) => `${person.first} ${person.last}`;

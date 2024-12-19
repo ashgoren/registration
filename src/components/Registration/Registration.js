@@ -11,10 +11,12 @@ import OrderSummary from "components/OrderSummary";
 import { Typography, Button } from "@mui/material";
 import { StyledPaper, Paragraph } from 'components/Layout/SharedStyles';
 import config from 'config';
+import Loading from "components/Loading";
 const { PAYMENT_METHODS, PAYPAL_OPTIONS, TITLE, CONFIRMATION_CHECK_TITLE, CONFIRMATION_PAYPAL_TITLE, SANDBOX_MODE, SHOW_PRE_REGISTRATION } = config;
 
 export default function Registration() {
   const [registering, setRegistering] = useState(false);
+
   return (
     SHOW_PRE_REGISTRATION || (SANDBOX_MODE && window.location.hostname !== 'localhost') ? (
       registering ? <RealRegistration /> : <PreRegistration setRegistering={setRegistering} />
@@ -36,10 +38,9 @@ const PreRegistration = ({ setRegistering }) => {
 }
 
 const RealRegistration = () => {
-  const { order, currentPage, error } = useOrder();
-  const CONFIRMATION_TITLE = order.paymentId === 'check' ? CONFIRMATION_CHECK_TITLE : CONFIRMATION_PAYPAL_TITLE;
+  const { order, paymentMethod, currentPage, error } = useOrder();
+  const CONFIRMATION_TITLE = paymentMethod === 'check' ? CONFIRMATION_CHECK_TITLE : CONFIRMATION_PAYPAL_TITLE;
 
-  console.log('currentPage', currentPage);
   const content = (
     <>
       {error && <Error />}
@@ -50,7 +51,10 @@ const RealRegistration = () => {
       </Header>
 
       {isFinite(currentPage) && <MainForm />}
-      {currentPage === 'checkout' && <Checkout />}
+
+      {currentPage === 'checkout' && order.total && <Checkout />}
+      {currentPage === 'checkout' && !order.total && <Loading />}
+
       {currentPage === 'confirmation' && <Confirmation />}
     </>
   )

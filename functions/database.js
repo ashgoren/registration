@@ -1,7 +1,7 @@
-// errors are handled in the calling function
 import { logger } from 'firebase-functions/v2';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { validFields } from './fields.js';
+import { createError, ErrorType } from './errorHandler.js';
 const firestore = getFirestore();
 
 const pendingCollection = firestore.collection('pendingOrders');
@@ -18,15 +18,17 @@ export const savePendingOrder = async (order) => {
     status: 'pending'
   };
 
-  const existingOrders = await pendingCollection.where('idempotencyKey', '==', order.idempotencyKey).get();
-  if (existingOrders.empty) {
-    await pendingCollection.add(preppedOrder);
-  } else {
-    await pendingCollection.doc(existingOrders.docs[0].id).set(preppedOrder);
+  try {
+    const existingOrders = await pendingCollection.where('idempotencyKey', '==', order.idempotencyKey).get();
+    if (existingOrders.empty) {
+      await pendingCollection.add(preppedOrder);
+    } else {
+      await pendingCollection.doc(existingOrders.docs[0].id).set(preppedOrder);
+    }
+    logger.info(`PENDING ORDER SAVED: ${order.people[0].email}`);
+  } catch (err) {
+    throw createError(ErrorType.DATABASE_SAVE, 'Error saving pending order', { order, error: err });
   }
-
-  logger.info(`PENDING ORDER SAVED: ${order.people[0].email}`);
-  return { status: 'success' };
 };
 
 export const saveFinalOrder = async (order) => {
@@ -39,10 +41,12 @@ export const saveFinalOrder = async (order) => {
     status: 'final'
   };
 
-  await ordersCollection.add(preppedOrder);
-
-  logger.info(`FINAL ORDER SAVED: ${order.people[0].email}`);
-  return { status: 'success' };
+  try {
+    await ordersCollection.add(preppedOrder);
+    logger.info(`FINAL ORDER SAVED: ${order.people[0].email}`);
+  } catch (err) {
+    throw createError(ErrorType.DATABASE_SAVE, 'Error saving final order', { order, error: err });
+  }
 };
 
 // helper function to filter out any fields that aren't in the validFields array

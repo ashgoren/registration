@@ -18,24 +18,19 @@ export default function MainForm() {
     }
   }, []);
 
-  // this is for the final form submit (after last page before checkout)
-  // for now it's really just validating the PaymentInfo page fields
-  // note: it doesn't get here until all validations are passing
+  // this is triggered after People submitted and after PaymentInfo submitted
+  // for now it's really just validating the PaymentInfo page fields (?)
+  // note: it doesn't get here until all validations are passing (?)
   function submitForm(values, actions) {
     const submittedOrder = Object.assign({}, values);
     const sanitizedOrder = sanitizeObject(submittedOrder);
-    const updatedOrder = {
+    updateOrder({
       ...sanitizedOrder,
       deposit: sanitizedOrder.deposit ? sanitizedOrder.people.length * DEPOSIT_COST : 0,
       total: order.total,
       fees: order.fees
-    };
-    if (currentPage === NUM_PAGES) {
-      updateOrder({ ...updatedOrder, status: 'checkout' });
-    } else {
-      updateOrder(updatedOrder);
-      setCurrentPage(currentPage + 1);
-    }
+    });
+    setCurrentPage(currentPage === NUM_PAGES ? 'checkout' : currentPage + 1);
   }
 
   return (

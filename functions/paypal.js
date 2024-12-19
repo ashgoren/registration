@@ -1,8 +1,7 @@
 import { logger } from 'firebase-functions/v2';
 import { ApiError, CheckoutPaymentIntent, Client, Environment, LogLevel, OrdersController, ShippingPreference, PatchOp } from "@paypal/paypal-server-sdk";
-import { ErrorType } from './constants.js';
 import { formatCurrency } from './helpers.js';
-import { createError } from './errorHandler.js';
+import { createError, ErrorType } from './errorHandler.js';
 
 const client = new Client({
   clientCredentialsAuthCredentials: {
@@ -35,8 +34,8 @@ export const capturePaypalOrder = async ({ id, idempotencyKey }) => {
   }
 };
 
-export const createOrUpdatePaypalOrder = async ({ id, description, amount, idempotencyKey }) => {
-  logger.info('createOrUpdatePaypalOrder', { idempotencyKey });
+export const createOrUpdatePaypalOrder = async ({ id, email, description, amount, idempotencyKey }) => {
+  logger.info('createOrUpdatePaypalOrder', { email, idempotencyKey });
 
   const result = id
     ? await updateOrder({ id, amount, idempotencyKey })
@@ -76,6 +75,7 @@ const createOrder = async ({ description, amount, idempotencyKey }) => {
     });
 
     if (!result) throw new Error('No order created');
+    logger.info('Initialized Paypal order', { id: result.id });
     return result;
   } catch (error) {
     handlePaypalError(error, 'createOrder');
@@ -103,6 +103,7 @@ const updateOrder = async ({ id, amount, idempotencyKey }) => {
     });
 
     if (statusCode < 200 || statusCode >= 300) throw new Error(`Failed to update order: ${statusCode}`);
+    logger.info('Updated Paypal order', { id });
     return getOrder(id);
   } catch (error) {
     handlePaypalError(error, 'updateOrder');

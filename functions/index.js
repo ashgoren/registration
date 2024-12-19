@@ -8,6 +8,8 @@ import { sendEmailConfirmations } from './email-confirmation.js';
 import { logToPapertrail } from './logger.js';
 import { getStripePaymentIntent } from './stripe.js';
 import { createOrUpdatePaypalOrder, capturePaypalOrder } from './paypal.js';
+import { initializeOrder } from './initializeOrder.js';
+import { log } from 'firebase-functions/logger';
 
 if (!getApps().length) initializeApp();
 
@@ -16,17 +18,13 @@ const firebaseFunctionDispatcher = onCall({ enforceAppCheck: false }, async (req
   const hasToken = !!request.app?.token;
   const { action, data, metadata } = request.data;
 
-  if (action !== 'caffeinate' && action !== 'logToPapertrail') {
-    const email = metadata?.email;
-    logger[hasToken ? 'info' : 'warn'](
-      'AppCheck ' + (hasToken ? 'success' : 'fail') + (email ? `: ${email}` : ''),
-      { ...metadata, action }
-    );
-  };
+  logTokenStatus(hasToken, action, metadata);
 
   try {
     switch(action) {
       case 'caffeinate': return { status: 'awake' };
+      case 'initializeOrder':
+        return await initializeOrder(data, savePendingOrder, getStripePaymentIntent, createOrUpdatePaypalOrder);
       case 'getStripePaymentIntent': return await getStripePaymentIntent(data);
       case 'createOrUpdatePaypalOrder': return await createOrUpdatePaypalOrder(data);
       case 'capturePaypalOrder': return await capturePaypalOrder(data);
@@ -40,5 +38,15 @@ const firebaseFunctionDispatcher = onCall({ enforceAppCheck: false }, async (req
     handleFunctionError(err, action, data);
   }
 });
+
+const logTokenStatus = (hasToken, action, metadata) => {
+  if (action !== 'caffeinate' && action !== 'logToPapertrail') {
+    const email = metadata?.email;
+    logger[hasToken ? 'info' : 'warn'](
+      'AppCheck ' + (hasToken ? 'success' : 'fail') + (email ? `: ${email}` : ''),
+      { ...metadata, action }
+    );
+  };
+};
 
 export { firebaseFunctionDispatcher, appendrecordtospreadsheet };

@@ -7,8 +7,8 @@ import config from 'config';
 const { CHECK_TO, CHECK_ADDRESS, EVENT_TITLE, PAYMENT_DUE_DATE, DIRECT_PAYMENT_URL } = config;
 
 // relies on passing order as prop to ensure is updated
-export default function Receipt({ order, person, isPurchaser }) {
-  const isCheckPayment = order.paymentId === 'check';
+export default function Receipt({ order, paymentMethod, person, isPurchaser }) {
+  const isCheckPayment = paymentMethod === 'check';
   const isElectronicPayment = !isCheckPayment;
   const isDeposit = order.deposit > 0;
   const isFullPayment = !isDeposit;

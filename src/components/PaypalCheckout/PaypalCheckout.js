@@ -10,7 +10,7 @@ import config from 'config';
 const { SANDBOX_MODE, TECH_CONTACT } = config;
 
 const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, setPaying, processCheckout }) => {
-	const { processing, setError, order, paymentInfo } = useOrder();
+	const { processing, setError, order, electronicPaymentDetails } = useOrder();
 	const { email } = order.people[0]; // for logging
 	const [, isResolved] = usePayPalScriptReducer();
 	const [captureIdempotencyKey, setCaptureIdempotencyKey] = useState(null);
@@ -30,7 +30,7 @@ const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, setPaying
 
 	// this actually processes the payment
 	const processPayment = async () => {
-		if (!paymentInfo.id) {
+		if (!electronicPaymentDetails.id) {
 			setPaying(false);
 			setError('No payment intent ID found. Please try again or contact support.');
 			return;
@@ -40,7 +40,7 @@ const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, setPaying
 				action: 'capturePaypalOrder',
 				email,
 				data: {
-					id: paymentInfo.id,
+					id: electronicPaymentDetails.id,
 					idempotencyKey: captureIdempotencyKey
 				}
 			});
@@ -84,14 +84,14 @@ const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, setPaying
 					<p>(If this takes more than a few seconds, please refresh the page.)</p>
 				</Box>
 			}
-			{isResolved && paymentInfo.id && (
+			{isResolved && electronicPaymentDetails.id && (
 				<Box sx={ processing ? { display: 'none' } : {} }>
 					{SANDBOX_MODE && paypalButtonsLoaded && !processing &&
 						<TestCardBox number='4012000077777777' />
 					}
 					<PayPalButtons className={processing ? 'd-none' : ''}
 						style={{ height: 48, tagline: false, shape: "pill" }}
-						createOrder={(data, actions) => Promise.resolve(paymentInfo.id)}
+						createOrder={(data, actions) => Promise.resolve(electronicPaymentDetails.id)}
 						onApprove={(data, actions) => onApprove(data, actions)}
 						onClick={(data, actions) => onClick(data, actions)}
 						onError={(err) => onError(err)}

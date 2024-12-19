@@ -1,11 +1,11 @@
-import { createContext, useState, useReducer, useContext, useEffect, useCallback } from 'react';
+import { createContext, useState, useReducer, useContext, useEffect, useCallback, useRef } from 'react';
 import { log, logError, logDivider } from 'logger';
 import { firebaseFunctionDispatcher } from 'firebase.js';
 import { renderToStaticMarkup } from 'react-dom/server';
 import Receipt from 'components/Receipt';
 import { cache, cached } from 'utils';
 import config from 'config';
-const { getOrderDefaults, PAYMENT_METHODS, TECH_CONTACT, WAITLIST_MODE } = config;
+const { getOrderDefaults, PAYMENT_METHODS, WAITLIST_MODE, EVENT_TITLE } = config;
 
 const OrderContext = createContext();
 
@@ -23,7 +23,8 @@ function orderReducer(state, action) {
 export const OrderProvider = ({ children }) => {
   const initialOrderState = cached('order') || getOrderDefaults();
   const [order, dispatch] = useReducer(orderReducer, initialOrderState);
-  const [paymentInfo, setPaymentInfo] = useState(cached('paymentInfo') || { id: null, clientSecret: null });
+  const [amountToCharge, setAmountToCharge] = useState(null);
+  const [electronicPaymentDetails, setElectronicPaymentDetails] = useState(cached('electronicPaymentDetails') || { id: null, clientSecret: null });
   const [currentPage, setCurrentPage] = useState(cached('currentPage') || 1);
   const [processing, setProcessing] = useState(null);
   const [processingMessage, setProcessingMessage] = useState(null);
@@ -34,17 +35,14 @@ export const OrderProvider = ({ children }) => {
   const updateOrder = useCallback((updates) => dispatch({ type: 'UPDATE_ORDER', payload: updates }), []);
 
   useEffect(() => { cache('order', order) }, [order]);
-  useEffect(() => { cache('paymentInfo', paymentInfo) }, [paymentInfo]);
+  useEffect(() => { cache('amountToCharge', amountToCharge) }, [amountToCharge]);
+  useEffect(() => { cache('electronicPaymentDetails', electronicPaymentDetails) }, [electronicPaymentDetails]);
   useEffect(() => { cache('currentPage', currentPage) }, [currentPage]);
-
-  // wait for order to be updated before moving on to checkout page
-  useEffect(() => {
-    if (order.status === 'checkout') setCurrentPage('checkout');
-  }, [order.status]);
 
   const startOver = () => {
     dispatch({ type: 'RESET_ORDER' });
-    setPaymentInfo({ id: null, clientSecret: null });
+    setAmountToCharge(null);
+    setElectronicPaymentDetails({ id: null, clientSecret: null });
     setPaymentMethod(WAITLIST_MODE ? 'waitlist' : PAYMENT_METHODS[0]);
     setProcessingMessage(null);
     setCurrentPage(1);
@@ -53,13 +51,14 @@ export const OrderProvider = ({ children }) => {
   const value = {
     startOver,
     order, updateOrder,
-    paymentInfo, setPaymentInfo,
     currentPage, setCurrentPage,
     processing, setProcessing,
     processingMessage, setProcessingMessage,
     error, setError,
     paymentMethod, setPaymentMethod,
-    warmedUp, setWarmedUp
+    warmedUp, setWarmedUp,
+    amountToCharge, setAmountToCharge,
+    electronicPaymentDetails, setElectronicPaymentDetails
   };
   return <OrderContext.Provider value={value}>{children}</OrderContext.Provider>;
 };
@@ -67,31 +66,48 @@ export const OrderProvider = ({ children }) => {
 export const useOrder = () => useContext(OrderContext);
 
 export const useOrderOperations = () => {
-  const { order, updateOrder, setError, setProcessingMessage } = useOrder();
+  const { order, setProcessingMessage, paymentMethod, electronicPaymentDetails, setElectronicPaymentDetails, setAmountToCharge } = useOrder();
   const { email } = order.people[0]; // for logging
+  const idempotencyKeyRef = useRef(crypto.randomUUID());
 
-  const savePendingOrderToFirebase = async (order) => {
-    setProcessingMessage('Saving registration...');
-    updateOrder({ status: 'pending', paymentId: 'PENDING' });
-    log('Saving pending order to firebase', { email, order });
+  const savePendingOrderAndInitializePayment = useCallback(async () => {
+    log('Saving pending order and initializing payment', { email, order });
+
     try {
-      await firebaseFunctionDispatcher({
-        action: 'savePendingOrder',
-        data: order,
-        email
+      const data = await initializeOrderWithPayment({
+        order,
+        paymentId: electronicPaymentDetails.id, // pass existing electronic payment intent id; null for new orders
+        paymentMethod,
+        idempotencyKey: idempotencyKeyRef.current
       });
-      log('Pending order saved', { email });
-      return true;
+
+      validatePaymentResponse({ data, paymentMethod, peopleCount: order.people.length });
+
+      const { amount, id, clientSecret } = data;
+      if (isElectronicPayment(paymentMethod)) {
+        setElectronicPaymentDetails({ id, clientSecret }); // save for payment updates and/or capture
+        setAmountToCharge(amount); // display total from payment intent
+        log('Pending order saved and payment initialized', { email });
+      } else {
+        setAmountToCharge(amount);
+        log('Pending order saved; no payment processing', { email });
+      }
+
+      idempotencyKeyRef.current = crypto.randomUUID(); // reset after successful order creation
     } catch (error) {
-      logError('Error saving pending order to firebase', { email, error, userAgent: navigator.userAgent });
-      setError(`We're sorry, but we experienced an issue saving your registration. You have not been charged. If you use the uBlock origin extension, try disabling it for this page. You can also try reloading the page. If that doesn't work, please close this tab and start over. If this error persists, please contact ${TECH_CONTACT}.`);
-      return false;
+      logError('Error saving pending order and initializing payment', {
+        email,
+        error,
+        userAgent: navigator.userAgent
+      });
+      idempotencyKeyRef.current = crypto.randomUUID(); // reset after failure as well, since user may change order
+      throw error;
     }
-  };
+  }, [order, email, paymentMethod, electronicPaymentDetails.id, setElectronicPaymentDetails, setAmountToCharge]);
 
   const saveFinalOrderToFirebase = async (order) => {
     log('Saving final order to firebase', { email });
-    setProcessingMessage(order.paymentId === 'check' || order.paymentId === 'waitlist'
+    setProcessingMessage(paymentMethod === 'check' || paymentMethod === 'waitlist'
       ? 'Updating registration...'
       : 'Payment successful. Updating registration...'
     );
@@ -101,21 +117,20 @@ export const useOrderOperations = () => {
         data: order,
         email
       });
-      updateOrder({ status: 'final' });
       log('Final order saved', { email });
       setTimeout(() => logDivider(), 1000);
-      return true;
     } catch (error) {
       logError('Error saving final order to firebase', { email, error, order });
-      setError(`Your payment was processed successfully. However, we encountered an error updating your registration. Please contact ${TECH_CONTACT}.`);
-      return false;
+      throw error;
+      // setError(`Your payment was processed successfully. However, we encountered an error updating your registration. Please contact ${TECH_CONTACT}.`);
+      // return false;
     }
   };
 
   // fire-and-forget
   const sendReceipts = (order) => {
     setProcessingMessage('Sending email confirmation...');
-    const emailReceiptPairs = generateReceipts({ order });
+    const emailReceiptPairs = generateReceipts({ order, paymentMethod });
     firebaseFunctionDispatcher({
       action: 'sendEmailConfirmations',
       data: emailReceiptPairs,
@@ -123,15 +138,81 @@ export const useOrderOperations = () => {
     });
   };
 
-  return { savePendingOrderToFirebase, saveFinalOrderToFirebase, sendReceipts };
+  return { savePendingOrderAndInitializePayment, saveFinalOrderToFirebase, sendReceipts };
 };
 
-function generateReceipts({ order }) {
+function generateReceipts({ order, paymentMethod }) {
   return order.people.map((person, i) => {
-    const receipt = <Receipt order={order} person={person} isPurchaser={i === 0} />;
+    const receipt = <Receipt order={order} paymentMethod={paymentMethod} person={person} isPurchaser={i === 0} />;
     return {
       email: person.email,
       receipt: renderToStaticMarkup(receipt)
     };
   });
 }
+
+
+// ===== Helpers =====
+
+/**
+ * @param {Object} order - Order object
+ * @param {string} paymentId - Payment ID from payment processor previously stored in state, or null for new orders
+ * @param {string} paymentMethod - Payment method (stripe/paypal/check/waitlist)
+ * @param {string} idempotencyKey - Unique key to prevent duplicate orders
+ * @returns {Object} Payment details object containing:
+ *  - {number} amount: Total returned from payment processor to show user before they click pay
+ *  - {string|null} id: Payment intent ID (for electronic payments)
+ *  - {string|null} clientSecret: Required for Stripe front-end payment capture
+ */
+const initializeOrderWithPayment = async ({ order, paymentId, paymentMethod, idempotencyKey }) => {
+  const { data } = await firebaseFunctionDispatcher({
+    action: 'initializeOrder',
+    email: order.people[0].email,
+    data: {
+      order,
+      paymentId,
+      paymentMethod,
+      idempotencyKey,
+      description: EVENT_TITLE
+    }
+  });
+  return data;
+};
+
+const PAYMENT_VALIDATION_RULES = {
+  stripe: {
+    requiredFields: ['amount', 'id', 'clientSecret'],
+    validateAmount: true
+  },
+  paypal: {
+    requiredFields: ['amount', 'id'],
+    validateAmount: true
+  },
+  check: {
+    requiredFields: ['amount'],
+    validateAmount: false
+  },
+  waitlist: {
+    requiredFields: [],
+    validateAmount: false
+  }
+};
+
+/**
+ * @param {Object} data - Response data from payment processor
+ * @param {string} paymentMethod - Payment method (stripe/paypal/check/waitlist)
+ * @param {number} peopleCount - Number of people in the order
+ * @throws {Error} - If required fields are missing or amount is out of range
+ * @returns {void}
+ */
+const validatePaymentResponse = ({ data, paymentMethod, peopleCount }) => {
+  const { requiredFields, validateAmount } = PAYMENT_VALIDATION_RULES[paymentMethod];
+  for (const field of requiredFields) {
+    if (!data[field]) throw new Error(`Missing ${field} from payment processor`);
+  }
+  if (validateAmount && data.amount > 999 * peopleCount) {
+    throw new Error('out-of-range');
+  }
+};
+
+const isElectronicPayment = (paymentMethod) => ['stripe', 'paypal'].includes(paymentMethod);

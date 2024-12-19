@@ -7,7 +7,7 @@ import config from 'config';
 const { EMAIL_CONTACT, EVENT_TITLE, MORE_INFO_URL } = config;
 
 export default function Confirmation() {
-  const { order, startOver } = useOrder();
+  const { order, startOver, paymentMethod } = useOrder();
 
   return (
     <>
@@ -22,7 +22,7 @@ export default function Confirmation() {
 
         <SectionDivider />
 
-        <Receipt order={order} isPurchaser={true} />
+        <Receipt order={order} paymentMethod={paymentMethod} isPurchaser={true} />
 
       </StyledPaper>
 

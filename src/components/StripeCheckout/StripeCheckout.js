@@ -21,7 +21,7 @@ export default function StripeCheckout({ total, processCheckout }) {
 }
 
 function StripeCheckoutForm({ processCheckout }) {
-  const { processing, setProcessing, setError, paymentInfo } = useOrder();
+  const { processing, setProcessing, setError, electronicPaymentDetails } = useOrder();
   const stripe = useStripe();
   const elements = useElements();
 
@@ -63,7 +63,7 @@ function StripeCheckoutForm({ processCheckout }) {
 
   const processPayment = async () => {
     try {
-      const { clientSecret } = paymentInfo;
+      const { clientSecret } = electronicPaymentDetails;
       if (!clientSecret) throw new Error('Missing clientSecret for payment processing');
       const { id, amount } = await confirmPayment({ clientSecret });
       return { id, amount: Number(amount) / 100}; // amount comes back from stripe in cents

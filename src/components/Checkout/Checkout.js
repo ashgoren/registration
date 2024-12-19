@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Box, Typography } from '@mui/material';
 import { useOrder, useOrderOperations } from 'components/OrderContext';
-import { scrollToTop, warnBeforeUserLeavesSite, fullName, formatCurrency } from 'utils';
+import { scrollToTop, warnBeforeUserLeavesSite, formatCurrency } from 'utils';
 import PaypalCheckout from 'components/PaypalCheckout';
 import Check from "components/Check";
 import Loading from 'components/Loading';
@@ -9,28 +9,19 @@ import TogglePaymentMode from 'components/TogglePaymentMode';
 import NavButtons from 'components/NavButtons/index.js';
 import { StyledPaper, Title } from 'components/Layout/SharedStyles';
 import StripeCheckout from 'components/StripeCheckout';
-import { firebaseFunctionDispatcher } from 'firebase.js';
 import Error from 'components/Error';
 import config from 'config';
-const { NUM_PAGES, EVENT_TITLE, TECH_CONTACT } = config;
+const { NUM_PAGES, TECH_CONTACT } = config;
 
 export default function Checkout() {
-  const { order, updateOrder, setCurrentPage, processing, setProcessing, processingMessage, setProcessingMessage, error, setError, paymentMethod, paymentInfo, setPaymentInfo } = useOrder();
-  const { savePendingOrderToFirebase, saveFinalOrderToFirebase, sendReceipts } = useOrderOperations();
+  console.log('RENDER Checkout');
+
+  const { order, updateOrder, setCurrentPage, processing, setProcessing, processingMessage, setProcessingMessage, error, setError, paymentMethod, amountToCharge } = useOrder();
+  const { savePendingOrderAndInitializePayment, saveFinalOrderToFirebase, sendReceipts } = useOrderOperations();
   const [paying, setPaying] = useState(null);
   const [paypalButtonsLoaded, setPaypalButtonsLoaded] = useState(false);
-  const [amount, setAmount] = useState(null);
-  const total = parseInt(order.total) + parseFloat(order.fees);
-	const orderCreationAttempted = useRef(false);
-  const [updateIdempotencyKey, setUpdateIdempotencyKey] = useState(null);
 
-  if (!isValidTotal(order)) {
-    setError('Possible payment amount discrepancy. Please verify total is correct!');
-  }
-
-  useEffect(() => {
-    setUpdateIdempotencyKey(crypto.randomUUID());
-  }, []);
+  console.log('order', order);
 
   useEffect(() => { scrollToTop() },[]);
 
@@ -43,95 +34,58 @@ export default function Checkout() {
 
   const handleClickBackButton = () => {
     setError(null);
-    updateOrder({ status: '' });
     setCurrentPage(NUM_PAGES);
   };
 
-  // prep paypal / stripe order
-	const createOrder = useCallback(async () => {
-		if (orderCreationAttempted.current) {
-			console.log('orderCreationAttempted', orderCreationAttempted.current);
-			return;
-		}
-		console.log(paymentInfo.id ? 'updating existing order' : 'creating new order');
-		orderCreationAttempted.current = true;
-
-		try {
-      const response = await firebaseFunctionDispatcher({
-        action: paymentMethod === 'paypal' ? 'createOrUpdatePaypalOrder' : 'getStripePaymentIntent',
-        email: order.people[0].email,
-        data: {
-          description: `${EVENT_TITLE}`, // only used by paypal
-          name: fullName(order.people[0]), // only used by stripe
-          email: order.people[0].email, // only used by stripe
-          id: paymentInfo.id,
-          amount: total,
-          idempotencyKey: paymentInfo.id ? updateIdempotencyKey : order.idempotencyKey
-        }
-      });
-      const { id, amount, clientSecret } = response?.data || {};
-
-      if (!id || !amount) throw new Error('Missing data from payment processor');
-      if (paymentMethod === 'stripe' && !clientSecret) throw new Error('Missing clientSecret from Stripe');
-      if (amount > 999 * order.people.length) throw new Error('out-of-range');
-
-      setPaymentInfo({ id, clientSecret }); // clientSecret only used by stripe
-      setAmount(amount); // to show user the actual total from paypal before they enter payment info
-
-		} catch (error) {
-      // console.log('error.code', error.code);
-      // console.log('error.message', error.message);
-      // console.log('error.details', error.details);
-			console.log('createOrder error', error);
-			orderCreationAttempted.current = false; // allow retry on fail
-			setError(`${paymentMethod} encountered an error. ${error}. Please try again or contact ${TECH_CONTACT}.`);
-		}
-
-	}, [order, total, paymentMethod, paymentInfo, setPaymentInfo, setError, updateIdempotencyKey]);
+  const prepareOrder = useCallback(async () => {
+    setProcessingMessage('Saving registration details...');
+    try {
+      await savePendingOrderAndInitializePayment();
+    } catch (error) {
+      setError(`We're sorry, but we experienced an issue saving your registration. Please close this tab and start over. If this error persists, please contact ${TECH_CONTACT}.`);
+    }
+  }, [setProcessingMessage, setError, savePendingOrderAndInitializePayment]);
 
 	useEffect(() => {
-		createOrder();
-	}, [createOrder]);
+		prepareOrder();
+	}, [prepareOrder]);
+
+
+
 
   // error handling is done within the called functions
   const processCheckout = async ({ paymentProcessorFn, paymentParams={} }) => {
     setError(null);
     setProcessing(true);
-
-    // move this part to backend to happen at same time we create initial payment intent?
-  
-    const pendingSuccess = await savePendingOrderToFirebase(order);
-    if (!pendingSuccess) {
-      setProcessing(false);
-      setPaying(false);
-      return;
-    }
-
-
-
     setProcessingMessage('Processing payment...');
+
+    // move this part to backend to happen at same time we confirm payment? (tho stripe capture is front-end only)
+
     const { id, amount } = await paymentProcessorFn(paymentParams);
     if (!id) return;
-  
-  
-    // and move this part to backend to happen at same time we confirm payment?
 
     updateOrder({ paymentId: id, charged: amount });
     const finalOrder = { ...order, paymentId: id, charged: amount };
 
-    const success = await saveFinalOrderToFirebase(finalOrder);
-  
-    if (success) {
+    try {
+      await saveFinalOrderToFirebase(finalOrder);
       sendReceipts(finalOrder); // fire-and-forget
       setPaying(false);
       setProcessing(false);
       setCurrentPage('confirmation');
-    } else {
+    } catch (error) {
       setProcessing(false);
     }
   };
 
-  if (!amount) {
+
+
+
+  if (!isValidTotal(order)) {
+    setError('Possible payment amount discrepancy. Please verify total is correct!');
+  }
+
+  if (!amountToCharge) {
     return (
       <>
         <StyledPaper align='center'>
@@ -153,14 +107,14 @@ export default function Checkout() {
         {!processing &&
           <>
             <Typography variant='h6' gutterBottom><em>Please confirm the amount shown is correct!</em></Typography>
-            <Title>Amount due: ${formatCurrency(amount)}</Title>
+            <Title>Amount due: ${formatCurrency(amountToCharge)}</Title>
           </>
 
         }
 
         {paymentMethod === 'stripe' &&
           <StripeCheckout
-            total={total}
+            total={amountToCharge}
             processCheckout={processCheckout}
           />
         }
