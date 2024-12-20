@@ -35,7 +35,6 @@ export const OrderProvider = ({ children }) => {
   const updateOrder = useCallback((updates) => dispatch({ type: 'UPDATE_ORDER', payload: updates }), []);
 
   useEffect(() => { cache('order', order) }, [order]);
-  useEffect(() => { cache('amountToCharge', amountToCharge) }, [amountToCharge]);
   useEffect(() => { cache('electronicPaymentDetails', electronicPaymentDetails) }, [electronicPaymentDetails]);
   useEffect(() => { cache('currentPage', currentPage) }, [currentPage]);
 
@@ -70,9 +69,9 @@ export const useOrderOperations = () => {
   const { email } = order.people[0]; // for logging
   const idempotencyKeyRef = useRef(crypto.randomUUID());
 
-  const savePendingOrderAndInitializePayment = useCallback(async () => {
+  const savePendingOrder_InitPayment = useCallback(async () => {
     log('Saving pending order and initializing payment', { email, order });
-
+    setAmountToCharge(null);
     try {
       const data = await initializeOrderWithPayment({
         order,
@@ -138,7 +137,7 @@ export const useOrderOperations = () => {
     });
   };
 
-  return { savePendingOrderAndInitializePayment, saveFinalOrderToFirebase, sendReceipts };
+  return { savePendingOrder_InitPayment, saveFinalOrderToFirebase, sendReceipts };
 };
 
 function generateReceipts({ order, paymentMethod }) {

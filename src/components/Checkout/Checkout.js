@@ -17,7 +17,7 @@ export default function Checkout() {
   console.log('RENDER Checkout');
 
   const { order, updateOrder, setCurrentPage, processing, setProcessing, processingMessage, setProcessingMessage, error, setError, paymentMethod, amountToCharge } = useOrder();
-  const { savePendingOrderAndInitializePayment, saveFinalOrderToFirebase, sendReceipts } = useOrderOperations();
+  const { savePendingOrder_InitPayment, saveFinalOrderToFirebase, sendReceipts } = useOrderOperations();
   const [paying, setPaying] = useState(null);
   const [paypalButtonsLoaded, setPaypalButtonsLoaded] = useState(false);
 
@@ -40,11 +40,11 @@ export default function Checkout() {
   const prepareOrder = useCallback(async () => {
     setProcessingMessage('Saving registration details...');
     try {
-      await savePendingOrderAndInitializePayment();
+      await savePendingOrder_InitPayment();
     } catch (error) {
       setError(`We're sorry, but we experienced an issue saving your registration. Please close this tab and start over. If this error persists, please contact ${TECH_CONTACT}.`);
     }
-  }, [setProcessingMessage, setError, savePendingOrderAndInitializePayment]);
+  }, [setProcessingMessage, setError, savePendingOrder_InitPayment]);
 
 	useEffect(() => {
 		prepareOrder();
