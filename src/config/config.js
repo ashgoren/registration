@@ -19,8 +19,7 @@ const ORDER_MISC_DEFAULTS = {
 };
 const getOrderDefaults = () => ({
   ...ORDER_MISC_DEFAULTS,
-  people: [PERSON_DEFAULTS],
-  idempotencyKey: crypto.randomUUID()
+  people: [PERSON_DEFAULTS]
 });
 
 const config = {

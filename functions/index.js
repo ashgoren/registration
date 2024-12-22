@@ -8,7 +8,7 @@ import { sendEmailConfirmations } from './email-confirmation.js';
 import { logToPapertrail } from './logger.js';
 import { getStripePaymentIntent } from './stripe.js';
 import { createOrUpdatePaypalOrder, capturePaypalOrder } from './paypal.js';
-import { initializeOrder } from './initializeOrder.js';
+import { initializePayment } from './initializePayment.js';
 import { log } from 'firebase-functions/logger';
 
 if (!getApps().length) initializeApp();
@@ -23,8 +23,8 @@ const firebaseFunctionDispatcher = onCall({ enforceAppCheck: false }, async (req
   try {
     switch(action) {
       case 'caffeinate': return { status: 'awake' };
-      case 'initializeOrder':
-        return await initializeOrder(data, savePendingOrder, getStripePaymentIntent, createOrUpdatePaypalOrder);
+      case 'initializePayment':
+        return await initializePayment(data, getStripePaymentIntent, createOrUpdatePaypalOrder);
       case 'getStripePaymentIntent': return await getStripePaymentIntent(data);
       case 'createOrUpdatePaypalOrder': return await createOrUpdatePaypalOrder(data);
       case 'capturePaypalOrder': return await capturePaypalOrder(data);

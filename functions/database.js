@@ -7,8 +7,9 @@ const firestore = getFirestore();
 const pendingCollection = firestore.collection('pendingOrders');
 const ordersCollection = firestore.collection('orders');
 
-export const savePendingOrder = async (order) => {
-  logger.info(`SAVING PENDING ORDER: ${order.people[0].email}`, order);
+export const savePendingOrder = async ({ orderId, order }) => {
+  const { email } = order.people[0];
+  logger.info(`SAVING PENDING ORDER: ${email}`, order);
 
   const filteredOrder = filterObject(order, validFields);
   const preppedOrder = {
@@ -19,13 +20,15 @@ export const savePendingOrder = async (order) => {
   };
 
   try {
-    const existingOrders = await pendingCollection.where('idempotencyKey', '==', order.idempotencyKey).get();
-    if (existingOrders.empty) {
-      await pendingCollection.add(preppedOrder);
+    if (orderId) {
+      const docRef = await pendingCollection.doc(orderId).set(preppedOrder);
+      logger.info(`PENDING ORDER UPDATED: ${email}`);
+      return { id: orderId };
     } else {
-      await pendingCollection.doc(existingOrders.docs[0].id).set(preppedOrder);
+      const docRef = await pendingCollection.add(preppedOrder);
+      logger.info(`PENDING ORDER SAVED: ${email}`);
+      return { id: docRef.id };
     }
-    logger.info(`PENDING ORDER SAVED: ${order.people[0].email}`);
   } catch (err) {
     throw createError(ErrorType.DATABASE_SAVE, 'Error saving pending order', { order, error: err });
   }

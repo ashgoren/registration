@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Box, Typography } from '@mui/material';
-import { useOrder, useOrderOperations } from 'components/OrderContext';
+import { useOrder, useOrderSetup, useOrderOperations } from 'components/OrderContext';
 import { scrollToTop, warnBeforeUserLeavesSite, formatCurrency } from 'utils';
 import PaypalCheckout from 'components/PaypalCheckout';
 import Check from "components/Check";
@@ -17,11 +17,20 @@ export default function Checkout() {
   console.log('RENDER Checkout');
 
   const { order, updateOrder, setCurrentPage, processing, setProcessing, processingMessage, setProcessingMessage, error, setError, paymentMethod, amountToCharge } = useOrder();
-  const { savePendingOrder_InitPayment, saveFinalOrderToFirebase, sendReceipts } = useOrderOperations();
+  const { saveFinalOrderToFirebase, sendReceipts } = useOrderOperations();
   const [paying, setPaying] = useState(null);
   const [paypalButtonsLoaded, setPaypalButtonsLoaded] = useState(false);
 
-  console.log('order', order);
+  useOrderSetup({
+    onError: (errorMsg) => setError(
+      <>
+        We're sorry, but we experienced an issue initializing your registration:<br />
+        {errorMsg}<br />
+        Please close this tab and start over.<br />
+        If this error persists, please contact {TECH_CONTACT}.
+      </>
+    )
+  });
 
   useEffect(() => { scrollToTop() },[]);
 
@@ -36,22 +45,6 @@ export default function Checkout() {
     setError(null);
     setCurrentPage(NUM_PAGES);
   };
-
-  const prepareOrder = useCallback(async () => {
-    setProcessingMessage('Saving registration details...');
-    try {
-      await savePendingOrder_InitPayment();
-    } catch (error) {
-      setError(`We're sorry, but we experienced an issue saving your registration. Please close this tab and start over. If this error persists, please contact ${TECH_CONTACT}.`);
-    }
-  }, [setProcessingMessage, setError, savePendingOrder_InitPayment]);
-
-	useEffect(() => {
-		prepareOrder();
-	}, [prepareOrder]);
-
-
-
 
   // error handling is done within the called functions
   const processCheckout = async ({ paymentProcessorFn, paymentParams={} }) => {
