@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Box, Typography } from '@mui/material';
 import { useOrder, useOrderSetup, useOrderOperations } from 'components/OrderContext';
-import { scrollToTop, warnBeforeUserLeavesSite, formatCurrency } from 'utils';
+import { formatCurrency } from 'utils';
 import PaypalCheckout from 'components/PaypalCheckout';
 import Check from "components/Check";
 import Loading from 'components/Loading';
@@ -11,6 +11,8 @@ import { StyledPaper, Title } from 'components/Layout/SharedStyles';
 import StripeCheckout from 'components/StripeCheckout';
 import Error from 'components/Error';
 import config from 'config';
+import useScrollToTop from 'hooks/useScrollToTop';
+import useWarnBeforeUnload from 'hooks/useWarnBeforeUnload';
 const { NUM_PAGES, TECH_CONTACT } = config;
 
 export default function Checkout() {
@@ -20,6 +22,9 @@ export default function Checkout() {
   const { saveFinalOrderToFirebase, sendReceipts } = useOrderOperations();
   const [paying, setPaying] = useState(null);
   const [paypalButtonsLoaded, setPaypalButtonsLoaded] = useState(false);
+
+  useScrollToTop();
+  useWarnBeforeUnload();
 
   useOrderSetup({
     onError: (errorMsg) => setError(
@@ -31,15 +36,6 @@ export default function Checkout() {
       </>
     )
   });
-
-  useEffect(() => { scrollToTop() },[]);
-
-  useEffect(() => {
-    if (window.location.hostname !== 'localhost') {
-      window.addEventListener('beforeunload', warnBeforeUserLeavesSite);
-      return () => window.removeEventListener('beforeunload', warnBeforeUserLeavesSite);
-    }
-  }, []);
 
   const handleClickBackButton = () => {
     setError(null);

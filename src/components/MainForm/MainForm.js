@@ -1,22 +1,18 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { useOrder } from 'components/OrderContext';
 import { Formik } from 'formik';
-import { sanitizeObject, warnBeforeUserLeavesSite } from 'utils';
+import { sanitizeObject } from 'utils';
 import FormContents from "./FormContents";
 import { validationSchema } from './validationSchema';
 import config from 'config';
+import useWarnBeforeUnload from 'hooks/useWarnBeforeUnload';
 const { NUM_PAGES, DEPOSIT_COST } = config;
 
 export default function MainForm() {
   const formikRef = useRef();
   const { order, updateOrder, currentPage, setCurrentPage } = useOrder();
 
-  useEffect(() => {
-    if (window.location.hostname !== 'localhost') {
-      window.addEventListener('beforeunload', warnBeforeUserLeavesSite);
-      return () => window.removeEventListener('beforeunload', warnBeforeUserLeavesSite);
-    }
-  }, []);
+  useWarnBeforeUnload();
 
   // this is triggered after People submitted and after PaymentInfo submitted
   // for now it's really just validating the PaymentInfo page fields (?)
