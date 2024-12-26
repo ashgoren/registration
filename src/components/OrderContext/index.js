@@ -1,1 +1,1 @@
-export { OrderProvider, useOrder, useOrderSetup, useOrderOperations } from './OrderContext';
+export { OrderProvider, useOrder, useOrderSetup, useOrderFinalization } from './OrderContext';

@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Box, Typography } from '@mui/material';
-import { useOrder, useOrderSetup, useOrderOperations } from 'components/OrderContext';
-import { scrollToTop, warnBeforeUserLeavesSite, formatCurrency } from 'utils';
+import { useOrder, useOrderSetup } from 'components/OrderContext';
+import { formatCurrency } from 'utils';
 import PaypalCheckout from 'components/PaypalCheckout';
 import Check from "components/Check";
 import Loading from 'components/Loading';
@@ -11,15 +11,19 @@ import { StyledPaper, Title } from 'components/Layout/SharedStyles';
 import StripeCheckout from 'components/StripeCheckout';
 import Error from 'components/Error';
 import config from 'config';
+import useScrollToTop from 'hooks/useScrollToTop';
+import useWarnBeforeUnload from 'hooks/useWarnBeforeUnload';
 const { NUM_PAGES, TECH_CONTACT } = config;
 
 export default function Checkout() {
   console.log('RENDER Checkout');
 
-  const { order, updateOrder, setCurrentPage, processing, setProcessing, processingMessage, setProcessingMessage, error, setError, paymentMethod, amountToCharge } = useOrder();
-  const { saveFinalOrderToFirebase, sendReceipts } = useOrderOperations();
+  const { order, setCurrentPage, processing, processingMessage, error, setError, paymentMethod, amountToCharge } = useOrder();
   const [paying, setPaying] = useState(null);
   const [paypalButtonsLoaded, setPaypalButtonsLoaded] = useState(false);
+
+  useScrollToTop();
+  useWarnBeforeUnload();
 
   useOrderSetup({
     onError: (errorMsg) => setError(
@@ -32,47 +36,10 @@ export default function Checkout() {
     )
   });
 
-  useEffect(() => { scrollToTop() },[]);
-
-  useEffect(() => {
-    if (window.location.hostname !== 'localhost') {
-      window.addEventListener('beforeunload', warnBeforeUserLeavesSite);
-      return () => window.removeEventListener('beforeunload', warnBeforeUserLeavesSite);
-    }
-  }, []);
-
   const handleClickBackButton = () => {
     setError(null);
     setCurrentPage(NUM_PAGES);
   };
-
-  // error handling is done within the called functions
-  const processCheckout = async ({ paymentProcessorFn, paymentParams={} }) => {
-    setError(null);
-    setProcessing(true);
-    setProcessingMessage('Processing payment...');
-
-    // move this part to backend to happen at same time we confirm payment? (tho stripe capture is front-end only)
-
-    const { id, amount } = await paymentProcessorFn(paymentParams);
-    if (!id) return;
-
-    updateOrder({ paymentId: id, charged: amount });
-    const finalOrder = { ...order, paymentId: id, charged: amount };
-
-    try {
-      await saveFinalOrderToFirebase(finalOrder);
-      sendReceipts(finalOrder); // fire-and-forget
-      setPaying(false);
-      setProcessing(false);
-      setCurrentPage('confirmation');
-    } catch (error) {
-      setProcessing(false);
-    }
-  };
-
-
-
 
   if (!isValidTotal(order)) {
     setError('Possible payment amount discrepancy. Please verify total is correct!');
@@ -106,22 +73,18 @@ export default function Checkout() {
         }
 
         {paymentMethod === 'stripe' &&
-          <StripeCheckout
-            total={amountToCharge}
-            processCheckout={processCheckout}
-          />
+          <StripeCheckout total={amountToCharge} />
         }
 
         {paymentMethod === 'paypal' &&
           <PaypalCheckout
             paypalButtonsLoaded={paypalButtonsLoaded} setPaypalButtonsLoaded={setPaypalButtonsLoaded}
             setPaying={setPaying}
-            processCheckout={processCheckout}
           />
         }
 
         {paymentMethod === 'check' && 
-          <Check processCheckout={processCheckout} />
+          <Check />
         }
 
         {!paying && !processing && (paymentMethod === 'check' || paymentMethod === 'stripe' || paypalButtonsLoaded) &&

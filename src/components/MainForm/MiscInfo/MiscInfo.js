@@ -1,17 +1,17 @@
-import { useState, useEffect, useCallback } from 'react';
-import { scrollToTop } from 'utils.js';
+import { useState, useCallback } from 'react';
 import { Input } from '../Input';
 import { Title } from 'components/Layout/SharedStyles';
 import { Box } from '@mui/material';
 import config from 'config';
+import useScrollToTop from 'hooks/useScrollToTop';
 const { FIELD_CONFIG, PERSON_MISC_FIELDS } = config;
 
 export default function MiscInfo({ index, formikRef }) {
   console.log('MiscInfo rendered');
-
+  
   const [showPhotoCommentsField, setShowPhotoCommentsField] = useState(false);
-
-  useEffect(() => { scrollToTop(); },[])
+  
+  useScrollToTop();
 
   const updatePhotoCommentsField = useCallback((e) => {
     if (!formikRef.current) return;

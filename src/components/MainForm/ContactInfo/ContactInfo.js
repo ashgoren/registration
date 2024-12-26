@@ -1,15 +1,14 @@
 import React from 'react';
-import { useEffect } from 'react';
-import { scrollToTop } from 'utils';
 import ContactInfoInputs from '../ContactInfoInputs';
 import { Title } from 'components/Layout/SharedStyles';
 import config from 'config';
+import useScrollToTop from 'hooks/useScrollToTop';
 const { PERSON_INPUT_LABELS, PERSON_CONTACT_FIELDS } = config;
 
 function ContactInfo({ index, formikRef }) {
-  useEffect(() => { scrollToTop(); },[])
-
   console.log('ContactInfo rendered');
+
+  useScrollToTop();
 
   return (
     <section className='contact-section'>

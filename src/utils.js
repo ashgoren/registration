@@ -8,8 +8,6 @@ export const formatCurrency = (num) => {
   return Number.isInteger(num) ? num : num.toFixed(2);
 }
 
-export const scrollToTop = () => window.scrollTo(0,0);
-
 export const websiteLink = (link) => `https://${link}`;
 export const mailtoLink = (email) => `mailto:${email}`;
 
@@ -34,11 +32,6 @@ export const sanitizeObject = (obj) => {
     );
   }
   return trimAndSanitizeValue(obj);
-};
-
-export const warnBeforeUserLeavesSite = event => {
-  event.preventDefault();
-  event.returnValue = '';
 };
 
 // helper for scrolling to first invalid field

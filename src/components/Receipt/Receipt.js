@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
-import { scrollToTop, websiteLink } from 'utils';
+import { websiteLink } from 'utils';
 import OrderSummary, { PersonSummary } from 'components/OrderSummary';
 import { Divider, Typography } from '@mui/material';
 import { StyledLink } from 'components/Layout/SharedStyles';
 import config from 'config';
+import useScrollToTop from 'hooks/useScrollToTop';
 const { CHECK_TO, CHECK_ADDRESS, EVENT_TITLE, PAYMENT_DUE_DATE, DIRECT_PAYMENT_URL } = config;
 
 // relies on passing order as prop to ensure is updated
@@ -14,7 +14,7 @@ export default function Receipt({ order, paymentMethod, person, isPurchaser }) {
   const isFullPayment = !isDeposit;
   const purchaserName = order.people[0].first;
 
-  useEffect(() => { scrollToTop() },[]);
+  useScrollToTop();
 
   const purchaserCheckPaymentContent = (
     <>

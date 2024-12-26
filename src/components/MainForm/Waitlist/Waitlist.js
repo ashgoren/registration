@@ -1,17 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Typography, Button, Checkbox, FormControlLabel } from "@mui/material";
 import OrderSummary from "components/OrderSummary";
-import { useOrder, useOrderOperations } from "components/OrderContext";
+import { useOrder, useOrderSetup, useOrderFinalization } from "components/OrderContext";
 import { StyledPaper, Paragraph } from 'components/Layout/SharedStyles';
 import NavButtons from 'components/NavButtons';
 import Loading from 'components/Loading';
 import Error from 'components/Error';
 import config from 'config';
-const { SANDBOX_MODE } = config;
+const { SANDBOX_MODE, TECH_CONTACT } = config;
 
 export default function Waitlist({ handleClickBackButton }) {
-  const { order, error, setError, processing, setProcessing, processingMessage, setProcessingMessage } = useOrder();
-  const { savePendingOrderToFirebase, saveFinalOrderToFirebase } = useOrderOperations();
+  const { order, updateOrder, error, setError, processing, setProcessing, processingMessage, setProcessingMessage } = useOrder();
+  const { finalizeOrder } = useOrderFinalization();
   const [ready, setReady] = useState(SANDBOX_MODE);
   const [confirmed, setConfirmed] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -20,24 +20,40 @@ export default function Waitlist({ handleClickBackButton }) {
     setReady(true);
   }, 5000);
 
+  useOrderSetup({
+    onError: (errorMsg) => setError(
+      <>
+        We're sorry, but we experienced an issue initializing your registration:<br />
+        {errorMsg}<br />
+        Please close this tab and start over.<br />
+        If this error persists, please contact {TECH_CONTACT}.
+      </>
+    )
+  });
+
+  useEffect(() => {
+    if (order.paymentId !== 'waitlist') return;
+
+    const finalize = async () => {
+      console.log('FINALIZE WAITLIST');
+      try {
+        await finalizeOrder();
+        setProcessing(false);
+        setSubmitted(true);
+      } catch (error) {
+        setError(`Error adding to waitlist. Please try again or contact ${TECH_CONTACT}.`);
+        setProcessing(false);
+      }
+    };
+
+    finalize();
+  }, [order.paymentId, finalizeOrder, setError]);
+
   const processWaitlist = async () => {
     setError(null);
     setProcessing(true);
     setProcessingMessage('Adding to waitlist...');
-
-    const pendingSuccess = await savePendingOrderToFirebase(order);
-    if (!pendingSuccess) {
-      setProcessing(false);
-      return;
-    }
-
-    const success = await saveFinalOrderToFirebase({ ...order, paymentId: 'waitlist' });
-    if (success) {
-      setProcessing(false);
-      setSubmitted(true);
-    } else {
-      setProcessing(false);
-    }
+    updateOrder({ paymentId: 'waitlist', charged: 0 });
   };
 
   return (

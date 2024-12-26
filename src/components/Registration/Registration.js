@@ -3,6 +3,7 @@ import { useOrder } from 'components/OrderContext';
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import MainForm from "components/MainForm";
 import Checkout from "components/Checkout";
+import Processing from "components/Processing";
 import Confirmation from "components/Confirmation";
 import Error from "components/Error";
 import Header from 'components/Header';
@@ -54,6 +55,8 @@ const RealRegistration = () => {
 
       {currentPage === 'checkout' && order.total && <Checkout />}
       {currentPage === 'checkout' && !order.total && <Loading />}
+
+      {currentPage === 'processing' && <Processing isPaymentComplete={isFinite(order.charged)} />}
 
       {currentPage === 'confirmation' && <Confirmation />}
     </>

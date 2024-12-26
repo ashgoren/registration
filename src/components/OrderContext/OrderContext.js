@@ -140,7 +140,7 @@ export const useOrderSetup = ({ onError }) => {
         setElectronicPaymentDetails({ id, clientSecret }); // save for payment updates and/or capture
         setAmountToCharge(amount); // display total from payment intent
 
-        log('Payment initialized', { email });
+        log('Payment initialized', { id });
 
         idempotencyKeyRef.current = crypto.randomUUID(); // reset after successful order creation
         return true;
@@ -156,18 +156,17 @@ export const useOrderSetup = ({ onError }) => {
   }, [order, orderId, setOrderId, setAmountToCharge, electronicPaymentDetails, setElectronicPaymentDetails, paymentMethod, onError]);
 };
 
+export const useOrderFinalization = () => {
+  const { order, paymentMethod } = useOrder();
+  const { email } = order.people[0]; // for logging
 
+  const finalizeOrder = async () => {
+    await saveFinalOrderToFirebase();
+    sendReceipts(); // fire-and-forget
+  };
 
-export const useOrderOperations = () => {
-  const { setProcessingMessage, paymentMethod } = useOrder();
-
-  const saveFinalOrderToFirebase = async (order) => {
-    const { email } = order.people[0]; // for logging
+  const saveFinalOrderToFirebase = async () => {
     log('Saving final order to firebase', { email });
-    setProcessingMessage(paymentMethod === 'check' || paymentMethod === 'waitlist'
-      ? 'Updating registration...'
-      : 'Payment successful. Updating registration...'
-    );
     try {
       await firebaseFunctionDispatcher({
         action: 'saveFinalOrder',
@@ -179,15 +178,11 @@ export const useOrderOperations = () => {
     } catch (error) {
       logError('Error saving final order to firebase', { email, error, order });
       throw error;
-      // setError(`Your payment was processed successfully. However, we encountered an error updating your registration. Please contact ${TECH_CONTACT}.`);
-      // return false;
     }
   };
 
   // fire-and-forget
-  const sendReceipts = (order) => {
-    const { email } = order.people[0]; // for logging
-    setProcessingMessage('Sending email confirmation...');
+  const sendReceipts = () => {
     const emailReceiptPairs = generateReceipts({ order, paymentMethod });
     firebaseFunctionDispatcher({
       action: 'sendEmailConfirmations',
@@ -196,7 +191,7 @@ export const useOrderOperations = () => {
     });
   };
 
-  return { saveFinalOrderToFirebase, sendReceipts };
+  return { finalizeOrder };
 };
 
 function generateReceipts({ order, paymentMethod }) {
