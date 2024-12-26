@@ -9,8 +9,8 @@ import { TestCardBox } from 'components/Layout/SharedStyles';
 import config from 'config';
 const { SANDBOX_MODE, TECH_CONTACT } = config;
 
-const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, setPaying, processCheckout }) => {
-	const { processing, setError, order, electronicPaymentDetails: { id } } = useOrder();
+const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, setPaying }) => {
+	const { processing, setCurrentPage, setError, order, updateOrder, electronicPaymentDetails: { id } } = useOrder();
 	const { email } = order.people[0]; // for logging
 	const { processPayment } = usePaypalPayment({ email, id });
 	const [, isResolved] = usePayPalScriptReducer();
@@ -43,14 +43,19 @@ const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, setPaying
 		setError(`PayPal encountered an error: ${error}. Please try again or contact ${TECH_CONTACT}.`);
 	};
 
-	// when user submits payment details (this does not process the payment yet)
+	// when user submits payment details
 	const onApprove = async () => {
 		log('User submitted payment details', { email });
-		processCheckout({ paymentProcessorFn: processPayment });
+		try {
+			const { id, amount } = await processPayment();
+			updateOrder({ paymentId: id, charged: amount });
+			setCurrentPage('processing');
+		} catch (error) {
+			const errorMessage = mapPaymentError(error);
+			setError(errorMessage);
+			setPaying(false);
+		}
 	};
-
-
-
 
 	return (
 		<section className='paypal-buttons-wrapper'>
@@ -79,14 +84,14 @@ const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, setPaying
 	);
 };
 
-// const mapPaymentError = (error) => {
-//   const errorMessages = {
-//     PAYMENT_AMOUNT_ERROR: `There was a problem initializing the payment: Amount out of range. Please contact ${TECH_CONTACT}.`,
-//     PAYMENT_INIT_ERROR: `There was a problem initializing the payment: ${error.message}. Please try again or contact ${TECH_CONTACT}.`,
-//     PAYMENT_PROCESS_ERROR: `There was a problem processing the payment: ${error.message}. Please verify your payment details and try again.`,
-//     PAYMENT_CONFIRM_ERROR: `There was a problem confirming the payment: ${error.message}. Please contact ${TECH_CONTACT}.`,
-//   };
-//   return errorMessages[error.code] || `Unexpected payment processing error: ${error.message}. Please contact ${TECH_CONTACT}.`;
-// }
+const mapPaymentError = (error) => {
+  const errorMessages = {
+    PAYMENT_AMOUNT_ERROR: `There was a problem initializing the payment: Amount out of range. Please contact ${TECH_CONTACT}.`,
+    PAYMENT_INIT_ERROR: `There was a problem initializing the payment: ${error.message}. Please try again or contact ${TECH_CONTACT}.`,
+    PAYMENT_PROCESS_ERROR: `There was a problem processing the payment: ${error.message}. Please verify your payment details and try again.`,
+    PAYMENT_CONFIRM_ERROR: `There was a problem confirming the payment: ${error.message}. Please contact ${TECH_CONTACT}.`,
+  };
+  return errorMessages[error.code] || `Unexpected payment processing error: ${error.message}. Please contact ${TECH_CONTACT}.`;
+}
 
 export default PaypalCheckout;

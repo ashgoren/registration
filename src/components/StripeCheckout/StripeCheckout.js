@@ -5,26 +5,26 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Box, Button } from '@mui/material';
 import { TestCardBox } from 'components/Layout/SharedStyles';
 import config from 'config';
-const { SANDBOX_MODE, PAYMENT_METHODS } = config;
+const { SANDBOX_MODE, PAYMENT_METHODS, TECH_CONTACT } = config;
 const stripePromise = PAYMENT_METHODS.includes('stripe') ? loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY) : null;
 
 // this wrapper is required to use the Stripe Elements component
-export default function StripeCheckout({ total, processCheckout }) {
+export default function StripeCheckout({ total }) {
   const options = { mode: 'payment', currency: 'usd', amount: total * 100 };
   return (
     <>
       {SANDBOX_MODE && <TestCardBox number='4242424242424242' />}
       <Elements stripe={stripePromise} options={options}>
-        <StripeCheckoutForm processCheckout={processCheckout} />
+        <StripeCheckoutForm />
       </Elements>
     </>
   );
 }
 
-function StripeCheckoutForm({ processCheckout }) {
+function StripeCheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
-  const { processing, setProcessing, setError, electronicPaymentDetails: { clientSecret} } = useOrder();
+  const { updateOrder, setCurrentPage, processing, setProcessing, setError, electronicPaymentDetails: { clientSecret} } = useOrder();
   const { processPayment } = useStripePayment({ stripe, elements, clientSecret });
 
   const handleSubmit = async (event) => {
@@ -35,7 +35,15 @@ function StripeCheckoutForm({ processCheckout }) {
     if (submitError) {
       setProcessing(false); // PaymentElement automatically shows error messages
     } else {
-      processCheckout({ paymentProcessorFn: processPayment });
+      try {
+        const { id, amount } = await processPayment();
+        updateOrder({ paymentId: id, charged: amount });
+        setCurrentPage('processing');
+      } catch (error) {
+        const errorMessage = mapPaymentError(error);
+        setError(errorMessage);
+        setProcessing(false);
+      }
     }
   };
 
@@ -49,12 +57,12 @@ function StripeCheckoutForm({ processCheckout }) {
   );
 }
 
-// const mapPaymentError = (error) => {
-//   const errorMessages = {
-//     PAYMENT_AMOUNT_ERROR: `There was a problem initializing the payment: Amount out of range. Please contact ${TECH_CONTACT}.`,
-//     PAYMENT_INIT_ERROR: `There was a problem initializing the payment: ${error.message}. Please try again or contact ${TECH_CONTACT}.`,
-//     PAYMENT_PROCESS_ERROR: `There was a problem processing the payment: ${error.message}. Please verify your payment details and try again.`,
-//     PAYMENT_CONFIRM_ERROR: `There was a problem confirming the payment: ${error.message}. Please contact ${TECH_CONTACT}.`,
-//   };
-//   return errorMessages[error.code] || `Unexpected payment processing error: ${error.message}. Please contact ${TECH_CONTACT}.`;
-// }
+const mapPaymentError = (error) => {
+  const errorMessages = {
+    PAYMENT_AMOUNT_ERROR: `There was a problem initializing the payment: Amount out of range. Please contact ${TECH_CONTACT}.`,
+    PAYMENT_INIT_ERROR: `There was a problem initializing the payment: ${error.message}. Please try again or contact ${TECH_CONTACT}.`,
+    PAYMENT_PROCESS_ERROR: `There was a problem processing the payment: ${error.message}. Please verify your payment details and try again.`,
+    PAYMENT_CONFIRM_ERROR: `There was a problem confirming the payment: ${error.message}. Please contact ${TECH_CONTACT}.`,
+  };
+  return errorMessages[error.code] || `Unexpected payment processing error: ${error.message}. Please contact ${TECH_CONTACT}.`;
+}

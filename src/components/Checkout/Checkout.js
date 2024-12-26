@@ -18,7 +18,7 @@ const { NUM_PAGES, TECH_CONTACT } = config;
 export default function Checkout() {
   console.log('RENDER Checkout');
 
-  const { order, updateOrder, setCurrentPage, processing, setProcessing, processingMessage, setProcessingMessage, error, setError, paymentMethod, amountToCharge } = useOrder();
+  const { order, setCurrentPage, processing, processingMessage, error, setError, paymentMethod, amountToCharge } = useOrder();
   const [paying, setPaying] = useState(null);
   const [paypalButtonsLoaded, setPaypalButtonsLoaded] = useState(false);
 
@@ -39,19 +39,6 @@ export default function Checkout() {
   const handleClickBackButton = () => {
     setError(null);
     setCurrentPage(NUM_PAGES);
-  };
-
-  // error handling is done within the called functions
-  const processCheckout = async ({ paymentProcessorFn, paymentParams={} }) => {
-    setError(null);
-    setProcessing(true);
-    setProcessingMessage('Processing payment...');
-
-    const { id, amount } = await paymentProcessorFn(paymentParams);
-    if (!id) return;
-
-    updateOrder({ paymentId: id, charged: amount });
-    setCurrentPage('processing');
   };
 
   if (!isValidTotal(order)) {
@@ -86,22 +73,18 @@ export default function Checkout() {
         }
 
         {paymentMethod === 'stripe' &&
-          <StripeCheckout
-            total={amountToCharge}
-            processCheckout={processCheckout}
-          />
+          <StripeCheckout total={amountToCharge} />
         }
 
         {paymentMethod === 'paypal' &&
           <PaypalCheckout
             paypalButtonsLoaded={paypalButtonsLoaded} setPaypalButtonsLoaded={setPaypalButtonsLoaded}
             setPaying={setPaying}
-            processCheckout={processCheckout}
           />
         }
 
         {paymentMethod === 'check' && 
-          <Check processCheckout={processCheckout} />
+          <Check />
         }
 
         {!paying && !processing && (paymentMethod === 'check' || paymentMethod === 'stripe' || paypalButtonsLoaded) &&

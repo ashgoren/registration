@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Box } from '@mui/material';
 import { StyledPaper } from 'components/Layout/SharedStyles';
-import { useOrder, useOrderOperations } from 'components/OrderContext';
+import { useOrder, useOrderFinalization } from 'components/OrderContext';
 import Loading from 'components/Loading';
 import Error from 'components/Error';
 import config from 'config';
@@ -9,15 +9,14 @@ const { TECH_CONTACT } = config;
 
 export default function Processing({ isPaymentComplete }) {
   const { paymentMethod, setCurrentPage, error, setError } = useOrder();
-  const { saveFinalOrderToFirebase, sendReceipts } = useOrderOperations();
+  const { finalizeOrder } = useOrderFinalization();
 
   useEffect(() => {
     if (!isPaymentComplete) return;
 
     const finalize = async () => {
       try {
-        await saveFinalOrderToFirebase();
-        sendReceipts(); // fire-and-forget
+        await finalizeOrder();
         setCurrentPage('confirmation');
       } catch (error) {
         setError(`Your payment was processed successfully. However, we encountered an error updating your registration. Please contact ${TECH_CONTACT}.`);
@@ -25,7 +24,7 @@ export default function Processing({ isPaymentComplete }) {
     };
 
     finalize();
-  }, [isPaymentComplete, setCurrentPage, setError, saveFinalOrderToFirebase, sendReceipts]);
+  }, [isPaymentComplete, finalizeOrder, setCurrentPage, setError]);
 
   return (
     <StyledPaper align='center'>

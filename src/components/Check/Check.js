@@ -5,20 +5,17 @@ import Loading from 'components/Loading';
 import config from 'config';
 const { CHECK_ADDRESS, CHECK_TO, SANDBOX_MODE } = config;
 
-export default function Check({ processCheckout }) {
-  const { processing } = useOrder();
+export default function Check() {
+  const { processing, setCurrentPage, updateOrder } = useOrder();
   const [ready, setReady] = useState(SANDBOX_MODE);
 
   setTimeout(() => {
     setReady(true);
   }, 5000);
 
-  const processPayment = () => {
-    return { id: 'check', amount: 0 };
-  };
-
   const handleRegister = async () => {
-    processCheckout({ paymentProcessorFn: processPayment });
+    updateOrder({ paymentId: 'check', charged: 0 });
+    setCurrentPage('processing');
   }
 
   return (
