@@ -21,6 +21,7 @@ const ordersController = new OrdersController(client);
 
 export const capturePaypalOrder = async ({ id, idempotencyKey }) => {
   logger.info('capturePaypalOrder', { id });
+  if (!id) throw createError(ErrorType.INVALID_ARGUMENT, 'No payment intent ID provided');
   try {
     const { result, statusCode } = await ordersController.ordersCapture({
       id,

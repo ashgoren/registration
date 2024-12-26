@@ -3,6 +3,7 @@ import { HttpsError } from 'firebase-functions/v2/https';
 
 export const ErrorType = {
   INVALID_AMOUNT: 'INVALID_AMOUNT',
+  INVALID_ARGUMENT: 'INVALID_ARGUMENT',
   VALIDATION_MISSING_ID: 'VALIDATION_MISSING_ID',
   VALIDATION_MISSING_AMOUNT: 'VALIDATION_MISSING_AMOUNT',
   VALIDATION_ID_MISMATCH: 'VALIDATION_ID_MISMATCH',
@@ -37,6 +38,7 @@ const ErrorCode = {
 // set valid error code and optional message override for each error type
 const errorMapping = {
   [ErrorType.INVALID_AMOUNT]: { code: ErrorCode.OUT_OF_RANGE },
+  [ErrorType.INVALID_ARGUMENT]: { code: ErrorCode.INVALID_ARGUMENT },
   [ErrorType.VALIDATION_MISSING_ID]: { code: ErrorCode.INVALID_ARGUMENT },
   [ErrorType.VALIDATION_MISSING_AMOUNT]: { code: ErrorCode.INVALID_ARGUMENT },
   [ErrorType.VALIDATION_ID_MISMATCH]: { code: ErrorCode.INVALID_ARGUMENT },
