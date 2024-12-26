@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Box, Typography } from '@mui/material';
-import { useOrder, useOrderSetup, useOrderOperations } from 'components/OrderContext';
+import { useOrder, useOrderSetup } from 'components/OrderContext';
 import { formatCurrency } from 'utils';
 import PaypalCheckout from 'components/PaypalCheckout';
 import Check from "components/Check";
@@ -19,7 +19,6 @@ export default function Checkout() {
   console.log('RENDER Checkout');
 
   const { order, updateOrder, setCurrentPage, processing, setProcessing, processingMessage, setProcessingMessage, error, setError, paymentMethod, amountToCharge } = useOrder();
-  const { saveFinalOrderToFirebase, sendReceipts } = useOrderOperations();
   const [paying, setPaying] = useState(null);
   const [paypalButtonsLoaded, setPaypalButtonsLoaded] = useState(false);
 
@@ -48,27 +47,12 @@ export default function Checkout() {
     setProcessing(true);
     setProcessingMessage('Processing payment...');
 
-    // move this part to backend to happen at same time we confirm payment? (tho stripe capture is front-end only)
-
     const { id, amount } = await paymentProcessorFn(paymentParams);
     if (!id) return;
 
     updateOrder({ paymentId: id, charged: amount });
-    const finalOrder = { ...order, paymentId: id, charged: amount };
-
-    try {
-      await saveFinalOrderToFirebase(finalOrder);
-      sendReceipts(finalOrder); // fire-and-forget
-      setPaying(false);
-      setProcessing(false);
-      setCurrentPage('confirmation');
-    } catch (error) {
-      setProcessing(false);
-    }
+    setCurrentPage('processing');
   };
-
-
-
 
   if (!isValidTotal(order)) {
     setError('Possible payment amount discrepancy. Please verify total is correct!');

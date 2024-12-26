@@ -140,7 +140,7 @@ export const useOrderSetup = ({ onError }) => {
         setElectronicPaymentDetails({ id, clientSecret }); // save for payment updates and/or capture
         setAmountToCharge(amount); // display total from payment intent
 
-        log('Payment initialized', { email });
+        log('Payment initialized', { id });
 
         idempotencyKeyRef.current = crypto.randomUUID(); // reset after successful order creation
         return true;
@@ -159,15 +159,15 @@ export const useOrderSetup = ({ onError }) => {
 
 
 export const useOrderOperations = () => {
-  const { setProcessingMessage, paymentMethod } = useOrder();
+  const { order, paymentMethod } = useOrder();
 
-  const saveFinalOrderToFirebase = async (order) => {
+  const saveFinalOrderToFirebase = async () => {
     const { email } = order.people[0]; // for logging
     log('Saving final order to firebase', { email });
-    setProcessingMessage(paymentMethod === 'check' || paymentMethod === 'waitlist'
-      ? 'Updating registration...'
-      : 'Payment successful. Updating registration...'
-    );
+    // setProcessingMessage(paymentMethod === 'check' || paymentMethod === 'waitlist'
+    //   ? 'Updating registration...'
+    //   : 'Payment successful. Updating registration...'
+    // );
     try {
       await firebaseFunctionDispatcher({
         action: 'saveFinalOrder',
@@ -185,9 +185,9 @@ export const useOrderOperations = () => {
   };
 
   // fire-and-forget
-  const sendReceipts = (order) => {
+  const sendReceipts = () => {
     const { email } = order.people[0]; // for logging
-    setProcessingMessage('Sending email confirmation...');
+    // setProcessingMessage('Sending email confirmation...');
     const emailReceiptPairs = generateReceipts({ order, paymentMethod });
     firebaseFunctionDispatcher({
       action: 'sendEmailConfirmations',
