@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material';
+import { Box } from '@mui/material';
 import { useOrder } from 'components/OrderContext';
 import { StyledPaper, StyledLink, Paragraph, SectionDivider } from 'components/Layout/SharedStyles';
 import Receipt from 'components/Receipt';
@@ -7,7 +7,7 @@ import config from 'config';
 const { EMAIL_CONTACT, EVENT_TITLE, MORE_INFO_URL } = config;
 
 export default function Confirmation() {
-  const { order, startOver, paymentMethod } = useOrder();
+  const { order, paymentMethod } = useOrder();
 
   return (
     <>
@@ -24,16 +24,7 @@ export default function Confirmation() {
 
         <Receipt order={order} paymentMethod={paymentMethod} isPurchaser={true} />
 
-      </StyledPaper>
-
-      <StyledPaper>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <div />
-          <Button variant='outlined' color='warning' onClick={startOver}>
-            Start another registration
-          </Button>
-          <div />
-        </Box>
+        <Box my={2} />
       </StyledPaper>
     </>
   );

@@ -41,18 +41,7 @@ export const OrderProvider = ({ children }) => {
   useEffect(() => { cache('electronicPaymentDetails', electronicPaymentDetails) }, [electronicPaymentDetails]);
   useEffect(() => { cache('currentPage', currentPage) }, [currentPage]);
 
-  const startOver = () => {
-    dispatch({ type: 'RESET_ORDER' });
-    setOrderId(null);
-    setAmountToCharge(null);
-    setElectronicPaymentDetails({ id: null, clientSecret: null });
-    setPaymentMethod(WAITLIST_MODE ? 'waitlist' : PAYMENT_METHODS[0]);
-    setProcessingMessage(null);
-    setCurrentPage(1);
-  }
-
   const value = {
-    startOver,
     order, updateOrder,
     orderId, setOrderId,
     currentPage, setCurrentPage,
