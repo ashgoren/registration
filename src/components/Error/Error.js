@@ -1,4 +1,4 @@
-import { useOrder } from 'components/OrderContext';
+import { useOrder } from 'hooks/useOrder';
 import { Box } from '@mui/material';
 import useScrollToTop from 'hooks/useScrollToTop';
 

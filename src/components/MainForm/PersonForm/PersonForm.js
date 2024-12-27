@@ -1,4 +1,4 @@
-import { useOrder } from 'components/OrderContext';
+import { useOrder } from 'hooks/useOrder';
 import { Box, Button } from '@mui/material';
 import ContactInfo from '../ContactInfo';
 import MiscInfo from '../MiscInfo';

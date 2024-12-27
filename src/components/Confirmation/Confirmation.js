@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { useOrder } from 'components/OrderContext';
+import { useOrder } from 'hooks/useOrder';
 import { StyledPaper, StyledLink, Paragraph, SectionDivider } from 'components/Layout/SharedStyles';
 import Receipt from 'components/Receipt';
 import { mailtoLink, websiteLink } from 'utils';

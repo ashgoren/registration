@@ -1,6 +1,6 @@
 import { log } from 'logger';
 import { useEffect } from 'react';
-import { useOrder } from 'components/OrderContext';
+import { useOrder } from 'hooks/useOrder';
 import { usePaypalPayment } from 'hooks/usePaypalPayment';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import Loading from 'components/Loading';

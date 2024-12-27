@@ -1,4 +1,4 @@
-import { useOrder } from 'components/OrderContext';
+import { useOrder } from 'hooks/useOrder';
 import { useStripePayment } from 'hooks/useStripePayment';
 import { Elements, useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';

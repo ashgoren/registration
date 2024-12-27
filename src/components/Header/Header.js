@@ -1,4 +1,4 @@
-import { useOrder } from 'components/OrderContext';
+import { useOrder } from 'hooks/useOrder';
 import { StyledPaper } from 'components/Layout/SharedStyles';
 import { Typography, Box } from "@mui/material";
 import { MyStepper } from 'components/MyStepper';

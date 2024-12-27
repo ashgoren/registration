@@ -1,4 +1,4 @@
-import { useOrder } from 'components/OrderContext';
+import { useOrder } from 'hooks/useOrder';
 import { Typography, Button } from '@mui/material';
 import config from 'config';
 const { PAYMENT_METHODS } = config;

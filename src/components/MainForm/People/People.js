@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useOrder } from 'components/OrderContext';
+import { useOrder } from 'hooks/useOrder';
 import { Box, Button, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PersonForm from '../PersonForm';

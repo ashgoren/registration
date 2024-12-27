@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useOrder } from 'components/OrderContext';
+import { useOrder } from 'hooks/useOrder';
 import { clamp } from 'utils';
 import { RightAlignedInput } from '../Input';
 import { StyledPaper, Title, Paragraph } from 'components/Layout/SharedStyles';

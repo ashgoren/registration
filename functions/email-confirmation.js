@@ -20,8 +20,6 @@ export const sendEmailConfirmations = onDocumentUpdated(`${CONFIG_DATA_COLLECTIO
   const { before, after } = event.data;
   if (before?.data()?.status === 'pending' && after.data().status === 'final') {
     const { people } = after.data();
-    logger.info(`SENDING EMAIL CONFIRMATIONS: ${people[0].email}`);
-
     for (const person of people) {
       const { email, receipt } = person;
       let mailOptions = {

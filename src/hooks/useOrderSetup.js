@@ -1,62 +1,10 @@
-import { createContext, useState, useReducer, useContext, useEffect, useCallback, useRef } from 'react';
-import { log, logError, logDivider } from 'logger';
-import { firebaseFunctionDispatcher } from 'firebase.js';
-import { renderToStaticMarkup } from 'react-dom/server';
+import { useEffect, useRef } from 'react';
+import { useOrder } from 'hooks/useOrder';
 import { isEqual } from 'lodash';
-import Receipt from 'components/Receipt';
-import { cache, cached } from 'utils';
+import { firebaseFunctionDispatcher } from 'firebase.js';
+import { log, logError } from 'logger';
 import config from 'config';
-const { getOrderDefaults, PAYMENT_METHODS, WAITLIST_MODE, EVENT_TITLE } = config;
-
-const OrderContext = createContext();
-
-function orderReducer(state, action) {
-  switch (action.type) {
-    case 'UPDATE_ORDER':
-      return { ...state, ...action.payload };
-    case 'RESET_ORDER':
-      return getOrderDefaults();
-    default:
-      throw new Error(`Unhandled action type: ${action.type}`);
-  }
-}
-
-export const OrderProvider = ({ children }) => {
-  const initialOrderState = cached('order') || getOrderDefaults();
-  const [order, dispatch] = useReducer(orderReducer, initialOrderState);
-  const [orderId, setOrderId] = useState(cached('orderId') || null);
-  const [amountToCharge, setAmountToCharge] = useState(null);
-  const [electronicPaymentDetails, setElectronicPaymentDetails] = useState(cached('electronicPaymentDetails') || { id: null, clientSecret: null });
-  const [currentPage, setCurrentPage] = useState(cached('currentPage') || 1);
-  const [processing, setProcessing] = useState(null);
-  const [processingMessage, setProcessingMessage] = useState(null);
-  const [paymentMethod, setPaymentMethod] = useState(WAITLIST_MODE ? 'waitlist' : PAYMENT_METHODS[0]);
-  const [error, setError] = useState(null);
-  const [warmedUp, setWarmedUp] = useState(false);
-
-  const updateOrder = useCallback((updates) => dispatch({ type: 'UPDATE_ORDER', payload: updates }), []);
-
-  useEffect(() => { cache('order', order) }, [order]);
-  useEffect(() => { cache('orderId', orderId) }, [orderId]);
-  useEffect(() => { cache('electronicPaymentDetails', electronicPaymentDetails) }, [electronicPaymentDetails]);
-  useEffect(() => { cache('currentPage', currentPage) }, [currentPage]);
-
-  const value = {
-    order, updateOrder,
-    orderId, setOrderId,
-    currentPage, setCurrentPage,
-    processing, setProcessing,
-    processingMessage, setProcessingMessage,
-    error, setError,
-    paymentMethod, setPaymentMethod,
-    warmedUp, setWarmedUp,
-    amountToCharge, setAmountToCharge,
-    electronicPaymentDetails, setElectronicPaymentDetails
-  };
-  return <OrderContext.Provider value={value}>{children}</OrderContext.Provider>;
-};
-
-export const useOrder = () => useContext(OrderContext);
+const { EVENT_TITLE } = config;
 
 export const useOrderSetup = ({ onError }) => {
   const { order, orderId, setOrderId, paymentMethod, electronicPaymentDetails, setElectronicPaymentDetails, setAmountToCharge } = useOrder();
@@ -143,43 +91,6 @@ export const useOrderSetup = ({ onError }) => {
 
     initializeOrderWithPayment();
   }, [order, orderId, setOrderId, setAmountToCharge, electronicPaymentDetails, setElectronicPaymentDetails, paymentMethod, onError]);
-};
-
-export const useOrderFinalization = () => {
-  const { orderId, order, paymentMethod } = useOrder();
-  const { email } = order.people[0]; // for logging
-
-  const finalizeOrder = async () => {
-    const finalOrder = appendReceiptsToOrder(order);
-    await saveFinalOrderToFirebase(finalOrder);
-  };
-
-  const appendReceiptsToOrder = (order) => {
-    const peopleWithReceipts = order.people.map((person, i) => {
-      const receipt = <Receipt order={order} paymentMethod={paymentMethod} person={person} isPurchaser={i === 0} />;
-      const htmlReceipt = renderToStaticMarkup(receipt);
-      return { ...person, receipt: htmlReceipt };
-    });
-    return { ...order, people: peopleWithReceipts };
-  };
-
-  const saveFinalOrderToFirebase = async (order) => {
-    log('Saving final order to firebase', { email });
-    try {
-      await firebaseFunctionDispatcher({
-        action: 'saveFinalOrder',
-        data: { orderId, order },
-        email
-      });
-      log('Final order saved', { email });
-      setTimeout(() => logDivider(), 1000);
-    } catch (error) {
-      logError('Error saving final order to firebase', { email, error, order });
-      throw error;
-    }
-  };
-
-  return { finalizeOrder };
 };
 
 

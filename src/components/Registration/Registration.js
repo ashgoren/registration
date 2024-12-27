@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useOrder } from 'components/OrderContext';
+import { useOrder } from 'hooks/useOrder';
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import MainForm from "components/MainForm";
 import Checkout from "components/Checkout";

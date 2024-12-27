@@ -10,7 +10,7 @@ import MaterialLayout from 'components/Layout/';
 import Error from 'components/Error';
 import { PaymentExplanation } from 'components/Static/PaymentExplanation';
 import ScrollToAnchor from 'components/ScrollToAnchor';
-import { OrderProvider } from 'components/OrderContext';
+import { OrderProvider } from 'contexts/OrderContext';
 import config from 'config';
 const { TECH_CONTACT } = config;
 

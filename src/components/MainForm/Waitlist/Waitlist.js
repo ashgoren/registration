@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { Box, Typography, Button, Checkbox, FormControlLabel } from "@mui/material";
 import OrderSummary from "components/OrderSummary";
-import { useOrder, useOrderSetup, useOrderFinalization } from "components/OrderContext";
+import { useOrder } from 'hooks/useOrder';
+import { useOrderSetup } from 'hooks/useOrderSetup';
+import { useOrderFinalization } from 'hooks/useOrderFinalization';
 import { StyledPaper, Paragraph } from 'components/Layout/SharedStyles';
 import NavButtons from 'components/NavButtons';
 import Loading from 'components/Loading';

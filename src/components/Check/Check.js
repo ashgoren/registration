@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useOrder } from 'components/OrderContext';
+import { useOrder } from 'hooks/useOrder';
 import { Typography, Button } from '@mui/material';
 import Loading from 'components/Loading';
 import config from 'config';

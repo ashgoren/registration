@@ -1,4 +1,4 @@
-import { useOrder } from 'components/OrderContext';
+import { useOrder } from 'hooks/useOrder';
 import { Form } from 'formik';
 import People from '../People';
 import PaymentInfo from '../PaymentInfo';

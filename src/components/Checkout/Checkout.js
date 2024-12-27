@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Box, Typography } from '@mui/material';
-import { useOrder, useOrderSetup } from 'components/OrderContext';
+import { useOrder } from 'hooks/useOrder';
+import { useOrderSetup } from 'hooks/useOrderSetup';
 import { formatCurrency } from 'utils';
 import PaypalCheckout from 'components/PaypalCheckout';
 import Check from "components/Check";

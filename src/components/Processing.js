@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { Box } from '@mui/material';
 import { StyledPaper } from 'components/Layout/SharedStyles';
-import { useOrder, useOrderFinalization } from 'components/OrderContext';
+import { useOrder } from 'hooks/useOrder';
+import { useOrderFinalization } from 'hooks/useOrderFinalization';
 import Loading from 'components/Loading';
 import Error from 'components/Error';
 import config from 'config';

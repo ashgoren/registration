@@ -1,4 +1,4 @@
-import { useOrder } from 'components/OrderContext';
+import { useOrder } from 'hooks/useOrder';
 import { Stepper, Step, StepLabel, MobileStepper, Button } from "@mui/material";
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import config from 'config';
