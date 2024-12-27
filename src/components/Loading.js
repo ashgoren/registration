@@ -1,9 +1,9 @@
 import { TailSpin } from 'react-loading-icons'
 import { Box, Typography } from '@mui/material';
-import config from 'config';
+import { config } from 'config';
 const { TECH_CONTACT } = config;
 
-export default function Loading({ text='Thinking...', isHeading=true, processing=false }) {
+export const Loading = ({ text='Thinking...', isHeading=true, processing=false }) => {
   return (
     <Box align='center' sx={{ my: 10 }}>
       <TailSpin stroke='black' strokeWidth='2.5' />
@@ -18,4 +18,4 @@ export default function Loading({ text='Thinking...', isHeading=true, processing
       }
     </Box>
   );
-}
+};

@@ -1,22 +1,22 @@
 import { useState } from "react";
 import { Box, Typography } from '@mui/material';
+import { StyledPaper, Title } from 'components/Layout/SharedStyles';
 import { useOrder } from 'hooks/useOrder';
 import { useOrderSetup } from 'hooks/useOrderSetup';
 import { formatCurrency } from 'utils';
-import PaypalCheckout from 'components/PaypalCheckout';
-import Check from "components/Check";
-import Loading from 'components/Loading';
-import TogglePaymentMode from 'components/TogglePaymentMode';
-import NavButtons from 'components/NavButtons';
-import { StyledPaper, Title } from 'components/Layout/SharedStyles';
-import StripeCheckout from 'components/StripeCheckout';
-import Error from 'components/Error';
-import config from 'config';
-import useScrollToTop from 'hooks/useScrollToTop';
-import useWarnBeforeUnload from 'hooks/useWarnBeforeUnload';
+import { PaypalCheckout } from 'components/PaypalCheckout';
+import { Check } from "components/Check";
+import { Loading } from 'components/Loading';
+import { TogglePaymentMode } from 'components/TogglePaymentMode';
+import { NavButtons } from 'components/NavButtons';
+import { StripeCheckout } from 'components/StripeCheckout';
+import { Error } from 'components/Error';
+import { useScrollToTop } from 'hooks/useScrollToTop';
+import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
+import { config } from 'config';
 const { NUM_PAGES, TECH_CONTACT } = config;
 
-export default function Checkout() {
+export const Checkout = () => {
   console.log('RENDER Checkout');
 
   const { order, setCurrentPage, processing, processingMessage, error, setError, paymentMethod, amountToCharge } = useOrder();
@@ -98,7 +98,7 @@ export default function Checkout() {
       }
     </section>
   );
-}
+};
 
 function isValidTotal(order) {
   const orderTotal = parseInt(order.total) + parseFloat(order.fees);

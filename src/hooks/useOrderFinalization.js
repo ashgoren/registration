@@ -2,7 +2,7 @@ import { log, logError, logDivider } from 'logger';
 import { firebaseFunctionDispatcher } from 'firebase.js';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { useOrder } from 'hooks/useOrder';
-import Receipt from 'components/Receipt';
+import { Receipt } from 'components/Receipt';
 
 export const useOrderFinalization = () => {
   const { orderId, order, paymentMethod } = useOrder();

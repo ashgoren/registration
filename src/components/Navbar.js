@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { AppBar, Toolbar, Typography, Container, ListItem, Box, IconButton, Menu, Link } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link as RouterLink } from 'react-router-dom';
-import ColorModeToggle from 'components/ColorModeToggle';
-import config from 'config';
+import { ColorModeToggle } from 'components/ColorModeToggle';
+import { config } from 'config';
 const { TITLE, REGISTRATION_ONLY, NAVBAR_COLOR, NAVBAR_COLOR_DARK, NAVBAR_BACKGROUND_OVERRIDE } = config;
 
 const pages = [
@@ -20,7 +20,7 @@ const pages = [
 const row1 = pages.slice(0, 5);
 const row2 = pages.slice(5);
 
-export default function Navbar({ toggleColorMode }) {
+export const Navbar = ({ toggleColorMode }) => {
   const [anchorElNav, setAnchorElNav] = useState(null);
 
   const handleOpenNavMenu = (event) => {
@@ -125,7 +125,7 @@ export default function Navbar({ toggleColorMode }) {
       </Container>
     </AppBar>
   );
-}
+};
 
 const PageLinks = ({ pages, onClick }) => (
   pages.map((page) => (

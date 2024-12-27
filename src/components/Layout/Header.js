@@ -2,10 +2,10 @@ import { useOrder } from 'hooks/useOrder';
 import { StyledPaper } from 'components/Layout/SharedStyles';
 import { Typography, Box } from "@mui/material";
 import { MyStepper } from 'components/MyStepper';
-import config from 'config';
+import { config } from 'config';
 const { TITLE, REGISTRATION_ONLY, WAITLIST_MODE } = config;
 
-export default function Header({ titleText = TITLE, children }) {
+export const Header = ({ titleText = TITLE, children }) => {
   const { currentPage } = useOrder();
 
   return (
@@ -25,4 +25,4 @@ export default function Header({ titleText = TITLE, children }) {
       {children}
     </StyledPaper>
   );
-}
+};

@@ -1,8 +1,7 @@
 import { Box, List, ListItem } from '@mui/material';
 import { StyledPaper, StyledLink, PageTitle, Header } from 'components/Layout/SharedStyles';
 
-export default function Schedule() {
-
+export const Schedule = () => {
   return (
     <StyledPaper extraStyles={{ maxWidth: 750 }}>
       <PageTitle>
@@ -33,4 +32,4 @@ export default function Schedule() {
       </List>
     </StyledPaper>
   );
-}
+};

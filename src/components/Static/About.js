@@ -1,11 +1,10 @@
 import { Box, List, ListItem } from '@mui/material';
 import { StyledLink, StyledPaper, PageTitle, Paragraph, Header } from 'components/Layout/SharedStyles';
 import { mailtoLink } from 'utils';
-import config from 'config';
+import { config } from 'config';
 const { EMAIL_CONTACT } = config;
 
-export default function About() {
-
+export const About = () => {
   return (
     <StyledPaper extraStyles={{ maxWidth: 750 }}>
       <PageTitle>
@@ -74,4 +73,4 @@ export default function About() {
       <Paragraph>If you have any other questions about housing or hosting guests, please email Kristin at housing@some_eventcontra.com</Paragraph>
     </StyledPaper>
   );
-}
+};

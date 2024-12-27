@@ -3,7 +3,7 @@ import { useOrder } from 'hooks/useOrder';
 import { isEqual } from 'lodash';
 import { firebaseFunctionDispatcher } from 'firebase.js';
 import { log, logError } from 'logger';
-import config from 'config';
+import { config } from 'config';
 const { EVENT_TITLE } = config;
 
 export const useOrderSetup = ({ onError }) => {

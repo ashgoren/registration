@@ -7,14 +7,14 @@ import { InputAdornment, Box, Tab, Tabs, FormControlLabel, Checkbox } from '@mui
 import { TabPanel, TabContext } from '@mui/lab';
 import { useFormikContext } from 'formik';
 import { PaymentExplanation } from 'components/Static/PaymentExplanation';
-import NavButtons from 'components/NavButtons';
-import config from 'config';
-import useScrollToTop from 'hooks/useScrollToTop';
+import { NavButtons } from 'components/NavButtons';
+import { useScrollToTop } from 'hooks/useScrollToTop';
+import { config } from 'config';
 const { DEPOSIT_OPTION, COVER_FEES_OPTION, DEPOSIT_COST, ADMISSION_COST_RANGE, DONATION_OPTION, DONATION_MAX, PAYMENT_DUE_DATE } = config;
 
 const isSlidingScale = ADMISSION_COST_RANGE[0] < ADMISSION_COST_RANGE[1];
 
-export default function PaymentInfo({ handleClickBackButton }) {
+export const PaymentInfo = ({ handleClickBackButton }) => {
   const { order, updateOrder } = useOrder();
   const { values, setFieldValue, handleBlur } = useFormikContext();
   const [payingMax, setPayingMax] = useState(order.people[0].admission === ADMISSION_COST_RANGE[1]);
@@ -186,7 +186,7 @@ export default function PaymentInfo({ handleClickBackButton }) {
 
     </section>
   );
-}
+};
 
 const clampAdmission = (value) => clamp(value || ADMISSION_COST_RANGE[0], ADMISSION_COST_RANGE);
 const clampDonation = (value) => clamp(value || 0, [0, DONATION_MAX]);

@@ -1,20 +1,20 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-// import Home from 'components/Static/Home';
-import About from 'components/Static/About';
-import Staff from 'components/Static/Staff';
-import Seattle from 'components/Static/Seattle';
-import Contact from 'components/Static/Contact';
-import Schedule from 'components/Static/Schedule';
-import Registration from 'components/Registration';
-import MaterialLayout from 'components/Layout/MaterialLayout';
-import Error from 'components/Error';
+// import {Home} from 'components/Static/Home';
+import { About } from 'components/Static/About';
+import { Staff } from 'components/Static/Staff';
+import { Seattle } from 'components/Static/Seattle';
+import { Contact } from 'components/Static/Contact';
+import { Schedule } from 'components/Static/Schedule';
+import { Registration } from 'components/Registration';
+import { MaterialLayout } from 'components/Layout/MaterialLayout';
+import { Error } from 'components/Error';
 import { PaymentExplanation } from 'components/Static/PaymentExplanation';
-import ScrollToAnchor from 'components/ScrollToAnchor';
+import { ScrollToAnchor } from 'components/ScrollToAnchor';
 import { OrderProvider } from 'contexts/OrderContext';
-import config from 'config';
+import { config } from 'config';
 const { TECH_CONTACT } = config;
 
-export default function App() {
+export const App = () => {
   // useEffect(() => {
   //   document.title = EVENT_TITLE;
   // }, []);
@@ -43,4 +43,4 @@ export default function App() {
       </Router>
     </>
   );
-}
+};

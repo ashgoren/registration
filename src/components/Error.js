@@ -1,8 +1,8 @@
 import { useOrder } from 'hooks/useOrder';
 import { Box } from '@mui/material';
-import useScrollToTop from 'hooks/useScrollToTop';
+import { useScrollToTop } from 'hooks/useScrollToTop';
 
-export default function Error() {
+export const Error = () => {
   const { error } = useOrder();
   
   useScrollToTop();
@@ -12,4 +12,4 @@ export default function Error() {
       {error}
     </Box>
   );
-}
+};

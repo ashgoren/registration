@@ -3,7 +3,7 @@ import { StyledPaper, PageTitle, Paragraph, SectionDivider, Header } from 'compo
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
-export default function Staff() {
+export const Staff = () => {
   const location = useLocation();
   useEffect(() => {
     const element = document.getElementById(location.hash.replace('#', ''));
@@ -67,4 +67,4 @@ export default function Staff() {
       <Box sx={{ clear: 'both' }} />
     </StyledPaper>
   );
-}
+};

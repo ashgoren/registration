@@ -1,12 +1,12 @@
 import { Box } from '@mui/material';
 import { useOrder } from 'hooks/useOrder';
 import { StyledPaper, StyledLink, Paragraph, SectionDivider } from 'components/Layout/SharedStyles';
-import Receipt from 'components/Receipt';
+import { Receipt } from 'components/Receipt';
 import { mailtoLink, websiteLink } from 'utils';
-import config from 'config';
+import { config } from 'config';
 const { EMAIL_CONTACT, EVENT_TITLE, MORE_INFO_URL } = config;
 
-export default function Confirmation() {
+export const Confirmation = () => {
   const { order, paymentMethod } = useOrder();
 
   return (
@@ -28,4 +28,4 @@ export default function Confirmation() {
       </StyledPaper>
     </>
   );
-}
+};

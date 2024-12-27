@@ -1,13 +1,13 @@
 import { Box, Grid } from '@mui/material';
 import { StyledLink, StyledPaper, PageTitle, Paragraph, SectionDivider } from 'components/Layout/SharedStyles';
-import config from 'config';
+import { config } from 'config';
 const { DANCES } = config;
 
 const halfLength = Math.ceil(DANCES.length / 2);
 const col1 = DANCES.slice(0, halfLength);
 const col2 = DANCES.slice(halfLength);
 
-export default function Dances() {
+export const Dances = () => {
   return (
     <StyledPaper extraStyles={{ maxWidth: 750 }} align="center">
       <PageTitle>
@@ -49,4 +49,4 @@ export default function Dances() {
       </Paragraph>
     </StyledPaper>
   );
-}
+};

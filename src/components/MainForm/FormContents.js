@@ -1,12 +1,12 @@
 import { useOrder } from 'hooks/useOrder';
 import { Form } from 'formik';
-import People from './People';
-import PaymentInfo from './PaymentInfo';
-import Waitlist from './Waitlist';
-import config from 'config';
+import { People } from './People';
+import { PaymentInfo } from './PaymentInfo';
+import { Waitlist } from './Waitlist';
+import { config } from 'config';
 const { WAITLIST_MODE } = config;
 
-export default function FormContents({ formikRef }) {
+export const FormContents = ({ formikRef }) => {
   const { updateOrder, currentPage, setCurrentPage } = useOrder();
 
   console.log('FormContents rendered');
@@ -25,4 +25,4 @@ export default function FormContents({ formikRef }) {
       {currentPage === 2 && !WAITLIST_MODE && <PaymentInfo handleClickBackButton={handleClickBackButton} />}
     </Form>
   );
-}
+};

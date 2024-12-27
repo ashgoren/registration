@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { CssBaseline, useMediaQuery, Box } from '@mui/material';
 import { ThemeProvider } from '@mui/system';
-import Navbar from '../Navbar';
+import { Navbar } from '../Navbar';
 import { lightTheme, darkTheme, rootStyle } from './LayoutStyles';
 
-export default function MaterialLayout({ children }) {
+export const MaterialLayout = ({ children }) => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const [theme, setTheme] = useState(prefersDarkMode ? darkTheme : lightTheme);
 
@@ -28,4 +28,4 @@ export default function MaterialLayout({ children }) {
       </div>
     </ThemeProvider>
   );
-}
+};

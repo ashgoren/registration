@@ -1,6 +1,6 @@
 import { StyledPaper, Paragraph, Header, PageTitle } from 'components/Layout/SharedStyles';
 
-export default function Fragrance() {
+export const Fragrance = () => {
   return (
     <StyledPaper extraStyles={{ maxWidth: 750 }}>
       <PageTitle>
@@ -123,4 +123,4 @@ export default function Fragrance() {
       </Paragraph>
     </StyledPaper>
   );
-}
+};

@@ -1,4 +1,4 @@
-const countryMapping = {
+export const countryMapping = {
   "al": "USA",
   "alabama": "USA",
   "ak": "USA",
@@ -128,4 +128,3 @@ const countryMapping = {
   "yt": "Canada",
   "yukon": "Canada"
 }
-export default countryMapping;

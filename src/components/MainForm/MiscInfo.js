@@ -2,11 +2,11 @@ import { useState, useCallback } from 'react';
 import { Input } from './Input';
 import { Title } from 'components/Layout/SharedStyles';
 import { Box } from '@mui/material';
-import config from 'config';
-import useScrollToTop from 'hooks/useScrollToTop';
+import { useScrollToTop } from 'hooks/useScrollToTop';
+import { config } from 'config';
 const { FIELD_CONFIG, PERSON_MISC_FIELDS } = config;
 
-export default function MiscInfo({ index, formikRef }) {
+export const MiscInfo = ({ index, formikRef }) => {
   console.log('MiscInfo rendered');
   
   const [showPhotoCommentsField, setShowPhotoCommentsField] = useState(false);
@@ -76,4 +76,4 @@ export default function MiscInfo({ index, formikRef }) {
       }
     </Box>
   );
-}
+};

@@ -1,6 +1,6 @@
 import { createContext, useState, useReducer, useEffect, useCallback } from 'react';
 import { cache, cached } from 'utils';
-import config from 'config';
+import { config } from 'config';
 const { getOrderDefaults, PAYMENT_METHODS, WAITLIST_MODE } = config;
 
 export const OrderContext = createContext();

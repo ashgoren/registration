@@ -1,12 +1,12 @@
 import { useOrder } from 'hooks/useOrder';
 import { Box, Button } from '@mui/material';
-import ContactInfo from './ContactInfo';
-import MiscInfo from './MiscInfo';
+import { ContactInfo } from './ContactInfo';
+import { MiscInfo } from './MiscInfo';
 import { getFirstInvalidFieldName, sanitizeObject } from 'utils';
-import countryMapping from 'countryMapping';
+import { countryMapping } from 'countryMapping';
 import { firebaseFunctionDispatcher } from 'firebase.js';
 
-export default function PersonForm({ editIndex, setEditIndex, isNewPerson, setIsNewPerson, resetForm, formikRef }) {
+export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerson, resetForm, formikRef }) => {
   console.log('PersonForm rendered');
 
   const { order, updateOrder, warmedUp, setWarmedUp } = useOrder();
@@ -91,7 +91,7 @@ export default function PersonForm({ editIndex, setEditIndex, isNewPerson, setIs
       </Box>
     </>
   );
-}
+};
 
 function updateCountry(person) {
   if (person.country === 'United States') {

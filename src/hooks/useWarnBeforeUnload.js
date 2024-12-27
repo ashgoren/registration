@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-export default function useWarnBeforeUnload() {
+export const useWarnBeforeUnload = () => {
   useEffect(() => {
     if (window.location.hostname === 'localhost') return;
 
@@ -12,4 +12,4 @@ export default function useWarnBeforeUnload() {
     window.addEventListener('beforeunload', warnBeforeUserLeavesSite);
     return () => window.removeEventListener('beforeunload', warnBeforeUserLeavesSite);
   }, []);
-}
+};

@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useOrder } from 'hooks/useOrder';
 import { Typography, Button } from '@mui/material';
-import Loading from 'components/Loading';
-import config from 'config';
+import { Loading } from 'components/Loading';
+import { config } from 'config';
 const { CHECK_ADDRESS, CHECK_TO, SANDBOX_MODE } = config;
 
-export default function Check() {
+export const Check = () => {
   const { processing, setCurrentPage, updateOrder } = useOrder();
   const [ready, setReady] = useState(SANDBOX_MODE);
 
@@ -38,4 +38,4 @@ export default function Check() {
       }
     </section>
   );
-}
+};

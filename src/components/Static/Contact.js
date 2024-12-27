@@ -1,9 +1,9 @@
 import { StyledPaper, Paragraph, PageTitle, StyledLink } from 'components/Layout/SharedStyles';
 import { mailtoLink } from 'utils';
-import config from 'config';
+import { config } from 'config';
 const { EMAIL_CONTACT } = config;
 
-export default function Contact() {
+export const Contact = () => {
   return (
     <StyledPaper extraStyles={{ maxWidth: 750 }}>
       <PageTitle>
@@ -23,4 +23,4 @@ export default function Contact() {
       </Paragraph>
     </StyledPaper>
   );
-}
+};

@@ -1,13 +1,13 @@
 import { websiteLink } from 'utils';
-import OrderSummary, { PersonSummary } from 'components/OrderSummary';
+import { OrderSummary, PersonSummary } from 'components/OrderSummary';
 import { Divider, Typography } from '@mui/material';
 import { StyledLink } from 'components/Layout/SharedStyles';
-import config from 'config';
-import useScrollToTop from 'hooks/useScrollToTop';
+import { useScrollToTop } from 'hooks/useScrollToTop';
+import { config } from 'config';
 const { CHECK_TO, CHECK_ADDRESS, EVENT_TITLE, PAYMENT_DUE_DATE, DIRECT_PAYMENT_URL } = config;
 
 // relies on passing order as prop to ensure is updated
-export default function Receipt({ order, paymentMethod, person, isPurchaser }) {
+export const Receipt = ({ order, paymentMethod, person, isPurchaser }) => {
   const isCheckPayment = paymentMethod === 'check';
   const isElectronicPayment = !isCheckPayment;
   const isDeposit = order.deposit > 0;
@@ -90,4 +90,4 @@ export default function Receipt({ order, paymentMethod, person, isPurchaser }) {
       }
     </>
   );
-}
+};

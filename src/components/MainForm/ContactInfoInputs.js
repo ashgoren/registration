@@ -1,10 +1,10 @@
-import React from 'react';
+import { memo } from 'react';
 import { Input } from './Input';
 import { Grid } from '@mui/material';
-import config from 'config';
+import { config } from 'config';
 const { FIELD_CONFIG, INCLUDE_LAST_ON_NAMETAG } = config;
 
-function ContactInfoInputs({ fields, index, formikRef }) {
+export const ContactInfoInputs = memo(({ fields, index, formikRef }) => {
   console.log('ContactInfoInputs rendered');
 
   const triggerSetNametagField = `people[${index}].${INCLUDE_LAST_ON_NAMETAG ? 'last' : 'first'}`;
@@ -47,6 +47,4 @@ function ContactInfoInputs({ fields, index, formikRef }) {
       })}
     </Grid>
   );
-}
-
-export default React.memo(ContactInfoInputs);
+});

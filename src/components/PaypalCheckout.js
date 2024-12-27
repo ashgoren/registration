@@ -3,13 +3,13 @@ import { useEffect } from 'react';
 import { useOrder } from 'hooks/useOrder';
 import { usePaypalPayment } from 'hooks/usePaypalPayment';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
-import Loading from 'components/Loading';
+import { Loading } from 'components/Loading';
 import { Box } from "@mui/material";
 import { TestCardBox } from 'components/Layout/SharedStyles';
-import config from 'config';
+import { config } from 'config';
 const { SANDBOX_MODE, TECH_CONTACT } = config;
 
-const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, setPaying }) => {
+export const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, setPaying }) => {
 	const { processing, setCurrentPage, setError, order, updateOrder, electronicPaymentDetails: { id } } = useOrder();
 	const { email } = order.people[0]; // for logging
 	const { processPayment } = usePaypalPayment({ email, id });
@@ -93,5 +93,3 @@ const mapPaymentError = (error) => {
   };
   return errorMessages[error.code] || `Unexpected payment processing error: ${error.message}. Please contact ${TECH_CONTACT}.`;
 }
-
-export default PaypalCheckout;

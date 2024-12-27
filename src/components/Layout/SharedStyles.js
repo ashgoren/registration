@@ -3,12 +3,12 @@ import { useTheme } from '@mui/system';
 import { Button, Paper, Link, Typography, Divider, FormLabel, Box } from '@mui/material';
 import { paperStyle } from './LayoutStyles';
 
-export const StyledPaper = ({ extraStyles = {}, ...props }) => {
+const StyledPaper = ({ extraStyles = {}, ...props }) => {
   const theme = useTheme();
   return <Paper sx={paperStyle(theme, extraStyles)} {...props} />;
 };
 
-export const StyledButton = styled(Button)(({ theme, palette }) => ({
+const StyledButton = styled(Button)(({ theme, palette }) => ({
   borderColor: theme.palette[palette].main,
   color: theme.palette[palette].main,
   '&:hover': { 
@@ -26,7 +26,7 @@ export const StyledButton = styled(Button)(({ theme, palette }) => ({
   },
 }));
 
-export const StyledLink = ({ children, internal=false, to, ...props }) => {
+const StyledLink = ({ children, internal=false, to, ...props }) => {
   return (
     <Link
       href={to}
@@ -40,7 +40,7 @@ export const StyledLink = ({ children, internal=false, to, ...props }) => {
   );
 }
 
-export const Title = ({ children, ...props }) => {
+const Title = ({ children, ...props }) => {
   return (
     <Typography variant="h6" gutterBottom sx={{ mb: 2 }} {...props}>
       {children}
@@ -48,7 +48,7 @@ export const Title = ({ children, ...props }) => {
   );
 };
 
-export const PageTitle = ({ children, ...props }) => {
+const PageTitle = ({ children, ...props }) => {
   return (
     <>
       <Typography variant="h4" align='center' {...props}>
@@ -59,7 +59,7 @@ export const PageTitle = ({ children, ...props }) => {
   );
 };
 
-export const Header = ({ children, ...props }) => {
+const Header = ({ children, ...props }) => {
   return (
     <Typography variant="h6" gutterBottom sx={{ mt: 3 }} {...props}>
       {children}
@@ -67,7 +67,7 @@ export const Header = ({ children, ...props }) => {
   );
 };
 
-export const Paragraph = ({ children, ...props }) => {
+const Paragraph = ({ children, ...props }) => {
   return (
     <Typography variant="body1" sx={{ my: 2 }} {...props}>
       {children}
@@ -75,13 +75,13 @@ export const Paragraph = ({ children, ...props }) => {
   )
 }
 
-export const SectionDivider = ({ children, ...props }) => {
+const SectionDivider = ({ children, ...props }) => {
   return (
     <Divider component="hr" sx={{borderBottomWidth: 4, my: 4 }}/>
   )
 }
 
-export const Label  = ({ children, name, required=false, sx={} }) => {
+const Label  = ({ children, name, required=false, sx={} }) => {
   return (
     <Box sx={sx}>
       <FormLabel component='legend' htmlFor={name}>
@@ -92,8 +92,10 @@ export const Label  = ({ children, name, required=false, sx={} }) => {
   );
 }
 
-export const TestCardBox = ({ number }) => (
+const TestCardBox = ({ number }) => (
   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '3rem', my: 2, backgroundColor: 'var(--color-error)' }}>
     Testing: {number} / any future expiration / any cvc / any zip
   </Box>
 );
+
+export { StyledPaper, StyledButton, StyledLink, Title, PageTitle, Header, Paragraph, SectionDivider, Label, TestCardBox };

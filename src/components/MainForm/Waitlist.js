@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import { Box, Typography, Button, Checkbox, FormControlLabel } from "@mui/material";
-import OrderSummary from "components/OrderSummary";
+import { OrderSummary } from "components/OrderSummary";
 import { useOrder } from 'hooks/useOrder';
 import { useOrderSetup } from 'hooks/useOrderSetup';
 import { useOrderFinalization } from 'hooks/useOrderFinalization';
 import { StyledPaper, Paragraph } from 'components/Layout/SharedStyles';
-import NavButtons from 'components/NavButtons';
-import Loading from 'components/Loading';
-import Error from 'components/Error';
-import config from 'config';
+import { NavButtons } from 'components/NavButtons';
+import { Loading } from 'components/Loading';
+import { Error } from 'components/Error';
+import { config } from 'config';
 const { SANDBOX_MODE, TECH_CONTACT } = config;
 
-export default function Waitlist({ handleClickBackButton }) {
+export const Waitlist = ({ handleClickBackButton }) => {
   const { order, updateOrder, error, setError, processing, setProcessing, processingMessage, setProcessingMessage } = useOrder();
   const { finalizeOrder } = useOrderFinalization();
   const [ready, setReady] = useState(SANDBOX_MODE);
@@ -112,4 +112,4 @@ export default function Waitlist({ handleClickBackButton }) {
       }
     </>
   );
-}
+};

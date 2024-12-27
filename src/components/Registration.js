@@ -1,21 +1,21 @@
 import { useState } from "react";
 import { useOrder } from 'hooks/useOrder';
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
-import MainForm from "components/MainForm/MainForm";
-import Checkout from "components/Checkout";
-import Processing from "components/Processing";
-import Confirmation from "components/Confirmation";
-import Error from "components/Error";
-import Header from 'components/Layout/Header';
-import IntroHeader from 'components/IntroHeader';
-import OrderSummary from "components/OrderSummary";
 import { Typography, Button } from "@mui/material";
 import { StyledPaper, Paragraph } from 'components/Layout/SharedStyles';
-import config from 'config';
-import Loading from "components/Loading";
+import { MainForm } from "components/MainForm/MainForm";
+import { Checkout } from "components/Checkout";
+import { Processing } from "components/Processing";
+import { Confirmation } from "components/Confirmation";
+import { Error } from "components/Error";
+import { Header } from 'components/Layout/Header';
+import { IntroHeader } from 'components/IntroHeader';
+import { OrderSummary } from "components/OrderSummary";
+import { Loading } from "components/Loading";
+import { config } from 'config';
 const { PAYMENT_METHODS, PAYPAL_OPTIONS, TITLE, CONFIRMATION_CHECK_TITLE, CONFIRMATION_PAYPAL_TITLE, SANDBOX_MODE, SHOW_PRE_REGISTRATION } = config;
 
-export default function Registration() {
+export const Registration = () => {
   const [registering, setRegistering] = useState(false);
 
   return (
@@ -23,7 +23,7 @@ export default function Registration() {
       registering ? <RealRegistration /> : <PreRegistration setRegistering={setRegistering} />
     ) : <RealRegistration />
   );
-}
+};
 
 const PreRegistration = ({ setRegistering }) => {
   return(

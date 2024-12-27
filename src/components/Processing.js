@@ -3,12 +3,12 @@ import { Box } from '@mui/material';
 import { StyledPaper } from 'components/Layout/SharedStyles';
 import { useOrder } from 'hooks/useOrder';
 import { useOrderFinalization } from 'hooks/useOrderFinalization';
-import Loading from 'components/Loading';
-import Error from 'components/Error';
-import config from 'config';
+import { Loading } from 'components/Loading';
+import { Error } from 'components/Error';
+import { config } from 'config';
 const { TECH_CONTACT } = config;
 
-export default function Processing({ isPaymentComplete }) {
+export const Processing = ({ isPaymentComplete }) => {
   const { paymentMethod, setCurrentPage, error, setError } = useOrder();
   const { finalizeOrder } = useOrderFinalization();
 
@@ -41,6 +41,6 @@ export default function Processing({ isPaymentComplete }) {
       }
     </StyledPaper>
   );
-}
+};
 
 const isElectronicPayment = (paymentMethod) => ['stripe', 'paypal'].includes(paymentMethod);

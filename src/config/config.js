@@ -22,7 +22,7 @@ const getOrderDefaults = () => ({
   people: [PERSON_DEFAULTS]
 });
 
-const config = {
+export const config = {
   ...configPaypal,
   ...configBasics,
   ...configTheme,
@@ -35,5 +35,3 @@ const config = {
   PERSON_DEFAULTS,
   getOrderDefaults
 }
-
-export default config;

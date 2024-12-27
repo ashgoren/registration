@@ -2,10 +2,10 @@ import { websiteLink } from "utils";
 import { StyledLink, StyledPaper, Title } from 'components/Layout/SharedStyles';
 import { Typography } from '@mui/material';
 import { Paragraph } from 'components/Layout/SharedStyles';
-import config from 'config';
+import { config } from 'config';
 const { DIRECT_PAYMENT_URL, PAYMENT_DUE_DATE } = config;
 
-export function PaymentExplanation() {
+export const PaymentExplanation = () => {
   return (
     <StyledPaper>
       <Title>What Queer Contra Dance Camp Costs</Title>
@@ -66,4 +66,4 @@ export function SlidingScaleSummaryExplanation() {
       <Typography>$150 (real nice)</Typography>
     </>
   )
-}
+};

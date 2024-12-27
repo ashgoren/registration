@@ -1,8 +1,7 @@
 import { Box, List, ListItem } from '@mui/material';
 import { StyledPaper, StyledLink, PageTitle, Paragraph, Header } from 'components/Layout/SharedStyles';
 
-export default function Seattle() {
-
+export const Seattle = () => {
   return (
     <StyledPaper extraStyles={{ maxWidth: 750 }}>
       <PageTitle>
@@ -63,4 +62,4 @@ export default function Seattle() {
       </Box>
     </StyledPaper>
   );
-}
+};

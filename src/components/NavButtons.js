@@ -11,7 +11,7 @@ function UnifiedButton({ color, palette, variant='contained', type='button', onC
   );
 }
 
-export default function NavButtons({ backButtonProps, nextButtonProps, centerButtonProps }) {
+export const NavButtons = ({ backButtonProps, nextButtonProps, centerButtonProps }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -37,4 +37,4 @@ export default function NavButtons({ backButtonProps, nextButtonProps, centerBut
   };
 
   return renderButtonsOrMobileStepper();
-}
+};

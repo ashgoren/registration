@@ -2,10 +2,10 @@ import { useTheme } from '@mui/system';
 import { Typography, Box } from '@mui/material';
 import { StyledLink, StyledPaper, PageTitle, SectionDivider, Paragraph } from 'components/Layout/SharedStyles';
 import { mailtoLink} from 'utils';
-import config from 'config';
+import { config } from 'config';
 const { EMAIL_CONTACT, EVENT_TITLE, EVENT_LOCATION, EVENT_DATE, WAITLIST_MODE } = config;
 
-export default function Home() {
+export const Home = () => {
   const theme = useTheme();
 
   return (
@@ -81,4 +81,4 @@ export default function Home() {
       </Typography>
     </StyledPaper>
   );
-}
+};

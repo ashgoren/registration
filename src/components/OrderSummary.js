@@ -1,11 +1,11 @@
 import { Box, Typography } from '@mui/material';
 import { formatCurrency } from 'utils';
-import config from 'config';
+import { config } from 'config';
 const { ORDER_SUMMARY_OPTIONS, ADMISSION_COST_RANGE, PAYMENT_DUE_DATE, INCLUDE_PRONOUNS_ON_NAMETAG, WAITLIST_MODE } = config;
 
 // NOTE: this component uses some vanilla html becuase it's used in the confirmation email
 // NOTE: order is passed as prop to be sure it is most up-to-date when this is used in receipt generation
-export default function OrderSummary({ order }) {
+export const OrderSummary = ({ order }) => {
   const admissions = order.people.map(person => person.admission);
   const admissionsTotal = admissions.reduce((total, admission) => total + admission, 0);
   const isDeposit = order.deposit > 0;
@@ -64,9 +64,9 @@ export default function OrderSummary({ order }) {
       }
     </>
   );
-}
+};
 
-export function PersonSummary({ person, skipCost=false, skipFirstLastHeading=false }) {
+export const PersonSummary = ({ person, skipCost=false, skipFirstLastHeading=false }) => {
   return (
     <>
       {!skipFirstLastHeading &&
@@ -85,7 +85,7 @@ export function PersonSummary({ person, skipCost=false, skipFirstLastHeading=fal
       }
     </>
   );
-}
+};
 
 // data formatting helpers
 

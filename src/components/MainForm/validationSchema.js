@@ -1,8 +1,8 @@
 import * as Yup from 'yup';
-import config from 'config';
+import { config } from 'config';
 const { FIELD_CONFIG, PERSON_FIELDS, DONATION_MAX } = config;
 
-export function validationSchema({ currentPage }) {
+export const validationSchema = ({ currentPage }) => {
 
   const personValidationSchema = Yup.object(
     PERSON_FIELDS.reduce((obj, field) => ({ ...obj, [field]: FIELD_CONFIG[field].validation }), {})
@@ -23,4 +23,4 @@ export function validationSchema({ currentPage }) {
   };
 
   return validationSchemas[currentPage];
-}
+};

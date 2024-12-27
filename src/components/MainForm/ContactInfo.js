@@ -1,11 +1,11 @@
-import React from 'react';
-import ContactInfoInputs from './ContactInfoInputs';
+import { memo } from 'react';
+import { ContactInfoInputs } from './ContactInfoInputs';
 import { Title } from 'components/Layout/SharedStyles';
-import config from 'config';
-import useScrollToTop from 'hooks/useScrollToTop';
+import { useScrollToTop } from 'hooks/useScrollToTop';
+import { config } from 'config';
 const { PERSON_INPUT_LABELS, PERSON_CONTACT_FIELDS } = config;
 
-function ContactInfo({ index, formikRef }) {
+export const ContactInfo = memo(({ index, formikRef }) => {
   console.log('ContactInfo rendered');
 
   useScrollToTop();
@@ -20,6 +20,4 @@ function ContactInfo({ index, formikRef }) {
       />
     </section>
   );
-}
-
-export default React.memo(ContactInfo);
+});

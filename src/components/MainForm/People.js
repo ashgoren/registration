@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { useOrder } from 'hooks/useOrder';
 import { Box, Button, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import PersonForm from './PersonForm';
-import NavButtons from 'components/NavButtons';
 import { StyledPaper, Paragraph } from 'components/Layout/SharedStyles';
-import config from 'config';
+import { PersonForm } from './PersonForm';
+import { NavButtons } from 'components/NavButtons';
 import { PersonSummary } from 'components/OrderSummary';
+import { config } from 'config';
 const { ADMISSION_QUANTITY_MAX, PERSON_DEFAULTS } = config;
 
-export default function People({ formikRef }) {
+export const People = ({ formikRef }) => {
   console.log('People rendered');
 
   const { order, updateOrder } = useOrder();
@@ -122,4 +122,4 @@ function PersonContainerAccordion({ person, personIndex, showButtons, handleEdit
       </Accordion>
     </Box>
   );
-}
+};

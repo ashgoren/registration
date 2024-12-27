@@ -2,10 +2,10 @@ import { useTheme } from '@mui/system';
 import { Box } from '@mui/material';
 import { mailtoLink } from "utils";
 import { StyledLink, Paragraph } from 'components/Layout/SharedStyles';
-import config from 'config';
+import { config } from 'config';
 const { EMAIL_CONTACT, TECH_CONTACT, EVENT_TITLE, EVENT_LOCATION, EVENT_DATE, WAITLIST_MODE } = config;
 
-export default function IntroHeader() {
+export const IntroHeader = () => {
   const theme = useTheme();
 
   return (
@@ -24,4 +24,4 @@ export default function IntroHeader() {
       <Paragraph>Any other questions? Email <StyledLink to={mailtoLink(EMAIL_CONTACT)}>{EMAIL_CONTACT}</StyledLink>.</Paragraph>
     </>
   );
-}
+};

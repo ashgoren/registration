@@ -1,12 +1,12 @@
 import { useOrder } from 'hooks/useOrder';
 import { Typography, Button } from '@mui/material';
-import config from 'config';
+import { config } from 'config';
 const { PAYMENT_METHODS } = config;
 
 const switchToCheckText = '(or pay by check)';
 const switchToElectronicText = '(or view online payment options)';
 
-export default function TogglePaymentMode() {
+export const TogglePaymentMode = () => {
   const { paymentMethod, setPaymentMethod, setError } = useOrder();
   const text = paymentMethod === 'check' ? switchToElectronicText : switchToCheckText;
   const togglePaymentMethod = () => {
@@ -25,4 +25,4 @@ export default function TogglePaymentMode() {
       }
     </>
   );
-}
+};
