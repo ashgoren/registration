@@ -150,11 +150,20 @@ export const useOrderFinalization = () => {
   const { email } = order.people[0]; // for logging
 
   const finalizeOrder = async () => {
-    await saveFinalOrderToFirebase();
-    sendReceipts(); // fire-and-forget
+    const finalOrder = appendReceiptsToOrder(order);
+    await saveFinalOrderToFirebase(finalOrder);
   };
 
-  const saveFinalOrderToFirebase = async () => {
+  const appendReceiptsToOrder = (order) => {
+    const peopleWithReceipts = order.people.map((person, i) => {
+      const receipt = <Receipt order={order} paymentMethod={paymentMethod} person={person} isPurchaser={i === 0} />;
+      const htmlReceipt = renderToStaticMarkup(receipt);
+      return { ...person, receipt: htmlReceipt };
+    });
+    return { ...order, people: peopleWithReceipts };
+  };
+
+  const saveFinalOrderToFirebase = async (order) => {
     log('Saving final order to firebase', { email });
     try {
       await firebaseFunctionDispatcher({
@@ -170,28 +179,8 @@ export const useOrderFinalization = () => {
     }
   };
 
-  // fire-and-forget
-  const sendReceipts = () => {
-    const emailReceiptPairs = generateReceipts({ order, paymentMethod });
-    firebaseFunctionDispatcher({
-      action: 'sendEmailConfirmations',
-      data: emailReceiptPairs,
-      email
-    });
-  };
-
   return { finalizeOrder };
 };
-
-function generateReceipts({ order, paymentMethod }) {
-  return order.people.map((person, i) => {
-    const receipt = <Receipt order={order} paymentMethod={paymentMethod} person={person} isPurchaser={i === 0} />;
-    return {
-      email: person.email,
-      receipt: renderToStaticMarkup(receipt)
-    };
-  });
-}
 
 
 // ===== Helpers =====

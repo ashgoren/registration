@@ -45,5 +45,6 @@ export const validFields = [
   'emailConfirmation',
   'apartment',
   'photoComments',
-  'createdAt'
+  'createdAt',
+  'receipt'
 ];

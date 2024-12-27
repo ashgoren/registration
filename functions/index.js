@@ -9,7 +9,6 @@ import { logToPapertrail } from './logger.js';
 import { getStripePaymentIntent } from './stripe.js';
 import { createOrUpdatePaypalOrder, capturePaypalOrder } from './paypal.js';
 import { initializePayment } from './initializePayment.js';
-import { log } from 'firebase-functions/logger';
 
 if (!getApps().length) initializeApp();
 
@@ -30,7 +29,6 @@ const firebaseFunctionDispatcher = onCall({ enforceAppCheck: false }, async (req
       case 'capturePaypalOrder': return await capturePaypalOrder(data);
       case 'savePendingOrder': return await savePendingOrder(data);
       case 'saveFinalOrder': return await saveFinalOrder(data);
-      case 'sendEmailConfirmations': return await sendEmailConfirmations(data);
       case 'logToPapertrail': return logToPapertrail(data); // fire-and-forget
       default: return { error: 'Invalid action' };
     }
@@ -49,4 +47,4 @@ const logTokenStatus = (hasToken, action, metadata) => {
   };
 };
 
-export { firebaseFunctionDispatcher, appendrecordtospreadsheet };
+export { firebaseFunctionDispatcher, appendrecordtospreadsheet, sendEmailConfirmations };
