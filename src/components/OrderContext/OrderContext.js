@@ -157,7 +157,7 @@ export const useOrderSetup = ({ onError }) => {
 };
 
 export const useOrderFinalization = () => {
-  const { order, paymentMethod } = useOrder();
+  const { orderId, order, paymentMethod } = useOrder();
   const { email } = order.people[0]; // for logging
 
   const finalizeOrder = async () => {
@@ -170,7 +170,7 @@ export const useOrderFinalization = () => {
     try {
       await firebaseFunctionDispatcher({
         action: 'saveFinalOrder',
-        data: order,
+        data: { orderId, order },
         email
       });
       log('Final order saved', { email });

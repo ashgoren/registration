@@ -2,7 +2,7 @@
 
 import { logger } from 'firebase-functions/v2';
 import { initializeApp, getApps } from 'firebase-admin/app';
-import { onDocumentCreated } from 'firebase-functions/v2/firestore';
+import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { google } from 'googleapis';
 import { fieldOrder } from './fields.js';
 import { joinArrays } from './helpers.js';
@@ -17,22 +17,24 @@ if (!getApps().length) initializeApp();
 
 const client = new google.auth.JWT(process.env.SHEETS_SERVICE_ACCOUNT_CLIENT_EMAIL, null, process.env.SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY, ['https://www.googleapis.com/auth/spreadsheets']);
 
-export const appendrecordtospreadsheet = onDocumentCreated(`${CONFIG_DATA_COLLECTION}/{ITEM}`, async (event) => {
-  const snap = event.data;
-  logger.info(`APPEND TO SPREADSHEET: ${snap.id}`);
-  try {
-    const order = { ...snap.data(), key: snap.id };
-    const orders = mapOrderToSpreadsheetLines(order);
-    await appendAllLines(orders);
-  } catch (err) {
-    logger.error(`Error in appendrecordtospreadsheet for ${snap.data().people[0].email}`, err);
+export const appendrecordtospreadsheet = onDocumentUpdated(`${CONFIG_DATA_COLLECTION}/{ITEM}`, async (event) => {
+  const { before, after } = event.data;
+  if (before?.data()?.status === 'pending' && after.data().status === 'final') {
+    logger.info(`APPEND TO SPREADSHEET: ${after.id}`);
+    try {
+      const order = { ...after.data(), key: after.id };
+      const orders = mapOrderToSpreadsheetLines(order);
+      await appendAllLines(orders);
+    } catch (err) {
+      logger.error(`Error in appendrecordtospreadsheet for ${after.data().people[0].email}`, err);
+    }
   }
 });
 
 const mapOrderToSpreadsheetLines = (order) => {
   const orders = []
-  // const createdAt = order.createdAt.toDate().toLocaleDateString(); // just date
-  const createdAt = order.createdAt.toDate().toLocaleString('sv-SE', {
+  // const completedAt = order.completedAt.toDate().toLocaleDateString(); // just date
+  const completedAt = order.completedAt.toDate().toLocaleString('sv-SE', {
     timeZone: 'America/Los_Angeles',
     year: 'numeric',
     month: '2-digit',
@@ -74,7 +76,7 @@ const mapOrderToSpreadsheetLines = (order) => {
     const personFieldsBuilder = {
       ...updatedPerson,
       key: isPurchaser ? order.key : '-',
-      createdAt,
+      completedAt,
       address: updateAddress(person),
       photo: updatePhoto(person),
       admission,

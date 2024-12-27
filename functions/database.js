@@ -4,7 +4,6 @@ import { validFields } from './fields.js';
 import { createError, ErrorType } from './errorHandler.js';
 const firestore = getFirestore();
 
-const pendingCollection = firestore.collection('pendingOrders');
 const ordersCollection = firestore.collection('orders');
 
 export const savePendingOrder = async ({ orderId, order }) => {
@@ -21,11 +20,11 @@ export const savePendingOrder = async ({ orderId, order }) => {
 
   try {
     if (orderId) {
-      const docRef = await pendingCollection.doc(orderId).set(preppedOrder);
+      const docRef = await ordersCollection.doc(orderId).set(preppedOrder);
       logger.info(`PENDING ORDER UPDATED: ${email}`);
       return { id: orderId };
     } else {
-      const docRef = await pendingCollection.add(preppedOrder);
+      const docRef = await ordersCollection.add(preppedOrder);
       logger.info(`PENDING ORDER SAVED: ${email}`);
       return { id: docRef.id };
     }
@@ -34,19 +33,22 @@ export const savePendingOrder = async ({ orderId, order }) => {
   }
 };
 
-export const saveFinalOrder = async (order) => {
-  logger.info(`SAVING FINAL ORDER: ${order.people[0].email}`, order);
+export const saveFinalOrder = async ({ orderId, order }) => {
+  const { email } = order.people[0];
+  logger.info(`SAVING FINAL ORDER: ${email}`, order);
+
+  if (!orderId) throw new Error('Missing orderId');
 
   const filteredOrder = filterObject(order, validFields);
   const preppedOrder = {
     ...filteredOrder,
-    createdAt: FieldValue.serverTimestamp(),
+    completedAt: FieldValue.serverTimestamp(),
     status: 'final'
   };
 
   try {
-    await ordersCollection.add(preppedOrder);
-    logger.info(`FINAL ORDER SAVED: ${order.people[0].email}`);
+    await ordersCollection.doc(orderId).set(preppedOrder, { merge: true });
+    logger.info(`FINAL ORDER SAVED: ${email}`);
   } catch (err) {
     throw createError(ErrorType.DATABASE_SAVE, 'Error saving final order', { order, error: err });
   }

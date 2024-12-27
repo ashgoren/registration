@@ -32,7 +32,7 @@ export const fieldOrder = [
   'charged',
   'status',
   'purchaser',
-  'createdAt',
+  'completedAt',
   'paymentId'
 ];
 
@@ -44,5 +44,6 @@ export const validFields = [
   'additionalPersonReceipt',
   'emailConfirmation',
   'apartment',
-  'photoComments'
+  'photoComments',
+  'createdAt'
 ];
