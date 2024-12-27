@@ -1,8 +1,8 @@
 import { useOrder } from 'hooks/useOrder';
 import { Form } from 'formik';
-import People from '../People';
-import PaymentInfo from '../PaymentInfo';
-import Waitlist from '../Waitlist';
+import People from './People';
+import PaymentInfo from './PaymentInfo';
+import Waitlist from './Waitlist';
 import config from 'config';
 const { WAITLIST_MODE } = config;
 

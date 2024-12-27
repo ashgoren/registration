@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useOrder } from 'hooks/useOrder';
 import { clamp } from 'utils';
-import { RightAlignedInput } from '../Input';
+import { RightAlignedInput } from './Input';
 import { StyledPaper, Title, Paragraph } from 'components/Layout/SharedStyles';
 import { InputAdornment, Box, Tab, Tabs, FormControlLabel, Checkbox } from '@mui/material';
 import { TabPanel, TabContext } from '@mui/lab';

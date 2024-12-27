@@ -7,7 +7,7 @@ import PaypalCheckout from 'components/PaypalCheckout';
 import Check from "components/Check";
 import Loading from 'components/Loading';
 import TogglePaymentMode from 'components/TogglePaymentMode';
-import NavButtons from 'components/NavButtons/index.js';
+import NavButtons from 'components/NavButtons';
 import { StyledPaper, Title } from 'components/Layout/SharedStyles';
 import StripeCheckout from 'components/StripeCheckout';
 import Error from 'components/Error';

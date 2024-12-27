@@ -2,7 +2,7 @@ import { PAYPAL_ME_URL, EMAIL_CONTACT } from 'config';
 import { websiteLink, mailtoLink } from 'utils';
 import { PageTitle, Paragraph, StyledPaper, StyledLink } from 'components/Layout/SharedStyles';
 
-export default function Payment() {
+export default function WaysToPay() {
   return (
     <StyledPaper>
       <PageTitle>

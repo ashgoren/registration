@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useOrder } from 'hooks/useOrder';
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
-import MainForm from "components/MainForm";
+import MainForm from "components/MainForm/MainForm";
 import Checkout from "components/Checkout";
 import Processing from "components/Processing";
 import Confirmation from "components/Confirmation";
 import Error from "components/Error";
-import Header from 'components/Header';
-import IntroHeader from 'components/Header/IntroHeader';
+import Header from 'components/Layout/Header';
+import IntroHeader from 'components/IntroHeader';
 import OrderSummary from "components/OrderSummary";
 import { Typography, Button } from "@mui/material";
 import { StyledPaper, Paragraph } from 'components/Layout/SharedStyles';

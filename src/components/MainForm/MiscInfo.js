@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Input } from '../Input';
+import { Input } from './Input';
 import { Title } from 'components/Layout/SharedStyles';
 import { Box } from '@mui/material';
 import config from 'config';

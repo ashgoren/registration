@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input } from '../Input';
+import { Input } from './Input';
 import { Grid } from '@mui/material';
 import config from 'config';
 const { FIELD_CONFIG, INCLUDE_LAST_ON_NAMETAG } = config;

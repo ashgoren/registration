@@ -1,7 +1,7 @@
 import { useOrder } from 'hooks/useOrder';
 import { Box, Button } from '@mui/material';
-import ContactInfo from '../ContactInfo';
-import MiscInfo from '../MiscInfo';
+import ContactInfo from './ContactInfo';
+import MiscInfo from './MiscInfo';
 import { getFirstInvalidFieldName, sanitizeObject } from 'utils';
 import countryMapping from 'countryMapping';
 import { firebaseFunctionDispatcher } from 'firebase.js';

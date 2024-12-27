@@ -1,5 +1,5 @@
 import React from 'react';
-import ContactInfoInputs from '../ContactInfoInputs';
+import ContactInfoInputs from './ContactInfoInputs';
 import { Title } from 'components/Layout/SharedStyles';
 import config from 'config';
 import useScrollToTop from 'hooks/useScrollToTop';

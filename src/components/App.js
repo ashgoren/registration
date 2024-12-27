@@ -6,7 +6,7 @@ import Seattle from 'components/Static/Seattle';
 import Contact from 'components/Static/Contact';
 import Schedule from 'components/Static/Schedule';
 import Registration from 'components/Registration';
-import MaterialLayout from 'components/Layout/';
+import MaterialLayout from 'components/Layout/MaterialLayout';
 import Error from 'components/Error';
 import { PaymentExplanation } from 'components/Static/PaymentExplanation';
 import ScrollToAnchor from 'components/ScrollToAnchor';
