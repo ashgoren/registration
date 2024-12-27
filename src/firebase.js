@@ -1,6 +1,6 @@
-import { initializeApp, getApps } from "firebase/app";
-import { initializeAppCheck, ReCaptchaEnterpriseProvider, onTokenChanged } from "firebase/app-check";
-import { getFunctions, connectFunctionsEmulator, httpsCallable } from "firebase/functions";
+import { initializeApp, getApps } from 'firebase/app';
+import { initializeAppCheck, ReCaptchaEnterpriseProvider, onTokenChanged } from 'firebase/app-check';
+import { getFunctions, connectFunctionsEmulator, httpsCallable } from 'firebase/functions';
 import { log, logWarn } from 'logger.js';
 
 const firebaseConfig = {

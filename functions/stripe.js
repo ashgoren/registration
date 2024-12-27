@@ -1,5 +1,5 @@
 import { logger } from 'firebase-functions/v2';
-import Stripe from "stripe";
+import Stripe from 'stripe';
 import { createError, ErrorType } from './errorHandler.js';
 
 const isEmulator = !!process.env.FIREBASE_AUTH_EMULATOR_HOST || !!process.env.FIRESTORE_EMULATOR_HOST;

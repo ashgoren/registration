@@ -1,4 +1,4 @@
-import { websiteLink } from "utils";
+import { websiteLink } from 'utils';
 import { StyledLink, StyledPaper, Title } from 'components/Layout/SharedStyles';
 import { Typography } from '@mui/material';
 import { Paragraph } from 'components/Layout/SharedStyles';

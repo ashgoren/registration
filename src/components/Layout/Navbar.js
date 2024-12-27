@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { AppBar, Toolbar, Typography, Container, ListItem, Box, IconButton, Menu, Link } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link as RouterLink } from 'react-router-dom';
-import { ColorModeToggle } from 'components/ColorModeToggle';
+import { ColorModeToggle } from 'components/Layout/ColorModeToggle';
 import { config } from 'config';
 const { TITLE, REGISTRATION_ONLY, NAVBAR_COLOR, NAVBAR_COLOR_DARK, NAVBAR_BACKGROUND_OVERRIDE } = config;
 

@@ -1,11 +1,11 @@
 // memoizing isn't accomplishing anything since useField causes re-renders anyway
 
 import { useEffect, memo } from 'react';
-import { isMobile } from "react-device-detect";
+import { isMobile } from 'react-device-detect';
 import { useField } from 'formik';
 import { PatternFormat } from 'react-number-format';
 import { Box, TextField, Button, Checkbox, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText } from '@mui/material';
-import { usePlacesWidget } from "react-google-autocomplete";
+import { usePlacesWidget } from 'react-google-autocomplete';
 import { Label } from 'components/Layout/SharedStyles';
 
 export const Input = memo((props) => {

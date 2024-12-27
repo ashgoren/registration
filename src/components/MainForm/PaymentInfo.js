@@ -7,7 +7,7 @@ import { InputAdornment, Box, Tab, Tabs, FormControlLabel, Checkbox } from '@mui
 import { TabPanel, TabContext } from '@mui/lab';
 import { useFormikContext } from 'formik';
 import { PaymentExplanation } from 'components/Static/PaymentExplanation';
-import { NavButtons } from 'components/NavButtons';
+import { NavButtons } from 'components/Layout/NavButtons';
 import { useScrollToTop } from 'hooks/useScrollToTop';
 import { config } from 'config';
 const { DEPOSIT_OPTION, COVER_FEES_OPTION, DEPOSIT_COST, ADMISSION_COST_RANGE, DONATION_OPTION, DONATION_MAX, PAYMENT_DUE_DATE } = config;

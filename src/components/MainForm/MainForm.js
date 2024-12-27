@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { useOrder } from 'hooks/useOrder';
 import { Formik } from 'formik';
 import { sanitizeObject } from 'utils';
-import { FormContents } from "./FormContents";
+import { FormContents } from './FormContents';
 import { validationSchema } from './validationSchema';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
 import { config } from 'config';

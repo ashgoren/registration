@@ -4,7 +4,7 @@ import { Box, Button, Typography, Accordion, AccordionSummary, AccordionDetails 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { StyledPaper, Paragraph } from 'components/Layout/SharedStyles';
 import { PersonForm } from './PersonForm';
-import { NavButtons } from 'components/NavButtons';
+import { NavButtons } from 'components/Layout/NavButtons';
 import { PersonSummary } from 'components/OrderSummary';
 import { config } from 'config';
 const { ADMISSION_QUANTITY_MAX, PERSON_DEFAULTS } = config;

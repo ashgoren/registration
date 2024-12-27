@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { CssBaseline, useMediaQuery, Box } from '@mui/material';
 import { ThemeProvider } from '@mui/system';
-import { Navbar } from '../Navbar';
+import { Navbar } from './Navbar';
 import { lightTheme, darkTheme, rootStyle } from './LayoutStyles';
 
 export const MaterialLayout = ({ children }) => {

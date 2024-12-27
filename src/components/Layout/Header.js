@@ -1,7 +1,7 @@
 import { useOrder } from 'hooks/useOrder';
 import { StyledPaper } from 'components/Layout/SharedStyles';
-import { Typography, Box } from "@mui/material";
-import { MyStepper } from 'components/MyStepper';
+import { Typography, Box } from '@mui/material';
+import { MyStepper } from 'components/Layout/MyStepper';
 import { config } from 'config';
 const { TITLE, REGISTRATION_ONLY, WAITLIST_MODE } = config;
 

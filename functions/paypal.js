@@ -1,5 +1,5 @@
 import { logger } from 'firebase-functions/v2';
-import { ApiError, CheckoutPaymentIntent, Client, Environment, LogLevel, OrdersController, ShippingPreference, PatchOp } from "@paypal/paypal-server-sdk";
+import { ApiError, CheckoutPaymentIntent, Client, Environment, LogLevel, OrdersController, ShippingPreference, PatchOp } from '@paypal/paypal-server-sdk';
 import { formatCurrency } from './helpers.js';
 import { createError, ErrorType } from './errorHandler.js';
 

@@ -1,17 +1,17 @@
-import { useState } from "react";
+import { useState } from 'react';
 import { useOrder } from 'hooks/useOrder';
-import { PayPalScriptProvider } from "@paypal/react-paypal-js";
-import { Typography, Button } from "@mui/material";
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
+import { Typography, Button } from '@mui/material';
 import { StyledPaper, Paragraph } from 'components/Layout/SharedStyles';
-import { MainForm } from "components/MainForm/MainForm";
-import { Checkout } from "components/Checkout";
-import { Processing } from "components/Processing";
-import { Confirmation } from "components/Confirmation";
-import { Error } from "components/Error";
+import { MainForm } from 'components/MainForm/MainForm';
+import { Checkout } from 'components/Checkout';
+import { Processing } from 'components/Processing';
+import { Confirmation } from 'components/Confirmation';
+import { Error } from 'components/Layout/Error';
 import { Header } from 'components/Layout/Header';
 import { IntroHeader } from 'components/IntroHeader';
-import { OrderSummary } from "components/OrderSummary";
-import { Loading } from "components/Loading";
+import { OrderSummary } from 'components/OrderSummary';
+import { Loading } from 'components/Layout/Loading';
 import { config } from 'config';
 const { PAYMENT_METHODS, PAYPAL_OPTIONS, TITLE, CONFIRMATION_CHECK_TITLE, CONFIRMATION_PAYPAL_TITLE, SANDBOX_MODE, SHOW_PRE_REGISTRATION } = config;
 

@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
-import { Box, Typography, Button, Checkbox, FormControlLabel } from "@mui/material";
-import { OrderSummary } from "components/OrderSummary";
+import { useEffect, useState } from 'react';
+import { Box, Typography, Button, Checkbox, FormControlLabel } from '@mui/material';
+import { OrderSummary } from 'components/OrderSummary';
 import { useOrder } from 'hooks/useOrder';
 import { useOrderSetup } from 'hooks/useOrderSetup';
 import { useOrderFinalization } from 'hooks/useOrderFinalization';
 import { StyledPaper, Paragraph } from 'components/Layout/SharedStyles';
-import { NavButtons } from 'components/NavButtons';
-import { Loading } from 'components/Loading';
-import { Error } from 'components/Error';
+import { NavButtons } from 'components/Layout/NavButtons';
+import { Loading } from 'components/Layout/Loading';
+import { Error } from 'components/Layout/Error';
 import { config } from 'config';
 const { SANDBOX_MODE, TECH_CONTACT } = config;
 
