@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useOrder } from 'hooks/useOrder';
+import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
 import { Box, Button, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { StyledPaper, Paragraph } from 'components/Layout/SharedStyles';
@@ -15,6 +16,8 @@ export const People = ({ formikRef }) => {
   const { order, updateOrder } = useOrder();
   const [editIndex, setEditIndex] = useState(order.people[0].email === '' ? 0 : null);
   const [isNewPerson, setIsNewPerson] = useState(false);
+
+  useWarnBeforeUnload();
 
   const resetForm = () => {
     formikRef.current.resetForm({ values: order });

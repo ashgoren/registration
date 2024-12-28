@@ -4,6 +4,7 @@ import { OrderSummary } from 'components/OrderSummary';
 import { useOrder } from 'hooks/useOrder';
 import { useOrderSetup } from 'hooks/useOrderSetup';
 import { useOrderFinalization } from 'hooks/useOrderFinalization';
+import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
 import { StyledPaper, Paragraph } from 'components/Layout/SharedStyles';
 import { NavButtons } from 'components/Layout/NavButtons';
 import { Loading } from 'components/Layout/Loading';
@@ -17,6 +18,8 @@ export const Waitlist = ({ handleClickBackButton }) => {
   const [ready, setReady] = useState(SANDBOX_MODE);
   const [confirmed, setConfirmed] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  useWarnBeforeUnload(!submitted);
 
   setTimeout(() => {
     setReady(true);

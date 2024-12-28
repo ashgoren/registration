@@ -4,15 +4,12 @@ import { Formik } from 'formik';
 import { sanitizeObject } from 'utils';
 import { FormContents } from './FormContents';
 import { validationSchema } from './validationSchema';
-import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
 import { config } from 'config';
 const { NUM_PAGES, DEPOSIT_COST } = config;
 
 export const MainForm = () => {
   const formikRef = useRef();
   const { order, updateOrder, currentPage, setCurrentPage } = useOrder();
-
-  useWarnBeforeUnload();
 
   // this is triggered after People submitted and after PaymentInfo submitted
   // for now it's really just validating the PaymentInfo page fields (?)

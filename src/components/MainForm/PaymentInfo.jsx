@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useOrder } from 'hooks/useOrder';
+import { useScrollToTop } from 'hooks/useScrollToTop';
+import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
 import { clamp } from 'utils';
 import { RightAlignedInput } from './Input';
 import { StyledPaper, Title, Paragraph } from 'components/Layout/SharedStyles';
@@ -8,7 +10,6 @@ import { TabPanel, TabContext } from '@mui/lab';
 import { useFormikContext } from 'formik';
 import { PaymentExplanation } from 'components/Static/PaymentExplanation';
 import { NavButtons } from 'components/Layout/NavButtons';
-import { useScrollToTop } from 'hooks/useScrollToTop';
 import { config } from 'config';
 const { DEPOSIT_OPTION, COVER_FEES_OPTION, DEPOSIT_COST, ADMISSION_COST_RANGE, DONATION_OPTION, DONATION_MAX, PAYMENT_DUE_DATE } = config;
 
@@ -25,6 +26,7 @@ export const PaymentInfo = ({ handleClickBackButton }) => {
   const isMultiplePeople = order.people.length > 1;
 
   useScrollToTop();
+  useWarnBeforeUnload();
 
   const admissionTotal = useMemo(() => {
     return values.people.reduce((total, person) => total + clampAdmission(person.admission), 0);
