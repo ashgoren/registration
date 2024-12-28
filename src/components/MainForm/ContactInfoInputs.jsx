@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Input } from './Input';
+import { Field } from 'components/inputs';
 import { Grid } from '@mui/material';
 import { config } from 'config';
 const { FIELD_CONFIG, INCLUDE_LAST_ON_NAMETAG } = config;
@@ -28,7 +28,7 @@ export const ContactInfoInputs = memo(({ fields, index, formikRef }) => {
         const fieldName = `people[${index}].${field}`;
         return (
           <Grid item xs={12} sm={width} key={`${index}-${field}`}>
-            <Input
+            <Field
               label={label}
               name={fieldName}
               type={type || 'text'}

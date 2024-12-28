@@ -78,6 +78,7 @@ firebase apps:sdkconfig web
 
 Stripe configuration:
 - On Stripe console, disable all payment methods except Cards, Apple Pay, Google Pay
+- Apple Pay: requires stripe domain auth
 - Copy the _publishable key_ to the `.env` file. (Use test key until ready to launch.)
 - set Stripe secret key in `functions/.env`
 - set Stripe statement_descriptor_suffix in `functions/.env` (optional)

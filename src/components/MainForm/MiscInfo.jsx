@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Input } from './Input';
+import { Field } from 'components/inputs';
 import { Title } from 'components/Layout/SharedStyles';
 import { Box } from '@mui/material';
 import { useScrollToTop } from 'hooks/useScrollToTop';
@@ -60,7 +60,7 @@ export const MiscInfo = ({ index, formikRef }) => {
           return (
             <Box sx={{ mb: 6 }} key={field}>
               <Title>{title}</Title>
-              <Input
+              <Field
                 type={type}
                 label={label}
                 name={`people[${index}].${field}`}

@@ -3,7 +3,7 @@ import { useOrder } from 'hooks/useOrder';
 import { useScrollToTop } from 'hooks/useScrollToTop';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
 import { clamp } from 'utils';
-import { RightAlignedInput } from './Input';
+import { Field } from 'components/inputs';
 import { StyledPaper, Title, Paragraph } from 'components/Layout/SharedStyles';
 import { InputAdornment, Box, Tab, Tabs, FormControlLabel, Checkbox } from '@mui/material';
 import { TabPanel, TabContext } from '@mui/lab';
@@ -88,7 +88,8 @@ export const PaymentInfo = ({ handleClickBackButton }) => {
     <>
       {isMultiplePeople && <Paragraph>How much is each person able to pay?</Paragraph>}
       {order.people.map((person, index) =>
-        <RightAlignedInput
+        <Field
+          alignRight
           key={index}
           sx={{ width: '5em', mb: 1 }}
           label={isMultiplePeople ? `${person.first} ${person.last}` : 'How much are you able to pay?'}
@@ -144,7 +145,8 @@ export const PaymentInfo = ({ handleClickBackButton }) => {
           <StyledPaper className='donation-section'>
             <Title>Additional contribution</Title>
             {!donate && 
-              <RightAlignedInput
+              <Field
+                alignRight
                 type='button'
                 label="Would you like to make an additional contribution?"
                 name="donate"
@@ -154,7 +156,8 @@ export const PaymentInfo = ({ handleClickBackButton }) => {
             }
 
             {donate && 
-              <RightAlignedInput
+              <Field
+                alignRight
                 sx={{ minWidth: '6rem', maxWidth: '6rem' }}
                 label="How much would you like to add as an additional contribution?"
                 name="donation" 
