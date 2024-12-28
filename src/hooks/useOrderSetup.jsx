@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { useOrder } from 'hooks/useOrder';
 import { isEqual } from 'lodash';
-import { firebaseFunctionDispatcher } from 'firebase.js';
-import { log, logError } from 'logger';
+import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
+import { log, logError } from 'src/logger';
 import { config } from 'config';
 const { EVENT_TITLE } = config;
 

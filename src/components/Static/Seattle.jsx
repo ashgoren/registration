@@ -9,7 +9,7 @@ export const Seattle = () => {
       </PageTitle>
 
       <Box mt={-5} mb={4}>
-        <img src={process.env.PUBLIC_URL + '/some_event/seattle.jpg'} alt='' style={{ width: "100%", height: "auto" }} />
+        <img src={'/some_event/seattle.jpg'} alt='' style={{ width: "100%", height: "auto" }} />
       </Box>
 
       <Header>
@@ -18,14 +18,14 @@ export const Seattle = () => {
 
       <Paragraph>
         Come dancing the <StyledLink to='https://seattledance.org/contra/lakecity/'>Thursday evening</StyledLink> before some_event! <br />
-        Directions to the Lake City contra dance can be found <StyledLink to={process.env.PUBLIC_URL + '/some_event/LakeCityContraMap.pdf'}>here</StyledLink>.
+        Directions to the Lake City contra dance can be found <StyledLink to={'/some_event/LakeCityContraMap.pdf'}>here</StyledLink>.
       </Paragraph>
 
       <Header>
         Dining
       </Header>
       <Paragraph>
-        Click <StyledLink to={process.env.PUBLIC_URL + '/some_event/some_event-Dining-Guide-2020.pdf'}>here</StyledLink> to view our dining guide (last updated 2020).<br />
+        Click <StyledLink to={'/some_event/some_event-Dining-Guide-2020.pdf'}>here</StyledLink> to view our dining guide (last updated 2020).<br />
         The new 2023 Ballard dining guide is coming soon.
       </Paragraph>
 

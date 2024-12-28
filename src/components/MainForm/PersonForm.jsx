@@ -3,8 +3,8 @@ import { Box, Button } from '@mui/material';
 import { ContactInfo } from './ContactInfo';
 import { MiscInfo } from './MiscInfo';
 import { getFirstInvalidFieldName, sanitizeObject } from 'utils';
-import { countryMapping } from 'countryMapping';
-import { firebaseFunctionDispatcher } from 'firebase.js';
+import { countryMapping } from 'src/countryMapping';
+import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
 
 export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerson, resetForm, formikRef }) => {
   console.log('PersonForm rendered');

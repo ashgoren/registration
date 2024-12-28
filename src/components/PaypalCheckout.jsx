@@ -1,4 +1,4 @@
-import { log } from 'logger';
+import { log } from 'src/logger';
 import { useEffect } from 'react';
 import { useOrder } from 'hooks/useOrder';
 import { usePaypalPayment } from 'hooks/usePaypalPayment';

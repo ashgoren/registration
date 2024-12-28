@@ -1,5 +1,5 @@
-import { log, logError, logDivider } from 'logger';
-import { firebaseFunctionDispatcher } from 'firebase.js';
+import { log, logError, logDivider } from 'src/logger';
+import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { useOrder } from 'hooks/useOrder';
 import { Receipt } from 'components/Receipt';

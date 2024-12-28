@@ -1,4 +1,4 @@
-import { logError } from 'logger';
+import { logError } from 'src/logger';
 
 export const useStripePayment = ({ stripe, elements, clientSecret }) => {
 

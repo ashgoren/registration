@@ -1,6 +1,6 @@
 import { useRef } from 'react';
-import { logError } from 'logger';
-import { firebaseFunctionDispatcher } from 'firebase.js';
+import { logError } from 'src/logger';
+import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
 
 export const usePaypalPayment = ({ email, id: paymentIntentId }) => {
   const idempotencyKeyRef = useRef(crypto.randomUUID());

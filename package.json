@@ -15,9 +15,9 @@
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.2",
+    "@vitejs/plugin-react-swc": "^3.7.2",
     "bootstrap": "^5.3.3",
     "dompurify": "^3.1.5",
-    "eslint": "^8.57.0",
     "firebase": "^11.0.2",
     "firebase-admin": "^12.1.1",
     "firebase-functions": "^5.0.1",
@@ -34,22 +34,19 @@
     "react-loading-icons": "^1.1.0",
     "react-number-format": "^5.4.0",
     "react-router-dom": "^6.23.1",
-    "react-scripts": "5.0.1",
     "reaptcha": "^1.12.1",
+    "vite": "^6.0.6",
+    "vite-tsconfig-paths": "^5.1.4",
     "yup": "^1.4.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "pending": "node scripts/pending.mjs"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage --watch=false"
   },
   "browserslist": {
     "production": [
@@ -64,6 +61,13 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
-  }
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@vitest/coverage-v8": "^2.1.8",
+    "eslint": "^8.57.1",
+    "eslint-config-react-app": "^7.0.1",
+    "jsdom": "^25.0.1",
+    "vite-plugin-eslint": "^1.8.1",
+    "vitest": "^2.1.8"
+  },
+  "type": "module"
 }

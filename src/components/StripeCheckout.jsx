@@ -6,7 +6,7 @@ import { Box, Button } from '@mui/material';
 import { TestCardBox } from 'components/Layout/SharedStyles';
 import { config } from 'config';
 const { SANDBOX_MODE, PAYMENT_METHODS, TECH_CONTACT } = config;
-const stripePromise = PAYMENT_METHODS.includes('stripe') ? loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY) : null;
+const stripePromise = PAYMENT_METHODS.includes('stripe') ? loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY) : null;
 
 // this wrapper is required to use the Stripe Elements component
 export const StripeCheckout = ({ total }) => {

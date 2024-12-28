@@ -9,14 +9,14 @@ export const Schedule = () => {
       </PageTitle>
 
       <Box mt={-5} mb={4}>
-        <img src={process.env.PUBLIC_URL + '/some_event/instruments.jpg'} alt='' style={{ width: "100%", height: "auto" }} />
+        <img src={'/some_event/instruments.jpg'} alt='' style={{ width: "100%", height: "auto" }} />
       </Box>
 
       <Header>
         some_event Contra Dance Wekeend Itinerary
       </Header>
       <List>
-        <ListItem>2024 &mdash; <StyledLink to={process.env.PUBLIC_URL + '/some_event/some_event-schedule-2024.pdf'}>some_event Contra Dance Weekend Schedule</StyledLink></ListItem>
+        <ListItem>2024 &mdash; <StyledLink to={'/some_event/some_event-schedule-2024.pdf'}>some_event Contra Dance Weekend Schedule</StyledLink></ListItem>
       </List>
 
       <Header>

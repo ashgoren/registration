@@ -12,7 +12,7 @@ export const About = () => {
       </PageTitle>
 
       <Box mt={-5} mb={4}>
-        <img src={process.env.PUBLIC_URL + '/some_event/hands.jpg'} alt='' style={{ width: "100%", height: "auto" }} />
+        <img src={'/some_event/hands.jpg'} alt='' style={{ width: "100%", height: "auto" }} />
       </Box>
 
       <Header>
@@ -47,7 +47,7 @@ export const About = () => {
         Waiver
       </Header>
       <Paragraph>
-        You will need to sign a <StyledLink to={process.env.PUBLIC_URL + '/some_event/some_event-waiver.pdf'}>waiver</StyledLink> and email it to <StyledLink to={mailtoLink(EMAIL_CONTACT)}>{EMAIL_CONTACT}</StyledLink>.<br />
+        You will need to sign a <StyledLink to={'/some_event/some_event-waiver.pdf'}>waiver</StyledLink> and email it to <StyledLink to={mailtoLink(EMAIL_CONTACT)}>{EMAIL_CONTACT}</StyledLink>.<br />
       </Paragraph>
 
       <Header id='refund'>

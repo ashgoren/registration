@@ -223,7 +223,7 @@ const AddressAutocompleteInput = memo(({ label, name, ...props }) => {
   };
 
   const { ref } = usePlacesWidget({
-    apiKey: process.env.REACT_APP_GOOGLE_PLACES_API_KEY,
+    apiKey: import.meta.env.VITE_GOOGLE_PLACES_API_KEY,
     onPlaceSelected: (place) => {
 
       const { address_components } = place;

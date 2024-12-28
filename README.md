@@ -29,7 +29,7 @@ bash clear-old-settings.sh
 
 ## Set configuration options:
 
-- Update site title and meta content description in `public/index.html`
+- Update site title and meta content description in `index.html`
 - Update values in `config` folder files
 - Update favicon (can use [this site](https://www.favicon-generator.org) to generate them)
 - Copy desired logo to `public/logo.png` and set to desired height (likely <= 80px)
@@ -200,7 +200,7 @@ resource.type="cloud_run_revision" severity="ERROR"
 
 ```sh
 npm install
-npm start
+npm run dev
 ```
 
 # Deployment via GitHub workflow and Firebase hosting
