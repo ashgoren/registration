@@ -13,7 +13,7 @@ import { initializePayment } from './initializePayment.js';
 if (!getApps().length) initializeApp();
 
 // combining into one callable function to reduce slow cold start preflight checks
-const firebaseFunctionDispatcher = onCall({ enforceAppCheck: false }, async (request) => {
+const firebaseFunctionDispatcher = onCall({ enforceAppCheck: true }, async (request) => {
   const hasToken = !!request.app?.token;
   const { action, data, metadata } = request.data;
 

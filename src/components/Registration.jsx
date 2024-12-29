@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useOrder } from 'hooks/useOrder';
+import { initializeFirebaseAppCheck } from 'src/firebase.jsx';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
-import { Typography, Button } from '@mui/material';
+import { Typography, Button, Box } from '@mui/material';
 import { StyledPaper, Paragraph } from 'components/Layout/SharedStyles';
 import { MainForm } from 'components/MainForm/MainForm';
 import { Checkout } from 'components/Checkout';
@@ -13,10 +14,27 @@ import { IntroHeader } from 'components/IntroHeader';
 import { OrderSummary } from 'components/OrderSummary';
 import { Loading } from 'components/Layout/Loading';
 import { config } from 'config';
-const { PAYMENT_METHODS, PAYPAL_OPTIONS, TITLE, CONFIRMATION_CHECK_TITLE, CONFIRMATION_PAYPAL_TITLE, SANDBOX_MODE, SHOW_PRE_REGISTRATION } = config;
+const { PAYMENT_METHODS, PAYPAL_OPTIONS, TITLE, CONFIRMATION_CHECK_TITLE, CONFIRMATION_PAYPAL_TITLE, SANDBOX_MODE, SHOW_PRE_REGISTRATION, TECH_CONTACT } = config;
 
 export const Registration = () => {
+  const { setError } = useOrder();
   const [registering, setRegistering] = useState(false);
+
+  useEffect(() => {
+    const validateAppCheck = async () => {
+      const result = await initializeFirebaseAppCheck();
+      if (!result) {
+        setError(
+          <Box>
+            <Typography variant='h6' sx={{ fontWeight: 'bold' }}>Error: Browser or add-ons are blocking recaptcha verification.</Typography>
+            <Typography variant='h6'>Please disable the <em>uBlock Origin</em> extension, if installed, or try a different browser.</Typography>
+            <Typography variant='h6'>Please contact {TECH_CONTACT} if you continue to encounter this message even after trying the above steps.</Typography>
+          </Box>
+        );
+      }
+    }
+    validateAppCheck();
+  }, [setError]);
 
   return (
     SHOW_PRE_REGISTRATION || (SANDBOX_MODE && window.location.hostname !== 'localhost') ? (

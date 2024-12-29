@@ -4,7 +4,7 @@ import { useScrollToTop } from 'hooks/useScrollToTop';
 
 export const Error = () => {
   const { error } = useOrder();
-  
+
   useScrollToTop();
 
   return (

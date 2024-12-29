@@ -1,7 +1,7 @@
-import { initializeApp, getApps } from 'firebase/app';
-import { initializeAppCheck, ReCaptchaEnterpriseProvider, onTokenChanged } from 'firebase/app-check';
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { initializeAppCheck, ReCaptchaEnterpriseProvider, getToken } from 'firebase/app-check';
 import { getFunctions, connectFunctionsEmulator, httpsCallable } from 'firebase/functions';
-import { log, logWarn } from 'src/logger';
+import { logWarn } from 'src/logger';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -13,29 +13,31 @@ const firebaseConfig = {
   databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL
 }
 
-// window.self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+if (process.env.NODE_ENV === 'development') {
+  window.self.FIREBASE_APPCHECK_DEBUG_TOKEN = 'ffa35918-4d3c-4f4b-b779-e197c6909810';
+}
 
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 let appCheck;
 
-// initial setup of Firebase app and AppCheck
-if (!getApps().length) {
-  const app = initializeApp(firebaseConfig);
-  appCheck = initializeAppCheck(app, {
-    provider: new ReCaptchaEnterpriseProvider(import.meta.env.VITE_RECAPTCHA_SITE_KEY),
-    isTokenAutoRefreshEnabled: true
-  });
-}
-
-// log AppCheck token changes, for debugging
-if (appCheck) {
-  onTokenChanged(appCheck, (tokenResult) => {
-    if (tokenResult.error) {
-      logWarn('AppCheck token error', { error: tokenResult.error });
-    } else {
-      log('AppCheck token refreshed');
+const initializeFirebaseAppCheck = async () => {
+  if (!appCheck) {
+    indexedDB.deleteDatabase('firebase-app-check-database');
+    try {
+      appCheck = initializeAppCheck(app, {
+        provider: new ReCaptchaEnterpriseProvider(import.meta.env.VITE_RECAPTCHA_SITE_KEY),
+        isTokenAutoRefreshEnabled: true
+      });
+      await getToken(appCheck);
+      console.log('AppCheck initialized successfully');
+      return true;
+    } catch (error) {
+      logWarn('AppCheck initialization failed', { error });
+      return false;
     }
-  });
-}
+  }
+  return !!appCheck;
+};
 
 // initial setup of Firebase functions
 const functions = getFunctions();
@@ -56,4 +58,4 @@ const firebaseFunctionDispatcher = async ({ action, data, email }) => {
   return await callable({ action, data, metadata });
 };
 
-export { firebaseFunctionDispatcher };
+export { initializeFirebaseAppCheck, firebaseFunctionDispatcher };
