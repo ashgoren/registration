@@ -1,13 +1,12 @@
 import { Box } from '@mui/material';
 import { useOrder } from 'hooks/useOrder';
 import { StyledPaper, StyledLink, Paragraph, SectionDivider } from 'components/Layout/SharedStyles';
-import { Receipt } from 'components/Receipt';
 import { mailtoLink, websiteLink } from 'utils';
 import { config } from 'config';
 const { EMAIL_CONTACT, EVENT_TITLE, MORE_INFO_URL } = config;
 
 export const Confirmation = () => {
-  const { order, paymentMethod } = useOrder();
+  const { receipt } = useOrder();
 
   return (
     <>
@@ -22,7 +21,7 @@ export const Confirmation = () => {
 
         <SectionDivider />
 
-        <Receipt order={order} paymentMethod={paymentMethod} isPurchaser={true} />
+        <div dangerouslySetInnerHTML={{ __html: receipt }} />
 
         <Box my={2} />
       </StyledPaper>

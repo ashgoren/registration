@@ -1,4 +1,6 @@
 import DOMPurify from 'dompurify';
+import MarkdownIt from 'markdown-it';
+import Handlebars from 'handlebars';
 
 export const clamp = (value, range) => Math.min(Math.max(Number(value), range[0]), range[1]);
 
@@ -46,4 +48,11 @@ export const getFirstInvalidFieldName = (errors) => {
     }
   }
   return null;
+};
+
+export const renderMarkdownTemplate = (template, data) => {
+  const compiled = Handlebars.compile(template);
+  const filledTemplate = compiled(data);
+  const md = new MarkdownIt();
+  return md.render(filledTemplate);
 };

@@ -27,7 +27,7 @@ export const OrderSummary = ({ order }) => {
       {!WAITLIST_MODE &&
         <Box style={{ marginTop: '2em' }}>
           <Typography variant="body" gutterBottom>
-            <strong>Payment</strong>
+            <strong>Payment Info</strong>
           </Typography>
 
           <Typography component='p' style={{ marginTop: '1em' }}>

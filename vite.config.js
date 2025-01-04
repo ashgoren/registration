@@ -24,6 +24,7 @@ export default defineConfig({
       services: "/src/services",
       utils: "/src/utils",
       themes: "/src/themes",
+      templates: "/src/templates",
     },
   },
   server: {

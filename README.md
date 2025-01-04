@@ -33,8 +33,7 @@ bash clear-old-settings.sh
 - Update values in `config` folder files
 - Update favicon (can use [this site](https://www.favicon-generator.org) to generate them)
 - Copy desired logo to `public/logo.png` and set to desired height (likely <= 80px)
-- Update `MiscInfo`, `OrderSummary`, `Receipt` and other pages as needed
-- Ensure receipt text for all scenarios is as desired!
+- Update receipt templates in `templates` folder
 
 ## Create a Firebase project, which will also create a Google Cloud project with the same PROJECT_ID:
 
@@ -181,9 +180,9 @@ firebase deploy --only functions
 
 ## Add error logging for Firebase functions:
 
-###################################################################################
-### NOTE: Google will soon begin charging $1.50/month for each alert condition! ###
-###################################################################################
+##################################################################################
+### April 2026 Google will begin charging $1.50/month for each alert condition ###
+##################################################################################
 
 Setup logs for Firebase functions to notify on error:
 

@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { log, logError, logDivider } from 'src/logger';
 import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -5,38 +6,40 @@ import { useOrder } from 'hooks/useOrder';
 import { Receipt } from 'components/Receipt';
 
 export const useOrderFinalization = () => {
-  const { orderId, order, paymentMethod } = useOrder();
-  const { email } = order.people[0]; // for logging
+  const { orderId, order, paymentMethod, setReceipt } = useOrder();
 
-  const finalizeOrder = async () => {
+  const finalizeOrder = useCallback(async () => {
+    const appendReceiptsToOrder = (order) => {
+      const peopleWithReceipts = order.people.map((person, i) => {
+        const isPurchaser = i === 0;
+        const receipt = <Receipt order={order} paymentMethod={paymentMethod} person={person} isPurchaser={isPurchaser} />;
+        const htmlReceipt = renderToStaticMarkup(receipt);
+        if (isPurchaser) setReceipt(htmlReceipt); // for displaying on confirmation page
+        return { ...person, receipt: htmlReceipt };
+      });
+      return { ...order, people: peopleWithReceipts };
+    };
+
+    const saveFinalOrderToFirebase = async (order) => {
+      const { email } = order.people[0]; // for logging
+      log('Saving final order to firebase', { email });
+      try {
+        await firebaseFunctionDispatcher({
+          action: 'saveFinalOrder',
+          data: { orderId, order },
+          email
+        });
+        log('Final order saved', { email });
+        setTimeout(() => logDivider(), 1000);
+      } catch (error) {
+        logError('Error saving final order to firebase', { email, error, order });
+        throw error;
+      }
+    };
+
     const finalOrder = appendReceiptsToOrder(order);
     await saveFinalOrderToFirebase(finalOrder);
-  };
-
-  const appendReceiptsToOrder = (order) => {
-    const peopleWithReceipts = order.people.map((person, i) => {
-      const receipt = <Receipt order={order} paymentMethod={paymentMethod} person={person} isPurchaser={i === 0} />;
-      const htmlReceipt = renderToStaticMarkup(receipt);
-      return { ...person, receipt: htmlReceipt };
-    });
-    return { ...order, people: peopleWithReceipts };
-  };
-
-  const saveFinalOrderToFirebase = async (order) => {
-    log('Saving final order to firebase', { email });
-    try {
-      await firebaseFunctionDispatcher({
-        action: 'saveFinalOrder',
-        data: { orderId, order },
-        email
-      });
-      log('Final order saved', { email });
-      setTimeout(() => logDivider(), 1000);
-    } catch (error) {
-      logError('Error saving final order to firebase', { email, error, order });
-      throw error;
-    }
-  };
+  }, [orderId, order, paymentMethod, setReceipt]);
 
   return { finalizeOrder };
 };
