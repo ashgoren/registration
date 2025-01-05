@@ -1,7 +1,6 @@
 // *********************************************************************************************
 // ***                  You shouldn't need to actually modify this file!                     ***
-// *** Configure in configBasics, configContent, configOrderSummary and configPaypal files.  ***
-// *** NOTE: if change form fields may also need to update OrderSummary and validationSchema ***
+// ***                      Configure in other files in this folder.                         ***
 // *********************************************************************************************
 
 import configPaypal from './configPaypal';

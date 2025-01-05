@@ -5,7 +5,7 @@
 
 ## Thanks {{FIRST_NAME}}!
 
-{{! <!---- THIS SECTION IF ELECTRONIC PAYMENT ----> }}
+{{! <!---- BEGIN ELECTRONIC PAYMENT SECTION ----> }}
 {{#if IS_ELECTRONIC_PAYMENT}}
 
 **Your payment has been processed.**
@@ -21,7 +21,7 @@
 {{! <!---- END ELECTRONIC PAYMENT SECTION ----> }}
 
 
-{{! <!---- THIS SECTION IF CHECK PAYMENT ----> }}
+{{! <!---- BEGIN CHECK PAYMENT SECTION ----> }}
 {{#if IS_CHECK_PAYMENT}}
 
 **You are not yet registered.**

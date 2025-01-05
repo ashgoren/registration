@@ -5,7 +5,7 @@
 
 Someone has signed you up for the {{EVENT_TITLE}}!
 
-{{! <!---- THIS SECTION IF ELECTRONIC PAYMENT ----> }}
+{{! <!---- BEGIN ELECTRONIC PAYMENT SECTION ----> }}
 {{#if IS_ELECTRONIC_PAYMENT}}
 
 {{#if IS_DEPOSIT}}
@@ -18,7 +18,7 @@ We've received payment for your registration.
 {{! <!---- END ELECTRONIC PAYMENT SECTION ----> }}
 
 
-{{! <!---- THIS SECTION IF CHECK PAYMENT ----> }}
+{{! <!----  BEGIN CHECK PAYMENT SECTION -----> }}
 {{#if IS_CHECK_PAYMENT}}
 
 **Your spot in camp will be confirmed once we receive payment for your registration.**

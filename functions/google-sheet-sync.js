@@ -1,5 +1,3 @@
-'use strict';
-
 import { logger } from 'firebase-functions/v2';
 import { initializeApp, getApps } from 'firebase-admin/app';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';

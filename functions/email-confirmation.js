@@ -1,5 +1,3 @@
-'use strict';
-
 import { logger } from 'firebase-functions/v2';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import nodemailer from 'nodemailer';

@@ -13,8 +13,9 @@ const firebaseConfig = {
   databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL
 }
 
+// This is used to bypass Firebase App Check in development mode
 if (process.env.NODE_ENV === 'development') {
-  window.self.FIREBASE_APPCHECK_DEBUG_TOKEN = 'ffa35918-4d3c-4f4b-b779-e197c6909810';
+  window.self.FIREBASE_APPCHECK_DEBUG_TOKEN = import.meta.env.VITE_APPCHECK_DEBUG_TOKEN;
 }
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
