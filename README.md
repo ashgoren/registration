@@ -80,12 +80,12 @@ bash clear-old-settings.sh
 ## Create a Firebase project, which will also create a Google Cloud project with the same PROJECT_ID:
 
 ```sh
-# Replace [PROJECT_ID] with desired project ID
-firebase projects:create [PROJECT_ID]
+# Replace <PROJECT_ID> with desired project ID
+firebase projects:create <PROJECT_ID>
 ```
 
 > [!TIP]
-> In all instructions below, replace `[PROJECT_ID]` with the actual project ID created in the previous step.
+> In all instructions below, replace `<PROJECT_ID>` with the actual project ID created in the previous step.
 
 ---
 
@@ -104,7 +104,7 @@ firebase projects:create [PROJECT_ID]
 
 ```sh
 gcloud billing accounts list
-gcloud billing projects link [PROJECT_ID] --billing-account [BILLING_ACCOUNT_ID]
+gcloud billing projects link <PROJECT_ID> --billing-account [BILLING_ACCOUNT_ID]
 ```
 
 ---
@@ -122,7 +122,7 @@ gcloud billing projects link [PROJECT_ID] --billing-account [BILLING_ACCOUNT_ID]
 
 ## Setup database
 
-- Create Firestore database: https://console.firebase.google.com/project/[PROJECT_ID]/firestore
+- Create Firestore database: https://console.firebase.google.com/project/<PROJECT_ID>/firestore
 - Deploy Firestore database: `firebase deploy --only firestore`
 
 ---
@@ -154,9 +154,9 @@ PayPal configuration:
 Enable google places and maps javascript APIs. (Theoretically can use gcloud services enable via CLI, but may actually need to do from google cloud console.)
 
 ```sh
-gcloud services enable places-backend.googleapis.com --project [PROJECT_ID]
-gcloud services enable maps-backend.googleapis.com --project [PROJECT_ID]
-gcloud services api-keys create --flags-file=google-places-api-flags.yaml --project [PROJECT_ID]
+gcloud services enable places-backend.googleapis.com --project <PROJECT_ID>
+gcloud services enable maps-backend.googleapis.com --project <PROJECT_ID>
+gcloud services api-keys create --flags-file=google-places-api-flags.yaml --project <PROJECT_ID>
 ```
 
 - Copy `keyString` value to `VITE_GOOGLE_PLACES_API_KEY` in `.env`.
@@ -167,13 +167,13 @@ gcloud services api-keys create --flags-file=google-places-api-flags.yaml --proj
 
 - Enable Recaptcha Enterprise and create a key:
   ```sh
-  # Replace EXAMPLE.COM below with custom domain, or just use [PROJECT_ID].web.app
-  gcloud services enable recaptchaenterprise.googleapis.com --project [PROJECT_ID]
-  gcloud recaptcha keys create --display-name="recaptcha-enterprise" --integration-type="SCORE" --web --domains="[PROJECT_ID].web.app,EXAMPLE.COM" --project [PROJECT_ID]
+  # Replace EXAMPLE.COM below with custom domain, or just use <PROJECT_ID>.web.app
+  gcloud services enable recaptchaenterprise.googleapis.com --project <PROJECT_ID>
+  gcloud recaptcha keys create --display-name="recaptcha-enterprise" --integration-type="SCORE" --web --domains="<PROJECT_ID>.web.app,EXAMPLE.COM" --project <PROJECT_ID>
   ```
 - Copy site key value to `VITE_RECAPTCHA_SITE_KEY` in `.env`.
 
-- Enable Firebase App Check: https://console.firebase.google.com/project/[PROJECT_ID]/appcheck/apps
+- Enable Firebase App Check: https://console.firebase.google.com/project/<PROJECT_ID>/appcheck/apps
   - choose Recaptcha Enterprise option
   - use site key value from previous step
   - generate debug token for use in development mode:
@@ -218,14 +218,14 @@ Setup spreadsheet for recording orders:
 - Make a copy of the [template spreadsheet](https://docs.google.com/spreadsheets/d/1gQ9l8wBTgNmiI0KmpECsDzCqePSPMnZFaecuj0VO_cU/edit?usp=sharing).
 - Update fields/columns as needed in spreadsheet _and_ in `functions/fields.js`.
 - Determine your spreadsheet ID - the long string of characters in URL (likely between `/d/` and `/edit`)
-- Give spreadsheet edit permissions to the service account email: `sheets@[PROJECT_ID].iam.gserviceaccount.com`
+- Give spreadsheet edit permissions to the service account email: `sheets@<PROJECT_ID>.iam.gserviceaccount.com`
 
 Enable Sheets API, create Google Cloud service account, update values in `functions/.env`:
 
 ```sh
-gcloud services enable sheets.googleapis.com --project [PROJECT_ID]
-gcloud iam service-accounts create sheets --project [PROJECT_ID]
-gcloud iam service-accounts keys create tmp.json --iam-account sheets@[PROJECT_ID].iam.gserviceaccount.com
+gcloud services enable sheets.googleapis.com --project <PROJECT_ID>
+gcloud iam service-accounts create sheets --project <PROJECT_ID>
+gcloud iam service-accounts keys create tmp.json --iam-account sheets@<PROJECT_ID>.iam.gserviceaccount.com
 cat tmp.json
 rm tmp.json
 ```
@@ -320,3 +320,9 @@ npm run dev
 - Make registration link live on homepage & navbar
 - Clear spreadsheet
 - Clear Firestore DB
+
+---
+
+# Helper scripts
+
+See `scripts/README.md` for details on scripts to query Firestore and Google Sheets, as well as cleanup Google Cloud artifacts.

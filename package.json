@@ -48,7 +48,11 @@
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "vitest",
-    "test:coverage": "vitest run --coverage --watch=false"
+    "test:coverage": "vitest run --coverage --watch=false",
+    "orders": "node ./scripts/orders.js",
+    "missing": "node ./scripts/missing.js",
+    "spreadsheet": "node ./scripts/spreadsheet.js",
+    "cleanup-artifacts": "node ./scripts/cleanupArtifacts.js"
   },
   "browserslist": {
     "production": [
@@ -64,12 +68,15 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@google-cloud/artifact-registry": "^3.5.0",
     "@vitest/coverage-v8": "^2.1.8",
+    "dotenv": "^16.4.7",
     "eslint": "^8.57.1",
     "eslint-config-react-app": "^7.0.1",
     "jsdom": "^25.0.1",
     "vite-plugin-eslint": "^1.8.1",
-    "vitest": "^2.1.8"
+    "vitest": "^2.1.8",
+    "yargs": "^17.7.2"
   },
   "type": "module"
 }
