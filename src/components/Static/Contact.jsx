@@ -1,4 +1,4 @@
-import { StyledPaper, Paragraph, PageTitle, StyledLink } from 'components/Layout/SharedStyles';
+import { StyledPaper, Paragraph, PageTitle, StyledLink } from 'components/layouts/SharedStyles';
 import { mailtoLink } from 'utils';
 import { config } from 'config';
 const { EMAIL_CONTACT } = config;

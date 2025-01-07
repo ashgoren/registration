@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { Label } from 'components/Layout/SharedStyles';
+import { Label } from 'components/layouts/SharedStyles';
 import { ButtonInput, CheckboxInput, RadioButtons, NumericInput, TextArea, AddressAutocompleteInput, TextInput } from './';
 
 const inputComponents = {

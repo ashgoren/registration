@@ -1,7 +1,6 @@
 import { websiteLink } from 'utils';
-import { StyledLink, StyledPaper, Title } from 'components/Layout/SharedStyles';
 import { Typography } from '@mui/material';
-import { Paragraph } from 'components/Layout/SharedStyles';
+import { StyledLink, StyledPaper, Title, Paragraph } from 'components/layouts/SharedStyles';
 import { config } from 'config';
 const { DIRECT_PAYMENT_URL, PAYMENT_DUE_DATE } = config;
 

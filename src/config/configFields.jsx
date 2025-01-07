@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { StyledLink } from 'components/Layout/SharedStyles';
+import { StyledLink } from 'components/layouts/SharedStyles';
 import { websiteLink } from 'utils';
 import configBasics from './configBasics';
 const { ADMISSION_COST_DEFAULT, ADMISSION_COST_RANGE, EVENT_TITLE, SAFETY_POLICY_URL, SKIP_MANDATORY_FIELDS } = configBasics;

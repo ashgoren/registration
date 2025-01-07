@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { Field } from 'components/inputs';
-import { Title } from 'components/Layout/SharedStyles';
+import { Title } from 'components/layouts/SharedStyles';
 import { Box } from '@mui/material';
 import { useScrollToTop } from 'hooks/useScrollToTop';
 import { config } from 'config';

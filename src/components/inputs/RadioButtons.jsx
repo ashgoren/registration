@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { useField } from 'formik';
 import { FormControl, RadioGroup, FormControlLabel, Radio, FormHelperText } from '@mui/material';
-import { Label } from 'components/Layout/SharedStyles';
+import { Label } from 'components/layouts/SharedStyles';
 
 export const RadioButtons = memo(({ name, label, options, required, ...props }) => {
   const [field, { touched, error }, { setError }] = useField(name);

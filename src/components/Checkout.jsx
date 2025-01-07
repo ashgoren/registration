@@ -1,16 +1,14 @@
 import { useState } from 'react';
 import { Box, Typography } from '@mui/material';
-import { StyledPaper, Title } from 'components/Layout/SharedStyles';
+import { StyledPaper, Title } from 'components/layouts/SharedStyles';
+import { Loading, Error, NavButtons } from 'components/layouts';
 import { useOrder } from 'hooks/useOrder';
 import { useOrderSetup } from 'hooks/useOrderSetup';
 import { formatCurrency } from 'utils';
 import { PaypalCheckout } from 'components/PaypalCheckout';
 import { Check } from 'components/Check';
-import { Loading } from 'components/Layout/Loading';
 import { TogglePaymentMode } from 'components/TogglePaymentMode';
-import { NavButtons } from 'components/Layout/NavButtons';
 import { StripeCheckout } from 'components/StripeCheckout';
-import { Error } from 'components/Layout/Error';
 import { useScrollToTop } from 'hooks/useScrollToTop';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
 import { config } from 'config';

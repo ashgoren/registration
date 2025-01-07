@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 import { Box } from '@mui/material';
-import { StyledPaper } from 'components/Layout/SharedStyles';
+import { Loading, Error } from 'components/layouts';
+import { StyledPaper } from 'components/layouts/SharedStyles';
 import { useOrder } from 'hooks/useOrder';
 import { useOrderFinalization } from 'hooks/useOrderFinalization';
-import { Loading } from 'components/Layout/Loading';
-import { Error } from 'components/Layout/Error';
 import { config } from 'config';
 const { TECH_CONTACT } = config;
 

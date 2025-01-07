@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { useField } from 'formik';
 import { FormControlLabel, Checkbox } from '@mui/material';
-import { Label } from 'components/Layout/SharedStyles';
+import { Label } from 'components/layouts/SharedStyles';
 
 const CheckboxOption = memo(({ name, option, onChange, ...props }) => {
   const [field] = useField(name);

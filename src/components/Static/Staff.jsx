@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { StyledPaper, PageTitle, Paragraph, SectionDivider, Header } from 'components/Layout/SharedStyles';
+import { StyledPaper, PageTitle, Paragraph, SectionDivider, Header } from 'components/layouts/SharedStyles';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 

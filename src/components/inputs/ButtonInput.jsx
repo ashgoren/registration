@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { Label } from 'components/Layout/SharedStyles';
+import { Label } from 'components/layouts/SharedStyles';
 
 // not memoized because not used on the main form page
 export const ButtonInput = ({ buttonText, onClick }) => {

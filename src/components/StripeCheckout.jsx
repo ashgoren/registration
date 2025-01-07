@@ -3,7 +3,7 @@ import { useStripePayment } from 'hooks/useStripePayment';
 import { Elements, useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { Box, Button } from '@mui/material';
-import { TestCardBox } from 'components/Layout/SharedStyles';
+import { TestCardBox } from 'components/layouts/SharedStyles';
 import { config } from 'config';
 const { SANDBOX_MODE, PAYMENT_METHODS, TECH_CONTACT } = config;
 const stripePromise = PAYMENT_METHODS.includes('stripe') ? loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY) : null;

@@ -3,9 +3,9 @@ import { useEffect } from 'react';
 import { useOrder } from 'hooks/useOrder';
 import { usePaypalPayment } from 'hooks/usePaypalPayment';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
-import { Loading } from 'components/Layout/Loading';
 import { Box } from '@mui/material';
-import { TestCardBox } from 'components/Layout/SharedStyles';
+import { Loading } from 'components/layouts';
+import { TestCardBox } from 'components/layouts/SharedStyles';
 import { config } from 'config';
 const { SANDBOX_MODE, TECH_CONTACT } = config;
 

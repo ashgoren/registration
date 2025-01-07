@@ -5,10 +5,8 @@ import { useOrder } from 'hooks/useOrder';
 import { useOrderSetup } from 'hooks/useOrderSetup';
 import { useOrderFinalization } from 'hooks/useOrderFinalization';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
-import { StyledPaper, Paragraph } from 'components/Layout/SharedStyles';
-import { NavButtons } from 'components/Layout/NavButtons';
-import { Loading } from 'components/Layout/Loading';
-import { Error } from 'components/Layout/Error';
+import { NavButtons, Loading, Error } from 'components/layouts';
+import { StyledPaper, Paragraph } from 'components/layouts/SharedStyles';
 import { config } from 'config';
 const { SANDBOX_MODE, TECH_CONTACT } = config;
 

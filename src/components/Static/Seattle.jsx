@@ -1,5 +1,5 @@
 import { Box, List, ListItem } from '@mui/material';
-import { StyledPaper, StyledLink, PageTitle, Paragraph, Header } from 'components/Layout/SharedStyles';
+import { StyledPaper, StyledLink, PageTitle, Paragraph, Header } from 'components/layouts/SharedStyles';
 
 export const Seattle = () => {
   return (

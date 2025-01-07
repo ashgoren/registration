@@ -4,12 +4,12 @@ import { useScrollToTop } from 'hooks/useScrollToTop';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
 import { clamp } from 'utils';
 import { Field } from 'components/inputs';
-import { StyledPaper, Title, Paragraph } from 'components/Layout/SharedStyles';
 import { InputAdornment, Box, Tab, Tabs, FormControlLabel, Checkbox } from '@mui/material';
+import { NavButtons } from 'components/layouts';
+import { StyledPaper, Title, Paragraph } from 'components/layouts/SharedStyles';
 import { TabPanel, TabContext } from '@mui/lab';
 import { useFormikContext } from 'formik';
 import { PaymentExplanation } from 'components/Static/PaymentExplanation';
-import { NavButtons } from 'components/Layout/NavButtons';
 import { config } from 'config';
 const { DEPOSIT_OPTION, COVER_FEES_OPTION, DEPOSIT_COST, ADMISSION_COST_RANGE, DONATION_OPTION, DONATION_MAX, PAYMENT_DUE_DATE } = config;
 

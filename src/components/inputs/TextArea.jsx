@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { useField } from 'formik';
 import { TextField } from '@mui/material';
-import { Label } from 'components/Layout/SharedStyles';
+import { Label } from 'components/layouts/SharedStyles';
 
 export const TextArea = memo(({ label, name, rows }) => {
   const [field] = useField(name);

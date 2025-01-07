@@ -36,15 +36,13 @@ export const fieldOrder = [
   'paymentId'
 ];
 
+// additional valid fields for database, not used in spreadsheet
 export const validFields = [
   ...fieldOrder,
+  'createdAt',
   'people',
   'paymentMethod',
   'receipt',
-  'additionalPersonReceipt',
-  'emailConfirmation',
   'apartment',
-  'photoComments',
-  'createdAt',
-  'receipt'
+  'photoComments'
 ];

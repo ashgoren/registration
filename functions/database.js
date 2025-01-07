@@ -20,7 +20,7 @@ export const savePendingOrder = async ({ orderId, order }) => {
 
   try {
     if (orderId) {
-      const docRef = await ordersCollection.doc(orderId).set(preppedOrder);
+      await ordersCollection.doc(orderId).set(preppedOrder);
       logger.info(`PENDING ORDER UPDATED: ${email}`);
       return { id: orderId };
     } else {

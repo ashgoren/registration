@@ -1,5 +1,5 @@
 import { Box, Grid } from '@mui/material';
-import { StyledLink, StyledPaper, PageTitle, Paragraph, SectionDivider } from 'components/Layout/SharedStyles';
+import { StyledLink, StyledPaper, PageTitle, Paragraph, SectionDivider } from 'components/layouts/SharedStyles';
 import { config } from 'config';
 const { DANCES } = config;
 

@@ -1,4 +1,4 @@
-import { StyledPaper, Paragraph, Header, PageTitle } from 'components/Layout/SharedStyles';
+import { StyledPaper, Paragraph, Header, PageTitle } from 'components/layouts/SharedStyles';
 
 export const Fragrance = () => {
   return (

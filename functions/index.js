@@ -22,10 +22,11 @@ const firebaseFunctionDispatcher = onCall({ enforceAppCheck: true }, async (requ
   try {
     switch(action) {
       case 'caffeinate': return { status: 'awake' };
-      case 'initializePayment':
-        return await initializePayment(data, getStripePaymentIntent, createOrUpdatePaypalOrder);
-      case 'getStripePaymentIntent': return await getStripePaymentIntent(data);
-      case 'createOrUpdatePaypalOrder': return await createOrUpdatePaypalOrder(data);
+      case 'initializePayment': return await initializePayment(
+        data,
+        getStripePaymentIntent,
+        createOrUpdatePaypalOrder
+      );
       case 'capturePaypalOrder': return await capturePaypalOrder(data);
       case 'savePendingOrder': return await savePendingOrder(data);
       case 'saveFinalOrder': return await saveFinalOrder(data);

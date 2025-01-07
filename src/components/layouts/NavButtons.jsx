@@ -1,6 +1,6 @@
-import { MyMobileStepper } from 'components/Layout/MyStepper';
 import { Box, Button, useMediaQuery, useTheme } from '@mui/material';
-import { StyledButton, StyledPaper } from 'components/Layout/SharedStyles';
+import { MyMobileStepper } from 'components/layouts';
+import { StyledButton, StyledPaper } from 'components/layouts/SharedStyles';
 
 function UnifiedButton({ color, palette, variant='contained', type='button', onClick, text, ...props }) {
   const ButtonComponent = palette ? StyledButton : Button;
