@@ -1,6 +1,6 @@
 import { memo } from 'react';
-import { Field } from 'components/inputs';
 import { Grid } from '@mui/material';
+import { Field } from 'components/inputs';
 import { config } from 'config';
 const { FIELD_CONFIG, INCLUDE_LAST_ON_NAMETAG } = config;
 

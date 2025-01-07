@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Box, Typography, Button, Checkbox, FormControlLabel } from '@mui/material';
-import { OrderSummary } from 'components/OrderSummary';
+import { NavButtons, Loading, Error } from 'components/layouts';
+import { StyledPaper, Paragraph } from 'components/layouts/SharedStyles';
+import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
 import { useOrder } from 'hooks/useOrder';
 import { useOrderSetup } from 'hooks/useOrderSetup';
 import { useOrderFinalization } from 'hooks/useOrderFinalization';
-import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
-import { NavButtons, Loading, Error } from 'components/layouts';
-import { StyledPaper, Paragraph } from 'components/layouts/SharedStyles';
+import { OrderSummary } from 'components/OrderSummary';
 import { config } from 'config';
 const { SANDBOX_MODE, TECH_CONTACT } = config;
 

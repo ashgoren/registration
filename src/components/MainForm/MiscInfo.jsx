@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
-import { Field } from 'components/inputs';
-import { Title } from 'components/layouts/SharedStyles';
 import { Box } from '@mui/material';
+import { Title } from 'components/layouts/SharedStyles';
 import { useScrollToTop } from 'hooks/useScrollToTop';
+import { Field } from 'components/inputs';
 import { config } from 'config';
 const { FIELD_CONFIG, PERSON_MISC_FIELDS } = config;
 

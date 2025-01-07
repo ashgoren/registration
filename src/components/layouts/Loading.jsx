@@ -1,5 +1,5 @@
-import { TailSpin } from 'react-loading-icons'
 import { Box, Typography } from '@mui/material';
+import { TailSpin } from 'react-loading-icons'
 import { config } from 'config';
 const { TECH_CONTACT } = config;
 

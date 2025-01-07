@@ -1,7 +1,7 @@
 import { memo } from 'react';
-import { ContactInfoInputs } from './ContactInfoInputs';
-import { Title } from 'components/layouts/SharedStyles';
 import { useScrollToTop } from 'hooks/useScrollToTop';
+import { Title } from 'components/layouts/SharedStyles';
+import { ContactInfoInputs } from './ContactInfoInputs';
 import { config } from 'config';
 const { PERSON_INPUT_LABELS, PERSON_CONTACT_FIELDS } = config;
 

@@ -1,6 +1,6 @@
-import { useOrder } from 'hooks/useOrder';
 import { Box } from '@mui/material';
 import { useScrollToTop } from 'hooks/useScrollToTop';
+import { useOrder } from 'hooks/useOrder';
 
 export const Error = () => {
   const { error } = useOrder();

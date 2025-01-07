@@ -1,5 +1,5 @@
-import { useOrder } from 'hooks/useOrder';
 import { Typography, Button } from '@mui/material';
+import { useOrder } from 'hooks/useOrder';
 import { config } from 'config';
 const { PAYMENT_METHODS } = config;
 

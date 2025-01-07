@@ -1,10 +1,10 @@
-import { useOrder } from 'hooks/useOrder';
 import { Box, Button } from '@mui/material';
-import { ContactInfo } from './ContactInfo';
-import { MiscInfo } from './MiscInfo';
 import { getFirstInvalidFieldName, sanitizeObject } from 'utils';
 import { countryMapping } from 'src/countryMapping';
 import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
+import { useOrder } from 'hooks/useOrder';
+import { ContactInfo } from './ContactInfo';
+import { MiscInfo } from './MiscInfo';
 
 export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerson, resetForm, formikRef }) => {
   console.log('PersonForm rendered');

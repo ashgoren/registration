@@ -1,7 +1,7 @@
 import { useTheme } from '@mui/system';
 import { Box } from '@mui/material';
-import { mailtoLink } from 'utils';
 import { StyledLink, Paragraph } from 'components/layouts/SharedStyles';
+import { mailtoLink } from 'utils';
 import { config } from 'config';
 const { EMAIL_CONTACT, TECH_CONTACT, EVENT_TITLE, EVENT_LOCATION, EVENT_DATE, WAITLIST_MODE } = config;
 

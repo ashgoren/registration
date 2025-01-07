@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { Box, Typography } from '@mui/material';
-import { StyledPaper, Title } from 'components/layouts/SharedStyles';
 import { Loading, Error, NavButtons } from 'components/layouts';
-import { useOrder } from 'hooks/useOrder';
-import { useOrderSetup } from 'hooks/useOrderSetup';
+import { StyledPaper, Title } from 'components/layouts/SharedStyles';
 import { formatCurrency } from 'utils';
-import { PaypalCheckout } from 'components/PaypalCheckout';
-import { Check } from 'components/Check';
-import { TogglePaymentMode } from 'components/TogglePaymentMode';
-import { StripeCheckout } from 'components/StripeCheckout';
 import { useScrollToTop } from 'hooks/useScrollToTop';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
+import { useOrder } from 'hooks/useOrder';
+import { useOrderSetup } from 'hooks/useOrderSetup';
+import { TogglePaymentMode } from 'components/TogglePaymentMode';
+import { StripeCheckout } from 'components/StripeCheckout';
+import { PaypalCheckout } from 'components/PaypalCheckout';
+import { Check } from 'components/Check';
 import { config } from 'config';
 const { NUM_PAGES, TECH_CONTACT } = config;
 

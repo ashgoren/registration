@@ -1,6 +1,7 @@
-import { PAYPAL_ME_URL, EMAIL_CONTACT } from 'config';
-import { websiteLink, mailtoLink } from 'utils';
 import { PageTitle, Paragraph, StyledPaper, StyledLink } from 'components/layouts/SharedStyles';
+import { websiteLink, mailtoLink } from 'utils';
+import { config } from 'config';
+const { PAYPAL_ME_URL, EMAIL_CONTACT } = config;
 
 export const WaysToPay = () => {
   return (

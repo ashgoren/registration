@@ -1,14 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-// import {Home} from 'components/Static/Home';
-import { About } from 'components/Static/About';
-import { Staff } from 'components/Static/Staff';
-import { Seattle } from 'components/Static/Seattle';
-import { Contact } from 'components/Static/Contact';
-import { Schedule } from 'components/Static/Schedule';
-import { Registration } from 'components/Registration';
 import { MaterialLayout, Error, ScrollToAnchor } from 'components/layouts';
-import { PaymentExplanation } from 'components/Static/PaymentExplanation';
 import { OrderProvider } from 'contexts/OrderContext';
+import { Home, About, Staff, Seattle, Contact, Schedule, PaymentExplanation } from 'components/Static';
+import { Registration } from 'components/Registration';
 import { config } from 'config';
 const { TECH_CONTACT } = config;
 
@@ -17,6 +11,9 @@ export const App = () => {
   //   document.title = EVENT_TITLE;
   // }, []);
 
+  // for easier local testing of registration
+  const RootElement = window.location.hostname === 'localhost' ? Registration : Home;
+
   return (
     <>
       <Router>
@@ -24,8 +21,8 @@ export const App = () => {
         <MaterialLayout>
           <OrderProvider>
             <Routes>
-              {/* <Route exact path="/" element=<Home /> /> */}
-              <Route exact path="/" element=<Registration /> />
+              <Route exact path="/" element=<RootElement /> />
+              <Route exact path="/home" element=<Home /> />
               <Route exact path="/about" element=<About /> />
               <Route exact path="/staff" element=<Staff /> />
               <Route exact path="/schedule" element=<Schedule /> />

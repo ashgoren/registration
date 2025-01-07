@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useOrder } from 'hooks/useOrder';
-import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
 import { Box, Button, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { NavButtons } from 'components/layouts';
 import { StyledPaper, Paragraph } from 'components/layouts/SharedStyles';
+import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
+import { useOrder } from 'hooks/useOrder';
 import { PersonForm } from './PersonForm';
 import { PersonSummary } from 'components/OrderSummary';
 import { config } from 'config';

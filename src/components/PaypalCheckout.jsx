@@ -1,11 +1,11 @@
-import { log } from 'src/logger';
 import { useEffect } from 'react';
-import { useOrder } from 'hooks/useOrder';
-import { usePaypalPayment } from 'hooks/usePaypalPayment';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { Box } from '@mui/material';
 import { Loading } from 'components/layouts';
 import { TestCardBox } from 'components/layouts/SharedStyles';
+import { log } from 'src/logger';
+import { useOrder } from 'hooks/useOrder';
+import { usePaypalPayment } from 'hooks/usePaypalPayment';
 import { config } from 'config';
 const { SANDBOX_MODE, TECH_CONTACT } = config;
 

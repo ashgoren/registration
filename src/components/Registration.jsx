@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useOrder } from 'hooks/useOrder';
-import { initializeFirebaseAppCheck } from 'src/firebase.jsx';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { Typography, Button, Box } from '@mui/material';
 import { Error, Header, Loading } from 'components/layouts';
 import { StyledPaper, Paragraph } from 'components/layouts/SharedStyles';
+import { initializeFirebaseAppCheck } from 'src/firebase.jsx';
+import { useOrder } from 'hooks/useOrder';
 import { MainForm } from 'components/MainForm/MainForm';
 import { Checkout } from 'components/Checkout';
 import { Processing } from 'components/Processing';
