@@ -73,6 +73,8 @@
     "dotenv": "^16.4.7",
     "eslint": "^8.57.1",
     "eslint-config-react-app": "^7.0.1",
+    "fake-indexeddb": "^6.0.0",
+    "happy-dom": "^16.5.3",
     "jsdom": "^25.0.1",
     "vite-plugin-eslint": "^1.8.1",
     "vitest": "^2.1.8",
