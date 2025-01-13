@@ -9,7 +9,8 @@ import { logToPapertrail } from './logger.js';
 import { getStripePaymentIntent } from './stripe.js';
 import { createOrUpdatePaypalOrder, capturePaypalOrder } from './paypal.js';
 import { initializePayment } from './initializePayment.js';
-// import { missingFromSpreadsheet, duplicateEmailsInSpreadsheet } from './scheduled/validateSpreadsheet.js';
+import { missingFromSpreadsheet, duplicateEmailsInSpreadsheet } from './scheduled/validateSpreadsheet.js';
+import { emailIncompleteOrders } from './scheduled/incomplete.js';
 
 if (!getApps().length) initializeApp();
 
@@ -53,6 +54,7 @@ export {
   firebaseFunctionDispatcher,
   appendrecordtospreadsheet,
   sendEmailConfirmations,
-  // missingFromSpreadsheet,
-  // duplicateEmailsInSpreadsheet
+  missingFromSpreadsheet,
+  duplicateEmailsInSpreadsheet,
+  emailIncompleteOrders
 };
