@@ -10,7 +10,8 @@ export const ErrorType = {
   VALIDATION_AMOUNT_MISMATCH: 'VALIDATION_AMOUNT_MISMATCH',
   PAYPAL_API: 'PAYPAL_API',
   STRIPE_API: 'STRIPE_API',
-  DATABASE_SAVE: 'DATABASE_SAVE'
+  DATABASE_SAVE: 'DATABASE_SAVE',
+  DATABASE_READ: 'DATABASE_READ'
 };
 
 // Firebase Function error codes for use with HttpsError
@@ -45,7 +46,8 @@ const errorMapping = {
   [ErrorType.VALIDATION_AMOUNT_MISMATCH]: { code: ErrorCode.INVALID_ARGUMENT },
   [ErrorType.PAYPAL_API]: { code: ErrorCode.UNAVAILABLE, message: 'Payment service temporarily unavailable' },
   [ErrorType.STRIPE_API]: { code: ErrorCode.UNAVAILABLE, message: 'Payment service temporarily unavailable' },
-  [ErrorType.DATABASE_SAVE]: { code: ErrorCode.INTERNAL, message: 'Error saving order' }
+  [ErrorType.DATABASE_SAVE]: { code: ErrorCode.INTERNAL, message: 'Error saving order' },
+  [ErrorType.DATABASE_READ]: { code: ErrorCode.INTERNAL, message: 'Error reading order(s)' }
 };
 
 export const createError = (type, message, details = {}) => {

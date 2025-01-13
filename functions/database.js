@@ -1,10 +1,8 @@
 import { logger } from 'firebase-functions/v2';
-import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import { FieldValue } from 'firebase-admin/firestore';
 import { validFields } from './fields.js';
 import { createError, ErrorType } from './errorHandler.js';
-const firestore = getFirestore();
-
-const ordersCollection = firestore.collection('orders');
+import { ordersCollection } from './shared/orders.js';
 
 export const savePendingOrder = async ({ orderId, order }) => {
   const { email } = order.people[0];

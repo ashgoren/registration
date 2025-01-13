@@ -9,6 +9,7 @@ import { logToPapertrail } from './logger.js';
 import { getStripePaymentIntent } from './stripe.js';
 import { createOrUpdatePaypalOrder, capturePaypalOrder } from './paypal.js';
 import { initializePayment } from './initializePayment.js';
+// import { missingFromSpreadsheet, duplicateEmailsInSpreadsheet } from './scheduled/validateSpreadsheet.js';
 
 if (!getApps().length) initializeApp();
 
@@ -48,4 +49,10 @@ const logTokenStatus = (hasToken, action, metadata) => {
   };
 };
 
-export { firebaseFunctionDispatcher, appendrecordtospreadsheet, sendEmailConfirmations };
+export {
+  firebaseFunctionDispatcher,
+  appendrecordtospreadsheet,
+  sendEmailConfirmations,
+  // missingFromSpreadsheet,
+  // duplicateEmailsInSpreadsheet
+};

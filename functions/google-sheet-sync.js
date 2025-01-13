@@ -1,21 +1,13 @@
 import { logger } from 'firebase-functions/v2';
 import { initializeApp, getApps } from 'firebase-admin/app';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
-import { google } from 'googleapis';
 import { fieldOrder } from './fields.js';
 import { joinArrays } from './helpers.js';
-
-const SHEET_ID = process.env.SHEETS_SHEET_ID;
-const CONFIG_DATA_COLLECTION = 'orders';
-const RANGE = 'A:AP';
-const MAX_RETRIES = 3;
-const RETRY_DELAY_MS = 500;
+import { appendAllLines } from './shared/spreadsheet.js';
 
 if (!getApps().length) initializeApp();
 
-const client = new google.auth.JWT(process.env.SHEETS_SERVICE_ACCOUNT_CLIENT_EMAIL, null, process.env.SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY, ['https://www.googleapis.com/auth/spreadsheets']);
-
-export const appendrecordtospreadsheet = onDocumentUpdated(`${CONFIG_DATA_COLLECTION}/{ITEM}`, async (event) => {
+export const appendrecordtospreadsheet = onDocumentUpdated(`orders/{ITEM}`, async (event) => {
   const { before, after } = event.data;
   if (before?.data()?.status === 'pending' && after.data().status === 'final') {
     logger.info(`APPEND TO SPREADSHEET: ${after.id}`);
@@ -92,57 +84,6 @@ const mapOrderToSpreadsheetLines = (order) => {
   }
   return orders;
 };
-
-async function appendAllLines(orderLines, attempt = 0) {
-  try {
-    return await googleSheetsOperation({
-      operation: 'append',
-      params: {
-        valueInputOption: 'USER_ENTERED',
-        insertDataOption: 'INSERT_ROWS',
-        resource: {
-          values: orderLines
-        }
-      }
-    });
-  } catch (err) {
-    if (attempt < MAX_RETRIES) {
-      const delay = RETRY_DELAY_MS * Math.pow(2, attempt);
-      await new Promise(resolve => setTimeout(resolve, delay));
-      return appendAllLines(orderLines, attempt + 1);
-    } else {
-      logger.error(`Error appending order to spreadsheet`, err);
-      throw err;
-    }
-  }
-}
-
-async function googleSheetsOperation({ operation, params }) {
-  try {
-    const operationParams = {
-      ...params,
-      spreadsheetId: SHEET_ID,
-      range: params.range || RANGE
-    };
-    
-    await client.authorize();
-    const sheets = google.sheets({ version: 'v4', auth: client });
-
-    switch (operation) {
-      case 'read':
-        return await sheets.spreadsheets.values.get(operationParams);
-      case 'append':
-        return await sheets.spreadsheets.values.append(operationParams);
-      case 'update':
-        return await sheets.spreadsheets.values.update(operationParams);
-      default:
-        throw new Error('Invalid operation');
-    }
-  } catch (err) {
-    logger.error(`Google Sheets API operation (${operation}) failed`, err);
-    throw err;
-  }
-}
 
 const updateAddress = (person) => {
   const { address, apartment } = person;

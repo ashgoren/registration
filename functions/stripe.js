@@ -1,9 +1,9 @@
 import { logger } from 'firebase-functions/v2';
 import Stripe from 'stripe';
 import { createError, ErrorType } from './errorHandler.js';
+import { IS_EMULATOR } from './helpers.js';
 
-const isEmulator = !!process.env.FIREBASE_AUTH_EMULATOR_HOST || !!process.env.FIRESTORE_EMULATOR_HOST;
-const stripe = Stripe(isEmulator ? process.env.STRIPE_SECRET_KEY_DEV : process.env.STRIPE_SECRET_KEY);
+const stripe = Stripe(IS_EMULATOR ? process.env.STRIPE_SECRET_KEY_DEV : process.env.STRIPE_SECRET_KEY);
 const statement_descriptor_suffix = process.env.STRIPE_STATEMENT_DESCRIPTOR_SUFFIX; // appended to statement descriptor set in Stripe dashboard
 
 export const getStripePaymentIntent = async ({ email, name, amount, idempotencyKey, id }) => {
