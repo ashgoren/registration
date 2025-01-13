@@ -11,8 +11,8 @@ export const MainForm = () => {
   const formikRef = useRef();
   const { order, updateOrder, currentPage, setCurrentPage } = useOrder();
 
-  // this is triggered after People submitted and after PaymentInfo submitted
-  // for now it's really just validating the PaymentInfo page fields (?)
+  // this is triggered after People submitted and after PaymentForm submitted
+  // for now it's really just validating the PaymentForm page fields (?)
   // note: it doesn't get here until all validations are passing (?)
   function submitForm(values, actions) {
     const submittedOrder = Object.assign({}, values);
