@@ -13,18 +13,20 @@ const mailTransport = IS_EMULATOR ? null : nodemailer.createTransport({
   }
 });
 
-const sendMail = async ({ from=process.env.EMAIL_FROM, to, subject, html, replyTo=null }) => {
+const sendMail = async ({ from=process.env.EMAIL_FROM, to, subject, html=null, text=null, replyTo=null }) => {
   if (IS_EMULATOR) {
-    logger.info('Skipping email send in emulator', { from, to, subject, html });
+    logger.info('Skipping email send in emulator', { from, to, subject, html, text });
     return;
   }
 
+  logger.info('Sending email', { from, to, subject });
   try {
     await mailTransport.sendMail({
       from,
       to,
       subject,
-      html,
+      ...(html && { html }),
+      ...(text && { text }),
       ...(replyTo && { replyTo })
     });
   } catch (error) {

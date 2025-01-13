@@ -14,7 +14,7 @@ const EMAIL_COLUMN = 5;
 
 export const missingFromSpreadsheet = onSchedule(
   {
-    schedule: '0 0 * * *', // daily at midnight pacific time
+    schedule: '0 1 * * *', // daily at 12:01am pacific time
     timeZone: 'America/Los_Angeles',
   },
   async () => {
@@ -24,19 +24,18 @@ export const missingFromSpreadsheet = onSchedule(
       const keys = rows.map((row) => row[KEY_COLUMN]).filter((key) => key !== '-');
 
       const orders = await getFinalOrders();
-      const ordersMissingFromSheet = orders.filter((order) => !keys.includes(order.key));
-      const missingKeys = ordersMissingFromSheet.map((order) => order.key);
+      const missingOrders = orders.filter((order) => !keys.includes(order.key));
       
-      if (missingKeys.length === 0) {
+      if (missingOrders.length === 0) {
         logger.info('No final orders missing from spreadsheet :)');
         return;
       }
-      logger.info(`Final orders missing from spreadsheet: ${missingKeys.length}`);
+      logger.info(`Final orders missing from spreadsheet: ${missingOrders.length}`);
 
       await sendMail({
         to: process.env.EMAIL_NOTIFY_TO,
         subject: `${process.env.GCLOUD_PROJECT}: Orders missing from spreadsheet`,
-        html: missingKeys.map((key) => `<p>${key}</p>`).join(''),
+        text: missingOrders.map((order) => `${order.key} ${order.people[0].email}`).join('\n')
       });
 
     } catch (error) {
@@ -47,7 +46,7 @@ export const missingFromSpreadsheet = onSchedule(
 
 export const duplicateEmailsInSpreadsheet = onSchedule(
   {
-    schedule: '0 0 * * *', // daily at midnight pacific time
+    schedule: '0 2 * * *', // daily at 12:02am pacific time
     timeZone: 'America/Los_Angeles',
   },
   async () => {
@@ -68,7 +67,7 @@ export const duplicateEmailsInSpreadsheet = onSchedule(
       await sendMail({
         to: process.env.EMAIL_NOTIFY_TO,
         subject: `${process.env.GCLOUD_PROJECT}: Duplicate emails in spreadsheet`,
-        html: uniqueDuplicateEmails.map((email) => `<p>${email}</p>`).join(''),
+        text: uniqueDuplicateEmails.map((email) => email).join('\n')
       });
 
     } catch (error) {

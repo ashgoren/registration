@@ -23,13 +23,11 @@ export const emailIncompleteOrders = onSchedule(
       return;
     }
     logger.info(`Pending orders missing from orders: ${orders.length}`);
-
-    const htmlOrdersList = orders.map(order => `<p>${order.key} ${order.people[0].email}</p>`).join('');
   
     await sendMail({
       to: process.env.EMAIl_NOTIFY_TO,
       subject: `${PROJECT_ID}: Incomplete Orders`,
-      html: htmlOrdersList
+      text: orders.map((order) => `${order.key} ${order.people[0].email}`).join('\n')
     });  
   }
 );
