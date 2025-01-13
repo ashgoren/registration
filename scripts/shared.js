@@ -3,8 +3,8 @@ import { hideBin } from 'yargs/helpers';
 import fs from 'fs/promises';
 import admin from 'firebase-admin';
 import { getFirestore } from 'firebase-admin/firestore';
-import { google } from 'googleapis';
 import { ArtifactRegistryClient } from '@google-cloud/artifact-registry';
+// import { google } from 'googleapis';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -29,7 +29,6 @@ const argv = yargs(hideBin(process.argv))
 const pending = argv.pending;
 const includeTestEmails = argv['include-test-emails'];
 const testDomains = includeTestEmails ? [] : process.env.SCRIPTS_TEST_DOMAINS.split(',').map((domain) => domain.trim());
-const spreadsheetId = process.env['SCRIPTS_SHEET_ID'];
 
 if (scriptName !== 'cleanupArtifacts.js') {
   console.log(includeTestEmails ? '' : 'Excluding test emails!\n');
@@ -40,10 +39,10 @@ const firebaseServiceKeyPath = `keys/firebase-service-key.json`;
 const firebaseServiceAccount = JSON.parse(await fs.readFile(new URL(firebaseServiceKeyPath, import.meta.url), 'utf-8'));
 admin.initializeApp({ credential: admin.credential.cert(firebaseServiceAccount) });
 
-// setup artifact registry client
 const projectId = firebaseServiceAccount.project_id;
 console.log(`\nPROJECT: ${projectId}`);
 
+// setup artifact registry
 const artifactRegistryClient = new ArtifactRegistryClient({
   credentials: {
     client_email: firebaseServiceAccount.client_email,
@@ -52,19 +51,11 @@ const artifactRegistryClient = new ArtifactRegistryClient({
   projectId
 });
 
-// setup google sheets
-const sheetsServiceKeyPath = `keys/sheets-service-key.json`;
-const sheetsServiceAccount = JSON.parse(await fs.readFile(new URL(sheetsServiceKeyPath, import.meta.url), 'utf-8'));
-const sheetsClient = new google.auth.JWT({ email: sheetsServiceAccount.client_email, key: sheetsServiceAccount.private_key, scopes: ['https://www.googleapis.com/auth/spreadsheets'] });
-const sheets = google.sheets({ version: 'v4', auth: sheetsClient });
-
 // get data from firestore
 const db = getFirestore();
 const allOrders = await getOrders('orders');
+const finalOrders = allOrders.filter((order) => order.status === 'final');
 const pendingOrders = allOrders.filter((order) => order.status === 'pending');
-const orders = allOrders.filter((order) => order.status === 'final');
-
-// helper functions
 
 async function getOrders(collection) {
   const ref = db.collection(collection);
@@ -73,9 +64,13 @@ async function getOrders(collection) {
   return orders.sort((a, b) => b.createdAt - a.createdAt);
 }
 
-async function readSheet() {
-  return sheets.spreadsheets.values.get({ spreadsheetId, range: 'Orders' });
-}
+// // setup google sheets
+// const spreadsheetId = process.env['SCRIPTS_SHEET_ID'];
+// const sheetsServiceKeyPath = `keys/sheets-service-key.json`;
+// const sheetsServiceAccount = JSON.parse(await fs.readFile(new URL(sheetsServiceKeyPath, import.meta.url), 'utf-8'));
+// const sheetsClient = new google.auth.JWT({ email: sheetsServiceAccount.client_email, key: sheetsServiceAccount.private_key, scopes: ['https://www.googleapis.com/auth/spreadsheets'] });
+// const sheets = google.sheets({ version: 'v4', auth: sheetsClient });
+// const readSheet = async () => sheets.spreadsheets.values.get({ spreadsheetId, range: 'Orders' });
 
 function log({ email, message }) {
   const isTestEmail = testDomains.some((domain) => email.includes(domain));
@@ -84,4 +79,4 @@ function log({ email, message }) {
   }
 }
 
-export { pending, pendingOrders, orders, readSheet, log, artifactRegistryClient, projectId };
+export { pending, finalOrders, pendingOrders, projectId, artifactRegistryClient, log };

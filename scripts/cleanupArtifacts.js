@@ -12,7 +12,7 @@ const cleanupArtifacts = async (projectId) => {
 
         for (const repo of repositories) {
           if (repo.name.includes('gcf-artifacts')) {
-            console.log(`Attempting to delete repository: ${repo.name}`);
+            console.log(`Deleting artifact-repository: ${repo.name}`);
             artifactRegistryClient.deleteRepository({
               name: repo.name,
               force: true

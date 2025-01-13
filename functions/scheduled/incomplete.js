@@ -19,7 +19,7 @@ export const emailIncompleteOrders = onSchedule(
     const orders = await getPendingOrders();
 
     if (orders.length === 0) {
-      logger.info('No pending orders missing from orders :)\n');
+      logger.info('No pending orders missing from orders :)');
       return;
     }
     logger.info(`Pending orders missing from orders: ${orders.length}`);

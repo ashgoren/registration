@@ -1,7 +1,7 @@
-import { pending, pendingOrders, orders, log } from './shared.js';
+import { pending, pendingOrders, finalOrders, log } from './shared.js';
 
 console.log(pending ? '\nPENDING ORDERS\n' : '\nFINAL ORDERS\n');
-const theOrders = pending ? pendingOrders : orders;
+const theOrders = pending ? pendingOrders : finalOrders;
 
 try {
   for (const order of theOrders) {

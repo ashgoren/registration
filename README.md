@@ -280,6 +280,11 @@ Setup logs for Firebase functions to notify on error:
   - Set notification channel to Email.
   - Click Save.
 
+- Do the same for this query:
+  ```
+  resource.type="cloud_run_revision" textPayload:"Your function timed out after"
+  ```
+
 ---
 
 # Development 

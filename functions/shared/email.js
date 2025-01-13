@@ -15,7 +15,7 @@ const mailTransport = IS_EMULATOR ? null : nodemailer.createTransport({
 
 const sendMail = async ({ from=process.env.EMAIL_FROM, to, subject, html, replyTo=null }) => {
   if (IS_EMULATOR) {
-    logger.info('Skipping email send in emulator', { from, to, subject, html, replyTo });
+    logger.info('Skipping email send in emulator', { from, to, subject, html });
     return;
   }
 

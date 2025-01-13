@@ -30,4 +30,5 @@ scripts/keys/
 *error.log*
 
 .firebase/
+.firebase-emulator-data/
 .vscode/
