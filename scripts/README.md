@@ -10,10 +10,10 @@
 
 ## Configuration
 
-### Create Service Key Files
+### Create Service Key File
 
 > [!IMPORTANT]
-> Verify keys are not included in git commit!
+> Verify key is not included in git commit!
 
 > [!TIP]
 > In instructions below, replace `<PROJECT_ID>` with your actual Firebase project ID.
@@ -22,6 +22,11 @@
 
 - Generate new private key from project settings service accounts: https://console.firebase.google.com/project/<PROJECT_ID>/settings/serviceaccounts/adminsdk
 - Put in `scripts/keys` directory, rename to `firebase-service-key.json`
+
+### Give artifact registry permissions
+
+Replace `<PROJECT_ID>` and `<SERVICE_ACCOUNT_EMAIL>` with actual values.
+gcloud projects add-iam-policy-binding <PROJECT_ID> --member="serviceAccount:<SERVICE_ACCOUNT_EMAIL>" --role="roles/artifactregistry.admin"
 
 ### Configure Environment Variables
 

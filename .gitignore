@@ -32,3 +32,4 @@ scripts/keys/
 .firebase/
 .firebase-emulator-data/
 .vscode/
+backup/
