@@ -20,7 +20,7 @@ const config = {
   EVENT_LOCATION_2: 'Example address',
   EVENT_DATE: 'Example dates',
   TITLE: 'Example Contra Weekend 2024 Registation',
-  CONFIRMATION_PAYPAL_TITLE: 'Example Dance Weekend Confirmation',
+  CONFIRMATION_ELECTRONIC_TITLE: 'Example Dance Weekend Confirmation',
   CONFIRMATION_CHECK_TITLE: 'Example Dance Weekend Registration',
   EMAIL_CONTACT: 'contact@example.com',
   TECH_CONTACT: 'tech@example.com',

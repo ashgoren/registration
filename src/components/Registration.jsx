@@ -12,7 +12,7 @@ import { Confirmation } from 'components/Confirmation';
 import { IntroHeader } from 'components/IntroHeader';
 import { OrderSummary } from 'components/OrderSummary';
 import { config } from 'config';
-const { PAYMENT_METHODS, PAYPAL_OPTIONS, TITLE, CONFIRMATION_CHECK_TITLE, CONFIRMATION_PAYPAL_TITLE, SANDBOX_MODE, SHOW_PRE_REGISTRATION, TECH_CONTACT } = config;
+const { PAYMENT_METHODS, PAYPAL_OPTIONS, TITLE, CONFIRMATION_CHECK_TITLE, CONFIRMATION_ELECTRONIC_TITLE, SANDBOX_MODE, SHOW_PRE_REGISTRATION, TECH_CONTACT } = config;
 
 export const Registration = () => {
   const { setError } = useOrder();
@@ -56,7 +56,7 @@ const PreRegistration = ({ setRegistering }) => {
 
 const RealRegistration = () => {
   const { order, paymentMethod, currentPage, error } = useOrder();
-  const CONFIRMATION_TITLE = paymentMethod === 'check' ? CONFIRMATION_CHECK_TITLE : CONFIRMATION_PAYPAL_TITLE;
+  const CONFIRMATION_TITLE = paymentMethod === 'check' ? CONFIRMATION_CHECK_TITLE : CONFIRMATION_ELECTRONIC_TITLE;
 
   const content = (
     <>
