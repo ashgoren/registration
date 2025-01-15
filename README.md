@@ -141,8 +141,8 @@ Stripe configuration:
 
 PayPal configuration:
 - Don't want to accept Venmo? Comment out the venmo line in `configPaypal.jsx`.
-- Copy the sandbox mode `client ID` to the `.env` (VITE_PAYPAL_CLIENT_ID) and to `functions/.env` (PAYPAL_CLIENT_ID).
-- Copy the sandbox mode `secret` to the `functions/.env` file as both `PAYPAL_CLIENT_SECRET` and `PAYPAL_CLIENT_SECRET_DEV`.
+- Copy the sandbox mode `client ID` to the `.env` (`VITE_PAYPAL_CLIENT_ID_SANDBOX`) and to `functions/.env` (`PAYPAL_CLIENT_ID_SANDBOX`).
+- Copy the sandbox mode `secret` to the `functions/.env` file as `PAYPAL_CLIENT_SECRET_SANDBOX`.
 - Comment out the lines related to Stripe in `functions/index.js`
 
 ---
@@ -317,7 +317,7 @@ npm run dev
 
 # When switching to live mode
 
-- Set sandbox mode to false in `configBasics.jsx`
+- Set sandbox mode to false in `configBasics.jsx` and `functions/.env`
 - PAYPAL: Update Client ID to production mode locally and *ON GITHUB* and redeploy to Firebase
 - PAYPAL: Update both client & secret keys to production mode in `functions/.env` and redeploy Firebase Functions
 - STRIPE: Update Stripe Publishable Key to production mode locally and *ON GITHUB* and redeploy to Firebase

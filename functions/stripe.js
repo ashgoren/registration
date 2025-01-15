@@ -2,9 +2,13 @@ import { logger } from 'firebase-functions/v2';
 import Stripe from 'stripe';
 import { createError, ErrorType } from './errorHandler.js';
 import { IS_EMULATOR } from './helpers.js';
+const { SANDBOX_MODE, STRIPE_SECRET_KEY_SANDBOX, STRIPE_SECRET_KEY_LIVE, STRIPE_STATEMENT_DESCRIPTOR_SUFFIX } = process.env;
 
-const stripe = Stripe(IS_EMULATOR ? process.env.STRIPE_SECRET_KEY_DEV : process.env.STRIPE_SECRET_KEY);
-const statement_descriptor_suffix = process.env.STRIPE_STATEMENT_DESCRIPTOR_SUFFIX; // appended to statement descriptor set in Stripe dashboard
+const useSandbox = SANDBOX_MODE === 'true' || IS_EMULATOR;
+const stripeSecretKey = useSandbox ? STRIPE_SECRET_KEY_SANDBOX : STRIPE_SECRET_KEY_LIVE;
+const statement_descriptor_suffix = STRIPE_STATEMENT_DESCRIPTOR_SUFFIX; // appended to statement descriptor set in Stripe dashboard
+
+const stripe = Stripe(stripeSecretKey);
 
 export const getStripePaymentIntent = async ({ email, name, amount, idempotencyKey, id }) => {
   logger.info('getStripePaymentIntent', { email, idempotencyKey });

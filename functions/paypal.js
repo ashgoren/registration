@@ -1,12 +1,17 @@
 import { logger } from 'firebase-functions/v2';
 import { ApiError, CheckoutPaymentIntent, Client, Environment, LogLevel, OrdersController, ShippingPreference, PatchOp } from '@paypal/paypal-server-sdk';
-import { formatCurrency } from './helpers.js';
+import { formatCurrency, IS_EMULATOR } from './helpers.js';
 import { createError, ErrorType } from './errorHandler.js';
+const { SANDBOX_MODE, PAYPAL_CLIENT_ID_SANDBOX, PAYPAL_CLIENT_SECRET_SANDBOX, PAYPAL_CLIENT_ID_LIVE, PAYPAL_CLIENT_SECRET_LIVE } = process.env;
+
+const useSandbox = SANDBOX_MODE === 'true' || IS_EMULATOR;
+const paypalClientId = useSandbox ? PAYPAL_CLIENT_ID_SANDBOX : PAYPAL_CLIENT_ID_LIVE;
+const paypalClientSecret = useSandbox ? PAYPAL_CLIENT_SECRET_SANDBOX : PAYPAL_CLIENT_SECRET_LIVE;
 
 const client = new Client({
   clientCredentialsAuthCredentials: {
-    oAuthClientId: process.env.PAYPAL_CLIENT_ID,
-    oAuthClientSecret: process.env.PAYPAL_CLIENT_SECRET,
+    oAuthClientId: paypalClientId,
+    oAuthClientSecret: paypalClientSecret
   },
   timeout: 0,
   environment: Environment.Sandbox,
