@@ -10,7 +10,7 @@ import { config } from 'config';
 const { SANDBOX_MODE, TECH_CONTACT } = config;
 
 export const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, setPaying }) => {
-	const { processing, setCurrentPage, setError, order, updateOrder, electronicPaymentDetails: { id } } = useOrder();
+	const { processing, setProcessing, setCurrentPage, setError, order, updateOrder, electronicPaymentDetails: { id } } = useOrder();
 	const { email } = order.people[0]; // for logging
 	const { processPayment } = usePaypalPayment({ email, id });
 	const [, isResolved] = usePayPalScriptReducer();
@@ -45,6 +45,7 @@ export const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, se
 
 	// when user submits payment details
 	const onApprove = async () => {
+		setProcessing(true);
 		log('User submitted payment details', { email });
 		try {
 			const { id, amount } = await processPayment();
@@ -54,6 +55,7 @@ export const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, se
 			const errorMessage = mapPaymentError(error);
 			setError(errorMessage);
 			setPaying(false);
+			setProcessing(false);
 		}
 	};
 
