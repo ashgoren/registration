@@ -9,8 +9,8 @@ import { getFinalOrders } from '../shared/orders.js';
 import { readSheet } from '../shared/spreadsheet.js';
 import { sendMail } from '../shared/email.js';
 
-const KEY_COLUMN = 0;
-const EMAIL_COLUMN = 5;
+const KEY_COLUMN = process.env.SHEETS_KEY_COLUMN;
+const EMAIL_COLUMN = process.env.SHEETS_EMAIL_COLUMN;
 
 export const missingFromSpreadsheet = onSchedule(
   {
