@@ -25,7 +25,7 @@ export const emailIncompleteOrders = onSchedule(
     logger.info(`Pending orders missing from orders: ${orders.length}`);
   
     await sendMail({
-      to: process.env.EMAIl_NOTIFY_TO,
+      to: process.env.EMAIL_NOTIFY_TO,
       subject: `${PROJECT_ID}: Incomplete Orders`,
       text: orders.map((order) => `${order.key} ${order.people[0].email}`).join('\n')
     });  
