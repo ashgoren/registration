@@ -5,8 +5,10 @@
 import { logger } from 'firebase-functions/v2';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { getPendingOrders } from '../shared/orders.js';
+import { getOrderEmail, getOrderDomain } from '../helpers.js';
 import { sendMail } from '../shared/email.js';
 import { PROJECT_ID } from '../helpers.js';
+const testDomains = process.env.EMAIL_IGNORE_TEST_DOMAINS ? process.env.EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
 
 export const emailIncompleteOrders = onSchedule(
   {
@@ -17,17 +19,18 @@ export const emailIncompleteOrders = onSchedule(
     logger.info('emailIncompleteOrders triggered');
 
     const orders = await getPendingOrders();
+    const filteredOrders = orders.filter(order => !testDomains.includes(getOrderDomain(order)));
 
-    if (orders.length === 0) {
+    if (filteredOrders.length === 0) {
       logger.info('No pending orders missing from orders :)');
       return;
     }
-    logger.info(`Pending orders missing from orders: ${orders.length}`);
+    logger.info(`Pending orders missing from orders: ${filteredOrders.length}`);
   
     await sendMail({
       to: process.env.EMAIL_NOTIFY_TO,
       subject: `${PROJECT_ID}: Incomplete Orders`,
-      text: orders.map((order) => `${order.key} ${order.people[0].email}`).join('\n')
+      text: filteredOrders.map((order) => `${order.key} ${getOrderEmail(order)}`).join('\n')
     });  
   }
 );
