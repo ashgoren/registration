@@ -319,7 +319,7 @@ npm run dev
 
 - Set sandbox mode to false in `configBasics.jsx` and `functions/.env`
 - PAYPAL: Update Client ID to production mode locally and *ON GITHUB* and redeploy to Firebase
-- PAYPAL: Update both client & secret keys to production mode in `functions/.env` and redeploy Firebase Functions
+- PAYPAL: Update both client & secret keys to production mode in `functions/.env` and redeploy Firebase Functions with `--force`
 - STRIPE: Update Stripe Publishable Key to production mode locally and *ON GITHUB* and redeploy to Firebase
 - STRIPE: Update Stripe Secret Key to production mode in `functions/.env` and redeploy Firebase Functions
 - Make registration link live on homepage & navbar
