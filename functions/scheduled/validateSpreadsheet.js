@@ -16,7 +16,7 @@ const EMAIL_COLUMN = process.env.SHEETS_EMAIL_COLUMN;
 
 export const missingFromSpreadsheet = onSchedule(
   {
-    schedule: '0 1 * * *', // daily at 12:01am pacific time
+    schedule: '1 2 * * *', // daily at 2:01am pacific time
     timeZone: 'America/Los_Angeles',
   },
   async () => {
@@ -28,7 +28,7 @@ export const missingFromSpreadsheet = onSchedule(
       const orders = await getFinalOrders();
       const missingOrders = orders.filter((order) => !keys.includes(order.key));
       const missingOrdersFiltered = missingOrders.filter(order => !testDomains.includes(getOrderDomain(order)));
-      
+
       if (missingOrdersFiltered.length === 0) {
         logger.info('No final orders missing from spreadsheet :)');
         return;
@@ -49,14 +49,15 @@ export const missingFromSpreadsheet = onSchedule(
 
 export const duplicateEmailsInSpreadsheet = onSchedule(
   {
-    schedule: '0 2 * * *', // daily at 12:02am pacific time
+    schedule: '2 2 * * *', // daily at 2:02am pacific time
     timeZone: 'America/Los_Angeles',
   },
   async () => {
     try {
       const response = await readSheet();
       const rows = response.data.values.slice(2);
-      const emails = rows.map((row) => row[EMAIL_COLUMN]?.toLowerCase()).filter((email) => email);
+      const rowsWithIdCol = rows.filter(row => row[KEY_COLUMN] !== '-');
+      const emails = rowsWithIdCol.map((row) => row[EMAIL_COLUMN]?.toLowerCase()).filter((email) => email);
 
       const duplicateEmails = emails.sort().filter((email, index, array) => email === array[index + 1]);
       const uniqueDuplicateEmails = [...new Set(duplicateEmails)];

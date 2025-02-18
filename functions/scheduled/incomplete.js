@@ -12,7 +12,7 @@ const testDomains = process.env.EMAIL_IGNORE_TEST_DOMAINS ? process.env.EMAIL_IG
 
 export const emailIncompleteOrders = onSchedule(
   {
-    schedule: '0 0 * * *', // daily at midnight pacific time
+    schedule: '0 2 * * *', // daily at 2am pacific time
     timeZone: 'America/Los_Angeles',
   },
   async () => {
