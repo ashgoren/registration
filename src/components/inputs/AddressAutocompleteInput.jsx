@@ -53,6 +53,7 @@ export const AddressAutocompleteInput = memo(({ label, name, ...props }) => {
     apiKey: import.meta.env.VITE_GOOGLE_PLACES_API_KEY,
     onPlaceSelected: (place) => {
 
+      if (!place) return;
       const { address_components } = place;
       if (!address_components) return;
 
