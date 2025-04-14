@@ -14,7 +14,7 @@ const client = new Client({
     oAuthClientSecret: paypalClientSecret
   },
   timeout: 0,
-  environment: Environment.Sandbox,
+  environment: useSandbox ? Environment.Sandbox : Environment.Production,
   logging: {
     logLevel: LogLevel.Info,
     logRequest: { logBody: true },
