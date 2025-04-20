@@ -315,7 +315,8 @@ npm run dev
 
 # When switching to live mode
 
-- Set sandbox mode to false in `configBasics.jsx` and `functions/.env`
+- Set sandbox mode, waitlist mode, and skip_mandatory_fields to false in `.env`
+- Set sandbox mode to false in `functions/.env`
 - PAYPAL: Update Client ID to production mode locally and *ON GITHUB* and redeploy to Firebase
 - PAYPAL: Update both client & secret keys to production mode in `functions/.env` and redeploy Firebase Functions with `--force`
 - STRIPE: Update Stripe Publishable Key to production mode locally and *ON GITHUB* and redeploy to Firebase

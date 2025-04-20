@@ -1,7 +1,9 @@
+const { VITE_SANDBOX_MODE, VITE_SKIP_MANDATORY_FIELDS, VITE_WAITLIST_MODE } = import.meta.env;
+
 const config = {
-  SANDBOX_MODE: true, // for testing only
-  SKIP_MANDATORY_FIELDS: true, // for testing only
-  WAITLIST_MODE: false,
+  SANDBOX_MODE: VITE_SANDBOX_MODE === 'true', // set in .env
+  SKIP_MANDATORY_FIELDS: VITE_SKIP_MANDATORY_FIELDS === 'true', // set in .env
+  WAITLIST_MODE: VITE_WAITLIST_MODE === 'true', // set in .env
   SHOW_PRE_REGISTRATION: false,
   REGISTRATION_ONLY: false,
   ADMISSION_QUANTITY_MAX: 4,
