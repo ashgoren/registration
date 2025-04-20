@@ -4,7 +4,7 @@ import { NavButtons, Loading, Error } from 'components/layouts';
 import { StyledPaper, Paragraph } from 'components/layouts/SharedStyles';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
 import { useOrder } from 'hooks/useOrder';
-import { useOrderSetup } from 'hooks/useOrderSetup';
+import { useOrderSaving } from 'hooks/useOrderSaving';
 import { useOrderFinalization } from 'hooks/useOrderFinalization';
 import { OrderSummary } from 'components/OrderSummary';
 import { config } from 'config';
@@ -12,6 +12,7 @@ const { SANDBOX_MODE, TECH_CONTACT } = config;
 
 export const Waitlist = ({ handleClickBackButton }) => {
   const { order, updateOrder, error, setError, processing, setProcessing, processingMessage, setProcessingMessage } = useOrder();
+  const { savePendingOrder, isSaving } = useOrderSaving();
   const { finalizeOrder } = useOrderFinalization();
   const [ready, setReady] = useState(SANDBOX_MODE);
   const [confirmed, setConfirmed] = useState(false);
@@ -23,17 +24,7 @@ export const Waitlist = ({ handleClickBackButton }) => {
     setReady(true);
   }, 5000);
 
-  useOrderSetup({
-    onError: (errorMsg) => setError(
-      <>
-        We're sorry, but we experienced an issue initializing your registration:<br />
-        {errorMsg}<br />
-        Please close this tab and start over.<br />
-        If this error persists, please contact {TECH_CONTACT}.
-      </>
-    )
-  });
-
+  // useEffect rather than directly calling finalizeOrder to ensure order.paymentId has finished updating
   useEffect(() => {
     if (order.paymentId !== 'waitlist') return;
 
@@ -56,6 +47,7 @@ export const Waitlist = ({ handleClickBackButton }) => {
     setError(null);
     setProcessing(true);
     setProcessingMessage('Adding to waitlist...');
+    await savePendingOrder();
     updateOrder({ paymentId: 'waitlist', charged: 0 });
   };
 
@@ -93,7 +85,9 @@ export const Waitlist = ({ handleClickBackButton }) => {
 
             {confirmed &&
               <Box align='center' my={4}>
-                <Button variant='contained' color='secondary' onClick={processWaitlist}>Sign up for waitlist</Button>
+                <Button variant='contained' color='secondary' onClick={processWaitlist}>
+                  {isSaving ? 'Saving...' : 'Sign up for waitlist'}
+                </Button>
               </Box>
             }
           </>

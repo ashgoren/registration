@@ -3,6 +3,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Box, Button } from '@mui/material';
 import { TestCardBox } from 'components/layouts/SharedStyles';
 import { useOrder } from 'hooks/useOrder';
+import { useOrderSaving, OrderSavingError } from 'hooks/useOrderSaving';
 import { useStripePayment } from 'hooks/useStripePayment';
 import { config } from 'config';
 const { SANDBOX_MODE, PAYMENT_METHODS, TECH_CONTACT } = config;
@@ -30,6 +31,7 @@ function StripeCheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
   const { updateOrder, setCurrentPage, processing, setProcessing, setError, electronicPaymentDetails: { clientSecret} } = useOrder();
+  const { savePendingOrder } = useOrderSaving();
   const { processPayment } = useStripePayment({ stripe, elements, clientSecret });
 
   const handleSubmit = async (event) => {
@@ -41,12 +43,22 @@ function StripeCheckoutForm() {
       setProcessing(false); // PaymentElement automatically shows error messages
     } else {
       try {
+        console.log('SAVING PENDING ORDER');
+        await savePendingOrder();
+  
+        // it only hits this point if pending order saved successfully
+  
+        console.log('PROCESSING PAYMENT');
         const { id, amount } = await processPayment();
+
         updateOrder({ paymentId: id, charged: amount });
         setCurrentPage('processing');
       } catch (error) {
-        const errorMessage = mapPaymentError(error);
-        setError(errorMessage);
+        // UI error already set for OrderSavingError
+        if (!(error instanceof OrderSavingError)) {
+          const errorMessage = mapPaymentError(error);
+          setError(errorMessage);
+        }
         setProcessing(false);
       }
     }
