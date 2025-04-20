@@ -5,12 +5,14 @@ import { Loading } from 'components/layouts';
 import { TestCardBox } from 'components/layouts/SharedStyles';
 import { log } from 'src/logger';
 import { useOrder } from 'hooks/useOrder';
+import { useOrderSaving, OrderSavingError } from 'hooks/useOrderSaving';
 import { usePaypalPayment } from 'hooks/usePaypalPayment';
 import { config } from 'config';
 const { SANDBOX_MODE, TECH_CONTACT } = config;
 
 export const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, setPaying }) => {
 	const { processing, setProcessing, setCurrentPage, setError, order, updateOrder, electronicPaymentDetails: { id } } = useOrder();
+	const { savePendingOrder } = useOrderSaving();
 	const { email } = order.people[0]; // for logging
 	const { processPayment } = usePaypalPayment({ email, id });
 	const [, isResolved] = usePayPalScriptReducer();
@@ -48,12 +50,22 @@ export const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, se
 		setProcessing(true);
 		log('User submitted payment details', { email });
 		try {
+			console.log('SAVING PENDING ORDER');
+			await savePendingOrder();
+
+			// it only hits this point if pending order saved successfully
+
+			console.log('PROCESSING PAYMENT');
 			const { id, amount } = await processPayment();
+
 			updateOrder({ paymentId: id, charged: amount });
 			setCurrentPage('processing');
 		} catch (error) {
-			const errorMessage = mapPaymentError(error);
-			setError(errorMessage);
+			// UI error already set for OrderSavingError
+			if (!(error instanceof OrderSavingError)) {
+				const errorMessage = mapPaymentError(error);
+				setError(errorMessage);
+			}
 			setPaying(false);
 			setProcessing(false);
 		}

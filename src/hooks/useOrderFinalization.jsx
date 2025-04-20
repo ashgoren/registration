@@ -37,7 +37,7 @@ export const useOrderFinalization = () => {
       }
     };
 
-    const finalOrder = appendReceiptsToOrder(order);
+    const finalOrder = order.paymentId === 'waitlist' ? order : appendReceiptsToOrder(order);
     await saveFinalOrderToFirebase(finalOrder);
   }, [orderId, order, paymentMethod, setReceipt]);
 

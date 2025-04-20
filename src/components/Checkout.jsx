@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Box, Typography } from '@mui/material';
 import { Loading, Error, NavButtons } from 'components/layouts';
 import { StyledPaper, Title } from 'components/layouts/SharedStyles';
@@ -6,34 +6,37 @@ import { formatCurrency } from 'utils';
 import { useScrollToTop } from 'hooks/useScrollToTop';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
 import { useOrder } from 'hooks/useOrder';
-import { useOrderSetup } from 'hooks/useOrderSetup';
+import { usePaymentInitialization } from 'hooks/usePaymentInitialization';
 import { TogglePaymentMode } from 'components/TogglePaymentMode';
 import { StripeCheckout } from 'components/StripeCheckout';
 import { PaypalCheckout } from 'components/PaypalCheckout';
 import { Check } from 'components/Check';
 import { config } from 'config';
-const { NUM_PAGES, TECH_CONTACT } = config;
+const { NUM_PAGES } = config;
 
 export const Checkout = () => {
   console.log('RENDER Checkout');
 
   const { order, setCurrentPage, processing, processingMessage, error, setError, paymentMethod, amountToCharge } = useOrder();
+  const { initializePayment, isInitializing } = usePaymentInitialization();
   const [paying, setPaying] = useState(null);
   const [paypalButtonsLoaded, setPaypalButtonsLoaded] = useState(false);
 
   useScrollToTop();
   useWarnBeforeUnload();
 
-  useOrderSetup({
-    onError: (errorMsg) => setError(
-      <>
-        We're sorry, but we experienced an issue initializing your registration:<br />
-        {errorMsg}<br />
-        Please close this tab and start over.<br />
-        If this error persists, please contact {TECH_CONTACT}.
-      </>
-    )
-  });
+  const hasInitialized = useRef(false);
+
+  useEffect(() => {
+    if (hasInitialized.current) return;
+
+    const initialize = async () => {
+      await initializePayment();
+      hasInitialized.current = true;
+    };
+
+    initialize();
+  }, [initializePayment]);
 
   const handleClickBackButton = () => {
     setError(null);
@@ -44,7 +47,7 @@ export const Checkout = () => {
     setError('Possible payment amount discrepancy. Please verify total is correct!');
   }
 
-  if (!amountToCharge) {
+  if (!amountToCharge || isInitializing) {
     return (
       <>
         <StyledPaper align='center'>
