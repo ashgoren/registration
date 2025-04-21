@@ -1,11 +1,13 @@
 import { useRef } from 'react';
-import { logError } from 'src/logger';
+import { log, logError } from 'src/logger';
 import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
 
-export const usePaypalPayment = ({ email, id: paymentIntentId }) => {
-  const idempotencyKeyRef = useRef(crypto.randomUUID());
+export const usePaypalPayment = ({ order, id: paymentIntentId }) => {
+	const { email } = order.people[0];
+	const idempotencyKeyRef = useRef(crypto.randomUUID());
 
 	const processPayment = async () => {
+		log('Capturing PayPal payment', { email, order });
 		try {
 			const { data } = await firebaseFunctionDispatcher({
 				action: 'capturePaypalOrder',
@@ -20,6 +22,7 @@ export const usePaypalPayment = ({ email, id: paymentIntentId }) => {
 
 			const { id, amount } = data;
 
+			log('Payment captured', { email, paymentId: id, amount });
       idempotencyKeyRef.current = crypto.randomUUID(); // reset after successful order creation
 			return { id, amount: Number(amount) };
 		} catch (error) {
@@ -42,9 +45,9 @@ class PaymentError extends Error {
 }
 
 const validatePaymentResponse = (data) => {
-  if (!data) throw new Error('No data returned');
+  if (!data) throw new Error('No data returned from payment capturePaypalOrder');
 
   if (!data.id || !data.amount) {
-    throw new Error('Missing payment ID or amount');
+    throw new Error('Missing payment ID or amount from capturePaypalOrder');
   }
 }

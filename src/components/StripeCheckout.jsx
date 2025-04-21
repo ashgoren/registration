@@ -30,9 +30,9 @@ export const StripeCheckout = ({ total }) => {
 function StripeCheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
-  const { updateOrder, setCurrentPage, processing, setProcessing, setError, electronicPaymentDetails: { clientSecret} } = useOrder();
+  const { order, updateOrder, setCurrentPage, processing, setProcessing, setError, electronicPaymentDetails: { clientSecret} } = useOrder();
   const { savePendingOrder } = useOrderSaving();
-  const { processPayment } = useStripePayment({ stripe, elements, clientSecret });
+  const { processPayment } = useStripePayment({ order, stripe, elements, clientSecret });
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -43,12 +43,9 @@ function StripeCheckoutForm() {
       setProcessing(false); // PaymentElement automatically shows error messages
     } else {
       try {
-        console.log('SAVING PENDING ORDER');
-        await savePendingOrder();
+        await savePendingOrder(); // if fails to save, throws and sets error
   
-        // it only hits this point if pending order saved successfully
-  
-        console.log('PROCESSING PAYMENT');
+        // only reaches here if pending order saved successfully
         const { id, amount } = await processPayment();
 
         updateOrder({ paymentId: id, charged: amount });
