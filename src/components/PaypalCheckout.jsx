@@ -13,8 +13,7 @@ const { SANDBOX_MODE, TECH_CONTACT } = config;
 export const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, setPaying }) => {
 	const { processing, setProcessing, setCurrentPage, setError, order, updateOrder, electronicPaymentDetails: { id } } = useOrder();
 	const { savePendingOrder } = useOrderSaving();
-	const { email } = order.people[0]; // for logging
-	const { processPayment } = usePaypalPayment({ email, id });
+	const { processPayment } = usePaypalPayment({ order, id });
 	const [, isResolved] = usePayPalScriptReducer();
 
 	// this feels hella hacky, but sometimes the buttons don't render despite isResolved
@@ -40,7 +39,7 @@ export const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, se
 	};
 
 	const onError = (error) => {
-		log('PayPal onError', { email, error });
+		log('PayPal onError', { email: order.people[0].email, error });
 		setPaying(false);
 		setError(`PayPal encountered an error: ${error}. Please try again or contact ${TECH_CONTACT}.`);
 	};
@@ -48,14 +47,10 @@ export const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, se
 	// when user submits payment details
 	const onApprove = async () => {
 		setProcessing(true);
-		log('User submitted payment details', { email });
 		try {
-			console.log('SAVING PENDING ORDER');
-			await savePendingOrder();
+			await savePendingOrder(); // if fails to save, throws and sets error
 
-			// it only hits this point if pending order saved successfully
-
-			console.log('PROCESSING PAYMENT');
+			// only reaches here if pending order saved successfully
 			const { id, amount } = await processPayment();
 
 			updateOrder({ paymentId: id, charged: amount });

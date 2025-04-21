@@ -1,10 +1,12 @@
-import { logError } from 'src/logger';
+import { log, logError } from 'src/logger';
 
-export const useStripePayment = ({ stripe, elements, clientSecret }) => {
+export const useStripePayment = ({ order, stripe, elements, clientSecret }) => {
+  const { email } = order.people[0]; // for logging
 
   const processPayment = async () => {
+    log('Capturing Stripe payment', { email, order });
     if (!stripe || !elements || !clientSecret) {
-      logError('stripe, elements, or clientSecret missing', { stripe, elements, clientSecret });
+      logError('stripe, elements, or clientSecret missing', { email, stripe, elements, clientSecret });
       throw new PaymentError('Stripe payment processing is not available', 'PAYMENT_INIT_ERROR');
     }
     try {
@@ -20,6 +22,8 @@ export const useStripePayment = ({ stripe, elements, clientSecret }) => {
       validatePaymentResponse(paymentIntent, error);
 
       const { id, amount } = paymentIntent;
+
+      log('Payment captured', { email, paymentId: id, amount: Number(amount) / 100 });
       return { id, amount: Number(amount) / 100}; // amount comes back from stripe in cents
     } catch (error) {
       throw new PaymentError(error.message, 'PAYMENT_CONFIRM_ERROR');
