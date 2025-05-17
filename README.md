@@ -149,11 +149,11 @@ PayPal configuration:
 
 - Update allowed-referrers list in `google-places-api-flags.yaml` file.
 
-Enable google places and maps javascript APIs. (Theoretically can use gcloud services enable via CLI, but may actually need to do from google cloud console.)
+Enable the google maps javascript API _and_ the *new* google places API. (Theoretically can use gcloud services enable via CLI, but may actually need to do from google cloud console.)
 
 ```sh
-gcloud services enable places-backend.googleapis.com --project <PROJECT_ID>
-gcloud services enable maps-backend.googleapis.com --project <PROJECT_ID>
+gcloud services enable places.googleapis.com --project <PROJECT_ID>
+gcloud services enable mapsjs.googleapis.com --project <PROJECT_ID>
 gcloud services api-keys create --flags-file=google-places-api-flags.yaml --project <PROJECT_ID>
 ```
 
