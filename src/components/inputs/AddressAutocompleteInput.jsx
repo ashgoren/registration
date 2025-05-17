@@ -1,4 +1,4 @@
-import { memo, useEffect, useState, useCallback, useRef } from 'react';
+import { memo, useMemo, useEffect, useState, useCallback, useRef } from 'react';
 import { useField } from 'formik';
 import { TextField, Popper, Paper, List, ListItemButton, ListItemText, ClickAwayListener } from '@mui/material';
 import { usePlacesAutocomplete } from 'hooks/usePlacesAutocomplete';
@@ -13,24 +13,20 @@ const PLACES_FIELD_MAPPING = {
   country: ['country'],
 };
 
-export const AddressAutocompleteInput = memo(({ label, name, onAddressSelect, ...props }) => {
+export const AddressAutocompleteInput = memo(({ label, name, ...props }) => {
   // --- Formik field setup ---
   const [field, meta, helpers] = useField(name);
   const { touched, error } = meta;
   const { setError, setValue } = helpers;
 
-  // Extract person index for related fields
+  // Get field updaters for related fields
   const personIndex = name.split('[')[1].split(']')[0];
+  const relatedFieldUpdaters = useRelatedFieldUpdaters(personIndex);
 
-  // --- For setting other address fields ---
-  const [,,{ setValue: setCityValue, setError: setCityError }] = useField(`people[${personIndex}].city`);
-  const [,,{ setValue: setStateValue, setError: setStateError }] = useField(`people[${personIndex}].state`);
-  const [,,{ setValue: setZipValue, setError: setZipError }] = useField(`people[${personIndex}].zip`);
-  const [,,{ setValue: setCountryValue }] = useField(`people[${personIndex}].country`);
-  
   // --- UI state ---
   const textFieldRef = useRef(null); // to anchor the Popper
   const [focusedSuggestionIndex, setFocusedSuggestionIndex] = useState(-1); // index of the focused suggestion
+  const wasManuallyTriggered = useRef(false);
 
   // Initialize Places API hook
   const { predictions, getPredictions, getPlaceDetails, clearPredictions } = usePlacesAutocomplete(API_KEY);
@@ -39,11 +35,11 @@ export const AddressAutocompleteInput = memo(({ label, name, onAddressSelect, ..
   useEffect(() => {
     if (field.value) {
       setError('');
-      setCityError('');
-      setStateError('');
-      setZipError('');
+      for (const { setError: setRelatedError } of relatedFieldUpdaters) {
+        setRelatedError('');
+      }
     }
-  }, [field.value, setError, setCityError, setStateError, setZipError]);
+  }, [field.value, relatedFieldUpdaters, setError]);
 
   // --- Handle Input Change & Fetch Predictions ---
   const handleInputChange = useCallback(async (event) => {
@@ -51,7 +47,10 @@ export const AddressAutocompleteInput = memo(({ label, name, onAddressSelect, ..
     setValue(inputValue);
     setFocusedSuggestionIndex(-1); // Reset focus when input text changes
 
-    if (inputValue.trim()) {
+    const isManualInput = wasManuallyTriggered.current;
+    wasManuallyTriggered.current = false;
+
+    if (inputValue.trim() && isManualInput) {
       await getPredictions(inputValue);
     } else {
       clearPredictions();
@@ -71,18 +70,15 @@ export const AddressAutocompleteInput = memo(({ label, name, onAddressSelect, ..
       if (place?.addressComponents) {
         const addressData = extractAddressComponents(place.addressComponents, PLACES_FIELD_MAPPING);
 
-        // Update all fields directly
-        setValue(addressData.address || '');
-        setCityValue(addressData.city || '');
-        setStateValue(addressData.state || '');
-        setZipValue(addressData.zip || '');
-        setCountryValue(addressData.country || '');
-        
-        // Clear errors
-        setError('');
-        setCityError('');
-        setStateError('');
-        setZipError('');
+        // set value for address field
+        setValue(addressData.address || ''); // Set the main address field
+        setError(''); // Clear error for the main address field
+
+        // Set values for related fields (city, state, zip, country)
+        for (const { fieldName, setValue: setRelatedValue, setError: setRelatedError } of relatedFieldUpdaters) {
+          setRelatedValue(addressData[fieldName] || '');
+          setRelatedError('');
+        }
       }
     } catch (err) {
       console.error('Error selecting prediction:', err);
@@ -90,10 +86,18 @@ export const AddressAutocompleteInput = memo(({ label, name, onAddressSelect, ..
       setFocusedSuggestionIndex(-1); // Reset focus after selection
       // note: getPlaceDetails refreshes session token before returning place or error
     }
-  }, [getPlaceDetails, clearPredictions, setValue, setCityValue, setStateValue, setZipValue, setCountryValue, setError, setCityError, setStateError, setZipError]);
+  }, [getPlaceDetails, clearPredictions, setValue, setError, relatedFieldUpdaters]);
 
   // --- Allow keyboard navigation of suggestions ---
   const handleKeyDown = useCallback((event) => {
+    if (
+      (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) || // Printable characters
+      event.key === 'Backspace' ||
+      event.key === 'Delete'
+    ) {
+      wasManuallyTriggered.current = true;
+    }
+
     if (predictions.length === 0) return;
 
     switch (event.key) {
@@ -125,6 +129,11 @@ export const AddressAutocompleteInput = memo(({ label, name, onAddressSelect, ..
     }
   }, [predictions, focusedSuggestionIndex, handlePredictionSelect, clearPredictions]);
 
+  // --- Trigger autocomplete suggestions on paste ---
+  const handlePaste = useCallback(() => {
+    wasManuallyTriggered.current = true;
+  }, []);
+
   return (
     <div className='address-autocomplete-form-field'>
       <TextField
@@ -137,7 +146,8 @@ export const AddressAutocompleteInput = memo(({ label, name, onAddressSelect, ..
         {...props}
         onBlur={field.onBlur}
         onChange={handleInputChange}
-        onKeyDown={handleKeyDown} 
+        onKeyDown={handleKeyDown}
+        onPaste={handlePaste}
       />
 
       <ClickAwayListener onClickAway={clearPredictions}>
@@ -189,4 +199,34 @@ const extractAddressComponents = (addressComponents, fieldMapping) => {
     
     return { ...fields, [fieldName]: value };
   }, {});
+};
+
+const useRelatedFieldUpdaters = (personIndex) => {
+  const [, , cityHelpers] = useField(`people[${personIndex}].city`);
+  const [, , stateHelpers] = useField(`people[${personIndex}].state`);
+  const [, , zipHelpers] = useField(`people[${personIndex}].zip`);
+  const [, , countryHelpers] = useField(`people[${personIndex}].country`);
+
+  return useMemo(() => [
+    {
+      fieldName: 'city',
+      setValue: (text) => cityHelpers.setValue(text || ''),
+      setError: (text) => cityHelpers.setError(text || '')
+    },
+    {
+      fieldName: 'state',
+      setValue: (text) => stateHelpers.setValue(text || ''),
+      setError: (text) => stateHelpers.setError(text || '')
+    },
+    {
+      fieldName: 'zip',
+      setValue: (text) => zipHelpers.setValue(text || ''),
+      setError: (text) => zipHelpers.setError(text || '')
+    },
+    {
+      fieldName: 'country',
+      setValue: (text) => countryHelpers.setValue(text || ''),
+      setError: (text) => countryHelpers.setError(text || '')
+    }
+  ], [cityHelpers, stateHelpers, zipHelpers, countryHelpers]);
 };
