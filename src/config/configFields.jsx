@@ -206,9 +206,19 @@ export const FIELD_CONFIG = {
     type: 'textarea',
     title: 'Allergy / Safety Information',
     label: "So there's \"I don't eat gluten\" and then there's \"if a single crumb of gluten cross-contaminates my food I will be sick all weekend.\" Please elaborate as much are you need to feel comfortable that we know your safety and allergy needs. This can include non-food things as well.",
-    validation: Yup.string(),
     defaultValue: '',
-    rows: 2
+    rows: 2,
+    validation: Yup.string(),
+    conditionalValidation: {
+      message: 'Please provide relevant details about dietary restrictions.',
+      testFn: function (value) { // `value` is the value of 'allergies'
+        const { dietaryRestrictions } = this.parent; // `this.parent` is the person object
+        if (dietaryRestrictions?.includes('other')) {
+          return !!value && value.trim() !== ''; // Required and must not be only whitespace
+        }
+        return true; // Not required in other cases
+      }
+    }
   },
   housing: {
     type: 'textarea',
@@ -243,9 +253,19 @@ export const FIELD_CONFIG = {
   photoComments: {
     type: 'textarea',
     label: "Please explain any concerns or requests about photos here.",
-    validation: Yup.string(),
     defaultValue: '',
-    rows: 2
+    rows: 2,
+    validation: Yup.string(),
+    conditionalValidation: {
+      message: 'Please provide details for your photo consent preferences.',
+      testFn: function (value) { // `value` is the value of 'photoComments'
+        const { photo } = this.parent;
+        if (photo === 'Other') {
+          return !!value && value.trim() !== ''; // Required and must not be only whitespace
+        }
+        return true; // Not required
+      }
+    }
   },
   bedding: {
     type: 'checkbox',
