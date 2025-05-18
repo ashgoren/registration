@@ -9,7 +9,7 @@ const { FIELD_CONFIG, PERSON_MISC_FIELDS } = config;
 export const MiscInfo = ({ index, formikRef }) => {
   console.log('MiscInfo rendered');
   
-  const [showPhotoCommentsField, setShowPhotoCommentsField] = useState(false);
+  const [showPhotoCommentsField, setShowPhotoCommentsField] = useState(formikRef?.current?.values?.people?.[index]?.photo === 'Other');
   
   useScrollToTop();
 
