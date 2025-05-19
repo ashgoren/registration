@@ -133,7 +133,7 @@ function formatAddress(person) {
     streetAddress = apartment ? `${address} ${displayApartment}` : address;
   }
   const cityStateZip = city ? `${city}, ${state} ${zip}` : `${state} ${zip}`;
-  const cityStateZipWithCountry = country === 'USA' || country === 'United States' ? cityStateZip : `${cityStateZip}, ${country}`;
+  const cityStateZipWithCountry = country ? `${cityStateZip}, ${country}` : cityStateZip;
   return <>{streetAddress && <>{streetAddress}, </>}{cityStateZipWithCountry}</>
 }
 
