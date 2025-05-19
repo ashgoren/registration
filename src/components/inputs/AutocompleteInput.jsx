@@ -169,6 +169,7 @@ export const AutocompleteInput = ({ label, name, suggestions = [], filterOptions
       }}
       freeSolo={isFreeSoloActive}
       onBlur={handleAutocompleteBlur}
+      disabled={props.disabled}
     />
   );
 }
