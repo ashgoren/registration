@@ -78,7 +78,7 @@ export const ContactInfoInputs = memo(({ fields, index, formikRef }) => {
       <Grid container spacing={2}>
         {addressFields.map((field) => {
           const fieldConfig = FIELD_CONFIG[field];
-          const { label, type, pattern, placeholder, autoComplete, required, hidden, width } = fieldConfig;
+          const { label, type, pattern, placeholder, autoComplete, required, hidden, width, suggestions } = fieldConfig;
           const fieldName = `people[${index}].${field}`;
           return (
             <Grid item xs={12} sm={width} key={`${index}-${field}`}>
@@ -94,6 +94,7 @@ export const ContactInfoInputs = memo(({ fields, index, formikRef }) => {
                 mask='_'
                 variant='standard'
                 hidden={hidden}
+                suggestions={suggestions}
                 onBlur={fieldName === triggerSetNametagField ? setNametag : undefined}
                 disabled={isChecked}
               />
