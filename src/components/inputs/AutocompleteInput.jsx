@@ -72,7 +72,6 @@ export const AutocompleteInput = ({ label, name, suggestions = [], filterOptions
 
     setValue(newValue);
     setError('');
-    console.log('updated formik:', newValue);
   };
 
   const handleAutocompleteBlur = (event) => {

@@ -1,10 +1,10 @@
 import { Box, Button } from '@mui/material';
 import { getFirstInvalidFieldName, sanitizeObject } from 'utils';
-import { countryMapping } from 'src/countryMapping';
 import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
 import { useOrder } from 'hooks/useOrder';
 import { ContactInfo } from './ContactInfo';
 import { MiscInfo } from './MiscInfo';
+import { STATE_OPTIONS } from 'config/constants';
 
 export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerson, resetForm, formikRef }) => {
   console.log('PersonForm rendered');
@@ -94,13 +94,13 @@ export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerso
 };
 
 function updateCountry(person) {
-  if (person.country === 'United States') {
-    return { ...person, country: 'USA' };
-  } else if (person.state) {
-    const region = person.state.toLowerCase().replace(/\s/g, '').trim();
-    const country = countryMapping[region] || person.country;
-    return { ...person, country };
+  if (!person.state) return person;
+  const state = person.state.toLowerCase().trim();
+  const stateMatch = STATE_OPTIONS.find(opt => opt.fullName.toLowerCase() === state || opt.abbreviation.toLowerCase() === state)
+  const country = stateMatch?.country || person.country;
+  if (['usa', 'us', 'united states', 'united states of america'].includes(country?.toLowerCase())) {
+    return { ...person, country: '' };
   } else {
-    return person;
+    return { ...person, country };
   }
 }
