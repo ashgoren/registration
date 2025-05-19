@@ -10,45 +10,35 @@ const SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY = process.env.SHEETS_SERVICE_ACCOUNT_PR
 const SHEETS_AUTH_URL = 'https://www.googleapis.com/auth/spreadsheets';
 const client = new google.auth.JWT(SHEETS_SERVICE_ACCOUNT_CLIENT_EMAIL, null, SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY, [SHEETS_AUTH_URL]);
 
+const SHEET_OPERATIONS = {
+  READ: 'read',
+  APPEND: 'append',
+  UPDATE: 'update',
+};
+
 async function readSheet() {
-  try {
-    return await googleSheetsOperation({
-      operation: 'read',
-      params: {
-        range: 'Orders'
-      }
-    });
-  } catch (err) {
-    logger.error(`Error reading spreadsheet`, err);
-    throw err;
-  }
-}
-
-async function appendAllLines(lines, attempt = 0) {
-  try {
-    return await googleSheetsOperation({
-      operation: 'append',
-      params: {
-        valueInputOption: 'USER_ENTERED',
-        insertDataOption: 'INSERT_ROWS',
-        resource: {
-          values: lines
-        }
-      }
-    });
-  } catch (err) {
-    if (attempt < MAX_RETRIES) {
-      const delay = RETRY_DELAY_MS * Math.pow(2, attempt);
-      await new Promise(resolve => setTimeout(resolve, delay));
-      return appendAllLines(lines, attempt + 1);
-    } else {
-      logger.error(`Error appending lines to spreadsheet`, err);
-      throw err;
+  return googleSheetsOperation({
+    operation: SHEET_OPERATIONS.READ,
+    params: {
+      range: 'Orders'
     }
-  }
+  });
 }
 
-async function googleSheetsOperation({ operation, params }) {
+async function appendAllLines(lines) {
+  return googleSheetsOperation({
+    operation: SHEET_OPERATIONS.APPEND,
+    params: {
+      valueInputOption: 'USER_ENTERED',
+      insertDataOption: 'INSERT_ROWS',
+      resource: {
+        values: lines
+      }
+    }
+  });
+}
+
+async function googleSheetsOperation({ operation, params }, attempt = 0) {
   try {
     const operationParams = {
       ...params,
@@ -60,18 +50,25 @@ async function googleSheetsOperation({ operation, params }) {
     const sheets = google.sheets({ version: 'v4', auth: client });
 
     switch (operation) {
-      case 'read':
+      case SHEET_OPERATIONS.READ:
         return await sheets.spreadsheets.values.get(operationParams);
-      case 'append':
+      case SHEET_OPERATIONS.APPEND:
         return await sheets.spreadsheets.values.append(operationParams);
-      case 'update':
+      case SHEET_OPERATIONS.UPDATE:
         return await sheets.spreadsheets.values.update(operationParams);
       default:
         throw new Error('Invalid operation');
     }
   } catch (err) {
-    logger.error(`Google Sheets API operation (${operation}) failed`, err);
-    throw err;
+    if (attempt < MAX_RETRIES) {
+      logger.warn(`Google Sheets API operation (${operation}) failed, attempt ${attempt + 1}/${MAX_RETRIES}`, err);
+      const delay = RETRY_DELAY_MS * Math.pow(2, attempt);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return googleSheetsOperation({ operation, params }, attempt + 1);
+    } else {
+      logger.error(`Google Sheets API operation (${operation}) failed after ${MAX_RETRIES} attempts`, err);
+      throw err;
+    }
   }
 }
 
