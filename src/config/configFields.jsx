@@ -102,8 +102,7 @@ export const FIELD_CONFIG = {
     label: 'City',
     validation: Yup.string().required('Please enter city.'),
     defaultValue: '',
-    width: 6,
-    // width: 5,
+    width: 5,
     required: true,
     autoComplete: 'address-level2'
   },
@@ -121,7 +120,7 @@ export const FIELD_CONFIG = {
     label: 'Zip code',
     validation: Yup.string().required('Please enter zip/postal code.'),
     defaultValue: '',
-    width: 2,
+    width: 3,
     required: true,
     autoComplete: 'postal-code'
   },
