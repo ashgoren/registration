@@ -5,7 +5,8 @@ import { validationSchema } from './validationSchema';
 import { useOrder } from 'hooks/useOrder';
 import { FormContents } from './FormContents';
 import { config } from 'config';
-const { NUM_PAGES, DEPOSIT_COST } = config;
+const { NUM_PAGES, DEPOSIT_COST, SANDBOX_MODE } = config;
+const { MODE } = import.meta.env;
 
 export const MainForm = () => {
   const formikRef = useRef();
@@ -21,7 +22,8 @@ export const MainForm = () => {
       ...sanitizedOrder,
       deposit: sanitizedOrder.deposit ? sanitizedOrder.people.length * DEPOSIT_COST : 0,
       total: order.total,
-      fees: order.fees
+      fees: order.fees,
+      isTestOrder: SANDBOX_MODE || MODE === 'development'
     });
     setCurrentPage(currentPage === NUM_PAGES ? 'checkout' : currentPage + 1);
   }

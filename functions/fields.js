@@ -33,7 +33,8 @@ export const fieldOrder = [
   'status',
   'purchaser',
   'completedAt',
-  'paymentId'
+  'paymentId',
+  'isTestOrder'
 ];
 
 // additional valid fields for database, not used in spreadsheet
