@@ -1,10 +1,9 @@
 import { Box, Button } from '@mui/material';
-import { getFirstInvalidFieldName, sanitizeObject } from 'utils';
+import { getFirstInvalidFieldName, sanitizeObject, getCountry } from 'utils';
 import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
 import { useOrder } from 'hooks/useOrder';
 import { ContactInfo } from './ContactInfo';
 import { MiscInfo } from './MiscInfo';
-import { STATE_OPTIONS } from 'config/constants';
 
 export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerson, resetForm, formikRef }) => {
   console.log('PersonForm rendered');
@@ -30,13 +29,28 @@ export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerso
   }
 
   function saveUpdatedOrder() {
-    const { values } = formikRef.current;
+    const { values, setFieldValue } = formikRef.current;
+
+    // sanitize the order object
     const submittedOrder = Object.assign({}, values);
     const sanitizedOrder = sanitizeObject(submittedOrder);
+
+    // get country for the person being edited
+    const person = sanitizedOrder.people[editIndex];
+    const country = getCountry(person);
+
+    // add country to the person being edited
     const orderWithCountry = {
       ...sanitizedOrder,
-      people: sanitizedOrder.people.map(updateCountry)
+      people: sanitizedOrder.people.map((person, index) =>
+        index === editIndex ? { ...person, country } : person
+      )
     };
+
+    // update formik field value for country
+    setFieldValue(`people[${editIndex}].country`, country);
+
+    // update order context
     updateOrder(orderWithCountry);
   }
 
@@ -92,15 +106,3 @@ export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerso
     </>
   );
 };
-
-function updateCountry(person) {
-  if (!person.state) return person;
-  const state = person.state.toLowerCase().trim();
-  const stateMatch = STATE_OPTIONS.find(opt => opt.fullName.toLowerCase() === state || opt.abbreviation.toLowerCase() === state)
-  const country = stateMatch?.country || person.country;
-  if (['usa', 'us', 'united states', 'united states of america'].includes(country?.toLowerCase())) {
-    return { ...person, country: '' };
-  } else {
-    return { ...person, country };
-  }
-}

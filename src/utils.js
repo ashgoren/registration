@@ -1,6 +1,7 @@
 import DOMPurify from 'dompurify';
 import MarkdownIt from 'markdown-it';
 import Handlebars from 'handlebars';
+import { STATE_OPTIONS } from 'config/constants';
 
 export const clamp = (value, range) => Math.min(Math.max(Number(value), range[0]), range[1]);
 
@@ -55,4 +56,16 @@ export const renderMarkdownTemplate = (template, data) => {
   const filledTemplate = compiled(data);
   const md = new MarkdownIt();
   return md.render(filledTemplate);
+};
+
+export const getCountry = (person) => {
+  if (!person.state) return person.country; // in case the state field is not requested/required
+  const state = person.state.toLowerCase().trim();
+  const stateMatch = STATE_OPTIONS.find(opt => opt.fullName.toLowerCase() === state || opt.abbreviation.toLowerCase() === state)
+  const country = stateMatch?.country || person.country;
+  if (['usa', 'us', 'united states', 'united states of america'].includes(country?.toLowerCase())) {
+    return '';
+  } else {
+    return country;
+  }
 };
