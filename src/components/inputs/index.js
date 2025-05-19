@@ -1,6 +1,7 @@
 export { TextInput } from './TextInput';
 export { NumericInput } from './NumericInput';
 export { AddressAutocompleteInput } from './AddressAutocompleteInput';
+export { AutocompleteInput } from './AutocompleteInput';
 export { TextArea } from './TextArea';
 export { CheckboxInput } from './CheckboxInput';
 export { RadioButtons } from './RadioButtons';

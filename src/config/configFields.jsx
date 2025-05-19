@@ -1,6 +1,7 @@
 import * as Yup from 'yup';
 import { StyledLink } from 'components/layouts/SharedStyles';
 import { websiteLink } from 'utils';
+import { STATE_OPTIONS } from './constants';
 import configBasics from './configBasics';
 const { ADMISSION_COST_DEFAULT, ADMISSION_COST_RANGE, EVENT_TITLE, SAFETY_POLICY_URL, SKIP_MANDATORY_FIELDS } = configBasics;
 
@@ -101,21 +102,22 @@ export const FIELD_CONFIG = {
     label: 'City',
     validation: Yup.string().required('Please enter city.'),
     defaultValue: '',
-    width: 6,
-    // width: 5,
+    width: 5,
     required: true,
     autoComplete: 'address-level2'
   },
   state: {
     label: 'State / Province',
+    type: 'autocomplete',
+    suggestions: STATE_OPTIONS,
     validation: Yup.string().required('Please enter state or province.'),
     defaultValue: '',
-    width: 3,
+    width: 4,
     required: true,
     autoComplete: 'address-level1'
   },
   zip: {
-    label: 'Zip / Postal code',
+    label: 'Zip code',
     validation: Yup.string().required('Please enter zip/postal code.'),
     defaultValue: '',
     width: 3,
