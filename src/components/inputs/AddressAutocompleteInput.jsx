@@ -124,6 +124,10 @@ export const AddressAutocompleteInput = memo(({ label, name, ...props }) => {
         clearPredictions();
         setFocusedSuggestionIndex(-1);
         break;
+      case 'Tab':
+        clearPredictions();
+        setFocusedSuggestionIndex(-1);
+        break;
       default:
         break;
     }
