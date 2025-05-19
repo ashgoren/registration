@@ -2,6 +2,7 @@ import { memo, useMemo, useEffect, useState, useCallback, useRef } from 'react';
 import { useField } from 'formik';
 import { TextField, Popper, Paper, List, ListItemButton, ListItemText, ClickAwayListener } from '@mui/material';
 import { usePlacesAutocomplete } from 'hooks/usePlacesAutocomplete';
+import { clear } from '@testing-library/user-event/dist/types/utility';
 
 const API_KEY = import.meta.env.VITE_GOOGLE_PLACES_API_KEY;
 
@@ -121,6 +122,10 @@ export const AddressAutocompleteInput = memo(({ label, name, ...props }) => {
         break;
       case 'Escape':
         event.preventDefault(); // Clear predictions, closing the Popper
+        clearPredictions();
+        setFocusedSuggestionIndex(-1);
+        break;
+      case 'Tab':
         clearPredictions();
         setFocusedSuggestionIndex(-1);
         break;
