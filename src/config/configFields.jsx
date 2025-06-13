@@ -312,15 +312,15 @@ export const FIELD_CONFIG = {
     rows: 5,
   },
   agreement: {
-    type: 'radio',
+    type: 'checkbox',
     title: 'Values and Expectations',
     label: <>Do you agree to follow {EVENT_TITLE}'s <StyledLink to={websiteLink(SAFETY_POLICY_URL)}>values and expectations</StyledLink>?</>,
     options: [
-      { label: 'Yes', value: true }
+      { label: 'Yes', value: 'yes' }
     ],
     required: true,
-    validation: Yup.boolean().oneOf([true], 'Please agree to the terms.'),
-    defaultValue: false,
+    validation: Yup.array().min(1, 'You must agree to the values and expectations.'),
+    defaultValue: [],
   },
   admission: {
     validation: Yup.number().min(ADMISSION_COST_RANGE[0]).max(ADMISSION_COST_RANGE[1]).required(),

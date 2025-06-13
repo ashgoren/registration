@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { useField } from 'formik';
-import { FormControlLabel, Checkbox } from '@mui/material';
+import { FormControl, FormHelperText, FormControlLabel, Checkbox } from '@mui/material';
 import { Label } from 'components/layouts/SharedStyles';
 
 const CheckboxOption = memo(({ name, option, onChange, ...props }) => {
@@ -24,15 +24,19 @@ const CheckboxOption = memo(({ name, option, onChange, ...props }) => {
 });
 
 export const CheckboxInput = memo(({ name, label, options, onChange, ...props }) => {
+  const [, { touched, error }] = useField(name);
+
   // console.log('render CheckboxInput:', name);
+
   return (
-    <>
+    <FormControl error={Boolean(touched && error)}>
       <Label name={name} sx={{ mb: 1 }}>{label}</Label>
       {options.map((option) => (
         <div key={option.value}>
           <CheckboxOption name={name} option={option} onChange={onChange} {...props} />
         </div>
       ))}
-    </>
+      {touched && error && <FormHelperText sx={{ mt: 2 }}>{error}</FormHelperText>}
+    </FormControl>
   );
 });

@@ -44,9 +44,18 @@ export const MiscInfo = ({ index, formikRef }) => {
     }
   }, [formikRef, index]);
 
+  const updateAgreementField = useCallback(async (e) => {
+    if (!formikRef.current) return;
+    const { name, checked } = e.target;
+    const { setFieldValue, setFieldTouched } = formikRef.current;
+    await setFieldValue(name, checked ? ['yes'] : []);
+    setFieldTouched(name, true);
+  }, [formikRef]);
+
   const getOnChangeHandler = (field) => {
     if (field === 'share') return updateShareCheckboxOptions;
     if (field === 'photo') return updatePhotoCommentsField;
+    if (field === 'agreement') return updateAgreementField;
     return undefined; // use default onChange handler for that input field
   };
 
