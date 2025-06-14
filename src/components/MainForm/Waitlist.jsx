@@ -47,8 +47,20 @@ export const Waitlist = ({ handleClickBackButton }) => {
     setError(null);
     setProcessing(true);
     setProcessingMessage('Adding to waitlist...');
-    await savePendingOrder();
-    updateOrder({ paymentId: 'waitlist', charged: 0 });
+    try {
+      await savePendingOrder();
+      updateOrder({ paymentId: 'waitlist', charged: 0 });
+    } catch (error) { // instance of HttpsError from backend or other error
+      console.error('Error saving pending order:', error);
+      setError(
+				<>
+					We're sorry, but we experienced an issue saving your order.<br />
+					Please try again or contact {TECH_CONTACT} for assistance.<br />
+					Error: {error.message || error}
+				</>
+      );
+      setProcessing(false);
+    }
   };
 
   return (

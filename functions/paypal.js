@@ -175,6 +175,16 @@ const handlePaypalError = (error, operation) => {
   if (error instanceof ApiError) {
     error.type = ErrorType.PAYPAL_API;
     error.details = { ...error.details, statusCode: error.statusCode };
+
+    // try to extract a more useful error message from PayPal response
+    if (error.result?.message) {
+      error.message = error.result.message;
+      if (error.result.details?.[0]?.description) {
+        error.message += ` ${error.result.details[0].description}`;
+      }
+    } else {
+      error.message = `PayPal API error occurred during ${operation}.`;
+    }
   }
   throw error;
 };

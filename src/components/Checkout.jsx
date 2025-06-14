@@ -12,7 +12,7 @@ import { StripeCheckout } from 'components/StripeCheckout';
 import { PaypalCheckout } from 'components/PaypalCheckout';
 import { Check } from 'components/Check';
 import { config } from 'config';
-const { NUM_PAGES } = config;
+const { NUM_PAGES, TECH_CONTACT } = config;
 
 export const Checkout = () => {
   console.log('RENDER Checkout');
@@ -31,12 +31,26 @@ export const Checkout = () => {
     if (hasInitialized.current) return;
 
     const initialize = async () => {
-      await initializePayment();
-      hasInitialized.current = true;
+      try {
+        setError(null);
+        await initializePayment();
+        hasInitialized.current = true;
+      } catch (error) {
+        setError(
+          <>
+            We're sorry, but we experienced an issue initializing your registration:<br />
+            Error initializing payment<br />
+            Please close this tab and start over.<br />
+            If this error persists, please contact {TECH_CONTACT}.<br />
+            Error: {error.message || error}
+          </>
+        );
+
+      }
     };
 
     initialize();
-  }, [initializePayment]);
+  }, [initializePayment, setError]);
 
   const handleClickBackButton = () => {
     setError(null);

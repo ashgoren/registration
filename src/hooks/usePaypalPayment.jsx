@@ -28,7 +28,7 @@ export const usePaypalPayment = ({ order, id: paymentIntentId }) => {
 		} catch (error) {
 			idempotencyKeyRef.current = crypto.randomUUID(); // reset after failure as well, since user may change order
 			logError('PayPal process payment error', { email, error });
-			throw new PaymentError(error.message, 'PAYMENT_PROCESS_ERROR');
+			throw error; // rethrow HttpsError from backend or other error to be handled by PaypalCheckout component
 		}
 	};
   return { processPayment };
@@ -36,13 +36,6 @@ export const usePaypalPayment = ({ order, id: paymentIntentId }) => {
 
 
 // ===== Helpers =====
-
-class PaymentError extends Error {
-  constructor(message, code) {
-    super(message);
-    this.code = code;
-  }
-}
 
 const validatePaymentResponse = (data) => {
   if (!data) throw new Error('No data returned from capturePaypalOrder');
