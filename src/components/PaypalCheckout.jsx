@@ -80,7 +80,7 @@ export const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, se
 						<TestCardBox number='4012000077777777' />
 					}
 					<PayPalButtons className={processing ? 'd-none' : ''}
-						style={{ height: 48, tagline: false, shape: "pill" }}
+						style={{ height: 48, tagline: false, shape: "pill", label: 'paypal' }}
 						createOrder={() => Promise.resolve(id)}
 						onApprove={() => onApprove()}
 						onClick={() => onClick()}
@@ -95,10 +95,10 @@ export const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, se
 
 const mapPaymentError = (error) => {
   const errorMessages = {
-    PAYMENT_AMOUNT_ERROR: `There was a problem initializing the payment: Amount out of range. Please contact ${TECH_CONTACT}.`,
-    PAYMENT_INIT_ERROR: `There was a problem initializing the payment: ${error.message}. Please try again or contact ${TECH_CONTACT}.`,
+    // PAYMENT_AMOUNT_ERROR: `There was a problem initializing the payment: Amount out of range. Please contact ${TECH_CONTACT}.`,
+    // PAYMENT_INIT_ERROR: `There was a problem initializing the payment: ${error.message}. Please try again or contact ${TECH_CONTACT}.`,
     PAYMENT_PROCESS_ERROR: `There was a problem processing the payment: ${error.message}. Please verify your payment details and try again.`,
-    PAYMENT_CONFIRM_ERROR: `There was a problem confirming the payment: ${error.message}. Please contact ${TECH_CONTACT}.`,
+    // PAYMENT_CONFIRM_ERROR: `There was a problem confirming the payment: ${error.message}. Please contact ${TECH_CONTACT}.`,
   };
   return errorMessages[error.code] || `Unexpected payment processing error: ${error.message}. Please contact ${TECH_CONTACT}.`;
 }

@@ -45,9 +45,6 @@ class PaymentError extends Error {
 }
 
 const validatePaymentResponse = (data) => {
-  if (!data) throw new Error('No data returned from payment capturePaypalOrder');
-
-  if (!data.id || !data.amount) {
-    throw new Error('Missing payment ID or amount from capturePaypalOrder');
-  }
-}
+  if (!data) throw new Error('No data returned from capturePaypalOrder');
+  if (!data.id || !data.amount) throw new Error('Missing payment ID or amount from capturePaypalOrder');
+};
