@@ -44,8 +44,8 @@ const errorMapping = {
   [ErrorType.VALIDATION_MISSING_AMOUNT]: { code: ErrorCode.INVALID_ARGUMENT },
   [ErrorType.VALIDATION_ID_MISMATCH]: { code: ErrorCode.INVALID_ARGUMENT },
   [ErrorType.VALIDATION_AMOUNT_MISMATCH]: { code: ErrorCode.INVALID_ARGUMENT },
-  [ErrorType.PAYPAL_API]: { code: ErrorCode.UNAVAILABLE, message: 'Payment service temporarily unavailable' },
-  [ErrorType.STRIPE_API]: { code: ErrorCode.UNAVAILABLE, message: 'Payment service temporarily unavailable' },
+  [ErrorType.PAYPAL_API]: { code: ErrorCode.UNAVAILABLE },
+  [ErrorType.STRIPE_API]: { code: ErrorCode.UNAVAILABLE },
   [ErrorType.DATABASE_SAVE]: { code: ErrorCode.INTERNAL, message: 'Error saving order' },
   [ErrorType.DATABASE_READ]: { code: ErrorCode.INTERNAL, message: 'Error reading order(s)' }
 };
@@ -57,15 +57,13 @@ export const createError = (type, message, details = {}) => {
   return error;
 };
 
-
 export const handleFunctionError = (err, action, data) => {
   logger.error(err, { action, data, errorType: err.type, ...err.details });
 
-  const { code, message } = errorMapping[err.type] ?? {
-    code: ErrorCode.INTERNAL, // default error code
-    message: `An error occurred in ${action}` // default message
-  };
+  const mapping = errorMapping[err.type];
+  const code = mapping?.code ?? ErrorCode.INTERNAL;
+  const message = mapping?.message ?? err.message ?? `An error occurred in ${action}`;
+  const details = { originalType: err.type, ...err.details };
 
-  // if didn't override message above, just use the message the error came with
-  throw new HttpsError(code, message ?? err.message);
+  throw new HttpsError(code, message, details);
 };
