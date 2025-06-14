@@ -3,20 +3,21 @@ import { log, logError } from 'src/logger';
 import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
 import { useOrder } from 'hooks/useOrder';
 import { config } from 'config';
-const { EVENT_TITLE, TECH_CONTACT } = config;
+const { EVENT_TITLE } = config;
 
 export const usePaymentInitialization = () => {
-  const { order, paymentMethod, electronicPaymentDetails, setElectronicPaymentDetails, setAmountToCharge, setError } = useOrder();
+  const { order, paymentMethod, electronicPaymentDetails, setElectronicPaymentDetails, setAmountToCharge } = useOrder();
   const [isInitializing, setIsInitializing] = useState(false);
 
   const initializePayment = useCallback(async () => {
+
+    // Early return for check/waitlist since no payment init needed
     if (!isElectronicPayment(paymentMethod)) {
       setAmountToCharge(order.total);
-      return { success: true };
+      return;
     }
 
     setIsInitializing(true);
-    setError(null);
     const { email } = order.people[0]; // for logging
     log('Initializing payment', { email, order });
     setAmountToCharge(null);
@@ -44,21 +45,12 @@ export const usePaymentInitialization = () => {
 
       log('Payment initialized', { id });
       setIsInitializing(false);
-      return { success: true, id };
     } catch (error) {
       logError('Error initializing payment', { email, error, userAgent: navigator.userAgent });
-      setError(
-        <>
-          We're sorry, but we experienced an issue initializing your registration:<br />
-          Error initializing payment<br />
-          Please close this tab and start over.<br />
-          If this error persists, please contact {TECH_CONTACT}.
-        </>
-      );
       setIsInitializing(false);
-      return { success: false };
+      throw error; // re-throw HttpsError from backend or other error to be handled by Checkout component
     }
-  }, [order, paymentMethod, electronicPaymentDetails, setElectronicPaymentDetails, setAmountToCharge, setError]);
+  }, [order, paymentMethod, electronicPaymentDetails, setElectronicPaymentDetails, setAmountToCharge]);
 
   return { initializePayment, isInitializing };
 };

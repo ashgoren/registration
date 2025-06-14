@@ -4,10 +4,10 @@ import { Loading } from 'components/layouts';
 import { useOrder } from 'hooks/useOrder';
 import { useOrderSaving } from 'hooks/useOrderSaving';
 import { config } from 'config';
-const { CHECK_ADDRESS, CHECK_TO, SANDBOX_MODE } = config;
+const { CHECK_ADDRESS, CHECK_TO, SANDBOX_MODE, TECH_CONTACT } = config;
 
 export const Check = () => {
-  const { processing, setCurrentPage, updateOrder, error } = useOrder();
+  const { processing, setCurrentPage, updateOrder, error, setError } = useOrder();
   const { savePendingOrder, isSaving } = useOrderSaving();
   const [ready, setReady] = useState(SANDBOX_MODE);
 
@@ -20,8 +20,15 @@ export const Check = () => {
       await savePendingOrder();
       updateOrder({ paymentId: 'check', charged: 0 });
       setCurrentPage('processing');
-    } catch (error) {
+    } catch (error) { // instance of HttpsError from backend or other error
       console.error('Error saving pending order:', error);
+      setError(
+				<>
+					We're sorry, but we experienced an issue saving your order.<br />
+					Please try again or contact {TECH_CONTACT} for assistance.<br />
+					Error: {error.message || error}
+				</>
+      );
       return;
     }
   }
