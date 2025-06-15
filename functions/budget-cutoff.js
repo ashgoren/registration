@@ -23,7 +23,7 @@ const APIS_TO_DISABLE = [
   'eventarc.googleapis.com' // To stop event triggers
 ];
 
-export const disableFirebaseFunctions = onMessagePublished('budget-alerts', async (event) => {
+export const disableProjectAPIs = onMessagePublished('budget-alerts', async (event) => {
   const { PROJECT_ID } = process.env;
   if (!PROJECT_ID) {
     console.error('Missing required environment variable: PROJECT_ID');
@@ -37,7 +37,7 @@ export const disableFirebaseFunctions = onMessagePublished('budget-alerts', asyn
       console.log('Cost is below threshold, no action taken.');
       return; // Early exit if cost is below threshold
     }
-    console.log(`Cost (${costAmount}) exceeds threshold, proceeding to disable functions...`);
+    console.log(`Cost (${costAmount}) exceeds threshold, proceeding to disable APIs...`);
   } catch (error) {
     console.error('Error parsing Pub/Sub message:', error.message);
     return; // Early exit if invalid Pub/Sub message

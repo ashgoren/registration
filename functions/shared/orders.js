@@ -15,4 +15,11 @@ const getOrders = async ({ pending = false }) => {
 const getPendingOrders = async () => getOrders({ pending: true });
 const getFinalOrders = async () => getOrders({ pending: false });
 
-export { ordersCollection, getPendingOrders, getFinalOrders };
+const getPendingOrdersMissingFromFinalOrders = async () => {
+  const pendingOrders = await getPendingOrders();
+  const finalOrders = await getFinalOrders();
+  const finalOrderEmails = new Set(finalOrders.map(order => order.people[0].email));
+  return pendingOrders.filter(order => !finalOrderEmails.has(order.people[0].email));
+}
+
+export { ordersCollection, getPendingOrders, getFinalOrders, getPendingOrdersMissingFromFinalOrders };
