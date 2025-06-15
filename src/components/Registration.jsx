@@ -5,7 +5,7 @@ import { Error, Header, Loading } from 'components/layouts';
 import { StyledPaper, Paragraph } from 'components/layouts/SharedStyles';
 import { initializeFirebaseAppCheck } from 'src/firebase.jsx';
 import { useOrder } from 'hooks/useOrder';
-import { MainForm } from 'components/MainForm/MainForm';
+import { MainForm } from 'components/MainForm';
 import { Checkout } from 'components/Checkout';
 import { Processing } from 'components/Processing';
 import { Confirmation } from 'components/Confirmation';
