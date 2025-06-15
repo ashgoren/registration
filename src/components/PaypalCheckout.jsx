@@ -5,7 +5,7 @@ import { Loading } from 'components/layouts';
 import { TestCardBox } from 'components/layouts/SharedStyles';
 import { log } from 'src/logger';
 import { useOrder } from 'hooks/useOrder';
-import { useOrderSaving, OrderSavingError } from 'hooks/useOrderSaving';
+import { useOrderSaving } from 'hooks/useOrderSaving';
 import { usePaypalPayment } from 'hooks/usePaypalPayment';
 import { config } from 'config';
 const { SANDBOX_MODE, TECH_CONTACT } = config;
@@ -47,20 +47,38 @@ export const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, se
 	// when user submits payment details
 	const onApprove = async () => {
 		setProcessing(true);
+		setError(null);
+
+		// Step 1: save pending order
 		try {
-			await savePendingOrder(); // if fails to save, throws and sets error
+			await savePendingOrder();
+		} catch (error) { // instance of HttpsError from backend or other error from savePendingOrder
+			setError(
+				<>
+					We're sorry, but we experienced an issue saving your order.<br />
+					You were not charged.<br />
+					Please try again or contact {TECH_CONTACT} for assistance.<br />
+					Error: {error.message || error}
+				</>
+			);
+			setPaying(false);
+			setProcessing(false);
+			return ; // exit early if pending order save fails
+		}
 
-			// only reaches here if pending order saved successfully
+		// Step 2: process payment (only reaches here if pending order saved successfully)
+		try {
 			const { id, amount } = await processPayment();
-
 			updateOrder({ paymentId: id, charged: amount });
 			setCurrentPage('processing');
-		} catch (error) {
-			// UI error already set for OrderSavingError
-			if (!(error instanceof OrderSavingError)) {
-				const errorMessage = mapPaymentError(error);
-				setError(errorMessage);
-			}
+		} catch (error) { // instance of HttpsError from backend or other error from processPayment
+			setError(
+				<>
+					We're sorry, but we experienced an issue processing your payment.<br />
+					Please try again or contact {TECH_CONTACT} for assistance.<br />
+					Error: {error.message || error}
+				</>
+			);
 			setPaying(false);
 			setProcessing(false);
 		}
@@ -92,13 +110,3 @@ export const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, se
 		</section>
 	);
 };
-
-const mapPaymentError = (error) => {
-  const errorMessages = {
-    // PAYMENT_AMOUNT_ERROR: `There was a problem initializing the payment: Amount out of range. Please contact ${TECH_CONTACT}.`,
-    // PAYMENT_INIT_ERROR: `There was a problem initializing the payment: ${error.message}. Please try again or contact ${TECH_CONTACT}.`,
-    PAYMENT_PROCESS_ERROR: `There was a problem processing the payment: ${error.message}. Please verify your payment details and try again.`,
-    // PAYMENT_CONFIRM_ERROR: `There was a problem confirming the payment: ${error.message}. Please contact ${TECH_CONTACT}.`,
-  };
-  return errorMessages[error.code] || `Unexpected payment processing error: ${error.message}. Please contact ${TECH_CONTACT}.`;
-}
