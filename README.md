@@ -92,7 +92,7 @@ firebase projects:create <PROJECT_ID>
 ## Enable billing on Google Cloud account
 
 - Create a new billing account if necessary from the [Google Cloud console](https://console.cloud.google.com/billing)
-- Unlikely to owe any money for small scale use, but set a billing alert to be safe.
+- Unlikely to owe any money for small scale use, but set a billing alert to be safe (see below).
 - Setup [OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent)
   - user type: internal
   - values for other fields don't matter
@@ -104,8 +104,26 @@ firebase projects:create <PROJECT_ID>
 
 ```sh
 gcloud billing accounts list
-gcloud billing projects link <PROJECT_ID> --billing-account [BILLING_ACCOUNT_ID]
+gcloud billing projects link <PROJECT_ID> --billing-account <BILLING_ACCOUNT_ID>
 ```
+
+---
+
+## Set billing alert, enable failsafe shutdown of APIs if exceeded
+
+```sh
+gcloud pubsub topics create budget-alerts --project <PROJECT_ID>
+gcloud beta billing budgets create \
+    --billing-account=<YOUR_BILLING_ACCOUNT_ID> \
+    --display-name="<PROJECT_ID> Shutdown Budget" \
+    --budget-amount=10USD \
+    --project=<PROJECT_ID> \
+    --threshold-rule=percent=1,basis=CURRENT_SPEND \
+    --all-updates-rule-pubsub-topic="projects/<PROJECT_ID>/topics/budget-alerts"
+```
+
+> [!IMPORTANT]
+> Manually go in to [Google Cloud console](https://console.cloud.google.com/billing/budgets) and edit the created budget to apply only to this project, rather than all projects in the billing account.
 
 ---
 
