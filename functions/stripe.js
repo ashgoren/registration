@@ -10,7 +10,7 @@ const statement_descriptor_suffix = STRIPE_STATEMENT_DESCRIPTOR_SUFFIX; // appen
 
 const stripe = Stripe(stripeSecretKey);
 
-export const getStripePaymentIntent = async ({ email, name, amount, idempotencyKey, id }) => {
+export const getStripePaymentIntent = async ({ email, name, amount, description, idempotencyKey, id }) => {
   logger.info('getStripePaymentIntent', { email, idempotencyKey });
 
   const amountInCents = Math.round(amount * 100); // client-side handles amount in dollars
@@ -29,6 +29,7 @@ export const getStripePaymentIntent = async ({ email, name, amount, idempotencyK
           amount: amountInCents,
           currency: "usd",
           customer: await findOrCreateCustomer(email, name),
+          description,
           ...(statement_descriptor_suffix && { statement_descriptor_suffix })
         },
         { idempotencyKey }
