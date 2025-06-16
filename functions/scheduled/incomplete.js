@@ -4,7 +4,7 @@
 
 import { logger } from 'firebase-functions/v2';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
-import { getPendingOrders } from '../shared/orders.js';
+import { getPendingOrdersMissingFromFinalOrders } from '../shared/orders.js';
 import { getOrderEmail, getOrderDomain } from '../helpers.js';
 import { sendMail } from '../shared/email.js';
 import { PROJECT_ID } from '../helpers.js';
@@ -18,15 +18,15 @@ export const emailIncompleteOrders = onSchedule(
   async () => {
     logger.info('emailIncompleteOrders triggered');
 
-    const orders = await getPendingOrders();
+    const orders = await getPendingOrdersMissingFromFinalOrders();
     const filteredOrders = orders.filter(order => !testDomains.includes(getOrderDomain(order)));
 
     if (filteredOrders.length === 0) {
       logger.info('No pending orders missing from orders :)');
       return;
     }
+
     logger.info(`Pending orders missing from orders: ${filteredOrders.length}`);
-  
     await sendMail({
       to: process.env.EMAIL_NOTIFY_TO,
       subject: `${PROJECT_ID}: Incomplete Orders`,
