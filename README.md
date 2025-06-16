@@ -111,19 +111,19 @@ gcloud billing projects link <PROJECT_ID> --billing-account <BILLING_ACCOUNT_ID>
 
 ## Set billing alert, enable failsafe shutdown of APIs if exceeded
 
+> [!NOTE]
+> For myself, I can skip this, as I already have a global one setup, so all projects will shutdown in the unlikely event that any project exceeds the budget.
+
 ```sh
 gcloud pubsub topics create budget-alerts --project <PROJECT_ID>
 gcloud beta billing budgets create \
     --billing-account=<YOUR_BILLING_ACCOUNT_ID> \
     --display-name="<PROJECT_ID> Shutdown Budget" \
     --budget-amount=10USD \
-    --project=<PROJECT_ID> \
+    --all-projects \
     --threshold-rule=percent=1,basis=CURRENT_SPEND \
     --all-updates-rule-pubsub-topic="projects/<PROJECT_ID>/topics/budget-alerts"
 ```
-
-> [!IMPORTANT]
-> Manually go in to [Google Cloud console](https://console.cloud.google.com/billing/budgets) and edit the created budget to apply only to this project, rather than all projects in the billing account.
 
 ---
 
