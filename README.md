@@ -344,6 +344,12 @@ npm run dev
 - Clear spreadsheet
 - Clear Firestore DB
 
+# Disable APIs when project is in hibernation
+- gcloud services disable run.googleapis.com firestore.googleapis.com cloudbuild.googleapis.com eventarc.googleapis.com places.googleapis.com mapsjs.googleapis.com recaptchaenterprise.googleapis.com --project <PROJECT_ID>
+
+# Enable APIs when project is active again
+- gcloud services enable run.googleapis.com firestore.googleapis.com cloudbuild.googleapis.com eventarc.googleapis.com places.googleapis.com mapsjs.googleapis.com recaptchaenterprise.googleapis.com --project <PROJECT_ID>
+
 ---
 
 # Helper scripts
