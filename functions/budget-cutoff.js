@@ -13,6 +13,7 @@
 import { onMessagePublished } from 'firebase-functions/v2/pubsub';
 import { google } from 'googleapis';
 import { sendMail } from './shared/email.js';
+import { PROJECT_ID } from './helpers.js';
 // import 'dotenv/config'; // for local emulation, but breaks production deployment
 
 const COST_THRESHOLD = 10;
@@ -24,7 +25,6 @@ const APIS_TO_DISABLE = [
 ];
 
 export const disableProjectAPIs = onMessagePublished('budget-alerts', async (event) => {
-  const { PROJECT_ID } = process.env;
   if (!PROJECT_ID) {
     console.error('Missing required environment variable: PROJECT_ID');
     return;
