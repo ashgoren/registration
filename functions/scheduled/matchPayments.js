@@ -7,10 +7,12 @@
 
 import { logger, https } from 'firebase-functions/v2';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
-import { listTransactions } from '../paypal.js';
+import { listPaypalTransactions } from '../paypal.js';
+import { listStripeTransactions } from '../stripe.js';
 import { getOrders } from '../shared/orders.js';
 import { sendMail } from '../shared/email.js';
-const { EVENT_TITLE, EMAIL_NOTIFY_TO, CLOUD_FUNCTIONS_TRIGGER_TOKEN, SANDBOX_MODE } = process.env;
+const { EVENT_TITLE, EMAIL_NOTIFY_TO, CLOUD_FUNCTIONS_TRIGGER_TOKEN, SANDBOX_MODE, PAYMENT_PROCESSOR } = process.env;
+
 const isTestMode = SANDBOX_MODE === 'true';
 
 // On-demand wrapper for matching payments
@@ -45,69 +47,74 @@ const executeMatchPayments = async () => {
   const orders = finalOrders.filter(order => order.paymentId && order.paymentId !== 'check');
 
   // get list of payments from paypal or stripe
-  const paypalTransactions = await listTransactions(EVENT_TITLE);
+  const transactions = PAYMENT_PROCESSOR === 'paypal'
+    ? await listPaypalTransactions(EVENT_TITLE)
+    : await listStripeTransactions(EVENT_TITLE);
 
-  if (!orders?.length || !paypalTransactions?.length) {
-    if (!orders?.length) logger.warn('No final electronic payment orders found in db');  
-    if (!paypalTransactions?.length) logger.warn('No PayPal transactions found (note: API has delay)');
-    return { matchingOrders: [], extraDatabaseOrders: [], extraPaypalTransactions: [] };
+  if (!orders?.length || !transactions?.length) {
+    if (!orders?.length) logger.warn('No final electronic payment orders found in db');
+    if (!transactions?.length) logger.warn('No transactions found (note: PayPal API has delay)');
+    return { matchingOrders: [], extraDatabaseOrders: [], extraTransactions: [] };
   }
 
-  const { matchingOrders, extraDatabaseOrders, extraPaypalTransactions } = categorizeTransactions({ orders, paypalTransactions });
+  const { matchingOrders, extraDatabaseOrders, extraTransactions } = categorizeTransactions({ orders, transactions });
 
-  logResults({ matchingOrders, extraDatabaseOrders, extraPaypalTransactions });
+  logResults({ matchingOrders, extraDatabaseOrders, extraTransactions });
 
-  if (extraPaypalTransactions.length) {
-    await sendEmailNotification(extraPaypalTransactions);
+  if (extraTransactions.length) {
+    await sendEmailNotification(extraTransactions);
   }
 
   return {
     matchingOrders: matchingOrders.map(mapOrder),
     extraDatabaseOrders: extraDatabaseOrders.map(mapOrder),
-    extraPaypalTransactions: extraPaypalTransactions.map(mapTransaction)
+    extraTransactions: extraTransactions.map(mapTransaction)
   };
 };
 
-const categorizeTransactions = ({ orders, paypalTransactions }) => {
-  const paypalIds = new Set(paypalTransactions.map(txn => txn.id));
+const categorizeTransactions = ({ orders, transactions }) => {
+  const transactionIds = new Set(transactions.map(txn => txn.id));
   const orderPaymentIds = new Set(orders.map(order => order.paymentId));
 
+  // logger.debug('transactionIds', { transactionIds: Array.from(transactionIds) });
+  // logger.debug('orderPaymentIds', { orderPaymentIds: Array.from(orderPaymentIds) });
+
   return {
-    matchingOrders: orders.filter(order => paypalIds.has(order.paymentId)),
-    extraDatabaseOrders: orders.filter(order => !paypalIds.has(order.paymentId)),
-    extraPaypalTransactions: paypalTransactions.filter(txn => !orderPaymentIds.has(txn.id))
+    matchingOrders: orders.filter(order => transactionIds.has(order.paymentId)),
+    extraDatabaseOrders: orders.filter(order => !transactionIds.has(order.paymentId)),
+    extraTransactions: transactions.filter(txn => !orderPaymentIds.has(txn.id))
   };
 };
 
-const logResults = ({ matchingOrders, extraDatabaseOrders, extraPaypalTransactions }) => {
-  logger.debug(`Found ${matchingOrders.length} matching orders and PayPal transactions`, {
+const logResults = ({ matchingOrders, extraDatabaseOrders, extraTransactions }) => {
+  logger.debug(`Found ${matchingOrders.length} matching orders and transactions`, {
     matchingOrders: matchingOrders.map(mapOrder)
   });
 
-  if (extraDatabaseOrders.length === 0 && extraPaypalTransactions.length === 0) {
-    logger.info('All final orders have matching PayPal transactions and there are no unmatched PayPal transactions.');
+  if (extraDatabaseOrders.length === 0 && extraTransactions.length === 0) {
+    logger.info('All final orders have matching transactions and there are no unmatched transactions.');
     return;
   }
 
   // just logging this rather than sending email because paypal transactions can take a while to appear
   if (extraDatabaseOrders.length) {
-    logger.info(`Found ${extraDatabaseOrders.length} extra orders not in PayPal transactions (note: PayPal API has a delay)`, {
+    logger.info(`Found ${extraDatabaseOrders.length} extra orders not in transactions (note: PayPal API has a delay)`, {
       extraDatabaseOrders: extraDatabaseOrders.map(mapOrder)
     });
   }
 
-  if (extraPaypalTransactions.length) {
-    logger.warn(`Found ${extraPaypalTransactions.length} extra PayPal transactions not in final orders`, {
-      extraPaypalTransactions: extraPaypalTransactions.map(mapTransaction)
+  if (extraTransactions.length) {
+    logger.warn(`Found ${extraTransactions.length} extra transactions not in final orders`, {
+      extraTransactions: extraTransactions.map(mapTransaction)
     });
   }
 };
 
-const sendEmailNotification = async (extraPaypalTransactions) => {
+const sendEmailNotification = async (extraTransactions) => {
   await sendMail({
     to: EMAIL_NOTIFY_TO,
-    subject: `${EVENT_TITLE}: Missing PayPal Transactions`,
-    text: `PayPal transactions missing from DB: \n${extraPaypalTransactions.map(txn => `${txn.id} (${txn.email})`).join('\n')}`
+    subject: `${EVENT_TITLE}: Unmatched Payment Transactions`,
+    text: `Payment transactions missing from DB: \n${extraTransactions.map(txn => `${txn.id} (${txn.email})`).join('\n')}`
   });
 };
 

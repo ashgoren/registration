@@ -212,13 +212,13 @@ const handlePaypalError = (error, operation) => {
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // List transactions from PayPal API (only available in REST API, not SDK)
-export const listTransactions = async (description) => {
+export const listPaypalTransactions = async (description) => {
+  logger.info('listPaypalTransactions', { description });
+
   const accessToken = await getPayPalAccessToken();
   if (!accessToken) {
     throw createError(ErrorType.PAYPAL_API, 'Failed to retrieve PayPal access token');
   }
-
-  logger.info(`Listing PayPal transactions for: ${description}`);
 
   const transactions = await fetchAllTransactions(accessToken);
 
@@ -229,7 +229,7 @@ export const listTransactions = async (description) => {
 
   const normalizedTransactions = matchingTransactions.map(normalizeTransaction);
 
-  logger.debug('Normalized matching PayPal transactions:', normalizedTransactions); // debug log
+  logger.debug('Normalized PayPal transactions from API:', normalizedTransactions); // debug log
   return normalizedTransactions;
 };
 
@@ -290,14 +290,13 @@ const createDateChunks = () => {
 
 const normalizeTransaction = (txn) => {
   const { transaction_info, payer_info } = txn;
-  const { transaction_id, transaction_amount, transaction_subject, transaction_initiation_date } = transaction_info;
+  const { transaction_id, transaction_amount, transaction_initiation_date } = transaction_info;
   const { email_address } = payer_info;
 
   return {
     id: transaction_id,
     amount: parseFloat(transaction_amount.value),
     currency: transaction_amount.currency_code,
-    subject: transaction_subject,
     date: new Date(transaction_initiation_date),
     email: email_address
   };
