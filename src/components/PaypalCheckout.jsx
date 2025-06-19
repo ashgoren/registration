@@ -68,8 +68,8 @@ export const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, se
 
 		// Step 2: process payment (only reaches here if pending order saved successfully)
 		try {
-			const { id, amount } = await processPayment();
-			updateOrder({ paymentId: id, charged: amount });
+			const { paymentId, paymentEmail, amount } = await processPayment();
+			updateOrder({ paymentId, paymentEmail, charged: amount });
 			setCurrentPage('processing');
 		} catch (error) { // instance of HttpsError from backend or other error from processPayment
 			setError(

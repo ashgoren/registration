@@ -17,11 +17,11 @@ const config = {
   INCLUDE_PRONOUNS_ON_NAMETAG: false,
   INCLUDE_LAST_ON_NAMETAG: true,
   PAYMENT_METHODS: ['stripe', 'check'], // options are stripe|paypal|check (first is default)
-  EVENT_TITLE: 'Example Contra Weekend',
+  EVENT_TITLE: 'Example Contra Weekend 2025',
   EVENT_LOCATION: 'Example place, Example place',
   EVENT_LOCATION_2: 'Example address',
   EVENT_DATE: 'Example dates',
-  TITLE: 'Example Contra Weekend 2024 Registation',
+  TITLE: 'Example Contra Weekend 2025 Registration',
   CONFIRMATION_ELECTRONIC_TITLE: 'Example Dance Weekend Confirmation',
   CONFIRMATION_CHECK_TITLE: 'Example Dance Weekend Registration',
   EMAIL_CONTACT: 'contact@example.com',

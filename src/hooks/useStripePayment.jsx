@@ -23,10 +23,10 @@ export const useStripePayment = ({ order, stripe, elements, clientSecret }) => {
 
       validatePaymentResponse(paymentIntent, error);
 
-      const { id, amount } = paymentIntent;
+      const { id: paymentId, amount } = paymentIntent;
 
-      log('Payment captured', { email, paymentId: id, amount: Number(amount) / 100 });
-      return { id, amount: Number(amount) / 100}; // amount comes back from stripe in cents
+      log('Payment captured', { email, paymentId, amount: Number(amount) / 100 });
+      return { paymentId, amount: Number(amount) / 100 };
     } catch (error) { // catch any error (from stripe or our validation) and just re-throw it
       logError('Error processing Stripe payment', { email, error });
       throw error;

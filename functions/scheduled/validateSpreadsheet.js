@@ -5,7 +5,7 @@
 
 import { logger } from 'firebase-functions/v2';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
-import { getFinalOrders } from '../shared/orders.js';
+import { getOrders } from '../shared/orders.js';
 import { readSheet } from '../shared/spreadsheet.js';
 import { sendMail } from '../shared/email.js';
 import { getOrderEmail, getOrderDomain } from '../helpers.js';
@@ -25,7 +25,7 @@ export const missingFromSpreadsheet = onSchedule(
       const rows = response.data.values.slice(2);
       const keys = rows.map((row) => row[KEY_COLUMN]).filter((key) => key !== '-');
 
-      const orders = await getFinalOrders();
+      const orders = await getOrders({ pending: false });
       const missingOrders = orders.filter((order) => !keys.includes(order.key));
       const missingOrdersFiltered = missingOrders.filter(order => !testDomains.includes(getOrderDomain(order)));
 

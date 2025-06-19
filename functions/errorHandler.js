@@ -41,6 +41,7 @@ const errorMapping = {
   [ErrorType.INVALID_AMOUNT]: { code: ErrorCode.OUT_OF_RANGE },
   [ErrorType.INVALID_ARGUMENT]: { code: ErrorCode.INVALID_ARGUMENT },
   [ErrorType.VALIDATION_MISSING_ID]: { code: ErrorCode.INVALID_ARGUMENT },
+  [ErrorType.VALIDATION_MISSING_EMAIL]: { code: ErrorCode.INVALID_ARGUMENT },
   [ErrorType.VALIDATION_MISSING_AMOUNT]: { code: ErrorCode.INVALID_ARGUMENT },
   [ErrorType.VALIDATION_ID_MISMATCH]: { code: ErrorCode.INVALID_ARGUMENT },
   [ErrorType.VALIDATION_AMOUNT_MISMATCH]: { code: ErrorCode.INVALID_ARGUMENT },
