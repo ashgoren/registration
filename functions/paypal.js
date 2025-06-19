@@ -1,12 +1,15 @@
+// NOTE: listTransactions requires manually enabling that access in PayPal developer dashboard
+
 import { logger } from 'firebase-functions/v2';
 import { ApiError, CheckoutPaymentIntent, Client, Environment, LogLevel, OrdersController, ShippingPreference, PatchOp } from '@paypal/paypal-server-sdk';
-import { formatCurrency, IS_EMULATOR } from './helpers.js';
+import { getDateChunks, formatCurrency, IS_EMULATOR } from './helpers.js';
 import { createError, ErrorType } from './errorHandler.js';
 const { SANDBOX_MODE, PAYPAL_CLIENT_ID_SANDBOX, PAYPAL_CLIENT_SECRET_SANDBOX, PAYPAL_CLIENT_ID_LIVE, PAYPAL_CLIENT_SECRET_LIVE } = process.env;
 
 const useSandbox = SANDBOX_MODE === 'true' || IS_EMULATOR;
 const paypalClientId = useSandbox ? PAYPAL_CLIENT_ID_SANDBOX : PAYPAL_CLIENT_ID_LIVE;
 const paypalClientSecret = useSandbox ? PAYPAL_CLIENT_SECRET_SANDBOX : PAYPAL_CLIENT_SECRET_LIVE;
+const paypalApiUrl = useSandbox ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
 
 const client = new Client({
   clientCredentialsAuthCredentials: {
@@ -34,7 +37,8 @@ export const capturePaypalOrder = async ({ id, idempotencyKey }) => {
       prefer: 'return=minimal'
     });
     if (statusCode < 200 || statusCode >= 300) throw new Error(`Failed to capture order: ${statusCode}`);
-    return validateOrderResponse(result);
+    validateOrderResponse(result);
+    return parseResult(result);
   } catch (error) {
     handlePaypalError(error, 'capturePaypalOrder');
   }
@@ -47,7 +51,8 @@ export const createOrUpdatePaypalOrder = async ({ id, email, description, amount
     ? await updateOrder({ id, amount, idempotencyKey })
     : await createOrder({ description, amount, idempotencyKey });
 
-  return validateOrderResponse(result, id, amount);
+  validateOrderResponse(result, id, amount);
+  return parseResult(result);
 };
 
 const createOrder = async ({ description, amount, idempotencyKey }) => {
@@ -129,18 +134,24 @@ const getOrder = async (id) => {
   }
 }
 
-
-// helpers for validations and error handling
-
-const validateOrderResponse = (result, expectedId = null, expectedAmount = null) => {
-  let id, amount;
+const parseResult = (result) => {
+  let id, email, amount;
   if (result?.status === 'COMPLETED') {
-    id = result.payer?.emailAddress; // or transaction id: result.purchaseUnits[0].payments.captures[0].id
+    email = result.payer?.emailAddress;
+    id = result.purchaseUnits[0]?.payments?.captures?.[0]?.id;
     amount = result.purchaseUnits[0]?.payments?.captures[0]?.amount?.value;
   } else {
     id = result?.id;
     amount = result?.purchaseUnits[0]?.amount?.value;
   }
+  return { id, email, amount };
+};
+
+
+// helpers for validations and error handling
+
+const validateOrderResponse = (result, expectedId = null, expectedAmount = null) => {
+  const { id, amount } = parseResult(result);
 
   if (!id) throw createError(
     ErrorType.VALIDATION_MISSING_ID,
@@ -166,7 +177,7 @@ const validateOrderResponse = (result, expectedId = null, expectedAmount = null)
     { expected: expectedAmount, received: amount }
   );
   
-  return { id, amount };
+  return true;
 };
 
 const handlePaypalError = (error, operation) => {
@@ -188,3 +199,134 @@ const handlePaypalError = (error, operation) => {
   }
   throw error;
 };
+
+
+
+
+/* * * * * * * * * * PayPal Transactions List * * * * * * * * * * * * * * * * * * * * * * * *
+ * PayPal SDK does not support listing transactions directly.                               *
+ * We need to manually fetch transactions using the REST API.                               *
+ * The code below retrieves all transactions for a given description within the past year.  *
+ * This requires enabling the "Transactions" permission in the PayPal developer dashboard.  *
+ * Note that there is also a signficant delay (up to 24 hours) for transactions to appear.  *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// List transactions from PayPal API (only available in REST API, not SDK)
+export const listTransactions = async (description) => {
+  const accessToken = await getPayPalAccessToken();
+  if (!accessToken) {
+    throw createError(ErrorType.PAYPAL_API, 'Failed to retrieve PayPal access token');
+  }
+
+  logger.info(`Listing PayPal transactions for: ${description}`);
+
+  const transactions = await fetchAllTransactions(accessToken);
+
+  const matchingTransactions = transactions.filter(txn => 
+    txn.transaction_info?.transaction_subject === description
+  );
+  logger.info(`Found ${matchingTransactions.length} transactions for: ${description}`);
+
+  const normalizedTransactions = matchingTransactions.map(normalizeTransaction);
+
+  logger.debug('Normalized matching PayPal transactions:', normalizedTransactions); // debug log
+  return normalizedTransactions;
+};
+
+const fetchTransactionChunk = async (accessToken, startDate, endDate) => {
+  const params = new URLSearchParams({
+    'start_date': startDate.toISOString(),
+    'end_date': endDate.toISOString(),
+    'fields': 'all',
+    'page_size': '500'
+  });
+
+  const response = await fetch(`${paypalApiUrl}/v1/reporting/transactions?${params}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    }
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw createError(ErrorType.PAYPAL_API, `Failed to fetch transactions: ${response.status} ${errorText}`);
+  }
+
+  const data = await response.json();
+  if (!data?.transaction_details || !Array.isArray(data.transaction_details)) {
+    throw createError(ErrorType.PAYPAL_API, 'Invalid response format from PayPal transactions API');
+  }
+
+  return data.transaction_details;
+};
+
+const fetchAllTransactions = async (accessToken) => {
+  // Fetch in 30-day chunks due to PayPal API limitations
+  const dateChunks = createDateChunks();
+  const transactions = [];
+
+  for (const { start, end } of dateChunks) {
+    const chunkTransactions = await fetchTransactionChunk(accessToken, start, end);
+    transactions.push(...chunkTransactions);
+  }
+
+  if (!transactions.length) {
+    logger.info('No PayPal transactions found (recent transactions may not yet appear)');
+  }
+
+  return transactions;
+};
+
+const createDateChunks = () => {
+  const endDate = new Date();
+  endDate.setDate(endDate.getDate() + 1);
+  const startDate = new Date();
+  startDate.setFullYear(endDate.getFullYear() - 1);
+
+  return getDateChunks(startDate, endDate, 30);
+};
+
+const normalizeTransaction = (txn) => {
+  const { transaction_info, payer_info } = txn;
+  const { transaction_id, transaction_amount, transaction_subject, transaction_initiation_date } = transaction_info;
+  const { email_address } = payer_info;
+
+  return {
+    id: transaction_id,
+    amount: parseFloat(transaction_amount.value),
+    currency: transaction_amount.currency_code,
+    subject: transaction_subject,
+    date: new Date(transaction_initiation_date),
+    email: email_address
+  };
+};
+
+// Manually get token for use with REST API since server sdk doesn't support transactions list
+const getPayPalAccessToken = async () => {
+  const auth = Buffer.from(`${paypalClientId}:${paypalClientSecret}`).toString('base64');
+  const response = await fetch(`${paypalApiUrl}/v1/oauth2/token`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Basic ${auth}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: 'grant_type=client_credentials'
+  });
+
+  if (!response.ok) {
+    throw createError(ErrorType.PAYPAL_API, `Failed to get access token: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data.access_token;
+};
+
+// // Helper for debug logging of retrieved transactions
+// const logTransactions = (transactions) => {
+//   for (const txn of transactions) {
+//     const { id, amount, currency, subject, date, email } = txn;
+//     logger.debug(`Transaction ID: ${id}, Amount: ${amount} ${currency}, Subject: ${subject}, Date: ${date.toISOString()}, Email: ${email}`);
+//   }
+// }

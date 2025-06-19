@@ -34,6 +34,7 @@ export const fieldOrder = [
   'purchaser',
   'completedAt',
   'paymentId',
+  'paymentEmail',
   'isTestOrder'
 ];
 

@@ -48,6 +48,12 @@ gcloud projects add-iam-policy-binding <PROJECT_ID> --member="serviceAccount:<SE
 npm run orders -- [--pending] [--include-test-emails]
 ```
 
+### Check that there are no electronic payments missing from the database
+
+```sh
+npm run matchPayments
+```
+
 ### Cleanup google cloud artifacts
 
 ```sh

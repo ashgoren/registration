@@ -58,10 +58,8 @@ const finalOrders = allOrders.filter((order) => order.status === 'final');
 const pendingOrders = allOrders.filter((order) => order.status === 'pending');
 
 async function getOrders(collection) {
-  const ref = db.collection(collection);
-  const snapshot = await ref.get();
-  const orders = snapshot.docs.map((doc) => ({ key: doc.id, ...doc.data() }));
-  return orders.sort((a, b) => b.createdAt - a.createdAt);
+  const snapshot = await db.collection(collection).orderBy('createdAt', 'asc').get();
+  return snapshot.docs.map((doc) => ({ key: doc.id, ...doc.data() }));
 }
 
 // // setup google sheets
