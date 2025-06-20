@@ -1,3 +1,5 @@
+// onSchedule versions of function to match payments with orders
+
 // ensure no payments missing from db
 
 // NOTE: There is a significant delay for PayPal transactions to appear in the API
@@ -5,8 +7,7 @@
 
 // local testing: run `matchPaymentsScheduled()` from `firebase functions:shell`
 
-import { logger, https } from 'firebase-functions/v2';
-import { onSchedule } from 'firebase-functions/v2/scheduler';
+import { logger } from 'firebase-functions/v2';
 import { listPaypalTransactions } from '../paypal.js';
 import { listStripeTransactions } from '../stripe.js';
 import { getOrders } from '../shared/orders.js';
@@ -15,31 +16,23 @@ const { EVENT_TITLE, EMAIL_NOTIFY_TO, CLOUD_FUNCTIONS_TRIGGER_TOKEN, SANDBOX_MOD
 
 const isTestMode = SANDBOX_MODE === 'true';
 
-// On-demand wrapper for matching payments
-export const matchPayments = https.onRequest(async (req, res) => {
+// On-demand (onRequest) wrapper for matching payments
+export const matchPaymentsOnDemandHandler = async (req, res) => {
   if (req.get('Authorization') !== CLOUD_FUNCTIONS_TRIGGER_TOKEN) {
     logger.warn('Unauthorized access attempt to matchPayments function');
     res.status(401).json({ error: 'Unauthorized' });
     return;
   }
   try {
-    const result = await executeMatchPayments();
+    const result = await matchPaymentsHandler();
     res.status(200).json({ success: true, data: result });
   } catch (error) {
     res.status(500).json({ error: 'Function failed', details: error.message });
   }
-});
+};
 
-// Scheduled wrapper for matching payments
-export const matchPaymentsScheduled = onSchedule(
-  {
-    schedule: '3 2 * * *', // daily at 2:03am pacific time
-    timeZone: 'America/Los_Angeles',
-  },
-  async () => await executeMatchPayments()
-);
-
-const executeMatchPayments = async () => {
+// Scheduled function to match payments with orders
+export const matchPaymentsHandler = async () => {
   logger.info(`matchPayments triggered for event: ${EVENT_TITLE}`);
 
   // get final orders from db (test mode or live mode)

@@ -1,23 +1,36 @@
-import { logger } from 'firebase-functions/v2';
-import { onCall } from 'firebase-functions/v2/https';
-import { initializeApp, getApps } from 'firebase-admin/app';
+import './initializeFirebase.js'; // Ensure Firebase is initialized before importing other modules
+import { onCall, onRequest } from 'firebase-functions/v2/https';
+import { onSchedule } from 'firebase-functions/v2/scheduler';
+import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
+import { onMessagePublished } from 'firebase-functions/v2/pubsub';
 import { handleFunctionError } from './errorHandler.js';
-import { appendrecordtospreadsheet } from './google-sheet-sync.js';
-import { savePendingOrder, saveFinalOrder } from './database.js';
-import { sendEmailConfirmations } from './email-confirmation.js';
+import { logTokenStatus } from './helpers.js';
+
+// Functions called by firebaseFunctionDispatcher
 import { logToPapertrail } from './logger.js';
-import { getStripePaymentIntent, stripeWebhook } from './stripe.js';
-import { createOrUpdatePaypalOrder, capturePaypalOrder, paypalWebhook } from './paypal.js';
 import { initializePayment } from './initializePayment.js';
-import { missingFromSpreadsheet, duplicateEmailsInSpreadsheet } from './scheduled/validateSpreadsheet.js';
-import { emailIncompleteOrders } from './scheduled/incomplete.js';
-import { matchPaymentsScheduled, matchPayments } from './scheduled/matchPayments.js';
-import { disableProjectAPIs } from './budget-cutoff.js';
+import { savePendingOrder, saveFinalOrder } from './database.js';
+import { createOrUpdatePaypalOrder, capturePaypalOrder } from './paypal.js';
+import { getStripePaymentIntent } from './stripe.js';
 
-if (!getApps().length) initializeApp();
+// Firebase functions, wrapped in onCall/onRequest/onSchedule/onDocumentUpdated/onMessagePublished
+import { stripeWebhookHandler } from './stripe.js';
+import { paypalWebhookHandler } from './paypal.js';
+import { appendRecordToSpreadsheetHandler } from './google-sheet-sync.js';
+import { sendEmailConfirmationsHandler } from './email-confirmation.js';
+import { missingFromSpreadsheetHandler, duplicateEmailsInSpreadsheetHandler } from './scheduled/validateSpreadsheet.js';
+import { emailIncompleteOrdersHandler } from './scheduled/incomplete.js';
+import { matchPaymentsHandler, matchPaymentsOnDemandHandler } from './scheduled/matchPayments.js';
+import { disableProjectAPIsHandler } from './budget-cutoff.js';
 
-// combining into one callable function to reduce slow cold start preflight checks
-const firebaseFunctionDispatcher = onCall({ enforceAppCheck: true }, async (request) => {
+
+// Configuration constants (here because .env file is not yet loaded)
+const region = 'us-west1'; // also set in .env on client-side
+const timeZone = 'America/Los_Angeles';
+const enforceAppCheck = true;
+
+// Combined into one callable function to reduce slow cold start preflight checks
+const firebaseFunctionDispatcherHandler = async (request) => {
   const hasToken = !!request.app?.token;
   const { action, data, metadata } = request.data;
 
@@ -40,28 +53,107 @@ const firebaseFunctionDispatcher = onCall({ enforceAppCheck: true }, async (requ
   } catch (err) {
     handleFunctionError(err, action, data);
   }
-});
-
-const logTokenStatus = (hasToken, action, metadata) => {
-  if (action !== 'caffeinate' && action !== 'logToPapertrail') {
-    const email = metadata?.email;
-    logger[hasToken ? 'info' : 'warn'](
-      'AppCheck ' + (hasToken ? 'success' : 'fail') + (email ? `: ${email}` : ''),
-      { ...metadata, action }
-    );
-  };
 };
 
-export {
+
+const onCallFunctions = [
+  {
+    name: 'firebaseFunctionDispatcher',
+    handler: firebaseFunctionDispatcherHandler,
+  }
+];
+
+const onRequestFunctions = [
+  {
+    name: 'paypalWebhook',
+    handler: paypalWebhookHandler // paypal.js
+  },
+  {
+    name: 'stripeWebhook',
+    handler: stripeWebhookHandler // stripe.js
+  },
+  {
+    name: 'matchPaymentsOnDemand',
+    handler: matchPaymentsOnDemandHandler, // matchPayments.js
+  }
+];
+
+const onScheduleFunctions = [
+  {
+    name: 'emailIncompleteOrders',
+    handler: emailIncompleteOrdersHandler, // incomplete.js
+    schedule: 'every day 02:00',
+  },
+  {
+    name: 'missingFromSpreadsheet',
+    handler: missingFromSpreadsheetHandler, // validateSpreadsheet.js
+    schedule: 'every day 02:01',
+  },
+  {
+    name: 'duplicateEmailsInSpreadsheet',
+    handler: duplicateEmailsInSpreadsheetHandler, // validateSpreadsheet.js
+    schedule: 'every day 02:02',
+  },
+  {
+    name: 'matchPayments',
+    handler: matchPaymentsHandler, // matchPayments.js
+    schedule: 'every day 02:03',
+  },
+];
+
+const onDocumentUpdatedFunctions = [
+  {
+    name: 'appendRecordToSpreadsheet',
+    handler: appendRecordToSpreadsheetHandler, // google-sheet-sync.js
+    document: 'orders/{ITEM}',
+  },
+  {
+    name: 'sendEmailConfirmations',
+    handler: sendEmailConfirmationsHandler, // email-confirmation.js
+    document: 'orders/{ITEM}',
+  },
+];
+
+const onMessagePublishedFunctions = [
+  {
+    name: 'disableProjectAPIs',
+    handler: disableProjectAPIsHandler, // budget-cutoff.js
+    topic: 'budget-cutoff',
+  },
+];
+
+const exports = {};
+
+onCallFunctions.forEach(({ name, handler }) => {
+  exports[name] = onCall({ enforceAppCheck, region }, handler);
+});
+
+onRequestFunctions.forEach(({ name, handler }) => {
+  exports[name] = onRequest({ region }, handler);
+});
+
+onScheduleFunctions.forEach(({ name, handler, schedule }) => {
+  exports[name] = onSchedule({ schedule, timeZone, region }, handler);
+});
+
+onDocumentUpdatedFunctions.forEach(({ name, handler, document }) => {
+  exports[name] = onDocumentUpdated({ document, region }, handler);
+});
+
+onMessagePublishedFunctions.forEach(({ name, handler, topic }) => {
+  exports[name] = onMessagePublished({ topic, region }, handler);
+});
+
+export const {
   firebaseFunctionDispatcher,
-  appendrecordtospreadsheet,
+  appendRecordToSpreadsheet,
   sendEmailConfirmations,
   missingFromSpreadsheet,
   duplicateEmailsInSpreadsheet,
   emailIncompleteOrders,
-  matchPaymentsScheduled,
   matchPayments,
+  matchPaymentsOnDemand,
   disableProjectAPIs,
   paypalWebhook,
   stripeWebhook
-};
+} = exports;

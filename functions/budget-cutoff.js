@@ -10,7 +10,6 @@
 // To re-enable APIs from gcloud CLI:
 // gcloud services enable run.googleapis.com firestore.googleapis.com cloudbuild.googleapis.com eventarc.googleapis.com --project contra-testing
 
-import { onMessagePublished } from 'firebase-functions/v2/pubsub';
 import { google } from 'googleapis';
 import { sendMail } from './shared/email.js';
 import { PROJECT_ID } from './helpers.js';
@@ -24,7 +23,8 @@ const APIS_TO_DISABLE = [
   'eventarc.googleapis.com' // To stop event triggers
 ];
 
-export const disableProjectAPIs = onMessagePublished('budget-alerts', async (event) => {
+// onMessagePublished to budget-cutoff topic
+export const disableProjectAPIsHandler = async (event) => {
   if (!PROJECT_ID) {
     console.error('Missing required environment variable: PROJECT_ID');
     return;
@@ -65,7 +65,7 @@ export const disableProjectAPIs = onMessagePublished('budget-alerts', async (eve
   }
 
   await logAndEmail(apis);
-});
+};
 
 const parseCostAmount = (event) => {
   const msg = Buffer.from(event.data.message.data, 'base64').toString('utf-8');

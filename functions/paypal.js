@@ -1,6 +1,6 @@
 // NOTE: listTransactions requires manually enabling that access in PayPal developer dashboard
 
-import { logger, https } from 'firebase-functions/v2';
+import { logger } from 'firebase-functions/v2';
 import { ApiError, CheckoutPaymentIntent, Client, Environment, LogLevel, OrdersController, ShippingPreference, PatchOp } from '@paypal/paypal-server-sdk';
 import { getOrderByPaymentId } from './shared/orders.js';
 import { sendMail } from './shared/email.js';
@@ -332,7 +332,8 @@ const getPayPalAccessToken = async () => {
 //   }
 // }
 
-export const paypalWebhook = https.onRequest(async (req, res) => {
+// onRequest handler for PayPal webhooks
+export const paypalWebhookHandler = async (req, res) => {
   logger.debug('Received PayPal webhook', { headers: req.headers, body: req.body });
 
   try {
@@ -376,7 +377,7 @@ export const paypalWebhook = https.onRequest(async (req, res) => {
   }
 
   res.status(200).send('Webhook received');
-});
+};
 
 const validateWebhookSignature = async (req, res) => {
   const accessToken = await getPayPalAccessToken();

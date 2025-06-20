@@ -1,13 +1,13 @@
 import { logger } from 'firebase-functions/v2';
 import { initializeApp, getApps } from 'firebase-admin/app';
-import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { fieldOrder } from './fields.js';
 import { joinArrays } from './helpers.js';
 import { appendAllLines } from './shared/spreadsheet.js';
 
 if (!getApps().length) initializeApp();
 
-export const appendrecordtospreadsheet = onDocumentUpdated(`orders/{ITEM}`, async (event) => {
+// onDocumentUpdated
+export const appendRecordToSpreadsheetHandler = async (event) => {
   const { before, after } = event.data;
   if (before?.data()?.status === 'pending' && after.data().status === 'final') {
     logger.info(`APPEND TO SPREADSHEET: ${after.id}`);
@@ -16,10 +16,10 @@ export const appendrecordtospreadsheet = onDocumentUpdated(`orders/{ITEM}`, asyn
       const orders = mapOrderToSpreadsheetLines(order);
       await appendAllLines(orders);
     } catch (err) {
-      logger.error(`Error in appendrecordtospreadsheet for ${after.data().people[0].email}`, err);
+      logger.error(`Error in appendRecordToSpreadsheetHandler for ${after.data().people[0].email}`, err);
     }
   }
-});
+};
 
 const mapOrderToSpreadsheetLines = (order) => {
   const orders = []
