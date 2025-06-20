@@ -6,7 +6,7 @@ import { appendrecordtospreadsheet } from './google-sheet-sync.js';
 import { savePendingOrder, saveFinalOrder } from './database.js';
 import { sendEmailConfirmations } from './email-confirmation.js';
 import { logToPapertrail } from './logger.js';
-import { getStripePaymentIntent } from './stripe.js';
+import { getStripePaymentIntent, stripeWebhook } from './stripe.js';
 import { createOrUpdatePaypalOrder, capturePaypalOrder, paypalWebhook } from './paypal.js';
 import { initializePayment } from './initializePayment.js';
 import { missingFromSpreadsheet, duplicateEmailsInSpreadsheet } from './scheduled/validateSpreadsheet.js';
@@ -62,5 +62,6 @@ export {
   matchPaymentsScheduled,
   matchPayments,
   disableProjectAPIs,
-  paypalWebhook
+  paypalWebhook,
+  stripeWebhook
 };
