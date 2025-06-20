@@ -1,3 +1,15 @@
+import { logger } from 'firebase-functions/v2';
+
+export const logTokenStatus = (hasToken, action, metadata) => {
+  if (action !== 'caffeinate' && action !== 'logToPapertrail') {
+    const email = metadata?.email;
+    logger[hasToken ? 'info' : 'warn'](
+      'AppCheck ' + (hasToken ? 'success' : 'fail') + (email ? `: ${email}` : ''),
+      { ...metadata, action }
+    );
+  };
+};
+
 export const formatDateTime = (date) => {
   if (!date) return null;
   const localDate = new Date(date);

@@ -1,4 +1,4 @@
-import { logger, https } from 'firebase-functions/v2';
+import { logger } from 'firebase-functions/v2';
 import Stripe from 'stripe';
 import { getOrderByPaymentId } from './shared/orders.js';
 import { sendMail } from './shared/email.js';
@@ -135,7 +135,8 @@ const fetchAllCustomers = async () => {
   return allCustomers;
 };
 
-export const stripeWebhook = https.onRequest(async (req, res) => {
+// onRequest function to handle Stripe webhooks
+export const stripeWebhookHandler = async (req, res) => {
   logger.debug('Received Stripe webhook', { headers: req.headers, body: req.body });
 
   const sig = req.headers['stripe-signature'];
@@ -180,4 +181,4 @@ export const stripeWebhook = https.onRequest(async (req, res) => {
   }
 
   res.json({ received: true });
-});
+};

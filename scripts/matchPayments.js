@@ -1,10 +1,10 @@
 import dotenv from 'dotenv';
 dotenv.config();
-const { CLOUD_FUNCTIONS_FIREBASE_REGION, CLOUD_FUNCTIONS_TRIGGER_TOKEN, VITE_FIREBASE_PROJECT_ID } = process.env;
+const { CLOUD_FUNCTIONS_REGION, CLOUD_FUNCTIONS_TRIGGER_TOKEN, VITE_FIREBASE_PROJECT_ID } = process.env;
 
 console.log('Triggering matchPayments function...');
 
-const url = `https://${CLOUD_FUNCTIONS_FIREBASE_REGION}-${VITE_FIREBASE_PROJECT_ID}.cloudfunctions.net/matchPayments`;
+const url = `https://${CLOUD_FUNCTIONS_REGION}-${VITE_FIREBASE_PROJECT_ID}.cloudfunctions.net/matchPaymentsOnDemand`;
 const response = await fetch(url, {
   method: 'POST',
   headers: {

@@ -1,10 +1,10 @@
 import { logger } from 'firebase-functions/v2';
-import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { sendMail } from './shared/email.js';
 import { IS_EMULATOR } from './helpers.js';
 const testDomains = process.env.EMAIL_IGNORE_TEST_DOMAINS ? process.env.EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
 
-export const sendEmailConfirmations = onDocumentUpdated(`orders/{ITEM}`, async (event) => {
+// onDocumentUpdated
+export const sendEmailConfirmationsHandler = async (event) => {
   const { before, after } = event.data;
   if (before?.data()?.status === 'pending' && after.data().status === 'final') {
     const { people } = after.data();
@@ -24,4 +24,4 @@ export const sendEmailConfirmations = onDocumentUpdated(`orders/{ITEM}`, async (
       }
     }
   }
-});
+};
