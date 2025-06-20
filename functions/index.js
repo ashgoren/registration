@@ -7,7 +7,7 @@ import { savePendingOrder, saveFinalOrder } from './database.js';
 import { sendEmailConfirmations } from './email-confirmation.js';
 import { logToPapertrail } from './logger.js';
 import { getStripePaymentIntent } from './stripe.js';
-import { createOrUpdatePaypalOrder, capturePaypalOrder } from './paypal.js';
+import { createOrUpdatePaypalOrder, capturePaypalOrder, paypalWebhook } from './paypal.js';
 import { initializePayment } from './initializePayment.js';
 import { missingFromSpreadsheet, duplicateEmailsInSpreadsheet } from './scheduled/validateSpreadsheet.js';
 import { emailIncompleteOrders } from './scheduled/incomplete.js';
@@ -61,5 +61,6 @@ export {
   emailIncompleteOrders,
   matchPaymentsScheduled,
   matchPayments,
-  disableProjectAPIs
+  disableProjectAPIs,
+  paypalWebhook
 };
