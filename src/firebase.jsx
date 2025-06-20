@@ -41,7 +41,7 @@ const initializeFirebaseAppCheck = async () => {
 };
 
 // initial setup of Firebase functions
-const functions = getFunctions();
+const functions = getFunctions(app, import.meta.env.VITE_FUNCTIONS_REGION);
 if (import.meta.env.MODE === 'development' && import.meta.env.VITE_USE_FIREBASE_EMULATOR === 'true') {
   console.log('Using Firebase Emulator');
   connectFunctionsEmulator(functions, 'localhost', 5001);
