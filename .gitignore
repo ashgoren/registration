@@ -17,12 +17,10 @@ tmp.json
 .DS_Store
 
 # env and keys
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-functions/.env
+.env*
+!*example
+functions/.env*
+!functions/*example
 *service-key*
 scripts/keys/
 
