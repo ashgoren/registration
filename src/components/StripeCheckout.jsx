@@ -6,11 +6,9 @@ import { useOrder } from 'hooks/useOrder';
 import { useOrderSaving } from 'hooks/useOrderSaving';
 import { useStripePayment } from 'hooks/useStripePayment';
 import { config } from 'config';
-const { SANDBOX_MODE, PAYMENT_METHODS, TECH_CONTACT } = config;
-const { VITE_STRIPE_PUBLISHABLE_KEY_SANDBOX, VITE_STRIPE_PUBLISHABLE_KEY_LIVE, VITE_USE_FIREBASE_EMULATOR, MODE} = import.meta.env;
+const { SANDBOX_MODE, PAYMENT_METHODS, TECH_CONTACT, STRIPE_PUBLISHABLE_KEY_SANDBOX, STRIPE_PUBLISHABLE_KEY_LIVE, USE_FIREBASE_EMULATOR} = config;
 
-const IS_EMULATOR = VITE_USE_FIREBASE_EMULATOR === 'true' && MODE === 'development';
-const stripePublishableKey = SANDBOX_MODE || IS_EMULATOR ? VITE_STRIPE_PUBLISHABLE_KEY_SANDBOX : VITE_STRIPE_PUBLISHABLE_KEY_LIVE;
+const stripePublishableKey = SANDBOX_MODE || USE_FIREBASE_EMULATOR ? STRIPE_PUBLISHABLE_KEY_SANDBOX : STRIPE_PUBLISHABLE_KEY_LIVE;
 
 const stripePromise = PAYMENT_METHODS.includes('stripe') ? loadStripe(stripePublishableKey) : null;
 

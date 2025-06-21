@@ -54,7 +54,8 @@
     "cleanup-artifacts": "node ./scripts/cleanupArtifacts.js",
     "matchPayments": "node ./scripts/matchPayments.js",
     "emulator": "firebase emulators:start --only functions",
-    "emulator:isolated": "firebase emulators:start"
+    "emulator:isolated": "firebase emulators:start",
+    "update-env": "node ./generate-env.js"
   },
   "browserslist": {
     "production": [
