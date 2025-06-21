@@ -3,6 +3,7 @@
 // ***                      Configure in other files in this folder.                         ***
 // *********************************************************************************************
 
+import configEnv from './configEnv';
 import configPaypal from './configPaypal';
 import configBasics from './configBasics';
 import configTheme from './configTheme';
@@ -22,6 +23,7 @@ const getOrderDefaults = () => ({
 });
 
 export const config = {
+  ...configEnv,
   ...configPaypal,
   ...configBasics,
   ...configTheme,

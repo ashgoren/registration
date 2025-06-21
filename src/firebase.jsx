@@ -2,20 +2,25 @@ import { initializeApp, getApps, getApp } from 'firebase/app';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider, getToken } from 'firebase/app-check';
 import { getFunctions, connectFunctionsEmulator, httpsCallable } from 'firebase/functions';
 import { logWarn } from 'src/logger';
+import configEnv from 'config/configEnv';
+import configBasics from 'config/configBasics';
+
+const { FIREBASE_API_KEY, FIREBASE_AUTH_DOMAIN, FIREBASE_PROJECT_ID, FIREBASE_STORAGE_BUCKET, FIREBASE_SENDER_ID, FIREBASE_APP_ID } = configEnv;
+const { FUNCTIONS_REGION, RECAPTCHA_SITE_KEY, APPCHECK_DEBUG_TOKEN } = configEnv;
+const { USE_FIREBASE_EMULATOR } = configBasics;
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL
+  apiKey: FIREBASE_API_KEY,
+  authDomain: FIREBASE_AUTH_DOMAIN,
+  projectId: FIREBASE_PROJECT_ID,
+  storageBucket: FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: FIREBASE_SENDER_ID,
+  appId: FIREBASE_APP_ID
 }
 
 // This is used to bypass Firebase App Check in development mode
-if (process.env.NODE_ENV === 'development') {
-  window.self.FIREBASE_APPCHECK_DEBUG_TOKEN = import.meta.env.VITE_APPCHECK_DEBUG_TOKEN;
+if (import.meta.env.DEV) {
+  window.self.FIREBASE_APPCHECK_DEBUG_TOKEN = APPCHECK_DEBUG_TOKEN;
 }
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
@@ -26,7 +31,7 @@ const initializeFirebaseAppCheck = async () => {
     indexedDB.deleteDatabase('firebase-app-check-database');
     try {
       appCheck = initializeAppCheck(app, {
-        provider: new ReCaptchaEnterpriseProvider(import.meta.env.VITE_RECAPTCHA_SITE_KEY),
+        provider: new ReCaptchaEnterpriseProvider(RECAPTCHA_SITE_KEY),
         isTokenAutoRefreshEnabled: true
       });
       await getToken(appCheck);
@@ -41,11 +46,11 @@ const initializeFirebaseAppCheck = async () => {
 };
 
 // initial setup of Firebase functions
-const functions = getFunctions(app, import.meta.env.VITE_FUNCTIONS_REGION);
-if (import.meta.env.MODE === 'development' && import.meta.env.VITE_USE_FIREBASE_EMULATOR === 'true') {
+const functions = getFunctions(app, FUNCTIONS_REGION);
+if (USE_FIREBASE_EMULATOR) {
   console.log('Using Firebase Emulator');
   connectFunctionsEmulator(functions, 'localhost', 5001);
-} else if (import.meta.env.MODE === 'development') {
+} else if (import.meta.env.DEV) {
   console.warn('%cNOT using Firebase Emulator', 'background: orange; font-size: 1.1em; font-weight: bold; padding: 2px 4px;');
 }
 

@@ -1,4 +1,6 @@
 import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
+import { config } from 'config';
+const { FIREBASE_PROJECT_ID } = config;
 
 export const log = (message, metadata) => logger('info', message, metadata);
 export const logWarn = (message, metadata) => logger('warn', message, metadata);
@@ -14,7 +16,7 @@ const logger = (level, msg, metadata = {}) => {
   }
 
   // log to Papertrail via Firebase Function (production only)
-  if (import.meta.env.MODE === 'production') {
+  if (import.meta.env.PROD) {
     const { email, order, error, userAgent, ...rest } = metadata;
     const includeLevel = level === 'warn' || level === 'error';
     const includeMetadata = Object.keys(rest).length > 0;
@@ -28,7 +30,7 @@ const logger = (level, msg, metadata = {}) => {
       ...order && { order },
       ...error && { error },
       ...includeMetadata && { metadata: rest },
-      ...isLog && { project: import.meta.env.VITE_FIREBASE_PROJECT_ID }
+      ...isLog && { project: FIREBASE_PROJECT_ID }
     };
 
     firebaseFunctionDispatcher({
