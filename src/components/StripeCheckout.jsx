@@ -14,7 +14,7 @@ const stripePromise = PAYMENT_METHODS.includes('stripe') ? loadStripe(stripePubl
 
 // this wrapper is required to use the Stripe Elements component
 export const StripeCheckout = ({ total }) => {
-  const options = { mode: 'payment', currency: 'usd', amount: total * 100 };
+  const options = { mode: 'payment', currency: 'usd', amount: Math.round(total * 100) };
   return (
     <>
       {SANDBOX_MODE && <TestCardBox number='4242424242424242' />}
