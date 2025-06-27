@@ -1,8 +1,8 @@
 // NOTE: listTransactions requires manually enabling that access in PayPal developer dashboard
 
 import { logger } from 'firebase-functions/v2';
-import { getDateChunks } from '../helpers.js';
-import { createError, ErrorType } from '../errorHandler.js';
+import { getDateChunks } from '../shared/helpers.js';
+import { createError, ErrorType } from '../shared/errorhandler.js';
 import { getPayPalAccessToken, paypalApiUrl } from './auth.js';
 
 /* * * * * * * * * * PayPal Transactions List * * * * * * * * * * * * * * * * * * * * * * * *

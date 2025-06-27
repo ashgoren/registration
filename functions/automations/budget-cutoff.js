@@ -11,8 +11,8 @@
 // gcloud services enable run.googleapis.com firestore.googleapis.com cloudbuild.googleapis.com eventarc.googleapis.com --project contra-testing
 
 import { google } from 'googleapis';
-import { sendMail } from './shared/email.js';
-import { PROJECT_ID } from './helpers.js';
+import { sendMail } from '../shared/email.js';
+import { PROJECT_ID } from '../shared/helpers.js';
 // import 'dotenv/config'; // for local emulation, but breaks production deployment
 
 const COST_THRESHOLD = 10;

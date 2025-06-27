@@ -6,9 +6,9 @@
 
 import { logger } from 'firebase-functions/v2';
 import { getPendingOrdersMissingFromFinalOrders } from '../shared/orders.js';
-import { getOrderEmail, getOrderDomain } from '../helpers.js';
+import { getOrderEmail, getOrderDomain } from '../shared/helpers.js';
 import { sendMail } from '../shared/email.js';
-import { PROJECT_ID } from '../helpers.js';
+import { PROJECT_ID } from '../shared/helpers.js';
 const testDomains = process.env.EMAIL_IGNORE_TEST_DOMAINS ? process.env.EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
 
 // Scheduled function to email list of pending orders missing from final orders

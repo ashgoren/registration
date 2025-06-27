@@ -1,8 +1,8 @@
 import { logger } from 'firebase-functions/v2';
 import { initializeApp, getApps } from 'firebase-admin/app';
-import { fieldOrder } from './fields.js';
-import { joinArrays } from './helpers.js';
-import { appendAllLines } from './shared/spreadsheet.js';
+import { fieldOrder } from '../shared/fields.js';
+import { joinArrays } from '../shared/helpers.js';
+import { appendAllLines } from '../shared/spreadsheet.js';
 
 if (!getApps().length) initializeApp();
 

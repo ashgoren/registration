@@ -1,6 +1,6 @@
 import { stripe } from './auth.js';
 import { logger } from 'firebase-functions/v2';
-import { createError, ErrorType } from '../errorHandler.js';
+import { createError, ErrorType } from '../shared/errorhandler.js';
 
 export const listStripeTransactions = async (description) => {
   logger.info('listStripeTransactions', { description });

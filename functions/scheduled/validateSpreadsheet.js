@@ -9,7 +9,7 @@ import { logger } from 'firebase-functions/v2';
 import { getOrders } from '../shared/orders.js';
 import { readSheet } from '../shared/spreadsheet.js';
 import { sendMail } from '../shared/email.js';
-import { getOrderEmail, getOrderDomain } from '../helpers.js';
+import { getOrderEmail, getOrderDomain } from '../shared/helpers.js';
 const testDomains = process.env.EMAIL_IGNORE_TEST_DOMAINS ? process.env.EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
 
 const KEY_COLUMN = process.env.SHEETS_KEY_COLUMN;

@@ -12,7 +12,7 @@ import { listPaypalTransactions } from '../paypal/index.js';
 import { listStripeTransactions } from '../stripe/index.js';
 import { getOrders } from '../shared/orders.js';
 import { sendMail } from '../shared/email.js';
-import { IS_SANDBOX } from '../helpers.js';
+import { IS_SANDBOX } from '../shared/helpers.js';
 const { EVENT_TITLE, EMAIL_NOTIFY_TO, CLOUD_FUNCTIONS_TRIGGER_TOKEN, PAYMENT_PROCESSOR } = process.env;
 
 // On-demand (onRequest) wrapper for matching payments

@@ -1,6 +1,6 @@
 import { stripe } from './auth.js';
 import { logger } from 'firebase-functions/v2';
-import { createError, ErrorType } from '../errorHandler.js';
+import { createError, ErrorType } from '../shared/errorhandler.js';
 const { STRIPE_STATEMENT_DESCRIPTOR_SUFFIX: statement_descriptor_suffix } = process.env;
 
 export const getStripePaymentIntent = async ({ email, name, amount, description, idempotencyKey, id }) => {

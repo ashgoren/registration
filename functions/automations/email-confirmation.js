@@ -1,6 +1,6 @@
 import { logger } from 'firebase-functions/v2';
-import { sendMail } from './shared/email.js';
-import { IS_EMULATOR } from './helpers.js';
+import { sendMail } from '../shared/email.js';
+import { IS_EMULATOR } from '../shared/helpers.js';
 const testDomains = process.env.EMAIL_IGNORE_TEST_DOMAINS ? process.env.EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
 
 // onDocumentUpdated

@@ -1,8 +1,8 @@
 import { logger } from 'firebase-functions/v2';
 import { getOrderByPaymentId } from '../shared/orders.js';
 import { sendMail } from '../shared/email.js';
-import { PROJECT_ID } from '../helpers.js';
-import { createError, ErrorType } from '../errorHandler.js';
+import { PROJECT_ID } from '../shared/helpers.js';
+import { createError, ErrorType } from '../shared/errorhandler.js';
 import { getPayPalAccessToken, paypalApiUrl, useSandbox } from './auth.js'
 
 // onRequest handler for PayPal webhooks

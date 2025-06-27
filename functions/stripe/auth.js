@@ -1,5 +1,5 @@
 import Stripe from 'stripe';
-import { IS_SANDBOX, IS_EMULATOR } from '../helpers.js';
+import { IS_SANDBOX, IS_EMULATOR } from '../shared/helpers.js';
 const { STRIPE_SECRET_KEY_SANDBOX, STRIPE_SECRET_KEY_LIVE } = process.env;
 
 const useSandbox = IS_SANDBOX || IS_EMULATOR;

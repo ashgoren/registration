@@ -3,25 +3,25 @@ import { onCall, onRequest } from 'firebase-functions/v2/https';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { onMessagePublished } from 'firebase-functions/v2/pubsub';
-import { handleFunctionError } from './errorHandler.js';
-import { logTokenStatus } from './helpers.js';
+import { handleFunctionError } from './shared/errorHandler.js';
+import { logTokenStatus } from './shared/helpers.js';
 
 // Functions called by firebaseFunctionDispatcher
-import { logToPapertrail } from './logger.js';
-import { initializePayment } from './initializePayment.js';
-import { savePendingOrder, saveFinalOrder } from './database.js';
+import { logToPapertrail } from './api/logToPapertrail.js';
+import { initializePayment } from './api/initializePayment.js';
+import { savePendingOrder, saveFinalOrder } from './api/database.js';
 import { createOrUpdatePaypalOrder, capturePaypalOrder } from './paypal/index.js';
 import { getStripePaymentIntent } from './stripe/index.js';
 
 // Firebase functions, wrapped in onCall/onRequest/onSchedule/onDocumentUpdated/onMessagePublished
 import { stripeWebhookHandler } from './stripe/index.js';
 import { paypalWebhookHandler } from './paypal/index.js';
-import { appendRecordToSpreadsheetHandler } from './google-sheet-sync.js';
-import { sendEmailConfirmationsHandler } from './email-confirmation.js';
+import { appendRecordToSpreadsheetHandler } from './automations/google-sheet-sync.js';
+import { sendEmailConfirmationsHandler } from './automations/email-confirmation.js';
 import { missingFromSpreadsheetHandler, duplicateEmailsInSpreadsheetHandler } from './scheduled/validateSpreadsheet.js';
 import { emailIncompleteOrdersHandler } from './scheduled/incomplete.js';
 import { matchPaymentsHandler, matchPaymentsOnDemandHandler } from './scheduled/matchPayments.js';
-import { disableProjectAPIsHandler } from './budget-cutoff.js';
+import { disableProjectAPIsHandler } from './automations/budget-cutoff.js';
 
 
 // Configuration constants (here because .env file is not yet loaded)
