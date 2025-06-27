@@ -1,7 +1,7 @@
 import { logger } from 'firebase-functions/v2';
 import { ApiError, CheckoutPaymentIntent, OrdersController, ShippingPreference, PatchOp } from '@paypal/paypal-server-sdk';
-import { formatCurrency } from '../helpers.js';
-import { createError, ErrorType } from '../errorHandler.js';
+import { formatCurrency } from '../shared/helpers.js';
+import { createError, ErrorType } from '../shared/errorhandler.js';
 import { client } from './auth.js';
 
 const ordersController = new OrdersController(client);

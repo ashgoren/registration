@@ -2,7 +2,7 @@ import { stripe } from './auth.js';
 import { logger } from 'firebase-functions/v2';
 import { getOrderByPaymentId } from '../shared/orders.js';
 import { sendMail } from '../shared/email.js';
-import { PROJECT_ID, IS_SANDBOX } from '../helpers.js';
+import { PROJECT_ID, IS_SANDBOX } from '../shared/helpers.js';
 const { STRIPE_WEBHOOK_SECRET } = process.env;
 
 // onRequest function to handle Stripe webhooks

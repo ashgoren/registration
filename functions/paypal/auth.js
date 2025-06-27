@@ -1,6 +1,6 @@
 import { Client, Environment, LogLevel } from '@paypal/paypal-server-sdk';
-import { createError, ErrorType } from '../errorHandler.js';
-import { IS_SANDBOX, IS_EMULATOR } from '../helpers.js';
+import { createError, ErrorType } from '../shared/errorhandler.js';
+import { IS_SANDBOX, IS_EMULATOR } from '../shared/helpers.js';
 const { PAYPAL_CLIENT_ID_SANDBOX, PAYPAL_CLIENT_SECRET_SANDBOX, PAYPAL_CLIENT_ID_LIVE, PAYPAL_CLIENT_SECRET_LIVE } = process.env;
 
 export const useSandbox = IS_SANDBOX || IS_EMULATOR;
