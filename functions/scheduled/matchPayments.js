@@ -8,7 +8,7 @@
 // local testing: run `matchPaymentsScheduled()` from `firebase functions:shell`
 
 import { logger } from 'firebase-functions/v2';
-import { listPaypalTransactions } from '../paypal.js';
+import { listPaypalTransactions } from '../paypal/index.js';
 import { listStripeTransactions } from '../stripe.js';
 import { getOrders } from '../shared/orders.js';
 import { sendMail } from '../shared/email.js';
