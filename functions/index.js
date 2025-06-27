@@ -11,10 +11,10 @@ import { logToPapertrail } from './logger.js';
 import { initializePayment } from './initializePayment.js';
 import { savePendingOrder, saveFinalOrder } from './database.js';
 import { createOrUpdatePaypalOrder, capturePaypalOrder } from './paypal/index.js';
-import { getStripePaymentIntent } from './stripe.js';
+import { getStripePaymentIntent } from './stripe/index.js';
 
 // Firebase functions, wrapped in onCall/onRequest/onSchedule/onDocumentUpdated/onMessagePublished
-import { stripeWebhookHandler } from './stripe.js';
+import { stripeWebhookHandler } from './stripe/index.js';
 import { paypalWebhookHandler } from './paypal/index.js';
 import { appendRecordToSpreadsheetHandler } from './google-sheet-sync.js';
 import { sendEmailConfirmationsHandler } from './email-confirmation.js';
@@ -66,11 +66,11 @@ const onCallFunctions = [
 const onRequestFunctions = [
   {
     name: 'paypalWebhook',
-    handler: paypalWebhookHandler // paypal/webhook.js
+    handler: paypalWebhookHandler // paypal/webhooks.js
   },
   {
     name: 'stripeWebhook',
-    handler: stripeWebhookHandler // stripe.js
+    handler: stripeWebhookHandler // stripe/webhooks.js
   },
   {
     name: 'matchPaymentsOnDemand',
