@@ -9,7 +9,7 @@
 
 import { logger } from 'firebase-functions/v2';
 import { listPaypalTransactions } from '../paypal/index.js';
-import { listStripeTransactions } from '../stripe.js';
+import { listStripeTransactions } from '../stripe/index.js';
 import { getOrders } from '../shared/orders.js';
 import { sendMail } from '../shared/email.js';
 import { IS_SANDBOX } from '../helpers.js';
