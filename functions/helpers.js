@@ -1,5 +1,7 @@
 import { logger } from 'firebase-functions/v2';
 
+const { FIREBASE_AUTH_EMULATOR_HOST, FIRESTORE_EMULATOR_HOST, FUNCTIONS_EMULATOR, SANDBOX_MODE, GCLOUD_PROJECT } = process.env;
+
 export const logTokenStatus = (hasToken, action, metadata) => {
   if (action !== 'caffeinate' && action !== 'logToPapertrail') {
     const email = metadata?.email;
@@ -61,5 +63,6 @@ export const getOrderDomain = (order) => {
   return getOrderEmail(order).split('@')[1];
 }
 
-export const IS_EMULATOR = !!process.env.FIREBASE_AUTH_EMULATOR_HOST || !!process.env.FIRESTORE_EMULATOR_HOST || !!process.env.FUNCTIONS_EMULATOR;
-export const PROJECT_ID = process.env.GCLOUD_PROJECT;
+export const IS_EMULATOR = !!FIREBASE_AUTH_EMULATOR_HOST || !!FIRESTORE_EMULATOR_HOST || !!FUNCTIONS_EMULATOR;
+export const IS_SANDBOX = SANDBOX_MODE === 'true';
+export const PROJECT_ID = GCLOUD_PROJECT;

@@ -12,9 +12,8 @@ import { listPaypalTransactions } from '../paypal/index.js';
 import { listStripeTransactions } from '../stripe.js';
 import { getOrders } from '../shared/orders.js';
 import { sendMail } from '../shared/email.js';
-const { EVENT_TITLE, EMAIL_NOTIFY_TO, CLOUD_FUNCTIONS_TRIGGER_TOKEN, SANDBOX_MODE, PAYMENT_PROCESSOR } = process.env;
-
-const isTestMode = SANDBOX_MODE === 'true';
+import { IS_SANDBOX } from '../helpers.js';
+const { EVENT_TITLE, EMAIL_NOTIFY_TO, CLOUD_FUNCTIONS_TRIGGER_TOKEN, PAYMENT_PROCESSOR } = process.env;
 
 // On-demand (onRequest) wrapper for matching payments
 export const matchPaymentsOnDemandHandler = async (req, res) => {
@@ -36,7 +35,7 @@ export const matchPaymentsHandler = async () => {
   logger.info(`matchPayments triggered for event: ${EVENT_TITLE}`);
 
   // get final orders from db (test mode or live mode)
-  const finalOrders = await getOrders({ pending: false, testMode: isTestMode });
+  const finalOrders = await getOrders({ pending: false, testMode: IS_SANDBOX });
   const orders = finalOrders.filter(order => order.paymentId && order.paymentId !== 'check');
 
   // get list of payments from paypal or stripe

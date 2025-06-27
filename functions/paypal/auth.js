@@ -1,9 +1,9 @@
 import { Client, Environment, LogLevel } from '@paypal/paypal-server-sdk';
 import { createError, ErrorType } from '../errorHandler.js';
-import { IS_EMULATOR } from '../helpers.js';
-const { SANDBOX_MODE, PAYPAL_CLIENT_ID_SANDBOX, PAYPAL_CLIENT_SECRET_SANDBOX, PAYPAL_CLIENT_ID_LIVE, PAYPAL_CLIENT_SECRET_LIVE } = process.env;
+import { IS_SANDBOX, IS_EMULATOR } from '../helpers.js';
+const { PAYPAL_CLIENT_ID_SANDBOX, PAYPAL_CLIENT_SECRET_SANDBOX, PAYPAL_CLIENT_ID_LIVE, PAYPAL_CLIENT_SECRET_LIVE } = process.env;
 
-export const useSandbox = SANDBOX_MODE === 'true' || IS_EMULATOR;
+export const useSandbox = IS_SANDBOX || IS_EMULATOR;
 export const paypalApiUrl = useSandbox ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
 const paypalClientId = useSandbox ? PAYPAL_CLIENT_ID_SANDBOX : PAYPAL_CLIENT_ID_LIVE;
 const paypalClientSecret = useSandbox ? PAYPAL_CLIENT_SECRET_SANDBOX : PAYPAL_CLIENT_SECRET_LIVE;
