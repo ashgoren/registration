@@ -30,16 +30,18 @@ gcloud projects add-iam-policy-binding <PROJECT_ID> --member="serviceAccount:<SE
 
 ### Configure Environment Variables
 
-- Fill in `SCRIPTS_TEST_DOMAINS` in `/.env`
+- Fill in `SCRIPTS_TEST_DOMAINS` in `/.env.config.js`
   - comma-separated list of test domains to ignore when listing emails in these scripts
   - e.g. `example.com,test.com`
+
+- Generate a random uuid and save as `CLOUD_FUNCTIONS_TRIGGER_TOKEN` in both `.env.config.js` and `functions/.env`
 
 ---
 
 ## Usage
 
 > [!NOTE]
-> By default the orders script ignores emails listed as test domains in `.env`. To include them, use the `--all`/`--include-test-emails` flag.
+> By default the orders script ignores emails listed as test domains in `.env.config.js`. To include them, use the `--all`/`--include-test-emails` flag.
 
 
 ### List all completed orders (or pending, with flag)
