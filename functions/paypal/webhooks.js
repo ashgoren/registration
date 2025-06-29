@@ -1,7 +1,5 @@
 import { logger } from 'firebase-functions/v2';
-import { getOrderByPaymentId } from '../shared/orders.js';
-import { sendMail } from '../shared/email.js';
-import { PROJECT_ID } from '../shared/helpers.js';
+import { handlePaymentVerification } from '../shared/webhooks.js';
 import { createError, ErrorType } from '../shared/errorhandler.js';
 import { getPayPalAccessToken, paypalApiUrl, useSandbox } from './auth.js'
 
@@ -31,25 +29,14 @@ export const paypalWebhookHandler = async (req, res) => {
   // Process the webhook event
   logger.info('Received webhook for PayPal payment capture', { paymentId, useSandbox });
 
+  // Check if the payment is in the DB
   try {
-    // Confirm this payment is already in db
-    const order = await getOrderByPaymentId(paymentId, useSandbox);
-    if (order) {
-      logger.info('Found matching order in database', { paymentId, email: order.email });
-    } else {
-      logger.warn('Received PayPal payment capture for unrecognized payment ID', { paymentId });
-      sendMail({
-        to: process.env.EMAIL_NOTIFY_TO,
-        subject: `${PROJECT_ID} - Unrecognized PayPal Payment Capture: ${paymentId}`,
-        text: `Received PayPal payment capture for ID ${paymentId} but no matching record found in the database.`,
-      });
-    }
+    await handlePaymentVerification(paymentId);
+    res.status(200).send('Webhook received');
   } catch (error) {
     logger.error('Error processing PayPal webhook', { paymentId, error });
-    return res.status(500).send('Internal Server Error');
+    res.status(500).send('Internal Server Error');
   }
-
-  res.status(200).send('Webhook received');
 };
 
 const validateWebhookSignature = async (req) => {

@@ -1,8 +1,7 @@
 import { stripe } from './auth.js';
 import { logger } from 'firebase-functions/v2';
-import { getOrderByPaymentId } from '../shared/orders.js';
-import { sendMail } from '../shared/email.js';
-import { PROJECT_ID, IS_SANDBOX } from '../shared/helpers.js';
+import { handlePaymentVerification } from '../shared/webhooks.js';
+import { IS_SANDBOX } from '../shared/helpers.js';
 const { STRIPE_WEBHOOK_SECRET } = process.env;
 
 // onRequest function to handle Stripe webhooks
@@ -30,25 +29,12 @@ export const stripeWebhookHandler = async (req, res) => {
   const paymentIntent = event.data.object;
   const paymentId = paymentIntent.id;
 
-  logger.info('PaymentIntent was successful!', { paymentIntent });
-
-  // Confirm this payment is already in db
+  // Check if the payment is in the DB
   try {
-    const order = await getOrderByPaymentId(paymentId, IS_SANDBOX);
-    if (order) {
-      logger.info('Found matching order in database', { paymentId, email: order.email });
-    } else {
-      logger.warn('Received Stripe payment capture for unrecognized payment ID', { paymentId });
-      sendMail({
-        to: process.env.EMAIL_NOTIFY_TO,
-        subject: `${PROJECT_ID} - Unrecognized Stripe Payment Capture: ${paymentId}`,
-        text: `Received Stripe payment capture for ID ${paymentId} but no matching record found in the database.`,
-      });
-    }
-  } catch (error) {
+    await handlePaymentVerification(paymentId);
+    res.json({ received: true });
+  } catch (error) { // database errors
     logger.error('Error processing Stripe webhook', { paymentId, error });
-    return res.status(500).send('Internal Server Error');
+    res.status(500).send('Internal Server Error');
   }
-
-  res.json({ received: true });
 };
