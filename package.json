@@ -55,6 +55,8 @@
     "matchPayments": "node ./scripts/matchPayments.js",
     "emulator": "firebase emulators:start --only functions",
     "emulator:isolated": "firebase emulators:start",
+    "localtunnel-paypal": "lt -p 5001 -s contra-registration",
+    "localtunnel-stripe": "stripe listen --events payment_intent.succeeded --forward-to localhost:5001/contra-testing/us-west1/stripeWebhook",
     "update-env": "node ./generate-env.js"
   },
   "browserslist": {
