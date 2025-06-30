@@ -1,6 +1,6 @@
 import { logger } from 'firebase-functions/v2';
 import { handlePaymentVerification } from '../shared/webhooks.js';
-import { createError, ErrorType } from '../shared/errorhandler.js';
+import { createError, ErrorType } from '../shared/errorHandler.js';
 import { getPayPalAccessToken, paypalApiUrl, useSandbox } from './auth.js'
 
 // onRequest handler for PayPal webhooks

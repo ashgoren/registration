@@ -2,7 +2,7 @@
 
 import { logger } from 'firebase-functions/v2';
 import { getDateChunks } from '../shared/helpers.js';
-import { createError, ErrorType } from '../shared/errorhandler.js';
+import { createError, ErrorType } from '../shared/errorHandler.js';
 import { getPayPalAccessToken, paypalApiUrl } from './auth.js';
 
 /* * * * * * * * * * PayPal Transactions List * * * * * * * * * * * * * * * * * * * * * * * *

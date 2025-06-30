@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { Typography, Button, Box } from '@mui/material';
 import { Error, Header, Loading } from 'components/layouts';
@@ -17,6 +17,7 @@ const { PAYMENT_METHODS, PAYPAL_OPTIONS, TITLE, CONFIRMATION_CHECK_TITLE, CONFIR
 export const Registration = () => {
   const { setError } = useOrder();
   const [registering, setRegistering] = useState(false);
+  const firebaseInitRef = useRef(false);
 
   useEffect(() => {
     const validateAppCheck = async () => {
@@ -31,8 +32,11 @@ export const Registration = () => {
         );
       }
     }
-    validateAppCheck();
-  }, [setError]);
+    if (!firebaseInitRef.current) {
+      firebaseInitRef.current = true;
+      validateAppCheck();
+    }
+  }, []);
 
   return (
     SHOW_PRE_REGISTRATION || (SANDBOX_MODE && window.location.hostname !== 'localhost') ? (

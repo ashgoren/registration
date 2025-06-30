@@ -39,7 +39,7 @@ const initializeFirebaseAppCheck = async () => {
         }),
         isTokenAutoRefreshEnabled: true
       });
-      await getToken(appCheck);
+      // await getToken(appCheck);
       console.log('AppCheck initialized successfully');
       return true;
     } catch (error) {
