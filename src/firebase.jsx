@@ -1,12 +1,13 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { initializeAppCheck, ReCaptchaEnterpriseProvider, getToken } from 'firebase/app-check';
+import { initializeAppCheck, CustomProvider, getToken } from 'firebase/app-check';
 import { getFunctions, connectFunctionsEmulator, httpsCallable } from 'firebase/functions';
+import { CloudflareProviderOptions } from '@cloudflare/turnstile-firebase-app-check';
 import { logWarn } from 'src/logger';
 import configEnv from 'config/configEnv';
 import configBasics from 'config/configBasics';
 
 const { FIREBASE_API_KEY, FIREBASE_AUTH_DOMAIN, FIREBASE_PROJECT_ID, FIREBASE_STORAGE_BUCKET, FIREBASE_SENDER_ID, FIREBASE_APP_ID } = configEnv;
-const { FUNCTIONS_REGION, RECAPTCHA_SITE_KEY, APPCHECK_DEBUG_TOKEN } = configEnv;
+const { FUNCTIONS_REGION, TURNSTILE_SITE_KEY, TURNSTILE_FUNCTION_URL, APPCHECK_DEBUG_TOKEN } = configEnv;
 const { USE_FIREBASE_EMULATOR } = configBasics;
 
 const firebaseConfig = {
@@ -28,10 +29,14 @@ let appCheck;
 
 const initializeFirebaseAppCheck = async () => {
   if (!appCheck) {
-    indexedDB.deleteDatabase('firebase-app-check-database');
+    // indexedDB.deleteDatabase('firebase-app-check-database');
     try {
+      const turnstileOptions = new CloudflareProviderOptions(TURNSTILE_FUNCTION_URL, TURNSTILE_SITE_KEY);
+
       appCheck = initializeAppCheck(app, {
-        provider: new ReCaptchaEnterpriseProvider(RECAPTCHA_SITE_KEY),
+        provider: new CustomProvider({
+          getToken: () => turnstileOptions.getToken()
+        }),
         isTokenAutoRefreshEnabled: true
       });
       await getToken(appCheck);

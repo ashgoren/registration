@@ -23,6 +23,7 @@ functions/.env*
 !functions/*example
 *service-key*
 scripts/keys/
+extensions/
 
 *debug.log*
 *error.log*
