@@ -24,7 +24,7 @@ export const Registration = () => {
       if (!result) {
         setError(
           <Box>
-            <Typography variant='h6' sx={{ fontWeight: 'bold' }}>Error: Browser or add-ons are blocking recaptcha verification.</Typography>
+            <Typography variant='h6' sx={{ fontWeight: 'bold' }}>Error: Browser or add-ons are blocking app check verification.</Typography>
             <Typography variant='h6'>Please disable the <em>uBlock Origin</em> extension, if installed, or try a different browser.</Typography>
             <Typography variant='h6'>Please contact {TECH_CONTACT} if you continue to encounter this message even after trying the above steps.</Typography>
           </Box>

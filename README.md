@@ -6,7 +6,7 @@ Simple registration / admissions sales site for contra dance events.
 - Hosting: Firebase Hosting
 - Database: Firebase Firestore
 - Serverless functions: Firebase Functions
-- App Check: Recaptcha Enterprise + Firebase App Check
+- App Check: Cloudflare Turnstile + Firebase App Check
 - Logging: Papertrail & Google Cloud Logging
 - Address autocomplete: Google Places API
 - Email: Sendgrid
@@ -218,17 +218,22 @@ gcloud services api-keys create --flags-file=google-places-api-flags.yaml --proj
 
 ## Setup Firebase App Check
 
-- Enable Recaptcha Enterprise and create a key:
-  ```sh
-  # Replace EXAMPLE.COM below with custom domain, or just use <PROJECT_ID>.web.app
-  gcloud services enable recaptchaenterprise.googleapis.com --project <PROJECT_ID>
-  gcloud recaptcha keys create --display-name="recaptcha-enterprise" --integration-type="SCORE" --web --domains="<PROJECT_ID>.web.app,EXAMPLE.COM" --project <PROJECT_ID>
-  ```
-- Copy site key value to `RECAPTCHA_SITE_KEY` in `.env.config.js`.
+- Setup [Cloudflare Turnstile](https://firebase.google.com/docs/app-check/turnstile)
+  - Add hostname (and localhost for testing)
+  - Invisible mode
+  - copy `siteKey` value to `TURNSTILE_SITE_KEY` in `.env.config.js`
+
+- Install [Cloudflare Turnstile App Check Provider extension](https://extensions.dev/extensions/cloudflare/cloudflare-turnstile-app-check-provider)
+  - TTL 60 minutes is fine
+
+- Install the client package for turnstile firebase app check: `npm i @cloudflare/turnstile-firebase-app-check`
+
+- Get the URL of the newly created Firebase function and copy it to `TURNSTILE_FUNCTION_URL` in `.env.config.js`.
+
+- In Google Cloud IAM, click "Grant access" and give the ext-cloudflare-turnstile service account the "Service Account Token Creator" role.
 
 - Enable Firebase App Check: https://console.firebase.google.com/project/<PROJECT_ID>/appcheck/apps
-  - choose Recaptcha Enterprise option
-  - use site key value from previous step
+  - just using this for debug token for dev, so can put dummy value for recaptcha site key?
   - generate debug token for use in development mode:
     - click 3 dots, Manage debug token, Add debug token, Generate token, give it whatever name you want
     - copy the token value and add it to `.env.config.js` as `APPCHECK_DEBUG_TOKEN`
@@ -376,10 +381,10 @@ npm run dev
 - Clear Firestore DB
 
 # Disable APIs when project is in hibernation
-- gcloud services disable run.googleapis.com firestore.googleapis.com cloudbuild.googleapis.com eventarc.googleapis.com places.googleapis.com mapsjs.googleapis.com recaptchaenterprise.googleapis.com --project <PROJECT_ID>
+- gcloud services disable run.googleapis.com firestore.googleapis.com cloudbuild.googleapis.com eventarc.googleapis.com places.googleapis.com mapsjs.googleapis.com --project <PROJECT_ID>
 
 # Enable APIs when project is active again
-- gcloud services enable run.googleapis.com firestore.googleapis.com cloudbuild.googleapis.com eventarc.googleapis.com places.googleapis.com mapsjs.googleapis.com recaptchaenterprise.googleapis.com --project <PROJECT_ID>
+- gcloud services enable run.googleapis.com firestore.googleapis.com cloudbuild.googleapis.com eventarc.googleapis.com places.googleapis.com mapsjs.googleapis.com --project <PROJECT_ID>
 
 ---
 
