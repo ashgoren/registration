@@ -27,17 +27,18 @@ import { disableProjectAPIsHandler } from './automations/budget-cutoff.js';
 // Configuration constants (here because .env file is not yet loaded)
 const region = 'us-west1'; // also set in .env on client-side
 const timeZone = 'America/Los_Angeles';
-const enforceAppCheck = true;
+const enforceAppCheck = process.env.ENFORCE_APPCHECK === 'true'; // also set in .env on client-side
 
 // Combined into one callable function to reduce slow cold start preflight checks
 const firebaseFunctionDispatcherHandler = async (request) => {
   const hasToken = !!request.app?.token;
   const { action, data, metadata } = request.data;
 
-  logTokenStatus(hasToken, action, metadata);
+  if (enforceAppCheck) logTokenStatus(hasToken, action, metadata);
 
   try {
     switch(action) {
+      case 'getAppCheckToken': return { token: request.app?.token };
       case 'caffeinate': return { status: 'awake' };
       case 'initializePayment': return await initializePayment(
         data,

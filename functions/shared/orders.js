@@ -1,5 +1,5 @@
 import { getFirestore } from 'firebase-admin/firestore';
-import { createError, ErrorType } from '../shared/errorhandler.js';
+import { createError, ErrorType } from './errorHandler.js';
 
 export const ordersCollection = getFirestore().collection('orders');
 

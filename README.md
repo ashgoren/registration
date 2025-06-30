@@ -224,6 +224,7 @@ gcloud services api-keys create --flags-file=google-places-api-flags.yaml --proj
   - copy `siteKey` value to `TURNSTILE_SITE_KEY` in `.env.config.js`
 
 - Install [Cloudflare Turnstile App Check Provider extension](https://extensions.dev/extensions/cloudflare/cloudflare-turnstile-app-check-provider)
+  - get App ID (different from project id) from .env.config.js or from firebase console
   - TTL 60 minutes is fine
 
 - Install the client package for turnstile firebase app check: `npm i @cloudflare/turnstile-firebase-app-check`

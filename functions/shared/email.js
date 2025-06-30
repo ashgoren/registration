@@ -1,6 +1,6 @@
 import { logger } from 'firebase-functions/v2';
 import nodemailer from 'nodemailer';
-import { IS_EMULATOR } from '../shared/helpers.js';
+import { IS_EMULATOR } from './helpers.js';
 
 // Configure the email transport using Sendgrid with SMTP
 

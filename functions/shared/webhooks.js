@@ -1,7 +1,7 @@
 import { logger } from 'firebase-functions/v2';
 import { ordersCollection } from './orders.js';
 import { sendMail } from './email.js';
-import { createError, ErrorType } from './errorhandler.js';
+import { createError, ErrorType } from './errorHandler.js';
 import { PROJECT_ID, IS_SANDBOX } from './helpers.js';
 const { EMAIL_NOTIFY_TO } = process.env;
 
