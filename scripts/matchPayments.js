@@ -1,10 +1,13 @@
 import dotenv from 'dotenv';
 dotenv.config();
-const { VITE_FUNCTIONS_REGION, CLOUD_FUNCTIONS_TRIGGER_TOKEN, VITE_FIREBASE_PROJECT_ID } = process.env;
+const { VITE_CONFIG, CLOUD_FUNCTIONS_TRIGGER_TOKEN } = process.env;
+const { FUNCTIONS_REGION, FIREBASE_PROJECT_ID } = JSON.parse(VITE_CONFIG);
 
 console.log('Triggering matchPayments function...');
 
-const url = `https://${VITE_FUNCTIONS_REGION}-${VITE_FIREBASE_PROJECT_ID}.cloudfunctions.net/matchPaymentsOnDemand`;
+const url = `https://${FUNCTIONS_REGION}-${FIREBASE_PROJECT_ID}.cloudfunctions.net/matchPaymentsOnDemand`;
+console.log(`Request URL: ${url}`);
+
 const response = await fetch(url, {
   method: 'POST',
   headers: {
