@@ -28,7 +28,7 @@ const argv = yargs(hideBin(process.argv))
 
 const pending = argv.pending;
 const includeTestEmails = argv['include-test-emails'];
-const testDomains = includeTestEmails ? [] : process.env.SCRIPTS_TEST_DOMAINS.split(',').map((domain) => domain.trim());
+const testDomains = includeTestEmails ? [] : process.env.SCRIPTS_TEST_DOMAINS?.split(',')?.map((domain) => domain.trim());
 
 if (scriptName !== 'cleanupArtifacts.js') {
   console.log(includeTestEmails ? '' : 'Excluding test emails!\n');

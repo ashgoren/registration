@@ -59,6 +59,7 @@ cd [NAME]
 > git remote rm origin
 > gh repo create [NAME] [--public|private] --source=. --remote=origin
 > ```
+> If copying template over an existing project, maintain the .git directory from the existing project to preserve commit history.
 
 ---
 
@@ -67,6 +68,16 @@ cd [NAME]
 ```sh
 bash clear-old-settings.sh
 ```
+
+# Erase firebase functions from old project:
+```sh
+firebase functions:list
+firebase functions:delete <FUNCTION_NAME> --force
+```
+
+# Erase Firestore database from old project:
+
+- To avoid deleting data, could rename collections instead of deleting them.
 
 ---
 
@@ -120,7 +131,7 @@ gcloud billing projects link <PROJECT_ID> --billing-account <BILLING_ACCOUNT_ID>
 
 ```sh
 gcloud pubsub topics create budget-alerts --project <PROJECT_ID>
-gcloud beta billing budgets create --billing-account=BILLING_ACCOUNT_ID --display-name="PROJECT_ID Shutdown Budget" --budget-amount=100USD --project=PROJECT_ID --threshold-rule=percent=.01,basis=CURRENT_SPEND --threshold-rule=percent=.1,basis=CURRENT_SPEND --threshold-rule=percent=.5,basis=CURRENT_SPEND --threshold-rule=percent=1,basis=CURRENT_SPEND--all-updates-rule-pubsub-topic="projects/PROJECT_ID/topics/budget-alerts"
+gcloud beta billing budgets create --billing-account=BILLING_ACCOUNT_ID --display-name="PROJECT_ID Shutdown Budget" --budget-amount=100USD --project=PROJECT_ID --threshold-rule=percent=.01,basis=CURRENT_SPEND --threshold-rule=percent=.1,basis=CURRENT_SPEND --threshold-rule=percent=.5,basis=CURRENT_SPEND --threshold-rule=percent=1,basis=CURRENT_SPEND --all-updates-rule-pubsub-topic="projects/PROJECT_ID/topics/budget-alerts"
 ```
 
 ---
@@ -202,14 +213,17 @@ stripe listen --events payment_intent.succeeded --forward-to localhost:5001/<PRO
 
 ## If collecting addresses, setup Google Places API for address autocomplete
 
-- Update allowed-referrers list in `google-places-api-flags.yaml` file.
-
-Enable the google maps javascript API _and_ the *new* google places API. (Theoretically can use gcloud services enable via CLI, but may actually need to do from google cloud console.)
+Enable the google maps javascript API _and_ the *new* google places API. 
 
 ```sh
-gcloud services enable places.googleapis.com --project <PROJECT_ID>
-gcloud services enable mapsjs.googleapis.com --project <PROJECT_ID>
-gcloud services api-keys create --flags-file=google-places-api-flags.yaml --project <PROJECT_ID>
+gcloud services enable places.googleapis.com maps-backend.googleapis.com --project <PROJECT_ID>
+gcloud services api-keys create \
+  --display-name="Places and Maps API Key" \
+  --allowed-referrers="localhost:3000/*,<PROJECT_ID>.web.app/*,example.com/*,www.example.com/*" \
+  --api-target=service=places.googleapis.com \
+  --api-target=service=maps-backend.googleapis.com \
+  --project <PROJECT_ID>
+
 ```
 
 - Copy `keyString` value to `GOOGLE_PLACES_API_KEY` in `.env.config.js`.

@@ -26,7 +26,11 @@
 ### Give artifact registry permissions
 
 Replace `<PROJECT_ID>` and `<SERVICE_ACCOUNT_EMAIL>` with actual values.
+
+```sh
 gcloud projects add-iam-policy-binding <PROJECT_ID> --member="serviceAccount:<SERVICE_ACCOUNT_EMAIL>" --role="roles/artifactregistry.admin"
+gcloud projects add-iam-policy-binding <PROJECT_ID> --member="serviceAccount:<SERVICE_ACCOUNT_EMAIL>" --role="roles/artifactregistry.reader"
+```
 
 ### Configure Environment Variables
 

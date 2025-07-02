@@ -6,7 +6,7 @@ cp .env.config.js.example .env.config.js
 
 rm functions/.env
 rm functions/.env.local
-# rm functions/.env.<PROJECT_ID>
+rm functions/.env.contra-testing
 cp functions/.env.example functions/.env
 
 rm .firebaserc

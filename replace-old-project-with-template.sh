@@ -23,9 +23,6 @@ fi
 if [ -f "$TARGET_DIR/public" ]; then
   cp -R "$TARGET_DIR/public/" "$TARGET_DIR/backup/old-public"
 fi
-if [ -f "$TARGET_DIR/google-places-api-flags.yaml" ]; then
-  cp -R "$TARGET_DIR/google-places-api-flags.yaml/" "$TARGET_DIR/backup/old-google-places-api-flags.yaml"
-fi
 if [ -f "$TARGET_DIR/scripts/keys" ]; then
   cp -R "$TARGET_DIR/scripts/keys/" "$TARGET_DIR/backup/old-scripts-keys"
 fi
