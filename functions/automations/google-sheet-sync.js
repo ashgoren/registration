@@ -43,9 +43,11 @@ const mapOrderToSpreadsheetLines = (order) => {
     if (order.deposit) {
       deposit = order.deposit / people.length;
     } else {
+      deposit = 0;
       admission = parseInt(person.admission);
       total = isPurchaser ? admission + order.donation : admission;
     }
+    const fees = order.fees || 0;
     let paid, status;
     if (order.paymentId === 'waitlist') {
       admission = 0;
@@ -56,10 +58,10 @@ const mapOrderToSpreadsheetLines = (order) => {
       paid = 0;
       status = 'awaiting check';
     } else if (deposit > 0) {
-      paid = isPurchaser ? deposit + order.donation + order.fees : deposit;
+      paid = isPurchaser ? deposit + order.donation + fees : deposit;
       status = 'deposit';
     } else {
-      paid = isPurchaser ? total + order.fees : total;
+      paid = isPurchaser ? total + fees : total;
       status = 'paid';
     }
     const firstPersonPurchaserField = people.length > 1 ? `self (+${people.length - 1})` : 'self';
