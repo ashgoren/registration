@@ -10,7 +10,8 @@ export const sendEmailConfirmationsHandler = async (event) => {
     const { people } = after.data();
     for (const person of people) {
       const { email, receipt } = person;
-      if (testDomains.includes(email.split('@')[1])) {
+      const [emailUsername, emailDomain] = email.split('@');
+      if (testDomains.includes(emailDomain) && !emailUsername.includes('receipt')) {
         logger.info(`SKIPPING RECEIPT SEND: ${email}`);
       } else {
         await sendMail({
