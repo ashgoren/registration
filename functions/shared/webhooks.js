@@ -24,26 +24,19 @@ const getOrderByPaymentId = async (paymentId) => {
   }
 };
 
-const findPaymentInDatabase = async (paymentId, attempt = 0) => {
-  try {
+const findPaymentInDatabase = async (paymentId) => {
+  let attempt = 0;
+  const order = await getOrderByPaymentId(paymentId);
+  if (order) return order;
+  while (attempt < MAX_RETRIES) { // payment not found; retry
+    const delay = RETRY_DELAY_MS * Math.pow(2, attempt);
+    logger.warn(`Attempt ${attempt + 1}: Payment ID ${paymentId} not found, retrying in ${delay}ms`);
+    await new Promise(resolve => setTimeout(resolve, delay));
     const order = await getOrderByPaymentId(paymentId);
     if (order) return order;
-    if (attempt < MAX_RETRIES) { // payment not found; retry
-      const delay = RETRY_DELAY_MS * Math.pow(2, attempt);
-      logger.warn(`Attempt ${attempt + 1}: Payment ID ${paymentId} not found, retrying in ${delay}ms`);
-      await new Promise(resolve => setTimeout(resolve, delay));
-      return findPaymentInDatabase(paymentId, attempt + 1);
-    }
-    return null; // payment still not found after retries
-  } catch (error) { // handle DB errors
-    if (attempt < MAX_RETRIES) { // also retry on DB errors
-      const delay = RETRY_DELAY_MS * Math.pow(2, attempt);
-      logger.warn(`Attempt ${attempt + 1}: ${error.message}, retrying in ${delay}ms`, { paymentId });
-      await new Promise(resolve => setTimeout(resolve, delay));
-      return findPaymentInDatabase(paymentId, attempt + 1);
-    }
-    throw error; // re-throw DB errors after max retries
+    attempt++;
   }
+  return null; // payment still not found after retries
 };
 
 export const handlePaymentVerification = async (paymentId) => {
