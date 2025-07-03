@@ -343,7 +343,7 @@ Setup logs for Firebase functions to notify on error:
 These are used by GitHub Actions to deploy to Firebase.
 
 ```sh
-npm run generate-env
+npm run update-env
 ```
 
 ---
@@ -389,7 +389,8 @@ npm run dev
 
 - Set sandbox mode to false in `configBasics.jsx` and `functions/.env.<PROJECT_ID>`
 - Disable `enforceAppCheck` in `functions/index.js` if needed
-- Regenerate client-side `.env` and update GitHub `VITE_CONFIG` by running `npm run generate-env`
+- Ensure production webhook ID is set in `functions/.env.<PROJECT_ID>` 
+- Regenerate client-side `.env` and update GitHub `VITE_CONFIG` by running `npm run update-env`
 - Redeploy Firebase Functions with `--force`
 - Make registration link live on homepage & navbar
 - Clear spreadsheet
