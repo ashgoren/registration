@@ -23,3 +23,5 @@ if (!response.ok) {
 
 const data = await response.json();
 console.log(data.data || data.message || data.error || 'No data returned');
+
+console.log('\nNOTE: extraDatabaseOrders may confusingly include recent transactions due to PayPal API delay!!\n');
