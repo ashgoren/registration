@@ -42,8 +42,12 @@ export const PaymentFormDonation = ({ donationAmount }) => {
           pattern='###'
           range={[0, DONATION_MAX]}
           onBlur={updateDonationValue}
-          InputProps={{ startAdornment: <InputAdornment position='start'>$</InputAdornment> }}
-          autoFocus={values['donation'] === 0}
+          InputProps={{
+            startAdornment: <InputAdornment position='start'>$</InputAdornment>,
+            onFocus: (e) => e.target.select()
+          }}
+          autoFocus={values['donation'] === 0 || !values['donation']}
+          // value={values['donation'] === 0 ? '' : values['donation']}
         />
       }
     </StyledPaper>

@@ -12,7 +12,7 @@ import { execSync } from 'child_process';
 import { viteConfig, localScriptConfig } from './.env.config.js';
 
 if (!viteConfig || !localScriptConfig) {
-  throw new Error('Invalid configuration: .env.json viteConfig and localScriptConfig are required');
+  throw new Error('Invalid configuration: .env.config.js viteConfig and localScriptConfig are required');
 }
 
 const generateEnv = () => {
