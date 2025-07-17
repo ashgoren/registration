@@ -74,6 +74,7 @@ const fetchTransactionChunk = async (accessToken, startDate, endDate) => {
   }
 
   const data = await response.json();
+  if (data?.total_items === 0) return [];
   if (!data?.transaction_details || !Array.isArray(data.transaction_details)) {
     throw createError(ErrorType.PAYPAL_API, 'Invalid response format from PayPal transactions API');
   }
