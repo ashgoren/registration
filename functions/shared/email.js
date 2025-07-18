@@ -1,19 +1,20 @@
 import { logger } from 'firebase-functions/v2';
 import nodemailer from 'nodemailer';
 import { IS_EMULATOR } from './helpers.js';
+const { EMAIL_ENDPOINT, EMAIL_USER, EMAIL_PASSWORD, EMAIL_FROM } = process.env;
 
 // Configure the email transport using Sendgrid with SMTP
 
 const mailTransport = IS_EMULATOR ? null : nodemailer.createTransport({
-  host: 'smtp.sendgrid.net',
+  host: EMAIL_ENDPOINT,
   port: 587,
   auth: {
-      user: "apikey",
-      pass: process.env.EMAIL_SENDGRID_API_KEY
+      user: EMAIL_USER,
+      pass: EMAIL_PASSWORD
   }
 });
 
-const sendMail = async ({ from=process.env.EMAIL_FROM, to, subject, html=null, text=null, replyTo=null }) => {
+const sendMail = async ({ from=EMAIL_FROM, to, subject, html=null, text=null, replyTo=null }) => {
   if (IS_EMULATOR) {
     logger.info('Skipping email send in emulator', { from, to, subject, html, text });
     return;
