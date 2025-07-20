@@ -59,23 +59,25 @@ cd [NAME]
 > git remote rm origin
 > gh repo create [NAME] [--public|private] --source=. --remote=origin
 > ```
-> If copying template over an existing project, maintain the .git directory from the existing project to preserve commit history.
 
----
+## If copying template over an existing project:
 
-## Erase settings from old project:
+Maintain the `.git` directory from the existing project to preserve commit history.
+
+Erase settings from old project:
 
 ```sh
 bash clear-old-settings.sh
 ```
 
-# Erase firebase functions from old project:
+Erase firebase functions from old project:
+
 ```sh
 firebase functions:list
 firebase functions:delete <FUNCTION_NAME> --force
 ```
 
-# Erase Firestore database from old project:
+Erase Firestore database from old project:
 
 - To avoid deleting data, could rename collections instead of deleting them.
 
