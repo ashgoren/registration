@@ -1,3 +1,4 @@
+import { Link as RouterLink } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import { useTheme } from '@mui/system';
 import { Button, Paper, Link, Typography, Divider, FormLabel, Box } from '@mui/material';
@@ -27,17 +28,19 @@ const StyledButton = styled(Button)(({ theme, palette }) => ({
 }));
 
 const StyledLink = ({ children, internal=false, to, ...props }) => {
-  return (
-    <Link
-      href={to}
-      color='secondary'
-      target={internal ? '' : '_blank'}
-      rel={internal ? '' : 'noreferrer'}
-      {...props}
-    >
-      {children}
-    </Link>
-  );
+  if (internal) {
+    return (
+      <Link component={RouterLink} to={to} color='secondary'>
+        {children}
+      </Link>
+    );
+  } else {
+    return (
+      <Link href={to} color='secondary' target='_blank' rel='noreferrer' {...props}>
+        {children}
+      </Link>
+    );
+  }
 }
 
 const Title = ({ children, ...props }) => {
