@@ -9,7 +9,7 @@ Simple registration / admissions sales site for contra dance events.
 - App Check: Cloudflare Turnstile + Firebase App Check
 - Logging: Papertrail & Google Cloud Logging
 - Address autocomplete: Google Places API
-- Email: Amazon SES
+- Email: Sendgrid
 - Payment: Stripe or PayPal
 
 # Configuration
@@ -21,7 +21,7 @@ Simple registration / admissions sales site for contra dance events.
 
 - Account: [GitHub](https://github.com/)
 - Account: [Firebase](https://firebase.google.com/)
-- Account: [Amazon SES](https://aws.amazon.com/ses/)
+- Account: [Sendgrid](https://sendgrid.com/)
 - Account: [Papertrail](https://papertrailapp.com/)
 - Account: [Stripe](https://stripe.com/) or [PayPal](https://www.paypal.com/)
 
@@ -54,30 +54,28 @@ cd [NAME]
 > [!NOTE]
 > If you previously forked this for another instance, it won't be possible to fork again. Instead, duplicate existing local project and create a new repo:
 > ```sh
-> rsync -avh [SOURCE_DIR]/ [DESTINATION_DIR]/ # include trailing slashes
+> cp -R [SOURCE_DIR] [DESTINATION_DIR]
 > cd [DESTINATION_DIR]
 > git remote rm origin
 > gh repo create [NAME] [--public|private] --source=. --remote=origin
 > ```
+> If copying template over an existing project, maintain the .git directory from the existing project to preserve commit history.
 
-## If copying template over an existing project:
+---
 
-Maintain the `.git` directory from the existing project to preserve commit history.
-
-Erase settings from old project:
+## Erase settings from old project:
 
 ```sh
 bash clear-old-settings.sh
 ```
 
-Erase firebase functions from old project:
-
+# Erase firebase functions from old project:
 ```sh
 firebase functions:list
 firebase functions:delete <FUNCTION_NAME> --force
 ```
 
-Erase Firestore database from old project:
+# Erase Firestore database from old project:
 
 - To avoid deleting data, could rename collections instead of deleting them.
 
@@ -291,14 +289,12 @@ rm tmp.json
 
 ## Setup Email Confirmation:
 
-Create Amazon SES SMTP credentials, update values in `functions/.env`:
+Create a Sendgrid API key, update values in `functions/.env`:
 
-- `EMAIL_ENDPOINT` (from Amazon SES SMTP settings)
-- `EMAIL_USER` (from Amazon SES SMTP settings)
-- `EMAIL_PASSWORD` (from Amazon SES SMTP settings)
-- `EMAIL_FROM` (e.g. `"Awesome Event" <info@example.com>`)
+- `EMAIL_SENDGRID_API_KEY`
+- `EMAIL_FROM`
 - `EMAIL_SUBJECT`
-- `EMAIL_REPLY_TO` (if different from `EMAIL_FROM`)
+- `EMAIL_REPLY_TO` (if needed)
 
 ---
 
@@ -392,8 +388,8 @@ npm run dev
 # When switching to live mode
 
 - Set sandbox mode to false in `configBasics.jsx` and `functions/.env.<PROJECT_ID>`
-- Disable `enforceAppCheck` in `functions/index.js` if needed
-- Ensure production webhook ID is set in `functions/.env.<PROJECT_ID>` 
+- Ensure production webhook ID is set in `functions/.env.<PROJECT_ID>`
+- Disable `enforceAppCheck` in `.env.config.js` & `functions/.env` if needed
 - Regenerate client-side `.env` and update GitHub `VITE_CONFIG` by running `npm run update-env`
 - Redeploy Firebase Functions with `--force`
 - Make registration link live on homepage & navbar
