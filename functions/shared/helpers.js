@@ -28,16 +28,17 @@ export const formatDateTime = (date) => {
 
 export const getDateChunks = (start, end, days) => {
   const chunks = [];
+  const now = new Date();
   let current = new Date(start);
 
   while (current < end) {
     const chunkStart = new Date(current);
     current.setDate(current.getDate() + days); // increment by specified number of days
     const chunkEnd = current > end ? end : new Date(current.getTime() - 1); // subtract 1 ms to avoid overlap
-
-    chunks.push({ start: chunkStart, end: chunkEnd });
+    if (chunkStart < now) {
+      chunks.push({ start: chunkStart, end: chunkEnd });
+    }
   }
-
   return chunks;
 };
 
