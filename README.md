@@ -8,7 +8,7 @@ Simple registration / admissions sales site for contra dance events.
 - Serverless functions: Firebase Functions
 - Logging: Papertrail & Google Cloud Logging
 - Address autocomplete: Google Places API
-- Email: Sendgrid
+- Email: Amazon SES
 - Payment: Stripe or PayPal
 
 # Configuration
@@ -20,7 +20,7 @@ Simple registration / admissions sales site for contra dance events.
 
 - Account: [GitHub](https://github.com/)
 - Account: [Firebase](https://firebase.google.com/)
-- Account: [Sendgrid](https://sendgrid.com/)
+- Account: [Amazon SES](https://aws.amazon.com/ses/)
 - Account: [Papertrail](https://papertrailapp.com/)
 - Account: [Stripe](https://stripe.com/) or [PayPal](https://www.paypal.com/)
 
@@ -263,12 +263,17 @@ rm tmp.json
 
 ## Setup Email Confirmation:
 
-Create a Sendgrid API key, update values in `functions/.env`:
+Create an Amazon SES API key, update values in `functions/.env`:
 
-- `EMAIL_SENDGRID_API_KEY`
 - `EMAIL_FROM`
 - `EMAIL_SUBJECT`
 - `EMAIL_REPLY_TO` (if needed)
+- `EMAIL_IGNORE_TEST_DOMAINS` (comma-separated list of test domains to ignore for receipts etc)
+- `EMAIL_NOTIFY` (admin email)
+
+- `EMAIL_ENDPOINT` (from Amazon SES SMTP settings)
+- `EMAIL_USER` (from Amazon SES SMTP settings)
+- `EMAIL_PASSWORD` (from Amazon SES SMTP settings)
 
 ---
 
