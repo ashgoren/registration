@@ -6,7 +6,6 @@ Simple registration / admissions sales site for contra dance events.
 - Hosting: Firebase Hosting
 - Database: Firebase Firestore
 - Serverless functions: Firebase Functions
-- App Check: Cloudflare Turnstile + Firebase App Check
 - Logging: Papertrail & Google Cloud Logging
 - Address autocomplete: Google Places API
 - Email: Sendgrid
@@ -230,31 +229,6 @@ gcloud services api-keys create \
 
 ---
 
-## Setup Firebase App Check
-
-- Setup [Cloudflare Turnstile](https://firebase.google.com/docs/app-check/turnstile)
-  - Add hostname (and localhost for testing)
-  - Invisible mode
-  - copy `siteKey` value to `TURNSTILE_SITE_KEY` in `.env.config.js`
-
-- Install [Cloudflare Turnstile App Check Provider extension](https://extensions.dev/extensions/cloudflare/cloudflare-turnstile-app-check-provider)
-  - get App ID (different from project id) from .env.config.js or from firebase console
-  - TTL 60 minutes is fine
-
-- Install the client package for turnstile firebase app check: `npm i @cloudflare/turnstile-firebase-app-check`
-
-- Get the URL of the newly created Firebase function and copy it to `TURNSTILE_FUNCTION_URL` in `.env.config.js`.
-
-- In Google Cloud IAM, click "Grant access" and give the ext-cloudflare-turnstile service account the "Service Account Token Creator" role.
-
-- Enable Firebase App Check: https://console.firebase.google.com/project/<PROJECT_ID>/appcheck/apps
-  - just using this for debug token for dev, so can put dummy value for recaptcha site key?
-  - generate debug token for use in development mode:
-    - click 3 dots, Manage debug token, Add debug token, Generate token, give it whatever name you want
-    - copy the token value and add it to `.env.config.js` as `APPCHECK_DEBUG_TOKEN`
-
----
-
 ## Enable Papertrail for client-side logging (routed through firebase function)
 
 - Create log destination on [papertrail](https://papertrailapp.com/account/destinations)
@@ -389,7 +363,6 @@ npm run dev
 
 - Set sandbox mode to false in `configBasics.jsx` and `functions/.env.<PROJECT_ID>`
 - Ensure production webhook ID is set in `functions/.env.<PROJECT_ID>`
-- Disable `enforceAppCheck` in `.env.config.js` & `functions/.env` if needed
 - Regenerate client-side `.env` and update GitHub `VITE_CONFIG` by running `npm run update-env`
 - Redeploy Firebase Functions with `--force`
 - Make registration link live on homepage & navbar

@@ -1,16 +1,4 @@
-import { logger } from 'firebase-functions/v2';
-
 const { FIREBASE_AUTH_EMULATOR_HOST, FIRESTORE_EMULATOR_HOST, FUNCTIONS_EMULATOR, SANDBOX_MODE, GCLOUD_PROJECT } = process.env;
-
-export const logTokenStatus = (hasToken, action, metadata) => {
-  if (action !== 'caffeinate' && action !== 'logToPapertrail') {
-    const email = metadata?.email;
-    logger[hasToken ? 'info' : 'warn'](
-      'AppCheck ' + (hasToken ? 'success' : 'fail') + (email ? `: ${email}` : ''),
-      { ...metadata, action }
-    );
-  };
-};
 
 export const formatDateTime = (date) => {
   if (!date) return null;

@@ -4,7 +4,6 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { onMessagePublished } from 'firebase-functions/v2/pubsub';
 import { handleFunctionError } from './shared/errorHandler.js';
-import { logTokenStatus } from './shared/helpers.js';
 
 // Functions called by firebaseFunctionDispatcher
 import { logToPapertrail } from './api/logToPapertrail.js';
@@ -27,18 +26,13 @@ import { disableProjectAPIsHandler } from './automations/budget-cutoff.js';
 // Configuration constants (here because .env file is not yet loaded)
 const region = 'us-west1'; // also set in .env on client-side
 const timeZone = 'America/Los_Angeles';
-const enforceAppCheck = process.env.ENFORCE_APPCHECK === 'true'; // also set in .env on client-side
 
 // Combined into one callable function to reduce slow cold start preflight checks
 const firebaseFunctionDispatcherHandler = async (request) => {
-  const hasToken = !!request.app?.token;
-  const { action, data, metadata } = request.data;
-
-  if (enforceAppCheck) logTokenStatus(hasToken, action, metadata);
+  const { action, data } = request.data;
 
   try {
     switch(action) {
-      case 'getAppCheckToken': return { token: request.app?.token };
       case 'caffeinate': return { status: 'awake' };
       case 'initializePayment': return await initializePayment(
         data,
@@ -126,7 +120,7 @@ const onMessagePublishedFunctions = [
 const exports = {};
 
 onCallFunctions.forEach(({ name, handler }) => {
-  exports[name] = onCall({ enforceAppCheck, region }, handler);
+  exports[name] = onCall({ region }, handler);
 });
 
 onRequestFunctions.forEach(({ name, handler }) => {
