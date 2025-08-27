@@ -1,25 +1,23 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFunctions, connectFunctionsEmulator, httpsCallable } from 'firebase/functions';
-import configEnv from 'config/configEnv';
 import configBasics from 'config/configBasics';
 
-const { FIREBASE_API_KEY, FIREBASE_AUTH_DOMAIN, FIREBASE_PROJECT_ID, FIREBASE_STORAGE_BUCKET, FIREBASE_SENDER_ID, FIREBASE_APP_ID } = configEnv;
-const { FUNCTIONS_REGION } = configEnv;
+const { VITE_FIREBASE_API_KEY, VITE_FIREBASE_AUTH_DOMAIN, VITE_FIREBASE_PROJECT_ID, VITE_FIREBASE_STORAGE_BUCKET, VITE_FIREBASE_SENDER_ID, VITE_FIREBASE_APP_ID, VITE_FUNCTIONS_REGION } = import.meta.env;
 const { USE_FIREBASE_EMULATOR } = configBasics;
 
 const firebaseConfig = {
-  apiKey: FIREBASE_API_KEY,
-  authDomain: FIREBASE_AUTH_DOMAIN,
-  projectId: FIREBASE_PROJECT_ID,
-  storageBucket: FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: FIREBASE_SENDER_ID,
-  appId: FIREBASE_APP_ID
+  apiKey: VITE_FIREBASE_API_KEY,
+  authDomain: VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: VITE_FIREBASE_PROJECT_ID,
+  storageBucket: VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: VITE_FIREBASE_SENDER_ID,
+  appId: VITE_FIREBASE_APP_ID
 }
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 // initial setup of Firebase functions
-const functions = getFunctions(app, FUNCTIONS_REGION);
+const functions = getFunctions(app, VITE_FUNCTIONS_REGION);
 if (USE_FIREBASE_EMULATOR) {
   console.log('Using Firebase Emulator');
   connectFunctionsEmulator(functions, 'localhost', 5001);
