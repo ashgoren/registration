@@ -7,6 +7,7 @@ Simple registration / admissions sales site for contra dance events.
 - Database: Firebase Firestore
 - Serverless functions: Firebase Functions
 - Logging: Papertrail & Google Cloud Logging
+- Secrets management: Doppler & Google Cloud Secret Manager
 - Address autocomplete: Google Places API
 - Email: Amazon SES
 - Payment: Stripe or PayPal
@@ -20,6 +21,7 @@ Simple registration / admissions sales site for contra dance events.
 
 - Account: [GitHub](https://github.com/)
 - Account: [Firebase](https://firebase.google.com/)
+- Account: [Doppler](https://www.doppler.com/)
 - Account: [Amazon SES](https://aws.amazon.com/ses/)
 - Account: [Papertrail](https://papertrailapp.com/)
 - Account: [Stripe](https://stripe.com/) or [PayPal](https://www.paypal.com/)
@@ -31,6 +33,9 @@ Simple registration / admissions sales site for contra dance events.
 
 - Install: [Firebase CLI](https://firebase.google.com/docs/cli)
   - Login to the Firebase CLI: `firebase login`
+
+- Install: [Doppler CLI](https://www.doppler.com/docs/cli)
+  - Login to the Doppler CLI: `doppler login`
 
 - Install: [Google Cloud CLI](https://cloud.google.com/sdk/docs/install-sdk)
   - Login to the Google Cloud CLI: `gcloud auth login`
@@ -135,14 +140,51 @@ gcloud beta billing budgets create --billing-account=BILLING_ACCOUNT_ID --displa
 
 ---
 
-## Create Firebase web app and add config to `.env.config.js`
+## Secrets management
+
+- Create Doppler front-end and back-end projects:
+
+```sh
+doppler projects create <PROJECT_ID>-frontend
+doppler projects create <PROJECT_ID>-backend
+```
+
+- Create Doppler tokens and save to GitHub secrets:
+
+```sh
+echo $(doppler configs tokens create --project template-frontend --config stg github-stg-token --plain) | gh secret set DOPPLER_TOKEN_STG
+echo $(doppler configs tokens create --project template-frontend --config prd github-prd-token --plain) | gh secret set DOPPLER_TOKEN_PRD
+```
+
+> [!NOTE]
+> Replace all references to `doppler-set` below with actual path to script (from project root `./scripts/doppler-set.js`)
+
+---
+
+## Create Firebase web app and add config to Doppler
 
 - From [Firebase console](https://console.firebase.google.com/), select your project, click "Add app" and choose the web (`</>`) option.
 - Get Firebase web app config values by running the following command in the project directory:
   ```sh
   firebase apps:sdkconfig web
   ```
-- Fill in `.env.config.js` file with values from the output of the previous command.
+- Save the Firebase web app config values to Doppler:
+```sh
+doppler-set -p <PROJECT_ID> -t frontend VITE_FIREBASE_PROJECT_ID "<value>"
+doppler-set -p <PROJECT_ID> -t frontend VITE_FIREBASE_APP_ID "<value>"
+doppler-set -p <PROJECT_ID> -t frontend VITE_FIREBASE_STORAGE_BUCKET "<value>"
+doppler-set -p <PROJECT_ID> -t frontend VITE_FIREBASE_API_KEY "<value>"
+doppler-set -p <PROJECT_ID> -t frontend VITE_FIREBASE_AUTH_DOMAIN "<value>"
+doppler-set -p <PROJECT_ID> -t frontend VITE_FIREBASE_MESSAGING_SENDER_ID "<value>"
+```
+
+---
+
+## Set functions region in Doppler for frontend and in `functions/index.js` for backend
+
+```sh
+doppler-set -p <PROJECT_ID> -t frontend VITE_FUNCTIONS_REGION "us-west1"
+```
 
 ---
 
@@ -157,19 +199,34 @@ gcloud beta billing budgets create --billing-account=BILLING_ACCOUNT_ID --displa
 
 For both Stripe and PayPal, use test / sandbox mode keys until ready to launch.
 
-Stripe configuration:
+### Stripe configuration
+
 - On Stripe console, disable all payment methods except Cards, Apple Pay, Google Pay
 - Apple Pay: requires stripe domain auth
-- Copy the test mode `publishable key` to the `.env.config.js` file. (Use test key until ready to launch.)
+
+- Set the test & live mode `publishable key` in Doppler:
+```sh
+doppler-set -p <PROJECT_ID> -t frontend --dev --stg VITE_STRIPE_PUBLISHABLE_KEY "<test_mode_value>"
+doppler-set -p <PROJECT_ID> -t frontend --prd VITE_STRIPE_PUBLISHABLE_KEY "<live_mode_value>"
+```
+
 - set Stripe sandbox mode secret key in `functions/.env`
 - set Stripe produciton mode secret key in `functions/.env.<PROJECT_ID>`
 - set Stripe statement_descriptor_suffix in `functions/.env` (optional)
 
-PayPal configuration:
+### PayPal configuration
+
 - Don't want to accept Venmo? Comment out the venmo line in `configPaypal.jsx`.
-- Copy the sandbox mode `client ID` to `.env.config.js` and to `functions/.env`
-- Copy the sandbox mode `secret` to `functions/.env`
-- Copy the production mode `client ID` and `secret` to `functions/.env.<PROEJCT_ID>`
+
+- Set the test & live mode `publishable key` in Doppler:
+```sh
+doppler-set -p <PROJECT_ID> -t frontend --dev --stg VITE_PAYPAL_CLIENT_ID "<test_mode_value>"
+doppler-set -p <PROJECT_ID> -t frontend --prd VITE_PAYPAL_CLIENT_ID "<live_mode_value>"
+```
+
+- set sandbox mode `client ID` in `functions/.env`
+- set sandbox mode `secret` in `functions/.env`
+- set production mode `client ID` and `secret` in `functions/.env.<PROJECT_ID>`
 
 ---
 
@@ -225,7 +282,10 @@ gcloud services api-keys create \
 
 ```
 
-- Copy `keyString` value to `GOOGLE_PLACES_API_KEY` in `.env.config.js`.
+- Save the `keyString` value to Doppler:
+```sh
+doppler-set -p <PROJECT_ID> -t frontend VITE_GOOGLE_PLACES_API_KEY "<value>"
+```
 
 ---
 
@@ -317,17 +377,9 @@ Setup logs for Firebase functions to notify on error:
 
 ---
 
-## Generate `.env` file for dev and VITE_CONFIG on GitHub for prod:
+## Configure Firebase Hosting
 
-These are used by GitHub Actions to deploy to Firebase.
-
-```sh
-npm run update-env
-```
-
----
-
-## Add Firebase Service Account as GitHub Secret:
+#### Add Firebase Service Account as GitHub Secret:
 
 ```sh
 # answer no to questions, as this is already configured
@@ -337,11 +389,19 @@ rm .github/workflows/firebase-hosting-pull-request.yml
 
 - Set `firebaseServiceAccount` value in `.github/workflows/firebase-hosting-merge.yml` GitHub workflow to name of that GitHub secret.
 
+#### Add Firebase Hosting staging channel:
+
+```sh
+firebase hosting:channel:create staging
+```
+
+#### Add custom domains for Firebase Hosting:
+
+- In Firebase Console add custom domains for both live and staging. (e.g. example.com and staging.example.com)
+
 ---
 
 # Development 
-
-Ensure root directory `.env` is generated after any updates to `.env.config.js`, then:
 
 First time setup:
 ```sh
@@ -368,7 +428,6 @@ npm run dev
 
 - Set sandbox mode to false in `configBasics.jsx` and `functions/.env.<PROJECT_ID>`
 - Ensure production webhook ID is set in `functions/.env.<PROJECT_ID>`
-- Regenerate client-side `.env` and update GitHub `VITE_CONFIG` by running `npm run update-env`
 - Redeploy Firebase Functions with `--force`
 - Make registration link live on homepage & navbar
 - Clear spreadsheet

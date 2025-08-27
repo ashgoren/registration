@@ -18,6 +18,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@vitejs/plugin-react-swc": "^3.9.0",
     "bootstrap": "^5.3.6",
+    "commander": "^14.0.0",
     "dompurify": "^3.2.5",
     "firebase": "^11.7.3",
     "firebase-admin": "^13.4.0",
@@ -41,23 +42,25 @@
     "yup": "^1.6.1"
   },
   "scripts": {
-    "start": "vite",
-    "dev": "vite",
+    "start": "doppler run -- vite",
+    "dev": "doppler run -- vite",
     "build": "vite build",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "vitest",
     "test:coverage": "vitest run --coverage --watch=false",
-    "orders": "node ./scripts/orders.js",
-    "missing": "node ./scripts/missing.js",
-    "spreadsheet": "node ./scripts/spreadsheet.js",
-    "cleanup-artifacts": "node ./scripts/cleanupArtifacts.js",
-    "matchPayments": "node ./scripts/matchPayments.js",
+
+    "orders": "doppler run -- node ./scripts/orders.js",
+    "missing": "doppler run -- node ./scripts/missing.js",
+    "spreadsheet": "doppler run -- node ./scripts/spreadsheet.js",
+    "cleanup-artifacts": "doppler run -- node ./scripts/cleanupArtifacts.js",
+    "matchPayments": "doppler run -- node ./scripts/matchPayments.js",
+
     "emulator": "firebase emulators:start --only functions",
     "emulator:isolated": "firebase emulators:start",
+
     "localtunnel-paypal": "lt -p 5001 -s contra-registration",
-    "localtunnel-stripe": "stripe listen --events payment_intent.succeeded --forward-to localhost:5001/contra-testing/us-west1/stripeWebhook",
-    "update-env": "node ./generate-env.js"
+    "localtunnel-stripe": "stripe listen --events payment_intent.succeeded --forward-to localhost:5001/contra-testing/us-west1/stripeWebhook"
   },
   "browserslist": {
     "production": [

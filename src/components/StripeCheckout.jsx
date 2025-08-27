@@ -6,11 +6,10 @@ import { useOrder } from 'hooks/useOrder';
 import { useOrderSaving } from 'hooks/useOrderSaving';
 import { useStripePayment } from 'hooks/useStripePayment';
 import { config } from 'config';
-const { SANDBOX_MODE, PAYMENT_METHODS, TECH_CONTACT, STRIPE_PUBLISHABLE_KEY_SANDBOX, STRIPE_PUBLISHABLE_KEY_LIVE, USE_FIREBASE_EMULATOR} = config;
+const { SANDBOX_MODE, PAYMENT_METHODS, TECH_CONTACT } = config;
+const { VITE_STRIPE_PUBLISHABLE_KEY } = import.meta.env;
 
-const stripePublishableKey = SANDBOX_MODE || USE_FIREBASE_EMULATOR ? STRIPE_PUBLISHABLE_KEY_SANDBOX : STRIPE_PUBLISHABLE_KEY_LIVE;
-
-const stripePromise = PAYMENT_METHODS.includes('stripe') ? loadStripe(stripePublishableKey) : null;
+const stripePromise = PAYMENT_METHODS.includes('stripe') ? loadStripe(VITE_STRIPE_PUBLISHABLE_KEY) : null;
 
 // this wrapper is required to use the Stripe Elements component
 export const StripeCheckout = ({ total }) => {

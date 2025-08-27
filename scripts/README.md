@@ -34,18 +34,28 @@ gcloud projects add-iam-policy-binding <PROJECT_ID> --member="serviceAccount:<SE
 
 ### Configure Environment Variables
 
-- Fill in `SCRIPTS_TEST_DOMAINS` in `/.env.config.js`
+- Set `SCRIPTS_TEST_DOMAINS` in Doppler:
   - comma-separated list of test domains to ignore when listing emails in these scripts
   - e.g. `example.com,test.com`
 
-- Generate a random uuid and save as `CLOUD_FUNCTIONS_TRIGGER_TOKEN` in both `.env.config.js` and `functions/.env`
+```sh
+doppler-set -p <PROJECT_ID> -t frontend SCRIPTS_TEST_DOMAINS "<value>"
+```
+
+- Generate and save a random uuid as `CLOUD_FUNCTIONS_TRIGGER_TOKEN` in Doppler:
+
+```sh
+doppler-set -p <PROJECT_ID> -t frontend CLOUD_FUNCTIONS_TRIGGER_TOKEN "$(uuidgen)"
+```
+
+- Save that same uuid in `functions/.env`
 
 ---
 
 ## Usage
 
 > [!NOTE]
-> By default the orders script ignores emails listed as test domains in `.env.config.js`. To include them, use the `--all`/`--include-test-emails` flag.
+> By default the orders script ignores emails listed in `SCRIPTS_TEST_DOMAINS`. To include them, use the `--all`/`--include-test-emails` flag.
 
 
 ### List all completed orders (or pending, with flag)

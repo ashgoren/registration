@@ -2,8 +2,7 @@ import { memo, useMemo, useEffect, useState, useCallback, useRef } from 'react';
 import { useField } from 'formik';
 import { TextField, Popper, Paper, List, ListItemButton, ListItemText, ClickAwayListener } from '@mui/material';
 import { usePlacesAutocomplete } from 'hooks/usePlacesAutocomplete';
-import { config } from 'config';
-const { GOOGLE_PLACES_API_KEY } = config;
+const { VITE_GOOGLE_PLACES_API_KEY } = import.meta.env;
 
 const PLACES_FIELD_MAPPING = {
   address: ['street_number', 'route'],
@@ -29,7 +28,7 @@ export const AddressAutocompleteInput = memo(({ label, name, ...props }) => {
   const wasManuallyTriggered = useRef(false);
 
   // Initialize Places API hook
-  const { predictions, getPredictions, getPlaceDetails, clearPredictions } = usePlacesAutocomplete(GOOGLE_PLACES_API_KEY);
+  const { predictions, getPredictions, getPlaceDetails, clearPredictions } = usePlacesAutocomplete(VITE_GOOGLE_PLACES_API_KEY);
 
   // --- Fix for errors on these fields not disappearing after browser autofill ---
   useEffect(() => {

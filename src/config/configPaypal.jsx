@@ -1,14 +1,8 @@
-import configEnv from './configEnv';
-import configBasics from './configBasics';
-
-const { SANDBOX_MODE, USE_FIREBASE_EMULATOR } = configBasics;
-const { PAYPAL_CLIENT_ID_SANDBOX, PAYPAL_CLIENT_ID_LIVE } = configEnv;
-
-const paypalClientId = SANDBOX_MODE || USE_FIREBASE_EMULATOR ? PAYPAL_CLIENT_ID_SANDBOX : PAYPAL_CLIENT_ID_LIVE;
+const { VITE_PAYPAL_CLIENT_ID } = import.meta.env;
 
 const config = {
   PAYPAL_OPTIONS: {
-    "client-id": paypalClientId,
+    "client-id": VITE_PAYPAL_CLIENT_ID,
     "disable-funding": "paylater,credit",
     "enable-funding": "venmo",
     "currency": "USD",

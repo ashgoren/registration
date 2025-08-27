@@ -44,15 +44,7 @@ const baseConfig = {
   DIRECT_PAYMENT_URL: 'example.com/directpayment',
   CHECK_TO: 'Example Check To',
   CHECK_ADDRESS: <>Example Address line 1<br />Example Address line 2<br />Example Address line 3<br />Example Address line 4</>,
-  PAYMENT_DUE_DATE: 'Example Payment Due Date',
-
-  PERSON_INPUT_LABELS: [ 'Your contact information', 'Second admission', 'Third admission', 'Fourth admission' ],
-  NUM_PAGES: 2,
-  STEPS: [
-    {key: 1, label: 'Info'},
-    {key: 2, label: 'Payment'},
-    {key: 'checkout', label: 'Checkout'}
-  ],
+  PAYMENT_DUE_DATE: 'Example Payment Due Date'
 };
 
 const exportWithOverrides = {

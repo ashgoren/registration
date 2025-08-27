@@ -24,7 +24,7 @@ import { disableProjectAPIsHandler } from './automations/budget-cutoff.js';
 
 
 // Configuration constants (here because .env file is not yet loaded)
-const region = 'us-west1'; // also set in .env on client-side
+const region = 'us-west1'; // also set in Doppler on client-side
 const timeZone = 'America/Los_Angeles';
 
 // Combined into one callable function to reduce slow cold start preflight checks

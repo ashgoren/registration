@@ -7,6 +7,7 @@ import { ArtifactRegistryClient } from '@google-cloud/artifact-registry';
 // import { google } from 'googleapis';
 import dotenv from 'dotenv';
 dotenv.config();
+const { SCRIPTS_TEST_DOMAINS } = process.env;
 
 const scriptName = process.argv[1].split('/').pop();
 const argv = yargs(hideBin(process.argv))
@@ -28,7 +29,7 @@ const argv = yargs(hideBin(process.argv))
 
 const pending = argv.pending;
 const includeTestEmails = argv['include-test-emails'];
-const testDomains = includeTestEmails ? [] : process.env.SCRIPTS_TEST_DOMAINS?.split(',')?.map((domain) => domain.trim());
+const testDomains = includeTestEmails ? [] : SCRIPTS_TEST_DOMAINS?.split(',')?.map((domain) => domain.trim());
 
 if (scriptName !== 'cleanupArtifacts.js') {
   console.log(includeTestEmails ? '' : 'Excluding test emails!\n');
