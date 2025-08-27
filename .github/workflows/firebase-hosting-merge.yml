@@ -36,14 +36,6 @@ jobs:
       - name: Build Project
         run: npm run build
 
-      - name: Verify Build Output
-        run: |
-          echo "Listing files in the root directory..."
-          ls -la
-          echo "---"
-          echo "Listing files in the dist directory..."
-          ls -R ./dist
-
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
