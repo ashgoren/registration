@@ -26,19 +26,28 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Fetch Secrets From Doppler
-        uses: dopplerhq/cli-action@v3
+      - name: Fetch Secrets from Doppler
+        uses: dopplerhq/secrets-fetch-action@v1.3.0
+        id: doppler
         with:
           doppler-token: ${{ env.DOPPLER_TOKEN }}
-          config: ${{ env.DOPPLER_STAGE }}
+          inject-env-vars: true
 
       - name: Build Project
         run: npm run build
+
+      - name: Verify Build Output
+        run: |
+          echo "Listing files in the root directory..."
+          ls -la
+          echo "---"
+          echo "Listing files in the dist directory..."
+          ls -R ./dist
 
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          projectId: '${{ env.VITE_FIREBASE_PROJECT_ID }}'
           channelId: ${{ env.FIREBASE_CHANNEL }}
+          projectId: 'contra-testing'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_CONTRA_TESTING }}'
