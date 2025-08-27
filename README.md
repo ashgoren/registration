@@ -418,9 +418,8 @@ npm run dev
 
 # Deployment via GitHub workflow and Firebase hosting
 
-- Ensure `VITE_CONFIG` is updated on repo [secrets](https://github.com/[GITHUB_USER]/[GITHUB_REPO]/settings/secrets/actions)
 - Ensure `firebaseServiceAccount` is updated in `.github/workflows/firebase-hosting-merge.yml`
-- If update Github secrets, must redeploy
+- If update Doppler stg/prd secrets, must redeploy
 
 ---
 
@@ -428,6 +427,7 @@ npm run dev
 
 - Set sandbox mode to false in `configBasics.jsx` and `functions/.env.<PROJECT_ID>`
 - Ensure production webhook ID is set in `functions/.env.<PROJECT_ID>`
+- Ensure live mode Stripe or PayPal keys are set in Doppler and `functions/.env` (and redeploy both front-end and back-end if changed)
 - Redeploy Firebase Functions with `--force`
 - Make registration link live on homepage & navbar
 - Clear spreadsheet
