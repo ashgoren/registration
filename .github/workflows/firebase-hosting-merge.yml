@@ -13,7 +13,6 @@ jobs:
       DOPPLER_TOKEN: ${{ github.ref_name == 'main' && secrets.DOPPLER_TOKEN_PRD || secrets.DOPPLER_TOKEN_STG }}
       DOPPLER_STAGE: ${{ (github.ref_name == 'main' && 'prd') || 'stg' }}
       FIREBASE_CHANNEL: ${{ (github.ref_name == 'main' && 'live') || 'staging' }}
-      IS_PRODUCTION: ${{ github.ref_name == 'main' && 'true' || 'false' }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -24,8 +23,11 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install Dependencies
+      - name: Install Root Dependencies
         run: npm install
+
+      - name: Install Function Dependencies
+        run: npm --prefix functions install
 
       - name: Fetch Secrets from Doppler
         uses: dopplerhq/secrets-fetch-action@v1.3.0
@@ -36,6 +38,45 @@ jobs:
 
       - name: Build Project
         run: npm run build
+
+
+      # - name: Deploy to Firebase Fucntions
+      #   uses: jsryudev/deploy-firebase-functions@v20.0.1
+      #   env:
+      #     FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      #     FIREBASE_PROJECT: 'contra-testing'
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: '${{ secrets.FIREBASE_FUNCTIONS_DEPLOY_SERVICE_ACCOUNT }}'
+
+      # - name: 'Set up Cloud SDK'
+      #   uses: google-github-actions/setup-gcloud@v2
+
+      # - name: 'Verify Authentication'
+      #   run: 'gcloud auth list'
+
+      # - name: Deploy Firebase Functions
+      #   uses: w9jds/firebase-action@master
+      #   with:
+      #     args: deploy --only functions --project contra-testing
+      #   env:
+      #     GCP_SA_KEY: ${{ secrets.FIREBASE_FUNCTIONS_DEPLOY_SERVICE_ACCOUNT }}
+
+      # - name: Set active gcloud user
+      #   run: gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+
+      # - name: 🕵️ Attempt to Mint Access Token
+      #   run: |
+      #     echo "Attempting to generate token for the service account..."
+      #     gcloud auth print-access-token
+      #     echo "Token generation command finished."
+
+      - name: Deploy to Firebase
+        run: |
+          FB_TOKEN=$(gcloud auth print-access-token)
+          npx firebase-tools deploy --only functions --project 'contra-testing' --force --token "$FB_TOKEN"
 
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0

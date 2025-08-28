@@ -395,9 +395,35 @@ rm .github/workflows/firebase-hosting-pull-request.yml
 firebase hosting:channel:create staging
 ```
 
-#### Add custom domains for Firebase Hosting:
+---
 
-- In Firebase Console add custom domains for both live and staging. (e.g. example.com and staging.example.com)
+## Configure Firebase Functions deployment in GitHub workflow
+
+- Add necessary permission to existing Firebase service account used in GitHub secrets:
+
+<!-- ```sh
+gcloud iam service-accounts list --filter='displayName~"GitHub Actions"' --format='value(email)' --project=<PROJECT_ID>
+gcloud projects add-iam-policy-binding <PROJECT_ID> --member="serviceAccount:<SERVICE_ACCOUNT_EMAIL_FROM_PREVIOUS_COMMAND>" --role="roles/iam.serviceAccountUser"
+gcloud projects add-iam-policy-binding <PROJECT_ID> --member="serviceAccount:<SERVICE_ACCOUNT_EMAIL_FROM_PREVIOUS_COMMAND>" --role="roles/cloudfunctions.admin"
+gcloud projects add-iam-policy-binding <PROJECT_ID> --member="serviceAccount:<SERVICE_ACCOUNT_EMAIL_FROM_PREVIOUS_COMMAND>" --role="roles/serviceusage.serviceUsageAdmin"
+gcloud projects add-iam-policy-binding <PROJECT_ID> --member="serviceAccount:<SERVICE_ACCOUNT_EMAIL_FROM_PREVIOUS_COMMAND>" --role="roles/secretmanager.secretAccessor"
+gcloud projects add-iam-policy-binding <PROJECT_ID> --member="serviceAccount:<SERVICE_ACCOUNT_EMAIL_FROM_PREVIOUS_COMMAND>" --role="roles/logging.logWriter"
+gcloud projects add-iam-policy-binding <PROJECT_ID> --member="serviceAccount:<SERVICE_ACCOUNT_EMAIL_FROM_PREVIOUS_COMMAND>" --role="roles/datastore.user"
+gcloud projects add-iam-policy-binding <PROJECT_ID> --member="serviceAccount:<SERVICE_ACCOUNT_EMAIL_FROM_PREVIOUS_COMMAND>" --role="roles/storage.admin"
+gcloud projects add-iam-policy-binding <PROJECT_ID> --member="serviceAccount:<SERVICE_ACCOUNT_EMAIL_FROM_PREVIOUS_COMMAND>" --role="roles/run.admin"
+gcloud projects add-iam-policy-binding <PROJECT_ID> --member="serviceAccount:<SERVICE_ACCOUNT_EMAIL_FROM_PREVIOUS_COMMAND>" --role="roles/eventarc.admin"
+gcloud projects add-iam-policy-binding <PROJECT_ID> --member="serviceAccount:<SERVICE_ACCOUNT_EMAIL_FROM_PREVIOUS_COMMAND>" --role="roles/artifactregistry.writer"
+``` -->
+
+
+```sh
+gcloud iam service-accounts create firebase-functions-deploy --display-name "Firebase Functions Deploy" --project <PROJECT_ID>
+gcloud projects add-iam-policy-binding <PROJECT_ID> --member="serviceAccount:firebase-functions-deploy@<PROJECT_ID>.iam.gserviceaccount.com" --role="roles/iam.serviceAccountUser"
+gcloud projects add-iam-policy-binding <PROJECT_ID> --member="serviceAccount:firebase-functions-deploy@<PROJECT_ID>.iam.gserviceaccount.com" --role="roles/cloudfunctions.admin"
+gcloud iam service-accounts keys create tmp.json --iam-account firebase-functions-deploy@contra-testing.iam.gserviceaccount.com --project contra-testing
+cat tmp.json | gh secret set FIREBASE_FUNCTIONS_DEPLOY_SERVICE_ACCOUNT
+rm tmp.json
+```
 
 ---
 
