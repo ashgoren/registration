@@ -303,7 +303,7 @@ Setup spreadsheet for recording orders:
 - Make a copy of the [template spreadsheet](https://docs.google.com/spreadsheets/d/1gQ9l8wBTgNmiI0KmpECsDzCqePSPMnZFaecuj0VO_cU/edit?usp=sharing).
 - Update fields/columns as needed in spreadsheet _and_ in `functions/shared/fields.js`.
 
-Enable Sheets API, create Google Cloud service account, update values in `functions/.env`:
+Enable Sheets API, create Google Cloud service account, update values in `functions/config.js` and `functions/.env`:
 
 ```sh
 gcloud services enable sheets.googleapis.com --project <PROJECT_ID>
@@ -323,10 +323,11 @@ rm tmp.json
 
 ## Setup Email Confirmation:
 
-Create an Amazon SES API key, update values in `functions/.env`:
+Create an Amazon SES API key, update values in `functions/config.js` and `functions/.env`:
+
+- `EMAIL_SUBJECT`
 
 - `EMAIL_FROM`
-- `EMAIL_SUBJECT`
 - `EMAIL_REPLY_TO` (if needed)
 - `EMAIL_IGNORE_TEST_DOMAINS` (comma-separated list of test domains to ignore for receipts etc)
 - `EMAIL_NOTIFY` (admin email)
@@ -433,7 +434,7 @@ npm run dev
 
 # When switching to live mode
 
-- Set sandbox mode to false in `configBasics.jsx` and `functions/.env.<PROJECT_ID>`
+- Set sandbox mode to false in `configBasics.jsx` and `functions/.env`
 - Ensure production webhook ID is set in `functions/.env.<PROJECT_ID>`
 - Ensure live mode Stripe or PayPal keys are set in Doppler and `functions/.env` (and redeploy both front-end and back-end if changed)
 - Redeploy Firebase Functions with `--force`
