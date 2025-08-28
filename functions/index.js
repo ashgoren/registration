@@ -1,4 +1,5 @@
 import './initializeFirebase.js'; // Ensure Firebase is initialized before importing other modules
+import { logger } from 'firebase-functions/v2';
 import { onCall, onRequest } from 'firebase-functions/v2/https';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
@@ -29,6 +30,9 @@ const timeZone = 'America/Los_Angeles';
 
 // Combined into one callable function to reduce slow cold start preflight checks
 const firebaseFunctionDispatcherHandler = async (request) => {
+
+  logger.info('IS_PRODUCTION:', process.env.IS_PRODUCTION);
+
   const { action, data } = request.data;
 
   try {
