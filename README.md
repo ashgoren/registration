@@ -339,8 +339,16 @@ Create an Amazon SES API key, update values in `functions/.env`:
 
 ## Deploy Firebase Functions:
 
+### Configure Cleanup Policy
+
 ```sh
-cd functions && npm install && cd ..
+gcloud artifacts repositories set-cleanup-policies gcf-artifacts --policy cleanup-policy.json --location=<REGION> --project <PROJECT_ID>
+```
+
+### Deploy functions
+
+```sh
+npm install --prefix functions
 firebase deploy --only functions
 ```
 
