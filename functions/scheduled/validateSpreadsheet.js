@@ -10,10 +10,14 @@ import { getOrders } from '../shared/orders.js';
 import { readSheet } from '../shared/spreadsheet.js';
 import { sendMail } from '../shared/email.js';
 import { getOrderEmail, getOrderDomain } from '../shared/helpers.js';
-const testDomains = process.env.EMAIL_IGNORE_TEST_DOMAINS ? process.env.EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
+import { config } from '../config.js';
+import { PROJECT_ID } from '../shared/helpers.js';
 
-const KEY_COLUMN = process.env.SHEETS_KEY_COLUMN;
-const EMAIL_COLUMN = process.env.SHEETS_EMAIL_COLUMN;
+const { EMAIL_IGNORE_TEST_DOMAINS, SHEETS_KEY_COLUMN, SHEETS_EMAIL_COLUMN, EMAIL_NOTIFY_TO } = config;
+const testDomains = EMAIL_IGNORE_TEST_DOMAINS ? EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
+
+const KEY_COLUMN = SHEETS_KEY_COLUMN;
+const EMAIL_COLUMN = SHEETS_EMAIL_COLUMN;
 
 // Scheduled function to check for missing orders in the spreadsheet
 export const missingFromSpreadsheetHandler = async () => {
@@ -33,8 +37,8 @@ export const missingFromSpreadsheetHandler = async () => {
     logger.info(`Final orders missing from spreadsheet: ${missingOrdersFiltered.length}`);
 
     await sendMail({
-      to: process.env.EMAIL_NOTIFY_TO,
-      subject: `${process.env.GCLOUD_PROJECT}: Orders missing from spreadsheet`,
+      to: EMAIL_NOTIFY_TO,
+      subject: `${PROJECT_ID}: Orders missing from spreadsheet`,
       text: missingOrdersFiltered.map((order) => `${order.key} ${getOrderEmail(order)}`).join('\n')
     });
 
@@ -62,8 +66,8 @@ export const duplicateEmailsInSpreadsheetHandler = async () => {
     logger.info(`Duplicate emails in spreadsheet: ${duplicateEmailsFiltered.length}`);
 
     await sendMail({
-      to: process.env.EMAIL_NOTIFY_TO,
-      subject: `${process.env.GCLOUD_PROJECT}: Duplicate emails in spreadsheet`,
+      to: EMAIL_NOTIFY_TO,
+      subject: `${PROJECT_ID}: Duplicate emails in spreadsheet`,
       text: duplicateEmailsFiltered.map((email) => email).join('\n')
     });
 

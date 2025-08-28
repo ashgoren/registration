@@ -1,7 +1,10 @@
 import { logger } from 'firebase-functions/v2';
 import { sendMail } from '../shared/email.js';
 import { IS_EMULATOR } from '../shared/helpers.js';
-const testDomains = process.env.EMAIL_IGNORE_TEST_DOMAINS ? process.env.EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
+import { config  } from '../config.js';
+
+const { EMAIL_IGNORE_TEST_DOMAINS, EMAIL_FROM, EMAIL_SUBJECT, EMAIL_REPLY_TO } = config;
+const testDomains = EMAIL_IGNORE_TEST_DOMAINS ? EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
 
 // onDocumentUpdated
 export const sendEmailConfirmationsHandler = async (event) => {
@@ -15,11 +18,11 @@ export const sendEmailConfirmationsHandler = async (event) => {
         logger.info(`SKIPPING RECEIPT SEND: ${email}`);
       } else {
         await sendMail({
-          from: process.env.EMAIL_FROM,
+          from: EMAIL_FROM,
           to: email,
-          subject: process.env.EMAIL_SUBJECT,
+          subject: EMAIL_SUBJECT,
           html: receipt,
-          replyTo: process.env.EMAIL_REPLY_TO
+          replyTo: EMAIL_REPLY_TO
         });
         logger.info((IS_EMULATOR ? 'SKIPPED: ' : '') + `RECEIPT SENT TO: ${email}`);
       }

@@ -1,4 +1,6 @@
-const { FIREBASE_AUTH_EMULATOR_HOST, FIRESTORE_EMULATOR_HOST, FUNCTIONS_EMULATOR, SANDBOX_MODE, GCLOUD_PROJECT } = process.env;
+import { config } from '../config.js';
+const { SANDBOX_MODE } = config;
+const { FIREBASE_AUTH_EMULATOR_HOST, FIRESTORE_EMULATOR_HOST, FUNCTIONS_EMULATOR, GCLOUD_PROJECT } = process.env;
 
 export const formatDateTime = (date) => {
   if (!date) return null;

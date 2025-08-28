@@ -1,10 +1,10 @@
 import './initializeFirebase.js'; // Ensure Firebase is initialized before importing other modules
-import { logger } from 'firebase-functions/v2';
 import { onCall, onRequest } from 'firebase-functions/v2/https';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { onMessagePublished } from 'firebase-functions/v2/pubsub';
 import { handleFunctionError } from './shared/errorHandler.js';
+import { config } from './config.js';
 
 // Functions called by firebaseFunctionDispatcher
 import { logToPapertrail } from './api/logToPapertrail.js';
@@ -23,16 +23,12 @@ import { emailIncompleteOrdersHandler } from './scheduled/incomplete.js';
 import { matchPaymentsHandler, matchPaymentsOnDemandHandler } from './scheduled/matchPayments.js';
 import { disableProjectAPIsHandler } from './automations/budget-cutoff.js';
 
-
-// Configuration constants (here because .env file is not yet loaded)
-const region = 'us-west1'; // also set in Doppler on client-side
-const timeZone = 'America/Los_Angeles';
+const { REGION, TIMEZONE } = config;
+const region = REGION || 'us-west1';
+const timeZone = TIMEZONE || 'America/Los_Angeles';
 
 // Combined into one callable function to reduce slow cold start preflight checks
 const firebaseFunctionDispatcherHandler = async (request) => {
-
-  logger.info('IS_PRODUCTION:', process.env.IS_PRODUCTION);
-
   const { action, data } = request.data;
 
   try {

@@ -1,7 +1,8 @@
 import { logger } from 'firebase-functions/v2';
 import nodemailer from 'nodemailer';
+import { config } from '../config.js';
 import { IS_EMULATOR } from './helpers.js';
-const { EMAIL_ENDPOINT, EMAIL_USER, EMAIL_PASSWORD, EMAIL_FROM } = process.env;
+const { EMAIL_ENDPOINT, EMAIL_USER, EMAIL_PASSWORD, EMAIL_FROM } = config;
 
 // Configure the email transport using Sendgrid with SMTP
 

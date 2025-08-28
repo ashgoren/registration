@@ -2,6 +2,8 @@ import { logger } from 'firebase-functions/v2';
 import { handlePaymentVerification } from '../shared/webhooks.js';
 import { createError, ErrorType } from '../shared/errorHandler.js';
 import { getPayPalAccessToken, paypalApiUrl, useSandbox } from './auth.js'
+import { config } from '../config.js';
+const { PAYPAL_WEBHOOK_ID } = config;
 
 // onRequest handler for PayPal webhooks
 export const paypalWebhookHandler = async (req, res) => {
@@ -57,7 +59,7 @@ const validateWebhookSignature = async (req) => {
       transmission_id: req.headers['paypal-transmission-id'],
       transmission_sig: req.headers['paypal-transmission-sig'],
       transmission_time: req.headers['paypal-transmission-time'],
-      webhook_id: process.env.PAYPAL_WEBHOOK_ID,
+      webhook_id: PAYPAL_WEBHOOK_ID,
       webhook_event: req.body
     })
   });

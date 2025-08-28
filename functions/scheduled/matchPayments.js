@@ -13,7 +13,8 @@ import { listStripeTransactions } from '../stripe/index.js';
 import { getOrders } from '../shared/orders.js';
 import { sendMail } from '../shared/email.js';
 import { IS_SANDBOX } from '../shared/helpers.js';
-const { EVENT_TITLE, EMAIL_NOTIFY_TO, CLOUD_FUNCTIONS_TRIGGER_TOKEN, PAYMENT_PROCESSOR } = process.env;
+import { config } from '../config.js';
+const { EVENT_TITLE, EMAIL_NOTIFY_TO, CLOUD_FUNCTIONS_TRIGGER_TOKEN, PAYMENT_PROCESSOR } = config;
 
 // On-demand (onRequest) wrapper for matching payments
 export const matchPaymentsOnDemandHandler = async (req, res) => {

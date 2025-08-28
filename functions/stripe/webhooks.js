@@ -1,8 +1,9 @@
 import { stripe } from './auth.js';
 import { logger } from 'firebase-functions/v2';
 import { handlePaymentVerification } from '../shared/webhooks.js';
+import { config } from '../config.js';
 import { IS_SANDBOX } from '../shared/helpers.js';
-const { STRIPE_WEBHOOK_SECRET } = process.env;
+const { STRIPE_WEBHOOK_SECRET } = config;
 
 // onRequest function to handle Stripe webhooks
 export const stripeWebhookHandler = async (req, res) => {

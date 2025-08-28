@@ -13,9 +13,11 @@
 import { google } from 'googleapis';
 import { sendMail } from '../shared/email.js';
 import { PROJECT_ID } from '../shared/helpers.js';
+import { config } from '../config.js';
 // import 'dotenv/config'; // for local emulation, but breaks production deployment
+const { EMAIL_FROM, EMAIL_NOTIFY_TO } = config;
 
-const COST_THRESHOLD = 10;
+const COST_THRESHOLD = 100;
 const APIS_TO_DISABLE = [
   'run.googleapis.com', // 2nd Gen Firebase Functions
   'firestore.googleapis.com', // Firestore
@@ -91,7 +93,6 @@ const initializeGoogleServiceUsageClient = async () => {
 };
 
 const logAndEmail = async (apis) => {
-  const { PROJECT_ID, EMAIL_FROM, EMAIL_NOTIFY_TO } = process.env;
   if (!PROJECT_ID || !EMAIL_FROM || !EMAIL_NOTIFY_TO) {
     console.error('Unable to send email: Missing required environment variables');
     return;

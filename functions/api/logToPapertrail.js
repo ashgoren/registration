@@ -1,7 +1,9 @@
 import { logger } from 'firebase-functions/v2';
+import { config  } from '../config.js';
+const { PAPERTRAIL_TOKEN } = config;
 
 export const logToPapertrail = (payload) => {
-  const token = process.env.PAPERTRAIL_TOKEN;
+  const token = PAPERTRAIL_TOKEN;
 
   if (!token) {
     logger.warn('PAPERTRAIL_TOKEN is missing. Skipping logging to Papertrail.');

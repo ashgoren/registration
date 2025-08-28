@@ -1,12 +1,13 @@
 import { logger } from 'firebase-functions/v2';
 import { google } from 'googleapis';
+import { config } from '../config.js';
+
+const { SHEETS_SHEET_ID, SHEETS_SHEET_RANGE, SHEETS_SERVICE_ACCOUNT_CLIENT_EMAIL, SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY } = config;
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 500;
-const SHEET_ID = process.env.SHEETS_SHEET_ID;
-const RANGE = process.env.SHEETS_SHEET_RANGE;
-const SHEETS_SERVICE_ACCOUNT_CLIENT_EMAIL = process.env.SHEETS_SERVICE_ACCOUNT_CLIENT_EMAIL;
-const SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY = process.env.SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY;
+const SHEET_ID = SHEETS_SHEET_ID;
+const RANGE = SHEETS_SHEET_RANGE;
 const SHEETS_AUTH_URL = 'https://www.googleapis.com/auth/spreadsheets';
 const client = new google.auth.JWT(SHEETS_SERVICE_ACCOUNT_CLIENT_EMAIL, null, SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY, [SHEETS_AUTH_URL]);
 

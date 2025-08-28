@@ -1,7 +1,8 @@
 import { Client, Environment, LogLevel } from '@paypal/paypal-server-sdk';
 import { createError, ErrorType } from '../shared/errorHandler.js';
 import { IS_SANDBOX, IS_EMULATOR } from '../shared/helpers.js';
-const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = process.env;
+import { config } from '../config.js';
+const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = config;
 
 export const useSandbox = IS_SANDBOX || IS_EMULATOR;
 export const paypalApiUrl = useSandbox ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
