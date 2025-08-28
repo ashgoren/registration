@@ -6,9 +6,7 @@ export const functionsConfig = {
   SHEETS_KEY_COLUMN: "0",
   SHEETS_EMAIL_COLUMN: "5",
   SHEETS_SHEET_ID: "1E6a7o__Pil1GIb3XB_iuy5klfm1nGOc8wVHWwai7sqU",
-  EMAIL_FROM: "\"Registration Test App\" <contra@portlandcountrydance.org>",
+  SHEETS_SERVICE_ACCOUNT_CLIENT_EMAIL: "sheets@contra-testing.iam.gserviceaccount.com",
   EMAIL_SUBJECT: "Example Contra Weekend Registration",
-  EMAIL_REPLY_TO: "",
-  EMAIL_IGNORE_TEST_DOMAINS: "example.com,test.com,mortalwombat.net",
-  EMAIL_NOTIFY_TO: "contra@mortalwombat.net"
+  EMAIL_ENDPOINT: "email-smtp.us-east-2.amazonaws.com",
 };

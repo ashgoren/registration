@@ -2,6 +2,10 @@
 
 import { program } from 'commander';
 import { spawn } from 'child_process';
+import readline from 'readline';
+
+const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+const prompt = (question) => new Promise(resolve => rl.question(question, resolve));
 
 function execDoppler(project, config, secretName, secretValue) {
   return new Promise((resolve, reject) => {
@@ -35,7 +39,7 @@ program
   .option('--stg', 'Set on staging environment') 
   .option('--prd', 'Set on production environment')
   .argument('<name>', 'Secret name')
-  .argument('<value>', 'Secret value')
+  .argument('[value]', 'Secret value')
   .action(async (secretName, secretValue, options) => {
     const environments = [];
     
@@ -49,7 +53,18 @@ program
     }
 
     const projectName = `${options.project}-${options.target}`;
-    
+
+    if (!secretValue) {
+      secretValue = await prompt(`Enter value for ${secretName}: `);
+      rl.close();
+      if (!secretValue) {
+        console.error('❌ Secret value is required');
+        process.exit(1);
+      }
+    } else {
+      rl.close();
+    }
+
     console.log(`Setting ${secretName} on ${projectName} for: ${environments.join(', ')}`);
 
     try {
