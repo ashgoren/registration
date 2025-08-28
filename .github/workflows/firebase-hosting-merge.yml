@@ -13,6 +13,7 @@ jobs:
       DOPPLER_TOKEN: ${{ github.ref_name == 'main' && secrets.DOPPLER_TOKEN_PRD || secrets.DOPPLER_TOKEN_STG }}
       DOPPLER_STAGE: ${{ (github.ref_name == 'main' && 'prd') || 'stg' }}
       FIREBASE_CHANNEL: ${{ (github.ref_name == 'main' && 'live') || 'staging' }}
+      IS_PRODUCTION: ${{ github.ref_name == 'main' }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
