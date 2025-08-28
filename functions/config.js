@@ -9,7 +9,7 @@ const options = {
   SHEETS_SERVICE_ACCOUNT_CLIENT_EMAIL: "sheets@contra-testing.iam.gserviceaccount.com",
   EMAIL_SUBJECT: "Example Contra Weekend Registration",
   EMAIL_ENDPOINT: "email-smtp.us-east-2.amazonaws.com",
-  REGION: 'us-west1', // also set in Doppler on client-side
+  REGION: 'us-central1', // also set in Doppler on client-side
   TIMEZONE: 'America/Los_Angeles'
 };
 

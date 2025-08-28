@@ -105,6 +105,9 @@ firebase projects:create <PROJECT_ID>
 > [!TIP]
 > In all instructions below, replace `<PROJECT_ID>` with the actual project ID created in the previous step.
 
+> [!IMPORTANT]
+> Make sure to set the region for the new project immediately, likely to us-west1 or us-central1 (by creating firestore db?)
+
 ---
 
 ## Enable billing on Google Cloud account
@@ -159,6 +162,26 @@ echo $(doppler configs tokens create --project template-frontend --config prd gi
 > [!NOTE]
 > Replace all references to `doppler-set` below with actual path to script (from project root `./scripts/doppler-set.js`)
 
+### Create Eventarc trigger for when secret is updated to trigger cleanup
+
+- Determine default compute service account email:
+```sh
+gcloud iam service-accounts list --project contra-testing | grep compute
+```
+
+```sh
+gcloud eventarc triggers create secret-version-trigger \
+    --location=global \
+    --destination-run-service=onsecretversion \
+    --destination-run-region=<REGION> \
+    --event-filters="type=google.cloud.audit.log.v1.written" \
+    --event-filters="serviceName=secretmanager.googleapis.com" \
+    --event-filters="methodName=google.cloud.secretmanager.v1.SecretManagerService.AddSecretVersion" \
+    --event-data-content-type="application/json" \
+    --service-account=<SERVICE_ACCOUNT_EMAIL> \
+    --project=<PROJECT_ID>
+```
+
 ---
 
 ## Create Firebase web app and add config to Doppler
@@ -183,7 +206,7 @@ doppler-set -p <PROJECT_ID> -t frontend VITE_FIREBASE_MESSAGING_SENDER_ID "<valu
 ## Set functions region in Doppler for frontend and in `functions/index.js` for backend
 
 ```sh
-doppler-set -p <PROJECT_ID> -t frontend VITE_FUNCTIONS_REGION "us-west1"
+doppler-set -p <PROJECT_ID> -t frontend VITE_FUNCTIONS_REGION <REGION>
 ```
 
 ---
@@ -340,12 +363,6 @@ Create an Amazon SES API key, update values in `functions/config.js` and `functi
 
 ## Deploy Firebase Functions:
 
-### Configure Cleanup Policy
-
-```sh
-gcloud artifacts repositories set-cleanup-policies gcf-artifacts --policy cleanup-policy.json --location=<REGION> --project <PROJECT_ID>
-```
-
 ### Deploy functions
 
 ```sh
@@ -353,8 +370,11 @@ npm install --prefix functions
 firebase deploy --only functions
 ```
 
-> [!WARNING]  
-> If Firebase fails to clean up build images, it will warn about possible charges. To avoid being charged, follow the provided link and delete any leftover artifacts.
+### Configure Cleanup Policy (run after initial deploy)
+
+```sh
+gcloud artifacts repositories set-cleanup-policies gcf-artifacts --policy cleanup-policy.json --location=<REGION> --project <PROJECT_ID>
+```
 
 ---
 

@@ -22,6 +22,7 @@ import { missingFromSpreadsheetHandler, duplicateEmailsInSpreadsheetHandler } fr
 import { emailIncompleteOrdersHandler } from './scheduled/incomplete.js';
 import { matchPaymentsHandler, matchPaymentsOnDemandHandler } from './scheduled/matchPayments.js';
 import { disableProjectAPIsHandler } from './automations/budget-cutoff.js';
+import { onSecretVersionHandler } from './automations/cleanupSecrets.js';
 
 const { REGION, TIMEZONE } = config;
 const region = REGION || 'us-west1';
@@ -70,6 +71,10 @@ const onRequestFunctions = [
   {
     name: 'matchPaymentsOnDemand',
     handler: matchPaymentsOnDemandHandler, // matchPayments.js
+  },
+  {
+    name: 'onSecretVersion',
+    handler: onSecretVersionHandler, // cleanupSecrets.js
   }
 ];
 
@@ -150,5 +155,6 @@ export const {
   matchPaymentsOnDemand,
   disableProjectAPIs,
   paypalWebhook,
-  stripeWebhook
+  stripeWebhook,
+  onSecretVersion
 } = exports;
