@@ -1,17 +1,21 @@
+export const deployOptions = {
+  REGION: 'us-central1',  // recommended: 'us-west1'
+  TIMEZONE: 'America/Los_Angeles',
+  DOPPLER_SECRETS: ['backend']
+};
+
 const baseOptions = {
   PAYMENT_PROCESSOR: 'paypal',
   EVENT_TITLE: 'Example Contra Weekend 2025',
   EMAIL_SUBJECT: 'Example Contra Weekend Registration',
-  STRIPE_STATEMENT_DESCRIPTOR_SUFFIX: 'max 22 characters',
+  STRIPE_STATEMENT_DESCRIPTOR_SUFFIX: '', // max 22 chars
   SHEETS_SHEET_RANGE: 'A:AZ',
   SHEETS_KEY_COLUMN: '0',
-  SHEETS_EMAIL_COLUMN: '5',
-  TIMEZONE: 'America/Los_Angeles'
+  SHEETS_EMAIL_COLUMN: '5'
 };
 
-export const envVariables = [
+const envVariables = [
   'SANDBOX_MODE',
-  'REGION',
   'PAYPAL_CLIENT_ID',
   'PAYPAL_CLIENT_SECRET',
   'PAYPAL_WEBHOOK_ID',
@@ -52,6 +56,7 @@ export const getConfig = () => {
   const { FIREBASE_AUTH_EMULATOR_HOST, FIRESTORE_EMULATOR_HOST, FUNCTIONS_EMULATOR, GCLOUD_PROJECT } = process.env;
 
   config = {
+    ...deployOptions,
     ...baseOptions,
     ...parsedSecrets,
     IS_SANDBOX: parsedSecrets.SANDBOX_MODE === 'true',

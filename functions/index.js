@@ -4,7 +4,7 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { onMessagePublished } from 'firebase-functions/v2/pubsub';
 import { handleFunctionError } from './shared/errorHandler.js';
-// import { config } from './config.js';
+import { deployOptions } from './config.js';
 
 // Functions called by firebaseFunctionDispatcher
 import { logToPapertrail } from './api/logToPapertrail.js';
@@ -24,13 +24,10 @@ import { matchPaymentsHandler, matchPaymentsOnDemandHandler } from './scheduled/
 import { disableProjectAPIsHandler } from './automations/budget-cutoff.js';
 import { onSecretVersionHandler } from './automations/cleanupSecrets.js';
 
-// const { REGION, TIMEZONE } = config;
-// const region = REGION || 'us-west1';
-// const timeZone = TIMEZONE || 'America/Los_Angeles';
-const region = 'us-central1'; // Recommended: 'us-west1' 
-const timeZone = 'America/Los_Angeles';
-
-const secrets = ['backend'];
+// Deploy-time options
+const region = deployOptions.REGION;
+const timeZone = deployOptions.TIMEZONE;
+const secrets = deployOptions.DOPPLER_SECRETS;
 
 // Combined into one callable function to reduce slow cold start preflight checks
 const firebaseFunctionDispatcherHandler = async (request) => {

@@ -3,7 +3,9 @@ import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 const client = new SecretManagerServiceClient();
 
 export const onSecretVersionHandler = async (req, res) => {
-  const auditLog = req.body;  
+  res.status(200).send('OK'); // ack immediately to prevent timeout
+
+  const auditLog = req.body;
   try {
     if (auditLog.protoPayload?.methodName === 'google.cloud.secretmanager.v1.SecretManagerService.AddSecretVersion') {
       const resourceName = auditLog.protoPayload.resourceName;
@@ -20,7 +22,6 @@ export const onSecretVersionHandler = async (req, res) => {
 
       if (versions.length <= 1) {
         logger.info("No old versions to destroy.");
-        res.status(200).send('OK');
         return;
       }
 
@@ -45,5 +46,4 @@ export const onSecretVersionHandler = async (req, res) => {
   } catch (error) {
     logger.error(`Error processing secret version addition: ${error}`);
   }
-  res.status(200).send('OK');
 };
