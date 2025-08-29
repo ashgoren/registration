@@ -20,6 +20,7 @@ export const onSecretVersionHandler = async (req, res) => {
 
       if (versions.length <= 1) {
         logger.info("No old versions to destroy.");
+        res.status(200).send('OK');
         return;
       }
 

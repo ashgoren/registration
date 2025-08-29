@@ -155,8 +155,8 @@ doppler projects create <PROJECT_ID>-backend
 - Create Doppler tokens and save to GitHub secrets:
 
 ```sh
-echo $(doppler configs tokens create --project template-frontend --config stg github-stg-token --plain) | gh secret set DOPPLER_TOKEN_STG
-echo $(doppler configs tokens create --project template-frontend --config prd github-prd-token --plain) | gh secret set DOPPLER_TOKEN_PRD
+echo $(doppler configs tokens create --project <PROJECT_ID>-frontend --config stg github-stg-token --plain) | gh secret set DOPPLER_TOKEN_STG
+echo $(doppler configs tokens create --project <PROJECT_ID>-frontend --config prd github-prd-token --plain) | gh secret set DOPPLER_TOKEN_PRD
 ```
 
 > [!NOTE]
@@ -181,6 +181,20 @@ gcloud eventarc triggers create secret-version-trigger \
     --service-account=<SERVICE_ACCOUNT_EMAIL> \
     --project=<PROJECT_ID>
 ```
+
+### Setup Doppler -> GCP Secret Manager integration
+
+```sh
+gcloud iam service-accounts create doppler-secret-manager --display-name="Doppler Secret Manager" --project contra-testing
+gcloud projects add-iam-policy-binding contra-testing --member="serviceAccount:doppler-secret-manager@contra-testing.iam.gserviceaccount.com" --role="roles/secretmanager.admin"
+gcloud iam service-accounts keys create tmp.json --iam-account="doppler-secret-manager@contra-testing.iam.gserviceaccount.com"
+cat tmp.json && rm tmp.json
+```
+
+Create a GCP Secret Manager integration from Doppler console:
+- Paste entire contents of service account key file (tmp.json) into "Service Account Key" field.
+- Select Single-Secret sync strategy and name it `backend`.
+- Sync config `stg` for now; will remove & re-add integration with `prd` when ready to launch.
 
 ---
 
@@ -212,6 +226,9 @@ doppler-set -p <PROJECT_ID> -t frontend VITE_FUNCTIONS_REGION <REGION>
 ---
 
 ## Setup database
+
+> [!IMPORTANT]
+> Make sure to set the region for the new project immediately, likely to us-west1 or us-central1 (before deploying db?)
 
 - Create Firestore database: https://console.firebase.google.com/project/<PROJECT_ID>/firestore
 - Deploy Firestore database: `firebase deploy --only firestore`
@@ -454,6 +471,7 @@ npm run dev
 
 # When switching to live mode
 
+- Doppler-GCP-Secret-Manager integration: replace stg sync with prd sync
 - Set sandbox mode to false in `configBasics.jsx` and `functions/.env`
 - Ensure production webhook ID is set in `functions/.env.<PROJECT_ID>`
 - Ensure live mode Stripe or PayPal keys are set in Doppler and `functions/.env` (and redeploy both front-end and back-end if changed)
