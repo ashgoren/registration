@@ -64,6 +64,5 @@ export const getConfig = () => {
     PROJECT_ID: GCLOUD_PROJECT
   };
 
-  console.log('Configuration loaded:', config);
   return config;
 };

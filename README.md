@@ -224,11 +224,10 @@ doppler-set -p <PROJECT_ID> -t frontend VITE_FIREBASE_MESSAGING_SENDER_ID "<valu
 
 ---
 
-## Set functions region in Doppler for frontend and in `functions/index.js` for backend
+## Set functions region in Doppler for frontend and in `functions/config.js` for backend
 
 ```sh
 doppler-set -p <PROJECT_ID> -t frontend VITE_FUNCTIONS_REGION <REGION>
-doppler-set -p <PROJECT_ID> -t backend REGION <REGION>
 ```
 
 ---
