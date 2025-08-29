@@ -3,7 +3,6 @@ import { hideBin } from 'yargs/helpers';
 import fs from 'fs/promises';
 import admin from 'firebase-admin';
 import { getFirestore } from 'firebase-admin/firestore';
-import { ArtifactRegistryClient } from '@google-cloud/artifact-registry';
 // import { google } from 'googleapis';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -31,9 +30,7 @@ const pending = argv.pending;
 const includeTestEmails = argv['include-test-emails'];
 const testDomains = includeTestEmails ? [] : SCRIPTS_TEST_DOMAINS?.split(',')?.map((domain) => domain.trim());
 
-if (scriptName !== 'cleanupArtifacts.js') {
-  console.log(includeTestEmails ? '' : 'Excluding test emails!\n');
-}
+console.log(includeTestEmails ? '' : 'Excluding test emails!\n');
 
 // setup firebase
 const firebaseServiceKeyPath = `keys/firebase-service-key.json`;
@@ -42,15 +39,6 @@ admin.initializeApp({ credential: admin.credential.cert(firebaseServiceAccount) 
 
 const projectId = firebaseServiceAccount.project_id;
 console.log(`\nPROJECT: ${projectId}`);
-
-// setup artifact registry
-const artifactRegistryClient = new ArtifactRegistryClient({
-  credentials: {
-    client_email: firebaseServiceAccount.client_email,
-    private_key: firebaseServiceAccount.private_key
-  },
-  projectId
-});
 
 // get data from firestore
 const db = getFirestore();
@@ -78,4 +66,4 @@ function log({ email, message }) {
   }
 }
 
-export { pending, finalOrders, pendingOrders, projectId, artifactRegistryClient, log };
+export { pending, finalOrders, pendingOrders, projectId, log };

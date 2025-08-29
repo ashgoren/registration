@@ -1,16 +1,23 @@
 # Helper Scripts
 
-## Query Firestore; Cleanup Google Cloud Artifacts
+### Query Firestore
 
 - list all final orders
 - list any pending orders not finalized
-- cleanup google cloud artifacts
+
+### Match Payments
+
+- checks that there are no electronic payments missing from the database
+
+### Doppler set
+
+- helper to set Doppler secrets
 
 ---
 
 ## Configuration
 
-### Create Service Key File
+### Create Firebase Service Key File
 
 > [!IMPORTANT]
 > Verify key is not included in git commit!
@@ -18,19 +25,8 @@
 > [!TIP]
 > In instructions below, replace `<PROJECT_ID>` with your actual Firebase project ID.
 
-#### Firebase
-
 - Generate new private key from project settings service accounts: https://console.firebase.google.com/project/<PROJECT_ID>/settings/serviceaccounts/adminsdk
 - Put in `scripts/keys` directory, rename to `firebase-service-key.json`
-
-### Give artifact registry permissions
-
-Replace `<PROJECT_ID>` and `<SERVICE_ACCOUNT_EMAIL>` with actual values.
-
-```sh
-gcloud projects add-iam-policy-binding <PROJECT_ID> --member="serviceAccount:<SERVICE_ACCOUNT_EMAIL>" --role="roles/artifactregistry.admin"
-gcloud projects add-iam-policy-binding <PROJECT_ID> --member="serviceAccount:<SERVICE_ACCOUNT_EMAIL>" --role="roles/artifactregistry.reader"
-```
 
 ---
 
@@ -51,8 +47,11 @@ npm run orders -- [--pending] [--include-test-emails]
 npm run matchPayments
 ```
 
-### Cleanup google cloud artifacts
+### Doppler set secrets
+
+Helper script to set Doppler secrets on one or more environments.
+If no environment is specified, it sets the secret on all 3 environments.
 
 ```sh
-npm run cleanup-artifacts
+doppler-set -p <PROJECT_ID> -t <frontend|backend> [--dev|stg|prd] <KEY> <value>
 ```
