@@ -1,13 +1,12 @@
 import { logger } from 'firebase-functions/v2';
 import { sendMail } from '../shared/email.js';
-import { IS_EMULATOR } from '../shared/helpers.js';
-import { config  } from '../config.js';
-
-const { EMAIL_IGNORE_TEST_DOMAINS, EMAIL_FROM, EMAIL_SUBJECT, EMAIL_REPLY_TO } = config;
-const testDomains = EMAIL_IGNORE_TEST_DOMAINS ? EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
+import { getConfig } from '../config.js';
 
 // onDocumentUpdated
 export const sendEmailConfirmationsHandler = async (event) => {
+  const { EMAIL_IGNORE_TEST_DOMAINS, EMAIL_FROM, EMAIL_SUBJECT, EMAIL_REPLY_TO, IS_EMULATOR } = getConfig();
+  const testDomains = EMAIL_IGNORE_TEST_DOMAINS ? EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
+
   const { before, after } = event.data;
   if (before?.data()?.status === 'pending' && after.data().status === 'final') {
     const { people } = after.data();

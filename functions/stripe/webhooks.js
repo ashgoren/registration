@@ -1,20 +1,20 @@
-import { stripe } from './auth.js';
+import { getStripe } from './auth.js';
 import { logger } from 'firebase-functions/v2';
 import { handlePaymentVerification } from '../shared/webhooks.js';
-import { config } from '../config.js';
-import { IS_SANDBOX } from '../shared/helpers.js';
-const { STRIPE_WEBHOOK_SECRET } = config;
+import { getConfig } from '../config.js';
 
 // onRequest function to handle Stripe webhooks
 export const stripeWebhookHandler = async (req, res) => {
   logger.debug('Received Stripe webhook', { headers: req.headers, body: req.body });
+  
+  const { STRIPE_WEBHOOK_SECRET, IS_SANDBOX } = getConfig();
 
   const sig = req.headers['stripe-signature'];
   let event;
 
   // Verify the webhook signature
   try {
-    event = stripe.webhooks.constructEvent(req.rawBody, sig, STRIPE_WEBHOOK_SECRET);
+    event = getStripe().webhooks.constructEvent(req.rawBody, sig, STRIPE_WEBHOOK_SECRET);
   } catch (err) {
     logger.error('Error verifying Stripe webhook signature', { error: err });
     return res.status(400).send(`Webhook Error: ${err.message}`);

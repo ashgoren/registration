@@ -8,15 +8,14 @@ import { logger } from 'firebase-functions/v2';
 import { getPendingOrdersMissingFromFinalOrders } from '../shared/orders.js';
 import { getOrderEmail, getOrderDomain } from '../shared/helpers.js';
 import { sendMail } from '../shared/email.js';
-import { config } from '../config.js';
-import { PROJECT_ID } from '../shared/helpers.js';
-
-const { EMAIL_IGNORE_TEST_DOMAINS, EMAIL_NOTIFY_TO } = config;
-const testDomains = EMAIL_IGNORE_TEST_DOMAINS ? EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
+import { getConfig } from '../config.js';
 
 // Scheduled function to email list of pending orders missing from final orders
 export const emailIncompleteOrdersHandler = async () => {
   logger.info('emailIncompleteOrders triggered');
+
+  const { EMAIL_IGNORE_TEST_DOMAINS, EMAIL_NOTIFY_TO, PROJECT_ID } = getConfig();
+  const testDomains = EMAIL_IGNORE_TEST_DOMAINS ? EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
 
   const orders = await getPendingOrdersMissingFromFinalOrders();
   const filteredOrders = orders.filter(order => !testDomains.includes(getOrderDomain(order)));

@@ -4,7 +4,7 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { onMessagePublished } from 'firebase-functions/v2/pubsub';
 import { handleFunctionError } from './shared/errorHandler.js';
-import { config } from './config.js';
+// import { config } from './config.js';
 
 // Functions called by firebaseFunctionDispatcher
 import { logToPapertrail } from './api/logToPapertrail.js';
@@ -24,9 +24,13 @@ import { matchPaymentsHandler, matchPaymentsOnDemandHandler } from './scheduled/
 import { disableProjectAPIsHandler } from './automations/budget-cutoff.js';
 import { onSecretVersionHandler } from './automations/cleanupSecrets.js';
 
-const { REGION, TIMEZONE } = config;
-const region = REGION || 'us-west1';
-const timeZone = TIMEZONE || 'America/Los_Angeles';
+// const { REGION, TIMEZONE } = config;
+// const region = REGION || 'us-west1';
+// const timeZone = TIMEZONE || 'America/Los_Angeles';
+const region = 'us-central1'; // Recommended: 'us-west1' 
+const timeZone = 'America/Los_Angeles';
+
+const secrets = ['backend'];
 
 // Combined into one callable function to reduce slow cold start preflight checks
 const firebaseFunctionDispatcherHandler = async (request) => {
@@ -125,23 +129,23 @@ const onMessagePublishedFunctions = [
 const exports = {};
 
 onCallFunctions.forEach(({ name, handler }) => {
-  exports[name] = onCall({ region }, handler);
+  exports[name] = onCall({ region, secrets }, handler);
 });
 
 onRequestFunctions.forEach(({ name, handler }) => {
-  exports[name] = onRequest({ region }, handler);
+  exports[name] = onRequest({ region, secrets }, handler);
 });
 
 onScheduleFunctions.forEach(({ name, handler, schedule }) => {
-  exports[name] = onSchedule({ schedule, timeZone, region }, handler);
+  exports[name] = onSchedule({ schedule, timeZone, region, secrets }, handler);
 });
 
 onDocumentUpdatedFunctions.forEach(({ name, handler, document }) => {
-  exports[name] = onDocumentUpdated({ document, region }, handler);
+  exports[name] = onDocumentUpdated({ document, region, secrets }, handler);
 });
 
 onMessagePublishedFunctions.forEach(({ name, handler, topic }) => {
-  exports[name] = onMessagePublished({ topic, region }, handler);
+  exports[name] = onMessagePublished({ topic, region, secrets }, handler);
 });
 
 export const {

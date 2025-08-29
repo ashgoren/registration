@@ -1,9 +1,8 @@
 import { logger } from 'firebase-functions/v2';
 import { handlePaymentVerification } from '../shared/webhooks.js';
 import { createError, ErrorType } from '../shared/errorHandler.js';
-import { getPayPalAccessToken, paypalApiUrl, useSandbox } from './auth.js'
-import { config } from '../config.js';
-const { PAYPAL_WEBHOOK_ID } = config;
+import { getPayPalAccessToken, getPaypalApiUrl } from './auth.js'
+import { getConfig } from '../config.js';
 
 // onRequest handler for PayPal webhooks
 export const paypalWebhookHandler = async (req, res) => {
@@ -29,7 +28,8 @@ export const paypalWebhookHandler = async (req, res) => {
   }
 
   // Process the webhook event
-  logger.info('Received webhook for PayPal payment capture', { paymentId, useSandbox });
+  const usingSandbox = getConfig().IS_SANDBOX || getConfig().IS_EMULATOR;
+  logger.info('Received webhook for PayPal payment capture', { paymentId, usingSandbox });
 
   // Check if the payment is in the DB
   try {
@@ -47,6 +47,7 @@ const validateWebhookSignature = async (req) => {
     throw createError(ErrorType.PAYPAL_API, 'Failed to retrieve PayPal access token');
   }
 
+  const paypalApiUrl = getPaypalApiUrl();
   const response = await fetch(`${paypalApiUrl}/v1/notifications/verify-webhook-signature`, {
     method: 'POST',
     headers: {
@@ -59,7 +60,7 @@ const validateWebhookSignature = async (req) => {
       transmission_id: req.headers['paypal-transmission-id'],
       transmission_sig: req.headers['paypal-transmission-sig'],
       transmission_time: req.headers['paypal-transmission-time'],
-      webhook_id: PAYPAL_WEBHOOK_ID,
+      webhook_id: getConfig().PAYPAL_WEBHOOK_ID,
       webhook_event: req.body
     })
   });

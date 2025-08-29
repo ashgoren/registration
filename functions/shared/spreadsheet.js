@@ -1,15 +1,9 @@
 import { logger } from 'firebase-functions/v2';
 import { google } from 'googleapis';
-import { config } from '../config.js';
-
-const { SHEETS_SHEET_ID, SHEETS_SHEET_RANGE, SHEETS_SERVICE_ACCOUNT_CLIENT_EMAIL, SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY } = config;
+import { getConfig } from '../config.js';
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 500;
-const SHEET_ID = SHEETS_SHEET_ID;
-const RANGE = SHEETS_SHEET_RANGE;
-const SHEETS_AUTH_URL = 'https://www.googleapis.com/auth/spreadsheets';
-const client = new google.auth.JWT(SHEETS_SERVICE_ACCOUNT_CLIENT_EMAIL, null, SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY, [SHEETS_AUTH_URL]);
 
 const SHEET_OPERATIONS = {
   READ: 'read',
@@ -40,11 +34,16 @@ async function appendAllLines(lines) {
 }
 
 async function googleSheetsOperation({ operation, params }, attempt = 0) {
+  const { SHEETS_SHEET_ID, SHEETS_SHEET_RANGE, SHEETS_SERVICE_ACCOUNT_CLIENT_EMAIL, SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY } = getConfig();
+  const SHEETS_AUTH_URL = 'https://www.googleapis.com/auth/spreadsheets';
+  const key = SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY.replace(/\\n/g, '\n');
+  const client = new google.auth.JWT(SHEETS_SERVICE_ACCOUNT_CLIENT_EMAIL, null, key, [SHEETS_AUTH_URL]);
+
   try {
     const operationParams = {
       ...params,
-      spreadsheetId: SHEET_ID,
-      range: params.range || RANGE
+      spreadsheetId: SHEETS_SHEET_ID,
+      range: params.range || SHEETS_SHEET_RANGE
     };
     
     await client.authorize();

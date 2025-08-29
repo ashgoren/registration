@@ -3,7 +3,7 @@
 import { logger } from 'firebase-functions/v2';
 import { getDateChunks } from '../shared/helpers.js';
 import { createError, ErrorType } from '../shared/errorHandler.js';
-import { getPayPalAccessToken, paypalApiUrl } from './auth.js';
+import { getPayPalAccessToken, getPaypalApiUrl } from './auth.js';
 
 /* * * * * * * * * * PayPal Transactions List * * * * * * * * * * * * * * * * * * * * * * * *
  * PayPal SDK does not support listing transactions directly.                               *
@@ -60,6 +60,7 @@ const fetchTransactionChunk = async (accessToken, startDate, endDate) => {
     'page_size': '500'
   });
 
+  const paypalApiUrl = getPaypalApiUrl();
   const response = await fetch(`${paypalApiUrl}/v1/reporting/transactions?${params}`, {
     method: 'GET',
     headers: {

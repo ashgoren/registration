@@ -56,8 +56,8 @@
     "cleanup-artifacts": "doppler run -- node ./scripts/cleanupArtifacts.js",
     "matchPayments": "doppler run -- node ./scripts/matchPayments.js",
 
-    "emulator": "firebase emulators:start --only functions",
-    "emulator:isolated": "firebase emulators:start",
+    "emulator": "doppler run -- firebase emulators:start --only functions",
+    "emulator:isolated": "doppler run -- firebase emulators:start",
 
     "localtunnel-paypal": "lt -p 5001 -s contra-registration",
     "localtunnel-stripe": "stripe listen --events payment_intent.succeeded --forward-to localhost:5001/contra-testing/us-west1/stripeWebhook"

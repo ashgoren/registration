@@ -10,21 +10,17 @@ import { getOrders } from '../shared/orders.js';
 import { readSheet } from '../shared/spreadsheet.js';
 import { sendMail } from '../shared/email.js';
 import { getOrderEmail, getOrderDomain } from '../shared/helpers.js';
-import { config } from '../config.js';
-import { PROJECT_ID } from '../shared/helpers.js';
-
-const { EMAIL_IGNORE_TEST_DOMAINS, SHEETS_KEY_COLUMN, SHEETS_EMAIL_COLUMN, EMAIL_NOTIFY_TO } = config;
-const testDomains = EMAIL_IGNORE_TEST_DOMAINS ? EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
-
-const KEY_COLUMN = SHEETS_KEY_COLUMN;
-const EMAIL_COLUMN = SHEETS_EMAIL_COLUMN;
+import { getConfig } from '../config.js';
 
 // Scheduled function to check for missing orders in the spreadsheet
 export const missingFromSpreadsheetHandler = async () => {
+  const { EMAIL_IGNORE_TEST_DOMAINS, SHEETS_KEY_COLUMN, EMAIL_NOTIFY_TO, PROJECT_ID } = getConfig();
+  const testDomains = EMAIL_IGNORE_TEST_DOMAINS ? EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
+
   try {
     const response = await readSheet();
     const rows = response.data.values.slice(2);
-    const keys = rows.map((row) => row[KEY_COLUMN]).filter((key) => key !== '-');
+    const keys = rows.map((row) => row[SHEETS_KEY_COLUMN]).filter((key) => key !== '-');
 
     const orders = await getOrders({ pending: false });
     const missingOrders = orders.filter((order) => !keys.includes(order.key));
@@ -49,11 +45,14 @@ export const missingFromSpreadsheetHandler = async () => {
 
 // Scheduled function to check for duplicate emails in the spreadsheet
 export const duplicateEmailsInSpreadsheetHandler = async () => {
+  const { EMAIL_IGNORE_TEST_DOMAINS, SHEETS_KEY_COLUMN, SHEETS_EMAIL_COLUMN, EMAIL_NOTIFY_TO, PROJECT_ID } = getConfig();
+  const testDomains = EMAIL_IGNORE_TEST_DOMAINS ? EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
+
   try {
     const response = await readSheet();
     const rows = response.data.values.slice(2);
-    const rowsWithIdCol = rows.filter(row => row[KEY_COLUMN] !== '-');
-    const emails = rowsWithIdCol.map((row) => row[EMAIL_COLUMN]?.toLowerCase()).filter((email) => email);
+    const rowsWithIdCol = rows.filter(row => row[SHEETS_KEY_COLUMN] !== '-');
+    const emails = rowsWithIdCol.map((row) => row[SHEETS_EMAIL_COLUMN]?.toLowerCase()).filter((email) => email);
 
     const duplicateEmails = emails.sort().filter((email, index, array) => email === array[index + 1]);
     const uniqueDuplicateEmails = [...new Set(duplicateEmails)];

@@ -1,28 +1,47 @@
 import { Client, Environment, LogLevel } from '@paypal/paypal-server-sdk';
 import { createError, ErrorType } from '../shared/errorHandler.js';
-import { IS_SANDBOX, IS_EMULATOR } from '../shared/helpers.js';
-import { config } from '../config.js';
-const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = config;
+import { getConfig } from '../config.js';
 
-export const useSandbox = IS_SANDBOX || IS_EMULATOR;
-export const paypalApiUrl = useSandbox ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
+let paypalApiUrl = null;
+let client = null;
 
-export const client = new Client({
-  clientCredentialsAuthCredentials: {
-    oAuthClientId: PAYPAL_CLIENT_ID,
-    oAuthClientSecret: PAYPAL_CLIENT_SECRET
-  },
-  timeout: 0,
-  environment: useSandbox ? Environment.Sandbox : Environment.Production,
-  logging: {
-    logLevel: LogLevel.Info,
-    logRequest: { logBody: true },
-    logResponse: { logHeaders: true },
-  },
-});
+export const getPaypalApiUrl = () => {
+  if (paypalApiUrl) return paypalApiUrl;
+
+  const { IS_SANDBOX, IS_EMULATOR } = getConfig();
+  const useSandbox = IS_SANDBOX || IS_EMULATOR;
+  paypalApiUrl = useSandbox ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
+
+  return paypalApiUrl;
+};
+
+export const getClient = () => {
+  if (client) return client;
+
+  const { IS_SANDBOX, IS_EMULATOR, PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = getConfig();
+  const useSandbox = IS_SANDBOX || IS_EMULATOR;
+
+  client = new Client({
+    clientCredentialsAuthCredentials: {
+      oAuthClientId: PAYPAL_CLIENT_ID,
+      oAuthClientSecret: PAYPAL_CLIENT_SECRET
+    },
+    timeout: 0,
+    environment: useSandbox ? Environment.Sandbox : Environment.Production,
+    logging: {
+      logLevel: LogLevel.Info,
+      logRequest: { logBody: true },
+      logResponse: { logHeaders: true },
+    },
+  });
+
+  return client;
+};
 
 // Manually get token for use with REST API since server sdk doesn't support transactions list
 export const getPayPalAccessToken = async () => {
+  const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = getConfig();
+
   const auth = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_CLIENT_SECRET}`).toString('base64');
   const response = await fetch(`${paypalApiUrl}/v1/oauth2/token`, {
     method: 'POST',

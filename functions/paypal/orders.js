@@ -2,15 +2,16 @@ import { logger } from 'firebase-functions/v2';
 import { ApiError, CheckoutPaymentIntent, OrdersController, ShippingPreference, PatchOp } from '@paypal/paypal-server-sdk';
 import { formatCurrency } from '../shared/helpers.js';
 import { createError, ErrorType } from '../shared/errorHandler.js';
-import { client } from './auth.js';
+import { getClient } from './auth.js';
 
-const ordersController = new OrdersController(client);
+let ordersController = null;
+const getOrdersController = () => ordersController ??= new OrdersController(getClient());
 
 export const capturePaypalOrder = async ({ id, idempotencyKey }) => {
   logger.info('capturePaypalOrder', { id });
   if (!id) throw createError(ErrorType.INVALID_ARGUMENT, 'No payment intent ID provided');
   try {
-    const { result, statusCode } = await ordersController.ordersCapture({
+    const { result, statusCode } = await getOrdersController().ordersCapture({
       id,
       paypalRequestId: idempotencyKey,
       prefer: 'return=minimal'
@@ -58,7 +59,7 @@ const createOrder = async ({ description, amount, idempotencyKey }) => {
   };
 
   try {
-    const { result } = await ordersController.ordersCreate({
+    const { result } = await getOrdersController().ordersCreate({
       body: requestBody,
       paypalRequestId: idempotencyKey,
       prefer: 'return=representation'
@@ -85,7 +86,7 @@ const updateOrder = async ({ id, amount, idempotencyKey }) => {
   }];
 
   try {
-    const { statusCode } = await ordersController.ordersPatch({
+    const { statusCode } = await getOrdersController().ordersPatch({
       id,
       body: requestBody,
       paypalRequestId: idempotencyKey,
@@ -104,7 +105,7 @@ const getOrder = async (id) => {
   logger.info('Retrieving order', { id });
 
   try {
-    const { result } = await ordersController.ordersGet({ id });
+    const { result } = await getOrdersController().ordersGet({ id });
 
     if (!result) throw new Error('No order found');
     return result;

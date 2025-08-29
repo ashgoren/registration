@@ -12,13 +12,11 @@ import { listPaypalTransactions } from '../paypal/index.js';
 import { listStripeTransactions } from '../stripe/index.js';
 import { getOrders } from '../shared/orders.js';
 import { sendMail } from '../shared/email.js';
-import { IS_SANDBOX } from '../shared/helpers.js';
-import { config } from '../config.js';
-const { EVENT_TITLE, EMAIL_NOTIFY_TO, CLOUD_FUNCTIONS_TRIGGER_TOKEN, PAYMENT_PROCESSOR } = config;
+import { getConfig } from '../config.js';
 
 // On-demand (onRequest) wrapper for matching payments
 export const matchPaymentsOnDemandHandler = async (req, res) => {
-  if (req.get('Authorization') !== CLOUD_FUNCTIONS_TRIGGER_TOKEN) {
+  if (req.get('Authorization') !== getConfig().CLOUD_FUNCTIONS_TRIGGER_TOKEN) {
     logger.warn('Unauthorized access attempt to matchPayments function');
     res.status(401).json({ error: 'Unauthorized' });
     return;
@@ -33,6 +31,8 @@ export const matchPaymentsOnDemandHandler = async (req, res) => {
 
 // Scheduled function to match payments with orders
 export const matchPaymentsHandler = async () => {
+  const { EVENT_TITLE, PAYMENT_PROCESSOR, IS_SANDBOX } = getConfig();
+
   logger.info(`matchPayments triggered for event: ${EVENT_TITLE}`);
 
   // get final orders from db (test mode or live mode)
@@ -104,6 +104,7 @@ const logResults = ({ matchingOrders, extraDatabaseOrders, extraTransactions }) 
 };
 
 const sendEmailNotification = async (extraTransactions) => {
+  const { EVENT_TITLE, EMAIL_NOTIFY_TO } = getConfig();
   await sendMail({
     to: EMAIL_NOTIFY_TO,
     subject: `${EVENT_TITLE}: Unmatched Payment Transactions`,

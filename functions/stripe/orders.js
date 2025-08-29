@@ -1,12 +1,13 @@
-import { stripe } from './auth.js';
+import { getStripe } from './auth.js';
 import { logger } from 'firebase-functions/v2';
 import { createError, ErrorType } from '../shared/errorHandler.js';
-import { config } from '../config.js';
-
-const { STRIPE_STATEMENT_DESCRIPTOR_SUFFIX: statement_descriptor_suffix } = config;
+import { getConfig } from '../config.js';
 
 export const getStripePaymentIntent = async ({ email, name, amount, description, idempotencyKey, id }) => {
   logger.info('getStripePaymentIntent', { email, idempotencyKey });
+
+  const { STRIPE_STATEMENT_DESCRIPTOR_SUFFIX: statement_descriptor_suffix } = getConfig();
+  const stripe = getStripe();
 
   const amountInCents = Math.round(amount * 100); // client-side handles amount in dollars
   let paymentIntent;
@@ -42,6 +43,7 @@ export const getStripePaymentIntent = async ({ email, name, amount, description,
 };
 
 async function findOrCreateCustomer(email, name) {
+  const stripe = getStripe();
   let customer;
   const existingCustomers = await stripe.customers.list({ email, limit: 1 });
   if (existingCustomers.data.length) {

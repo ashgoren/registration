@@ -12,10 +12,8 @@
 
 import { google } from 'googleapis';
 import { sendMail } from '../shared/email.js';
-import { PROJECT_ID } from '../shared/helpers.js';
-import { config } from '../config.js';
+import { getConfig } from '../config.js';
 // import 'dotenv/config'; // for local emulation, but breaks production deployment
-const { EMAIL_FROM, EMAIL_NOTIFY_TO } = config;
 
 const COST_THRESHOLD = 100;
 const APIS_TO_DISABLE = [
@@ -27,6 +25,8 @@ const APIS_TO_DISABLE = [
 
 // onMessagePublished to budget-cutoff topic
 export const disableProjectAPIsHandler = async (event) => {
+  const { PROJECT_ID } = getConfig();
+
   if (!PROJECT_ID) {
     console.error('Missing required environment variable: PROJECT_ID');
     return;
@@ -93,6 +93,8 @@ const initializeGoogleServiceUsageClient = async () => {
 };
 
 const logAndEmail = async (apis) => {
+  const { EMAIL_FROM, EMAIL_NOTIFY_TO, PROJECT_ID } = getConfig();
+
   if (!PROJECT_ID || !EMAIL_FROM || !EMAIL_NOTIFY_TO) {
     console.error('Unable to send email: Missing required environment variables');
     return;

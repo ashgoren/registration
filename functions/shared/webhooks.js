@@ -2,14 +2,13 @@ import { logger } from 'firebase-functions/v2';
 import { ordersCollection } from './orders.js';
 import { sendMail } from './email.js';
 import { createError, ErrorType } from './errorHandler.js';
-import { config } from '../config.js';
-import { PROJECT_ID, IS_SANDBOX } from './helpers.js';
-const { EMAIL_NOTIFY_TO } = config;
+import { getConfig } from '../config.js';
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 5000; // 5 seconds
 
 const getOrderByPaymentId = async (paymentId) => {
+  const { IS_SANDBOX } = getConfig();
   try {
     const snapshot = await ordersCollection
       .where('paymentId', '==', paymentId)
@@ -41,6 +40,7 @@ const findPaymentInDatabase = async (paymentId) => {
 };
 
 export const handlePaymentVerification = async (paymentId) => {
+  const { EMAIL_NOTIFY_TO, PROJECT_ID } = getConfig();
   const order = await findPaymentInDatabase(paymentId);
   if (order) {
     logger.info('Found matching order in database', { paymentId, email: order.email });

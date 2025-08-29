@@ -1,6 +1,5 @@
 import Stripe from 'stripe';
-import { config } from '../config.js';
+import { getConfig } from '../config.js';
 
-const { STRIPE_SECRET_KEY } = config;
-
-export const stripe = Stripe(STRIPE_SECRET_KEY);
+let stripe;
+export const getStripe = () => stripe ??= Stripe(getConfig().STRIPE_SECRET_KEY);

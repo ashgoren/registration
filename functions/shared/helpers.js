@@ -1,7 +1,3 @@
-import { config } from '../config.js';
-const { SANDBOX_MODE } = config;
-const { FIREBASE_AUTH_EMULATOR_HOST, FIRESTORE_EMULATOR_HOST, FUNCTIONS_EMULATOR, GCLOUD_PROJECT } = process.env;
-
 export const formatDateTime = (date) => {
   if (!date) return null;
   const localDate = new Date(date);
@@ -53,7 +49,3 @@ export const getOrderEmail = (order) => {
 export const getOrderDomain = (order) => {
   return getOrderEmail(order).split('@')[1];
 }
-
-export const IS_EMULATOR = !!FIREBASE_AUTH_EMULATOR_HOST || !!FIRESTORE_EMULATOR_HOST || !!FUNCTIONS_EMULATOR;
-export const IS_SANDBOX = SANDBOX_MODE === 'true';
-export const PROJECT_ID = GCLOUD_PROJECT;

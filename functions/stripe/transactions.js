@@ -1,4 +1,4 @@
-import { stripe } from './auth.js';
+import { getStripe } from './auth.js';
 import { logger } from 'firebase-functions/v2';
 import { createError, ErrorType } from '../shared/errorHandler.js';
 
@@ -37,6 +37,8 @@ export const listStripeTransactions = async (description) => {
 };
 
 const fetchAllTransactions = async () => {
+  const stripe = getStripe();
+
   const allTransactions = [];
   let hasMore = true;
   let startingAfter = null;
@@ -59,6 +61,8 @@ const fetchAllTransactions = async () => {
 };
 
 const fetchAllCustomers = async () => {
+  const stripe = getStripe();
+
   const allCustomers = [];
   let hasMore = true;
   let startingAfter = null;
