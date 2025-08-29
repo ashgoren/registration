@@ -43,6 +43,7 @@ export const getPayPalAccessToken = async () => {
   const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = getConfig();
 
   const auth = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_CLIENT_SECRET}`).toString('base64');
+  const paypalApiUrl = getPaypalApiUrl();
   const response = await fetch(`${paypalApiUrl}/v1/oauth2/token`, {
     method: 'POST',
     headers: {
