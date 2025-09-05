@@ -46,12 +46,3 @@ npm run orders -- [--pending] [--include-test-emails]
 ```sh
 npm run matchPayments
 ```
-
-### Doppler set secrets
-
-Helper script to set Doppler secrets on one or more environments.
-If no environment is specified, it sets the secret on all 3 environments.
-
-```sh
-doppler-set -p <PROJECT_ID> -t <frontend|backend> [--dev|stg|prd] <KEY> <value>
-```
