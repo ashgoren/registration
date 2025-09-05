@@ -1,9 +1,0 @@
-[
-  {
-    "name": "DELETE_OLD_ARTIFACTS",
-    "action": {"type": "Delete"},
-    "condition": {
-      "olderThan": "1d"
-    }
-  }
-]
