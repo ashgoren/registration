@@ -2,13 +2,13 @@
 // {"budgetDisplayName":"TEST Shutdown Budget","costAmount":10.0,"costIntervalStart":"2025-06-01T07:00:00Z","budgetAmount":10.0,"budgetAmountType":"SPECIFIED_AMOUNT","currencyCode":"USD"}
 
 // To check status of APIs:
-// gcloud services list --enabled --project=contra-testing --filter="config.name:run.googleapis.com"
-// gcloud services list --enabled --project=contra-testing --filter="config.name:firestore.googleapis.com"
-// gcloud services list --enabled --project=contra-testing --filter="config.name:cloudbuild.googleapis.com"
-// gcloud services list --enabled --project=contra-testing --filter="config.name:eventarc.googleapis.com"
+// gcloud services list --enabled --project=<PROJECT_ID> --filter="config.name:run.googleapis.com"
+// gcloud services list --enabled --project=<PROJECT_ID> --filter="config.name:firestore.googleapis.com"
+// gcloud services list --enabled --project=<PROJECT_ID> --filter="config.name:cloudbuild.googleapis.com"
+// gcloud services list --enabled --project=<PROJECT_ID> --filter="config.name:eventarc.googleapis.com"
 
 // To re-enable APIs from gcloud CLI:
-// gcloud services enable run.googleapis.com firestore.googleapis.com cloudbuild.googleapis.com eventarc.googleapis.com --project contra-testing
+// gcloud services enable run.googleapis.com firestore.googleapis.com cloudbuild.googleapis.com eventarc.googleapis.com --project <PROJECT_ID>
 
 import { google } from 'googleapis';
 import { sendMail } from '../shared/email.js';

@@ -249,6 +249,9 @@ async function main() {
   log.info('\n🚀 Configuring Doppler projects...\n');
   runCommand('npm run terraform-bootstrap', 'Bootstrapping Terraform');
 
+  log.info('\n🚀 Generating .firebaserc file...\n');
+  runCommand(`npm run generate-firebaserc ${projectId}`, 'Generating .firebaserc');
+  
   log.success('\n🎉 Bootstrap completed!\n');
 }
 

@@ -50,59 +50,15 @@ Simple registration / admissions sales site for contra dance events.
 
 ---
 
-## Copy template project
+## Generate GitHub Repository
 
-Replace below with instructions on copying a github "template project"
-
-<!-- Fork [template](https://github.com/ashgoren/registration) and clone to a local directory:
-
-```sh
-# Replace [NAME] with desired project/directory name for new project
-gh repo fork ashgoren/registration [NAME] --clone
-cd [NAME]
-```
-
-> [!NOTE]
-> If you previously forked this for another instance, it won't be possible to fork again. Instead, duplicate existing local project and create a new repo:
-> ```sh
-> cp -R [SOURCE_DIR] [DESTINATION_DIR]
-> cd [DESTINATION_DIR]
-> git remote rm origin
-> gh repo create [NAME] [--public|private] --source=. --remote=origin
-> ```
-> If copying template over an existing project, maintain the .git directory from the existing project to preserve commit history. -->
-
----
-
-## Erase settings from old project:
-
-```sh
-bash clear-old-settings.sh
-```
-
-# Erase firebase functions from old project:
-```sh
-firebase functions:list
-firebase functions:delete <FUNCTION_NAME> --force
-```
-
-# Erase Firestore database from old project:
-
-- To avoid deleting data, could rename collections instead of deleting them.
-
-
-
-
-
-
-
-
+Generate a new GitHub repository from [template](https://github.com/ashgoren/registration/generate).
 
 ---
 
 ## Spreadsheet
 
-- Copy the [template spreadsheet](https://docs.google.com/spreadsheets/d/1gQ9l8wBTgNmiI0KmpECsDzCqePSPMnZFaecuj0VO_cU/template/preview)
+- Generate a new spreadsheet from [template](https://docs.google.com/spreadsheets/d/1gQ9l8wBTgNmiI0KmpECsDzCqePSPMnZFaecuj0VO_cU/template/preview)
 - Update fields/columns as needed in spreadsheet _and_ in `functions/shared/fields.js`
 - Set the new spreadsheet's URL in terraform `shared.auto.tfvars` (can just copy the url when viewing it)
 - Share spreadsheet (with edit permissions) with both stg & prd sheets service account emails:
@@ -175,6 +131,7 @@ firebase functions:delete <FUNCTION_NAME> --force
 > - Initializes terraform directories
 > - Creates terraform prd/stg workspaces, importing the appropriate google cloud project into each
 > - Creates Doppler projects & environments
+> - Generates .firebaserc file
 
 > [!IMPORTANT]
 > Ensure terraform tfvars files are updated before running this!
