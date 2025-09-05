@@ -1,7 +1,0 @@
-{
-  "projects": {
-    "default": "contra-testing-stg",
-    "staging": "contra-testing-stg",
-    "production": "contra-testing"
-  }
-}
