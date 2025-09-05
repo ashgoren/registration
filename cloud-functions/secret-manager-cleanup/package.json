@@ -1,0 +1,9 @@
+{
+  "name": "secret-manager-cleanup",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "@google-cloud/secret-manager": "^6.1.0"
+  },
+  "type": "module"
+}
