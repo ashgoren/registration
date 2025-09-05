@@ -52,7 +52,7 @@ Simple registration / admissions sales site for contra dance events.
 
 ## Generate GitHub Repository
 
-Generate a new GitHub repository from [template](https://github.com/ashgoren/registration/generate).
+- Generate a new GitHub repository from [template](https://github.com/ashgoren/registration/generate)
 
 ---
 
@@ -142,10 +142,15 @@ npm run bootstrap <PROJECT_ID> <BILLING_ACCOUNT_ID>
 
 ---
 
-## Configure OAuth consent screen [here](https://console.cloud.google.com/apis/credentials/consent)
+## Configure OAuth consent screen
 
-- For both the production & staging projects:
-  - Set user type to internal; other values don't matter & it isn't necessary to add any scopes
+> [!IMPORTANT]
+> Make sure to configure the OAuth consent screen for both production and staging projects.
+
+> [!TIP]
+> Set user type to internal (other values are unimportant & no scopes are required)
+
+[Configure OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent)
 
 ---
 
