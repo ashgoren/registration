@@ -1,0 +1,132 @@
+######## SET IN STG.TFVARS OR PRD.TFVARS ########
+
+# production project ID (globally unique)
+variable "project_id" {
+  description = "ID of the Firebase / Google Cloud project"
+  type        = string
+}
+
+variable "stripe_publishable_key" {
+  description = "Stripe publishable key"
+  type        = string
+}
+
+variable "stripe_secret_key" {
+  description = "Stripe secret key"
+  type        = string
+}
+
+variable "stripe_webhook_secret" {
+  description = "Stripe webhook secret"
+  type        = string
+}
+
+variable "paypal_client_id" {
+  description = "PayPal client ID"
+  type        = string
+}
+
+variable "paypal_client_secret" {
+  description = "PayPal client secret"
+  type        = string
+}
+
+variable "paypal_webhook_id" {
+  description = "PayPal webhook ID"
+  type        = string
+}
+
+
+####### SET IN SHARED.AUTO.TFVARS ########
+
+# Doppler frontend project name
+variable "doppler_project" {
+  description = "Name of the Doppler frontend project"
+  type        = string
+}
+
+# GitHub repository
+variable "github_repo" {
+  description = "The name of the GitHub repository"
+  type        = string
+}
+
+# To find this: gcloud organizations list
+variable "organization_id" {
+  description = "The Google Cloud organization to associate with the project"
+  type        = string
+}
+
+# To find this: gcloud billing accounts list
+variable "billing_account_id" {
+  description = "The Google Cloud billing account to associate with the project"
+  type        = string
+}
+
+# Desired region - e.g. us-west1 or us-central1
+variable "region" {
+  description = "The region where the Firebase / Google Cloud project is located"
+  type        = string
+  default     = "us-west1"
+}
+
+# Domain where the front-end will be hosted
+variable "domain" {
+  description = "The domain for the deployed application"
+  type        = string
+}
+
+# To find this: doppler configure get token
+variable "doppler_token" {
+  description = "Doppler API token"
+  type        = string
+}
+
+variable "spreadsheet_url" {
+  description = "URL of the Google Sheets spreadsheet"
+  type        = string
+}
+
+variable "email_amazonses_email_endpoint" {
+  description = "Amazon SES email endpoint (e.g. email-smtp.us-west-2.amazonaws.com)"
+  type        = string
+  default     = "email-smtp.us-west-2.amazonaws.com"
+}
+
+variable "email_amazonses_smtp_user" {
+  description = "Amazon SES SMTP user"
+  type        = string
+}
+
+variable "email_amazonses_smtp_password" {
+  description = "Amazon SES SMTP password"
+  type        = string
+}
+
+variable "email_from_name" {
+  description = "From name for sending email receipts"
+  type        = string
+}
+
+variable "email_from_email" {
+  description = "From email address for sending email receipts"
+  type        = string
+}
+
+variable "email_reply_to" {
+  description = "Reply-to email address for sending email receipts"
+  type        = string
+  default     = ""
+}
+
+variable "email_test_domains" {
+  description = "Comma-separated list of test domains to ignore for receipts and reports"
+  type        = string
+  default     = "example.com,test.com,testing.com"
+}
+
+# Email for budget alert & other notifications
+variable "email_admin_notifications" {
+  description = "Email address to receive budget alert & other notifications"
+  type        = string
+}

@@ -9,6 +9,7 @@ import configBasics from './configBasics';
 import configTheme from './configTheme';
 import configContent from './configContent';
 import configOrderSummary from './configOrderSummary';
+import configEnv from './configEnv';
 import { FIELD_CONFIG, PERSON_CONTACT_FIELDS, PERSON_MISC_FIELDS, PERSON_PAYMENT_FIELDS } from './configFields';
 
 const PERSON_FIELDS = [...PERSON_CONTACT_FIELDS, ...PERSON_MISC_FIELDS, ...PERSON_PAYMENT_FIELDS];
@@ -23,6 +24,7 @@ const getOrderDefaults = () => ({
 });
 
 export const config = {
+  ...configEnv,
   ...configSystem,
   ...configPaypal,
   ...configBasics,
@@ -35,4 +37,4 @@ export const config = {
   PERSON_FIELDS,
   PERSON_DEFAULTS,
   getOrderDefaults
-}
+};

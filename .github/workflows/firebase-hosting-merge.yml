@@ -9,10 +9,10 @@ on:
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'main' && 'prd' || 'stg' }}
     env:
-      DOPPLER_TOKEN: ${{ github.ref_name == 'main' && secrets.DOPPLER_TOKEN_PRD || secrets.DOPPLER_TOKEN_STG }}
+      DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
       DOPPLER_STAGE: ${{ (github.ref_name == 'main' && 'prd') || 'stg' }}
-      FIREBASE_CHANNEL: ${{ (github.ref_name == 'main' && 'live') || 'staging' }}
       IS_PRODUCTION: ${{ github.ref_name == 'main' && 'true' || 'false' }}
     steps:
       - name: Checkout Code
@@ -41,6 +41,5 @@ jobs:
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          channelId: ${{ env.FIREBASE_CHANNEL }}
-          projectId: 'contra-testing'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_CONTRA_TESTING }}'
+          projectId: '${{ vars.PROJECT_ID }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'

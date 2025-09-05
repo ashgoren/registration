@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { log, logError, logDivider } from 'src/logger';
+import { log, logError } from 'src/logger';
 import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
 import { useOrder } from 'hooks/useOrder';
 import { Receipt } from 'components/Receipt';
@@ -30,7 +30,6 @@ export const useOrderFinalization = () => {
           email
         });
         log('Final order saved', { email });
-        setTimeout(() => logDivider(), 1000);
       } catch (error) {
         logError('Error saving final order to firebase', { email, error, order });
         throw error;

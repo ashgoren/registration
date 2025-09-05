@@ -1,15 +1,11 @@
 const devConfigOverrides = {
-  SANDBOX_MODE: true,
   SKIP_MANDATORY_FIELDS: true,
   USE_FIREBASE_EMULATOR: true,
 };
 
-const productionConfigOverrides = {
-  SANDBOX_MODE: true,
-};
+const remoteConfigOverrides = {};
 
 const baseConfig = {
-  SANDBOX_MODE: false, // values above override this
   SKIP_MANDATORY_FIELDS: false,
   USE_FIREBASE_EMULATOR: false,
   WAITLIST_MODE: false,
@@ -49,7 +45,7 @@ const baseConfig = {
 
 const exportWithOverrides = {
   ...baseConfig,
-  ...(import.meta.env.DEV ? devConfigOverrides : productionConfigOverrides)
+  ...(import.meta.env.DEV ? devConfigOverrides : remoteConfigOverrides)
 };
 
 export default exportWithOverrides;

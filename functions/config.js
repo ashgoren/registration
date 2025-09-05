@@ -1,3 +1,4 @@
+// deployOptions are needed before doppler secrets can be parsed
 export const deployOptions = {
   REGION: 'us-central1',  // recommended: 'us-west1'
   TIMEZONE: 'America/Los_Angeles',
@@ -15,7 +16,6 @@ const baseOptions = {
 };
 
 const envVariables = [
-  'SANDBOX_MODE',
   'PAYPAL_CLIENT_ID',
   'PAYPAL_CLIENT_SECRET',
   'PAYPAL_WEBHOOK_ID',
@@ -59,9 +59,9 @@ export const getConfig = () => {
     ...deployOptions,
     ...baseOptions,
     ...parsedSecrets,
-    IS_SANDBOX: parsedSecrets.SANDBOX_MODE === 'true',
-    IS_EMULATOR: !!FIREBASE_AUTH_EMULATOR_HOST || !!FIRESTORE_EMULATOR_HOST || !!FUNCTIONS_EMULATOR,
-    PROJECT_ID: GCLOUD_PROJECT
+    PROJECT_ID: GCLOUD_PROJECT,
+    IS_SANDBOX: GCLOUD_PROJECT.includes('-stg'),
+    IS_EMULATOR: !!FIREBASE_AUTH_EMULATOR_HOST || !!FIRESTORE_EMULATOR_HOST || !!FUNCTIONS_EMULATOR
   };
 
   return config;

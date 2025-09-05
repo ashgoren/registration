@@ -6,11 +6,12 @@ Simple registration / admissions sales site for contra dance events.
 - Hosting: Firebase Hosting
 - Database: Firebase Firestore
 - Serverless functions: Firebase Functions
-- Logging: Papertrail & Google Cloud Logging
+- Logging: Google Cloud Logging
 - Secrets management: Doppler & Google Cloud Secret Manager
 - Address autocomplete: Google Places API
 - Email: Amazon SES
 - Payment: Stripe or PayPal
+- IaC: Terraform
 
 # Configuration
 
@@ -21,10 +22,13 @@ Simple registration / admissions sales site for contra dance events.
 
 - Account: [GitHub](https://github.com/)
 - Account: [Firebase](https://firebase.google.com/)
+- Account: [Google Cloud](https://cloud.google.com/)
+- Account: [Google Cloud Billing](https://console.cloud.google.com/billing)
 - Account: [Doppler](https://www.doppler.com/)
 - Account: [Amazon SES](https://aws.amazon.com/ses/)
-- Account: [Papertrail](https://papertrailapp.com/)
 - Account: [Stripe](https://stripe.com/) or [PayPal](https://www.paypal.com/)
+
+- Install: [Terraform](https://developer.hashicorp.com/terraform/install)
 
 - Install: [Node](https://nodejs.org/)
 
@@ -39,6 +43,7 @@ Simple registration / admissions sales site for contra dance events.
 
 - Install: [Google Cloud CLI](https://cloud.google.com/sdk/docs/install-sdk)
   - Login to the Google Cloud CLI: `gcloud auth login`
+  - Create local default credentials (needed for Terraform): `gcloud auth application-default login`
 
 - Install: [Stripe CLI](https://stripe.com/docs/stripe-cli) (if applicable)
   - Login to the Stripe CLI: `stripe login`
@@ -47,7 +52,9 @@ Simple registration / admissions sales site for contra dance events.
 
 ## Copy template project
 
-Fork [template](https://github.com/ashgoren/registration) and clone to a local directory:
+Replace below with instructions on copying a github "template project"
+
+<!-- Fork [template](https://github.com/ashgoren/registration) and clone to a local directory:
 
 ```sh
 # Replace [NAME] with desired project/directory name for new project
@@ -63,7 +70,7 @@ cd [NAME]
 > git remote rm origin
 > gh repo create [NAME] [--public|private] --source=. --remote=origin
 > ```
-> If copying template over an existing project, maintain the .git directory from the existing project to preserve commit history.
+> If copying template over an existing project, maintain the .git directory from the existing project to preserve commit history. -->
 
 ---
 
@@ -83,202 +90,120 @@ firebase functions:delete <FUNCTION_NAME> --force
 
 - To avoid deleting data, could rename collections instead of deleting them.
 
----
 
-## Set configuration options:
 
-- Update `index.html` with site `title` and `meta` properties (e.g. description and [og:image](https://ogp.me/))
-- Update favicon - use a generator, e.g. [favicon-generator](https://www.favicon-generator.org)
-- Copy desired logo to `public/logo.png` and set to desired height (likely <= 80px)
-- Update values in `config` folder files
-- Update email receipt templates in `templates` folder
+
+
+
+
+
 
 ---
 
-## Create a Firebase project, which will also create a Google Cloud project with the same PROJECT_ID:
+## Spreadsheet
 
-```sh
-# Replace <PROJECT_ID> with desired project ID
-firebase projects:create <PROJECT_ID>
-```
-
-> [!TIP]
-> In all instructions below, replace `<PROJECT_ID>` with the actual project ID created in the previous step.
-
-> [!IMPORTANT]
-> Make sure to set the region for the new project immediately, likely to us-west1 or us-central1 (by creating firestore db?)
+- Copy the [template spreadsheet](https://docs.google.com/spreadsheets/d/1gQ9l8wBTgNmiI0KmpECsDzCqePSPMnZFaecuj0VO_cU/template/preview)
+- Update fields/columns as needed in spreadsheet _and_ in `functions/shared/fields.js`
+- Set the new spreadsheet's URL in terraform `shared.auto.tfvars` (can just copy the url when viewing it)
+- Share spreadsheet (with edit permissions) with both stg & prd sheets service account emails:
+  - sheets@<PROJECT_ID>.iam.gserviceaccount.com
+  - sheets@<PROJECT_ID>-stg.iam.gserviceaccount.com
 
 ---
 
-## Enable billing on Google Cloud account
+## Email
 
-- Create a new billing account if necessary from the [Google Cloud console](https://console.cloud.google.com/billing)
-- Unlikely to owe any money for small scale use, but set a billing alert to be safe (see below).
-- Setup [OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent)
-  - user type: internal
-  - values for other fields don't matter
-  - not necessary to add any scopes
-
----
-
-## Link new project to Google Cloud billing account:
-
-```sh
-gcloud billing accounts list
-gcloud billing projects link <PROJECT_ID> --billing-account <BILLING_ACCOUNT_ID>
-```
+- Create AWS account and enable SES
+- Verify your domain in SES console (add required records to DNS provider and wait for verification)
+- Set the following in terraform `shared.auto.tfvars`:
+  - `email_amazonses_smtp_user` (from amazon ses)
+  - `email_amazonses_smtp_password` (from amazon ses)
+  - `email_from_name`
+  - `email_from_address` (domain must be verified in amazon ses)
+  - `email_reply_to` (if different from email_from_address)
+  - `email_admin_notifications`
+  - `email_ignore_test_domains` (comma-separated list of test domains to ignore for receipts etc)
 
 ---
 
-## Set billing alert, enable failsafe shutdown of APIs if exceeded
+## Payment Processor
 
-> [!WARNING]
-> This is an emergency failsafe to shutdown everything in case of wildly unexpected charges.
-> Actual shutoff point can be changed in budget-cutoff.js but defaults to $10.
-
-```sh
-gcloud pubsub topics create budget-alerts --project <PROJECT_ID>
-gcloud beta billing budgets create --billing-account=BILLING_ACCOUNT_ID --display-name="PROJECT_ID Shutdown Budget" --budget-amount=100USD --project=PROJECT_ID --threshold-rule=percent=.01,basis=CURRENT_SPEND --threshold-rule=percent=.1,basis=CURRENT_SPEND --threshold-rule=percent=.5,basis=CURRENT_SPEND --threshold-rule=percent=1,basis=CURRENT_SPEND --all-updates-rule-pubsub-topic="projects/PROJECT_ID/topics/budget-alerts"
-```
-
----
-
-## Secrets management
-
-- Create Doppler front-end and back-end projects:
-
-```sh
-doppler projects create <PROJECT_ID>-frontend
-doppler projects create <PROJECT_ID>-backend
-```
-
-- Create Doppler tokens and save to GitHub secrets:
-
-```sh
-echo $(doppler configs tokens create --project <PROJECT_ID>-frontend --config stg github-stg-token --plain) | gh secret set DOPPLER_TOKEN_STG
-echo $(doppler configs tokens create --project <PROJECT_ID>-frontend --config prd github-prd-token --plain) | gh secret set DOPPLER_TOKEN_PRD
-```
-
-- Set Sandbox Mode:
-
-```sh
-doppler-set -p <PROJECT_ID> -t backend --dev --stg SANDBOX_MODE "true"
-doppler-set -p <PROJECT_ID> -t backend --prd SANDBOX_MODE "false"
-```
-
-> [!NOTE]
-> Replace all references to `doppler-set` below with actual path to script (from project root `./scripts/doppler-set.js`)
-
-### Create Eventarc trigger for when secret is updated to trigger cleanup
-
-- Determine default compute service account email:
-```sh
-gcloud iam service-accounts list --project contra-testing | grep compute
-```
-
-```sh
-gcloud eventarc triggers create secret-version-trigger \
-    --location=global \
-    --destination-run-service=onsecretversion \
-    --destination-run-region=<REGION> \
-    --event-filters="type=google.cloud.audit.log.v1.written" \
-    --event-filters="serviceName=secretmanager.googleapis.com" \
-    --event-filters="methodName=google.cloud.secretmanager.v1.SecretManagerService.AddSecretVersion" \
-    --event-data-content-type="application/json" \
-    --service-account=<SERVICE_ACCOUNT_EMAIL> \
-    --project=<PROJECT_ID>
-```
-
-### Setup Doppler -> GCP Secret Manager integration
-
-```sh
-gcloud iam service-accounts create doppler-secret-manager --display-name="Doppler Secret Manager" --project contra-testing
-gcloud projects add-iam-policy-binding contra-testing --member="serviceAccount:doppler-secret-manager@contra-testing.iam.gserviceaccount.com" --role="roles/secretmanager.admin"
-gcloud iam service-accounts keys create tmp.json --iam-account="doppler-secret-manager@contra-testing.iam.gserviceaccount.com"
-cat tmp.json && rm tmp.json
-```
-
-Create a GCP Secret Manager integration from Doppler console:
-- Paste entire contents of service account key file (tmp.json) into "Service Account Key" field.
-- Select Single-Secret sync strategy and name it `backend`.
-- Sync config `stg` for now; will remove & re-add integration with `prd` when ready to launch.
-
----
-
-## Create Firebase web app and add config to Doppler
-
-- From [Firebase console](https://console.firebase.google.com/), select your project, click "Add app" and choose the web (`</>`) option.
-- Get Firebase web app config values by running the following command in the project directory:
-  ```sh
-  firebase apps:sdkconfig web
-  ```
-- Save the Firebase web app config values to Doppler:
-```sh
-doppler-set -p <PROJECT_ID> -t frontend VITE_FIREBASE_PROJECT_ID "<value>"
-doppler-set -p <PROJECT_ID> -t frontend VITE_FIREBASE_APP_ID "<value>"
-doppler-set -p <PROJECT_ID> -t frontend VITE_FIREBASE_STORAGE_BUCKET "<value>"
-doppler-set -p <PROJECT_ID> -t frontend VITE_FIREBASE_API_KEY "<value>"
-doppler-set -p <PROJECT_ID> -t frontend VITE_FIREBASE_AUTH_DOMAIN "<value>"
-doppler-set -p <PROJECT_ID> -t frontend VITE_FIREBASE_MESSAGING_SENDER_ID "<value>"
-```
-
----
-
-## Set functions region in Doppler for frontend and in `functions/config.js` for backend
-
-```sh
-doppler-set -p <PROJECT_ID> -t frontend VITE_FUNCTIONS_REGION <REGION>
-```
-
----
-
-## Setup database
-
-> [!IMPORTANT]
-> Make sure to set the region for the new project immediately, likely to us-west1 or us-central1 (before deploying db?)
-
-- Create Firestore database: https://console.firebase.google.com/project/<PROJECT_ID>/firestore
-- Deploy Firestore database: `firebase deploy --only firestore`
-
----
-
-## Setup Stripe or PayPal:
-
-For both Stripe and PayPal, use test / sandbox mode keys until ready to launch.
-
-### Stripe configuration
+### Stripe
 
 - On Stripe console, disable all payment methods except Cards, Apple Pay, Google Pay
 - Apple Pay: requires stripe domain auth
 
-- Set the test & live mode publishable & secret keys in Doppler:
-```sh
-doppler-set -p <PROJECT_ID> -t frontend --dev --stg VITE_STRIPE_PUBLISHABLE_KEY "<test_stripe_publishable_key_value>"
-doppler-set -p <PROJECT_ID> -t backend --dev --stg STRIPE_SECRET_KEY "<test_stripe_secret_key_value>"
-doppler-set -p <PROJECT_ID> -t frontend --prd VITE_STRIPE_PUBLISHABLE_KEY "<live_stripe_publishable_key_value>"
-doppler-set -p <PROJECT_ID> -t backend --prd STRIPE_SECRET_KEY "<live_stripe_secret_key_value>"
-```
+- Set the *test mode* publishable & secret keys in terraform `stg.tfvars`
+- Set the *live mode* publishable & secret keys in terraform `prd.tfvars`
 
-### PayPal configuration
+### PayPal
 
 > [!TIP]
 > Don't want to accept Venmo? Comment out the venmo line in `configPaypal.jsx`.
 
-- Set the test & live mode client id & client secret in Doppler:
+- Set the *test mode* client id & client secret in terraform `stg.tfvars`
+- Set the *live mode* client id & client secret in terraform `prd.tfvars`
+
+---
+
+## Config
+
+### Must configure before next step:
+
+- `terraform/bootstrap/terraform.tfvars`
+- `terraform/environments/shared.auto.tfvars`
+- `terraform/environments/staging.tfvars`
+- `terraform/environments/production.tfvars`
+
+### Configuration can be done now or later:
+
+- `functions/config.js`
+- `src/config` - including basics, fields, order summary, etc
+- `index.html` - site title and meta properties, e.g. description & [og:image](https://ogp.me/)
+- Update favicon - use a generator, e.g. [favicon-generator](https://www.favicon-generator.org)
+- Update logo - `public/logo.png` (set to desired height, likely <= 80px)
+- Update email receipts in `templates` folder
+
+---
+
+## Bootstrap Google Cloud projects
+
+> [!NOTE]
+> This script performs the following bootstrapping steps: 
+> - Creates production & staging projects, linked to a billing account
+> - Enables APIs required to bootstrap Terraform
+> - Initializes terraform directories
+> - Creates terraform prd/stg workspaces, importing the appropriate google cloud project into each
+> - Creates Doppler projects & environments
+
+> [!IMPORTANT]
+> Ensure terraform tfvars files are updated before running this!
+
 ```sh
-doppler-set -p <PROJECT_ID> -t frontend --dev --stg VITE_PAYPAL_CLIENT_ID "<test_mode_value>"
-doppler-set -p <PROJECT_ID> -t backend --dev --stg PAYPAL_CLIENT_ID "<test_mode_value>"
-doppler-set -p <PROJECT_ID> -t backend --dev --stg PAYPAL_CLIENT_SECRET "<test_mode_value>"
-doppler-set -p <PROJECT_ID> -t frontend --prd VITE_PAYPAL_CLIENT_ID "<live_mode_value>"
-doppler-set -p <PROJECT_ID> -t backend --prd PAYPAL_CLIENT_ID "<live_mode_value>"
-doppler-set -p <PROJECT_ID> -t backend --prd PAYPAL_CLIENT_SECRET "<live_mode_value>"
+npm run bootstrap <PROJECT_ID> <BILLING_ACCOUNT_ID>
 ```
 
 ---
 
-## Setup Payment Webhook:
+## Configure OAuth consent screen [here](https://console.cloud.google.com/apis/credentials/consent)
 
-Setup webhooks in PayPal Developer Dashboard or Stripe Dashboard to receive notifications of payment events.
+- For both the production & staging projects:
+  - Set user type to internal; other values don't matter & it isn't necessary to add any scopes
+
+---
+
+## Terraform - Build Infrastructure
+
+```sh
+npm run terraform-stg
+npm run terraform-prd
+```
+
+---
+
+## Payment Webhook(s):
+
+Add webhooks in PayPal Developer Dashboard or Stripe Dashboard to receive notifications of payment events.
 
 > [!IMPORTANT]
 > If you want to use this in Sandbox mode, you'll need 3 different webhooks.
@@ -287,7 +212,7 @@ Setup webhooks in PayPal Developer Dashboard or Stripe Dashboard to receive noti
 > 2nd webhook (sandbox payments) - goes to firebase function (for staging)
 > 3rd webhook (live payments) - goes to firebase function (for prod)
 
-### For PayPal:
+### PayPal Webhooks:
 
 1. In the PayPal Developer Dashboard, navigate to **My Apps & Credentials**.
 2. Select your app and scroll down to the **Webhooks** section.
@@ -299,12 +224,12 @@ Setup webhooks in PayPal Developer Dashboard or Stripe Dashboard to receive noti
 6. Set Webhook IDs generated by PayPal in Doppler:
 
 ```sh
-doppler-set -p <PROJECT_ID> -t backend --dev PAYPAL_WEBHOOK_ID "<local_sandbox>"
-doppler-set -p <PROJECT_ID> -t backend --stg PAYPAL_WEBHOOK_ID "<deployed_sandbox>"
-doppler-set -p <PROJECT_ID> -t backend --prd PAYPAL_WEBHOOK_ID "<deployed_live>"
+doppler secrets set -p <PROJECT_ID>-backend -c dev PAYPAL_WEBHOOK_ID "<local_sandbox>"
+doppler secrets set -p <PROJECT_ID>-backend -c stg PAYPAL_WEBHOOK_ID "<deployed_sandbox>"
+doppler secrets set -p <PROJECT_ID>-backend -c prd PAYPAL_WEBHOOK_ID "<deployed_live>"
 ```
 
-### For Stripe:
+### Stripe Webhooks:
 
 1. Create Stripe webhook endpoints from the command line using the Stripe CLI or from the Stripe Dashboard.
 
@@ -321,223 +246,88 @@ stripe listen --events payment_intent.succeeded --forward-to localhost:5001/<PRO
 2. Set Webhook Secrets generated by Stripe in Doppler:
 
 ```sh
-doppler-set -p <PROJECT_ID> -t backend --dev STRIPE_WEBHOOK_SECRET "<local_sandbox>"
-doppler-set -p <PROJECT_ID> -t backend --stg STRIPE_WEBHOOK_SECRET "<deployed_sandbox>"
-doppler-set -p <PROJECT_ID> -t backend --prd STRIPE_WEBHOOK_SECRET "<deployed_live>"
+doppler secrets set -p <PROJECT_ID>-backend -c dev STRIPE_WEBHOOK_SECRET "<local_sandbox>"
+doppler secrets set -p <PROJECT_ID>-backend -c stg STRIPE_WEBHOOK_SECRET "<deployed_sandbox>"
+doppler secrets set -p <PROJECT_ID>-backend -c prd STRIPE_WEBHOOK_SECRET "<deployed_live>"
 ```
 
 ---
 
-## If collecting addresses, setup Google Places API for address autocomplete
+# Development 
 
-Enable the google maps javascript API _and_ the *new* google places API. 
-
+First time:
 ```sh
-gcloud services enable places.googleapis.com maps-backend.googleapis.com --project <PROJECT_ID>
-gcloud services api-keys create \
-  --display-name="Places and Maps API Key" \
-  --allowed-referrers="localhost:3000/*,<PROJECT_ID>.web.app/*,example.com/*,www.example.com/*" \
-  --api-target=service=places.googleapis.com \
-  --api-target=service=maps-backend.googleapis.com \
-  --project <PROJECT_ID>
-
+npm install
+npm install --prefix functions
 ```
 
-- Save the `keyString` value to Doppler:
+Configure local doppler to use the right frontend and backend projects:
 ```sh
-doppler-set -p <PROJECT_ID> -t frontend VITE_GOOGLE_PLACES_API_KEY "<value>"
+doppler setup -p <PROJECT_ID> -c dev
+cd functions && doppler setup -p <PROJECT_ID>-backend -c dev && cd ..
 ```
 
----
-
-## Enable Papertrail for client-side logging (routed through firebase function)
-
-- Create log destination on [papertrail](https://papertrailapp.com/account/destinations)
-
+Usage in development:
 ```sh
-doppler-set -p <PROJECT_ID> -t backend PAPERTRAIL_TOKEN "<value>"
+npm run emulator # optional (to use emulators for firebase functions)
+npm run dev
 ```
 
 ---
 
-## Setup Google Sheets integration:
+# Deployment
 
-Setup spreadsheet for recording orders:
-
-- Make a copy of the [template spreadsheet](https://docs.google.com/spreadsheets/d/1gQ9l8wBTgNmiI0KmpECsDzCqePSPMnZFaecuj0VO_cU/edit?usp=sharing).
-- Update fields/columns as needed in spreadsheet _and_ in `functions/shared/fields.js`.
-
-Enable Sheets API, create Google Cloud service account, update values in Doppler:
-
-```sh
-gcloud services enable sheets.googleapis.com --project <PROJECT_ID>
-gcloud iam service-accounts create sheets --project <PROJECT_ID>
-gcloud iam service-accounts keys create tmp.json --iam-account sheets@<PROJECT_ID>.iam.gserviceaccount.com
-cat tmp.json && rm tmp.json
-```
-
-- Set Doppler values:
-
-```sh
-doppler-set -p <PROJECT_ID> -t backend SHEETS_SHEET_ID "<spreadsheet_id>" # long string of characters in URL, likely between `/d/` and `/edit`
-doppler-set -p <PROJECT_ID> -t backend SHEETS_SERVICE_ACCOUNT_CLIENT_EMAIL "<client_email>"
-doppler-set -p <PROJECT_ID> -t backend SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY "<private_key>"
-```
-
-> [!IMPORTANT]
-> SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY may not paste correctly; may have to use Doppler console to enter it.
-
-- Give spreadsheet edit permissions to the `client_email` address from above output.
-
----
-
-## Setup Email Confirmation:
-
-Create an Amazon SES API key, update values in Doppler backend:
-
-```sh
-doppler-set -p <PROJECT_ID> -t backend EMAIL_ENDPOINT "<value>" # (from amazonses SMTP settings)
-doppler-set -p <PROJECT_ID> -t backend EMAIL_USER "<value>" # (from amazonses SMTP settings)
-doppler-set -p <PROJECT_ID> -t backend EMAIL_PASSWORD "<value>" # (from amazonses SMTP settings)
-doppler-set -p <PROJECT_ID> -t backend EMAIL_FROM "<value>"
-doppler-set -p <PROJECT_ID> -t backend EMAIL_REPLY_TO "<value>" # (if needed)
-doppler-set -p <PROJECT_ID> -t backend EMAIL_IGNORE_TEST_DOMAINS "<value>" # (comma-separated list of test domains to ignore for receipts etc)
-doppler-set -p <PROJECT_ID> -t backend EMAIL_NOTIFY_TO "<value>" # admin email for notifications
-```
-
----
-
-## Deploy Firebase Functions:
-
-### Deploy functions
+## Deploy backend (Firebase Functions):
 
 ```sh
 npm install --prefix functions
 firebase deploy --only functions
 ```
 
-### Configure Cleanup Policy (run after initial deploy)
+## Deploy frontend (Firebase Hosting):
 
-```sh
-gcloud artifacts repositories set-cleanup-policies gcf-artifacts --policy cleanup-policy.json --location=<REGION> --project <PROJECT_ID>
-```
+- Push or merge to staging branch on GitHub to deploy staging project
+- Push or merge to main branch on GitHub to deploy production project
 
----
+## Configure Firebase Hosting URL
 
-## Add error logging for Firebase functions:
-
-> [!WARNING]  
-> In April 2026, Google plans to begin charging $1.50/month for each alert condition, though they're currently running a promotion to provide $300 in logging credits. Be sure to monitor your usage and set up billing alerts.
-
-Setup logs for Firebase functions to notify on error:
-
-- Go to [Google Cloud Logging](https://console.cloud.google.com/logs/query).
-- If you don't see a query box, click "Show query" in the top right.
-- Run the following query:
-  ```
-  resource.type="cloud_run_revision" severity="ERROR"
-  ```
-- Click on "Create log alert" from the Actions dropdown.
-- Configure the alert as desired. For example:
-  - Set alert name as desired.
-  - Set policy severity level to Error.
-  - Click Next 3 times.
-  - Set notification channel to Email.
-  - Click Save.
-
-- Do the same for this query:
-  ```
-  resource.type="cloud_run_revision" textPayload:"Your function timed out after"
-  ```
+- In Firebase Console add custom domain (if desired)
 
 ---
 
-## Configure Firebase Hosting
+# After updating stg/prd secrets
 
-#### Add Firebase Service Account as GitHub Secret:
-
-```sh
-# answer no to questions, as this is already configured
-firebase init hosting:github
-rm .github/workflows/firebase-hosting-pull-request.yml
-```
-
-- Set `firebaseServiceAccount` value in `.github/workflows/firebase-hosting-merge.yml` GitHub workflow to name of that GitHub secret.
-
-#### Add Firebase Hosting staging channel:
-
-```sh
-firebase hosting:channel:create staging
-```
-
-#### Add custom domains for Firebase Hosting:
-
-- In Firebase Console add custom domains for both live and staging. (e.g. example.com and staging.example.com)
+- After updating Doppler stg/prd secrets, must redeploy front-end + firebase functions with `--force`
 
 ---
 
-# Development 
-
-First time setup:
-```sh
-npm install
-```
-
-Usage in development:
-```sh
-npm run emulator # optional (to use emulators for serverless functions)
-npm run dev
-```
-
----
-
-# Deployment via GitHub workflow and Firebase hosting
-
-- Ensure `firebaseServiceAccount` is updated in `.github/workflows/firebase-hosting-merge.yml`
-- If update Doppler stg/prd secrets, must redeploy
-
----
-
-# When switching to live mode
+# Switching to live mode
 
 - Ensure that Doppler prd config has live mode values for these:
   - frontend: `VITE_STRIPE_PUBLISHABLE_KEY`
   - frontend: `VITE_PAYPAL_CLIENT_ID`
-  - backend: `SANDBOX_MODE`
   - backend: `STRIPE_SECRET_KEY`
   - backend: `STRIPE_WEBHOOK_SECRET`
   - backend: `PAYPAL_CLIENT_ID`
   - backend: `PAYPAL_CLIENT_SECRET`
   - backend: `PAYPAL_WEBHOOK_ID`
-- Doppler -> GCP-Secret-Manager integration: replace stg sync with prd sync
-- Set `SANDBOX_MODE` to false in `configBasics.jsx`
 - Make registration link live on homepage & navbar
 - Redeploy: front-end, back-end, firebase functions with `--force`
 - Clear Spreadsheet
-- Clear Firestore DB
+- Clear production Firestore DB if necessary
 
-# Disable APIs when project is in hibernation
-- gcloud services disable run.googleapis.com firestore.googleapis.com cloudbuild.googleapis.com eventarc.googleapis.com places.googleapis.com mapsjs.googleapis.com --project <PROJECT_ID>
+---
 
-# Enable APIs when project is active again
-- gcloud services enable run.googleapis.com firestore.googleapis.com cloudbuild.googleapis.com eventarc.googleapis.com places.googleapis.com mapsjs.googleapis.com --project <PROJECT_ID>
+# Hibernation for projects not actively in use
+
+Putting a project into hibernation:
+- `npm run disable-apis <PROJECT_ID>`
+
+Removing a project from hibernation:
+- `npm run enable-apis <PROJECT_ID>`
 
 ---
 
 # Helper scripts
-
-- Set `SCRIPTS_TEST_DOMAINS` (comma-separated list of test domains to ignore when listing emails):
-
-```sh
-doppler-set -p <PROJECT_ID> -t frontend SCRIPTS_TEST_DOMAINS "example.com,test.com"
-```
-
-- Generate and save a random uuid as `CLOUD_FUNCTIONS_TRIGGER_TOKEN` in Doppler:
-
-```sh
-uuidgen
-doppler-set -p <PROJECT_ID> -t frontend CLOUD_FUNCTIONS_TRIGGER_TOKEN "<uuid_from_above>"
-doppler-set -p <PROJECT_ID> -t backend CLOUD_FUNCTIONS_TRIGGER_TOKEN "<uuid_from_above>"
-```
 
 See `scripts/README.md` for details on scripts to query Firestore and Google Sheets.

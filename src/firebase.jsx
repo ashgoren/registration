@@ -2,17 +2,10 @@ import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFunctions, connectFunctionsEmulator, httpsCallable } from 'firebase/functions';
 import configBasics from 'config/configBasics';
 
-const { VITE_FIREBASE_API_KEY, VITE_FIREBASE_AUTH_DOMAIN, VITE_FIREBASE_PROJECT_ID, VITE_FIREBASE_STORAGE_BUCKET, VITE_FIREBASE_SENDER_ID, VITE_FIREBASE_APP_ID, VITE_FUNCTIONS_REGION } = import.meta.env;
+const { VITE_FIREBASE_CONFIG, VITE_FUNCTIONS_REGION } = import.meta.env;
 const { USE_FIREBASE_EMULATOR } = configBasics;
 
-const firebaseConfig = {
-  apiKey: VITE_FIREBASE_API_KEY,
-  authDomain: VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: VITE_FIREBASE_PROJECT_ID,
-  storageBucket: VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: VITE_FIREBASE_SENDER_ID,
-  appId: VITE_FIREBASE_APP_ID
-}
+const firebaseConfig = JSON.parse(VITE_FIREBASE_CONFIG);
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 

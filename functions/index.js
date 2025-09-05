@@ -7,7 +7,7 @@ import { handleFunctionError } from './shared/errorHandler.js';
 import { deployOptions } from './config.js';
 
 // Functions called by firebaseFunctionDispatcher
-import { logToPapertrail } from './api/logToPapertrail.js';
+import { logEvent } from './api/logEvent.js';
 import { initializePayment } from './api/initializePayment.js';
 import { savePendingOrder, saveFinalOrder } from './api/database.js';
 import { createOrUpdatePaypalOrder, capturePaypalOrder } from './paypal/index.js';
@@ -22,7 +22,6 @@ import { missingFromSpreadsheetHandler, duplicateEmailsInSpreadsheetHandler } fr
 import { emailIncompleteOrdersHandler } from './scheduled/incomplete.js';
 import { matchPaymentsHandler, matchPaymentsOnDemandHandler } from './scheduled/matchPayments.js';
 import { disableProjectAPIsHandler } from './automations/budget-cutoff.js';
-import { onSecretVersionHandler } from './automations/cleanupSecrets.js';
 
 // Deploy-time options
 const region = deployOptions.REGION;
@@ -44,7 +43,7 @@ const firebaseFunctionDispatcherHandler = async (request) => {
       case 'capturePaypalOrder': return await capturePaypalOrder(data);
       case 'savePendingOrder': return await savePendingOrder(data);
       case 'saveFinalOrder': return await saveFinalOrder(data);
-      case 'logToPapertrail': return logToPapertrail(data); // fire-and-forget
+      case 'logEvent': return logEvent(data); // fire-and-forget
       default: return { error: 'Invalid action' };
     }
   } catch (err) {
@@ -73,10 +72,6 @@ const onRequestFunctions = [
     name: 'matchPaymentsOnDemand',
     handler: matchPaymentsOnDemandHandler, // matchPayments.js
   },
-  {
-    name: 'onSecretVersion',
-    handler: onSecretVersionHandler, // cleanupSecrets.js
-  }
 ];
 
 const onScheduleFunctions = [
@@ -156,6 +151,5 @@ export const {
   matchPaymentsOnDemand,
   disableProjectAPIs,
   paypalWebhook,
-  stripeWebhook,
-  onSecretVersion
+  stripeWebhook
 } = exports;
