@@ -50,26 +50,13 @@ Simple registration / admissions sales site for contra dance events.
 
 ---
 
-## Generate GitHub Repository
+## 1. Generate GitHub Repository
 
 - Generate a new GitHub repository from [template](https://github.com/ashgoren/registration/generate)
 
 ---
 
-## Create Production & Staging Google Cloud Projects
-
-> [!NOTE]
-> Project ID's must be globally unique.
-> Staging project ID must match production project ID but with "-stg" appended.
-
-```sh
-gcloud projects create PROJECT_ID
-gcloud projects create PROJECT_ID-stg
-```
-
----
-
-## Create & Bootstrap GCP/Firebase Projects, Terraform, Doppler
+## 2. Create & Bootstrap GCP/Firebase Projects, Terraform, Doppler
 
 > [!NOTE]
 > This script performs the following bootstrapping steps:
@@ -94,7 +81,7 @@ npm run bootstrap <PROJECT_ID>
 
 ---
 
-## Spreadsheet
+## 3. Spreadsheet
 
 - Generate a new spreadsheet from [template](https://docs.google.com/spreadsheets/d/1gQ9l8wBTgNmiI0KmpECsDzCqePSPMnZFaecuj0VO_cU/template/preview)
 - Update fields/columns as needed in spreadsheet _and_ in `functions/shared/fields.js`
@@ -105,7 +92,7 @@ npm run bootstrap <PROJECT_ID>
 
 ---
 
-## Email
+## 4. Email
 
 - Create Amazon SES SMTP credentials [here](https://console.aws.amazon.com/ses/home#/smtp)
   - Set "SMTP user name" as `email_amazonses_smtp_user` in `terraform/shared.auto.tfvars`
@@ -119,7 +106,7 @@ npm run bootstrap <PROJECT_ID>
   - `email_from_name`
   - `email_from_address` - domain must be verified in amazon ses
   - `email_admin_notifications`
-  - `email_test_domains` - test domains to ignore for receipts etc - e.g. "example.com,test.com,testing.com"
+  - `email_test_domains` - test domains to ignore for receipts etc
 
 - Set the following in `terraform/shared.auto.tfvars` only if needed:
   - `email_reply_to` - use a custom reply-to address
@@ -127,7 +114,7 @@ npm run bootstrap <PROJECT_ID>
 
 ---
 
-## Payment Processor
+## 5. Payment Processor
 
 ### Stripe
 
@@ -138,7 +125,7 @@ npm run bootstrap <PROJECT_ID>
 - Set the *test mode* publishable & secret keys in terraform `stg.tfvars`
 - Set the *live mode* publishable key in terraform `prd.tfvars`
 - Set the *live mode* secret key manually in Doppler backend prd config:
-  - `doppler secrets set -p <PROJECT_ID>-backend -c prd STRIPE_SECRET_KEY`
+  - `echo -n <STRIPE_SECRET_KEY_VALUE> | doppler secrets set -p <PROJECT_ID>-backend -c prd STRIPE_SECRET_KEY --silent`
 
 ### PayPal
 
@@ -148,17 +135,17 @@ npm run bootstrap <PROJECT_ID>
 - Set the *test mode* client id & client secret in terraform `stg.tfvars`
 - Set the *live mode* client id in terraform `prd.tfvars`
 - Set the *live mode* client secret manually in Doppler backend prd config:
-  - `doppler secrets set -p <PROJECT_ID>-backend -c prd PAYPAL_CLIENT_SECRET`
+  - `echo -n <PAYPAL_CLIENT_SECRET_VALUE> | doppler secrets set -p <PROJECT_ID>-backend -c prd PAYPAL_CLIENT_SECRET --silent`
 
 ---
 
-## Terraform - Build Infrastructure
+## 6. Terraform - Build Infrastructure
 
 > [!IMPORTANT]
 > Ensure values are set in the following files:
 > - `terraform/shared.auto.tfvars`
-> - `terraform/staging.tfvars`
-> - `terraform/production.tfvars`
+> - `terraform/stg.tfvars`
+> - `terraform/prd.tfvars`
 
 > [!TIP]
 > Leave `frontend_domain` blank if you don't plan to have a custom domain for your website.
@@ -171,7 +158,7 @@ npm run terraform-prd # builds production project
 
 ---
 
-## Configure OAuth consent screen
+## 7. Configure OAuth consent screen
 
 > [!IMPORTANT]
 > Make sure to configure the OAuth consent screen for both production and staging projects.
@@ -183,7 +170,7 @@ npm run terraform-prd # builds production project
 
 ---
 
-## Config
+## 8. Config
 
 - `functions/config.js`
 - `src/config` - including basics, fields, order summary, etc
@@ -194,7 +181,7 @@ npm run terraform-prd # builds production project
 
 ---
 
-## Payment Webhook(s):
+## 9. Payment Webhook(s):
 
 Add webhooks in PayPal Developer Dashboard or Stripe Dashboard to receive notifications of payment events.
 
