@@ -34,7 +34,7 @@ function runCommand(command, description, options = { stdio: 'inherit' }) {
     return true;
   } catch (error) {
     log.error(`❌ Failed to execute: ${command}`);
-    log.error(`Error: ${error.message}\n`);
+    log.error(`${error.message}\n`);
     return false;
   }
 }

@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 
-// Note: script is idempotent except creation of tfvars files overwrites existing contents
+// Note: script is idempotent except:
+// - google cloud project creation fails if project already exists
+// - creation of tfvars files overwrites existing contents
 
 import { checkPrerequisites } from './checkPrerequisites.js';
 import { gatherValues } from './gatherValues.js';
+import { createProjects } from './createProjects.js';
 import { configureProjects } from './configureProjects.js'
 import { generateTfvarsFiles } from './generate-tfvars.js'
 import { generateFirebaserc } from './generate-firebaserc.js';
@@ -14,9 +17,10 @@ async function main() {
   const { projectId } = parseArgs();
 
   log.plain('\nThis script will:');
+  log.plain('• Create Google Cloud projects');
   log.plain('• Link GCP projects to billing account');
   log.plain('• Enable required Google Cloud APIs');
-  log.plain('• Generate Terraform tfvars files\n');
+  log.plain('• Generate Terraform tfvars files');
   log.plain('• Generate .firebaserc file');
   log.plain('• Bootstrap Doppler');
 
@@ -34,6 +38,12 @@ async function main() {
     process.exit(1);
   }
 
+  log.info('\n🚀 Creating Google Cloud projects...\n');
+  if (!await createProjects(projectId)) {
+    log.error('🔴 Failed to create Google Cloud projects\n');
+    process.exit(1);
+  }
+  
   log.info('\n🚀 Linking projects to billing account and enabling APIs...\n');
   if (!await configureProjects(projectId, gatheredValues.gcp_billing_account_id)) {
     log.error('🔴 Failed to configure projects\n');

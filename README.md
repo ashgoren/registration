@@ -69,15 +69,24 @@ gcloud projects create PROJECT_ID-stg
 
 ---
 
-## Bootstrap Google Cloud, Firebase, Terraform, Doppler
+## Create & Bootstrap GCP/Firebase Projects, Terraform, Doppler
 
 > [!NOTE]
 > This script performs the following bootstrapping steps:
+> - Creates Google Cloud production & staging projects
 > - Links Google Cloud projects to a billing account
 > - Enables APIs required to bootstrap Terraform
 > - Generates .firebaserc file
 > - Generates Terraform variables files
 > - Creates Doppler projects
+
+> [!IMPORTANT]
+> PROJECT_ID is your desired unique identifier for your project.
+> It must be globally unique. (This script will inform you if it's taken.)
+
+> [!TIP]
+> Firebase Hosting built-in project site will be https://<PROJECT_ID>.web.app.
+> (You may of course ignore that and use your own domain.)
 
 ```sh
 npm run bootstrap <PROJECT_ID>
@@ -143,18 +152,6 @@ npm run bootstrap <PROJECT_ID>
 
 ---
 
-## Configure OAuth consent screen
-
-> [!IMPORTANT]
-> Make sure to configure the OAuth consent screen for both production and staging projects.
-
-> [!TIP]
-> Set user type to internal (other values are unimportant & no scopes are required)
-
-[Configure OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent)
-
----
-
 ## Terraform - Build Infrastructure
 
 > [!IMPORTANT]
@@ -171,6 +168,18 @@ npm run initialize-terraform # initializes terraform with workspaces, imports GC
 npm run terraform-stg # builds staging project
 npm run terraform-prd # builds production project
 ```
+
+---
+
+## Configure OAuth consent screen
+
+> [!IMPORTANT]
+> Make sure to configure the OAuth consent screen for both production and staging projects.
+
+> [!TIP]
+> Set user type to internal (other values are unimportant & no scopes are required)
+
+[Configure OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent)
 
 ---
 
