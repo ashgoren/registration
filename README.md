@@ -151,7 +151,6 @@ npm run bootstrap <PROJECT_ID>
 > Leave `frontend_domain` blank if you don't plan to have a custom domain for your website.
 
 ```sh
-npm run initialize-terraform # initializes terraform with workspaces, imports GCP projects
 npm run terraform-stg # builds staging project
 npm run terraform-prd # builds production project
 ```

@@ -8,6 +8,7 @@ import { checkPrerequisites } from './checkPrerequisites.js';
 import { gatherValues } from './gatherValues.js';
 import { createProjects } from './createProjects.js';
 import { configureProjects } from './configureProjects.js'
+import { initializeTerraform } from './initialize-terraform.js'
 import { generateTfvarsFiles } from './generate-tfvars.js'
 import { generateFirebaserc } from './generate-firebaserc.js';
 import { bootstrapDoppler } from './bootstrapDoppler.js';
@@ -20,6 +21,7 @@ async function main() {
   log.plain('• Create Google Cloud projects');
   log.plain('• Link GCP projects to billing account');
   log.plain('• Enable required Google Cloud APIs');
+  log.plain('• Initialize Terraform directory and workspaces');
   log.plain('• Generate Terraform tfvars files');
   log.plain('• Generate .firebaserc file');
   log.plain('• Bootstrap Doppler');
@@ -47,6 +49,12 @@ async function main() {
   log.info('\n🚀 Linking projects to billing account and enabling APIs...\n');
   if (!await configureProjects(projectId, gatheredValues.gcp_billing_account_id)) {
     log.error('🔴 Failed to configure projects\n');
+    process.exit(1);
+  }
+
+  log.info('\n🚀 Initializing Terraform directory & workspaces...\n');
+  if (!await initializeTerraform()) {
+    log.error('🔴 Failed to initialize Terraform\n');
     process.exit(1);
   }
 
