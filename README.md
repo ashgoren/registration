@@ -70,8 +70,6 @@ npm run generate-tfvars
 > This script performs the following bootstrapping steps: 
 > - Creates production & staging projects, linked to a billing account
 > - Enables APIs required to bootstrap terraform
-> - Initializes terraform directories
-> - Creates terraform prd/stg workspaces, importing the appropriate google cloud project into each
 > - Generates .firebaserc file
 
 > [!TIP]
@@ -155,6 +153,7 @@ npm run bootstrap <PROJECT_ID> <BILLING_ACCOUNT_ID>
 > - `terraform/environments/production.tfvars`
 
 ```sh
+npm run initialize-terraform # initializes terraform with workspaces, imports GCP projects
 npm run terraform-bootstrap # creates doppler projects
 npm run terraform-stg # builds staging project
 npm run terraform-prd # builds production project
