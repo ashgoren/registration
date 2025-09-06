@@ -37,7 +37,7 @@ variable "doppler_project" {
   type        = string
 }
 
-# To find this: doppler configure get token
+# Set in Doppler bootstrap project and then run terraform via doppler run -- terraform
 variable "doppler_token" {
   description = "Doppler API token"
   type        = string

@@ -3,11 +3,7 @@ import { log } from './utils.js';
 
 export async function generateTfvarsFiles(tfvars) {
   const files = {
-  'terraform/bootstrap/terraform.tfvars': `doppler_project = "${tfvars.doppler_project}"
-doppler_token = "${tfvars.doppler_token}"`,
-
-  'terraform/environments/shared.auto.tfvars': `doppler_project = "${tfvars.doppler_project}"
-doppler_token = "${tfvars.doppler_token}"
+  'terraform/shared.auto.tfvars': `doppler_project = "${tfvars.doppler_project}"
 gcp_organization_id = "${tfvars.gcp_organization_id}"
 gcp_billing_account_id = "${tfvars.gcp_billing_account_id}"
 gcp_region = "us-west1"
@@ -21,13 +17,13 @@ email_from_email = ""
 email_admin_notifications = ""
 email_test_domains = "example.com,test.com,testing.com"`,
 
-  'terraform/environments/stg.tfvars': `project_id = "${tfvars.gcp_project_id}-stg"
+  'terraform/stg.tfvars': `project_id = "${tfvars.gcp_project_id}-stg"
 stripe_publishable_key = ""
 stripe_secret_key = ""
 paypal_client_id = ""
 paypal_client_secret = ""`,
 
-  'terraform/environments/prd.tfvars': `project_id = "${tfvars.gcp_project_id}"
+  'terraform/prd.tfvars': `project_id = "${tfvars.gcp_project_id}"
 stripe_publishable_key = ""
 paypal_client_id = ""`
 };
