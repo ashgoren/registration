@@ -69,14 +69,17 @@ npm run generate-tfvars
 > [!NOTE]
 > This script performs the following bootstrapping steps: 
 > - Creates production & staging projects, linked to a billing account
-> - Enables APIs required to bootstrap Terraform
+> - Enables APIs required to bootstrap terraform
 > - Initializes terraform directories
 > - Creates terraform prd/stg workspaces, importing the appropriate google cloud project into each
-> - Creates Doppler projects & environments
 > - Generates .firebaserc file
 
-> [!IMPORTANT]
-> Ensure `terraform/bootstrap/terraform.tfvars` is complete
+> [!TIP]
+> PROJECT_ID is your desired production Firebase / Google Cloud Project ID
+> Your chosen ID must be globally-unique (as must a version of it with '-stg' appended)
+
+> [!TIP]
+> To obtain your billing account ID, run `gcloud billing accounts list`
 
 ```sh
 npm run bootstrap <PROJECT_ID> <BILLING_ACCOUNT_ID>
@@ -146,13 +149,15 @@ npm run bootstrap <PROJECT_ID> <BILLING_ACCOUNT_ID>
 
 > [!IMPORTANT]
 > Ensure values are set in the following files:
+> - `terraform/bootstrap/terraform.tfvars`
 > - `terraform/environments/shared.auto.tfvars`
 > - `terraform/environments/staging.tfvars`
 > - `terraform/environments/production.tfvars`
 
 ```sh
-npm run terraform-stg
-npm run terraform-prd
+npm run terraform-bootstrap # creates doppler projects
+npm run terraform-stg # builds staging project
+npm run terraform-prd # builds production project
 ```
 
 ---
