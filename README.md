@@ -56,11 +56,22 @@ Simple registration / admissions sales site for contra dance events.
 
 ---
 
+## Create files for terraform variables
+
+```sh
+touch terraform/bootstrap/terraform.tfvars
+touch terraform/environments/shared.auto.tfvars
+touch terraform/environments/stg.tfvars
+touch terraform/environments/prd.tfvars
+```
+
+---
+
 ## Spreadsheet
 
 - Generate a new spreadsheet from [template](https://docs.google.com/spreadsheets/d/1gQ9l8wBTgNmiI0KmpECsDzCqePSPMnZFaecuj0VO_cU/template/preview)
 - Update fields/columns as needed in spreadsheet _and_ in `functions/shared/fields.js`
-- Set the new spreadsheet's URL in terraform `shared.auto.tfvars` (can just copy the url when viewing it)
+- Set the new spreadsheet's URL as `spreadsheet_url` in `terraform/environments/shared.auto.tfvars`
 - Share spreadsheet (with edit permissions) with both stg & prd sheets service account emails:
   - sheets@<PROJECT_ID>.iam.gserviceaccount.com
   - sheets@<PROJECT_ID>-stg.iam.gserviceaccount.com
