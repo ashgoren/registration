@@ -16,11 +16,6 @@ variable "stripe_secret_key" {
   type        = string
 }
 
-variable "stripe_webhook_secret" {
-  description = "Stripe webhook secret"
-  type        = string
-}
-
 variable "paypal_client_id" {
   description = "PayPal client ID"
   type        = string
@@ -28,11 +23,6 @@ variable "paypal_client_id" {
 
 variable "paypal_client_secret" {
   description = "PayPal client secret"
-  type        = string
-}
-
-variable "paypal_webhook_id" {
-  description = "PayPal webhook ID"
   type        = string
 }
 

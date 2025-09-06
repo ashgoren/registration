@@ -76,7 +76,7 @@ async function setupTerraform(projectId) {
 
   removeStateIfExists('google_project.project', envDir);
   if (!runCommand(
-    `terraform import -var 'projectId=${projectId}' google_project.project ${projectId}`,
+    `terraform import -var-file="prd.tfvars" google_project.project ${projectId}`,
     `Importing production project into Terraform`, { cwd: envDir }
   )) {
     return false;
@@ -89,7 +89,7 @@ async function setupTerraform(projectId) {
   }
 
   if (!runCommand(
-    `terraform import -var 'projectId=${projectId}-stg' google_project.project ${projectId}-stg`,
+    `terraform import -var-file="stg.tfvars" google_project.project ${projectId}-stg`,
     `Importing staging project into Terraform`, { cwd: envDir }
   )) {
     return false;
