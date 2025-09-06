@@ -15,6 +15,7 @@ variable "stripe_publishable_key" {
 variable "stripe_secret_key" {
   description = "Stripe secret key"
   type        = string
+  sensitive   = true
 }
 
 variable "paypal_client_id" {
@@ -26,15 +27,24 @@ variable "paypal_client_id" {
 variable "paypal_client_secret" {
   description = "PayPal client secret"
   type        = string
+  sensitive   = true
 }
 
 
 ####### SET IN SHARED.AUTO.TFVARS ########
 
 # Set in Doppler bootstrap project and then run terraform via doppler run -- terraform
-variable "DOPPLER_TOKEN" {
-  description = "Doppler API token"
+variable "DOPPLER_TOKEN_FRONTEND" {
+  description = "Doppler Service Token for the Doppler frontend project"
   type        = string
+  sensitive   = true
+}
+
+# Set in Doppler bootstrap project and then run terraform via doppler run -- terraform
+variable "DOPPLER_TOKEN_BACKEND" {
+  description = "Doppler Service Token for the Doppler backend project"
+  type        = string
+  sensitive   = true
 }
 
 # Doppler frontend project name
@@ -97,6 +107,7 @@ variable "email_amazonses_smtp_user" {
 variable "email_amazonses_smtp_password" {
   description = "Amazon SES SMTP password"
   type        = string
+  sensitive   = true
 }
 
 variable "email_from_name" {

@@ -52,6 +52,7 @@ locals {
 
 # Save secrets to Doppler frontend config matching current terraform workspace (stg or prd)
 resource "doppler_secret" "frontend_secrets" {
+  provider = doppler.frontend
   for_each = local.frontend_secrets
 
   project = var.doppler_project
@@ -63,6 +64,7 @@ resource "doppler_secret" "frontend_secrets" {
 # Also save secrets to Doppler frontend dev config
 # This only runs when working from stg workspace to avoid duplication
 resource "doppler_secret" "frontend_secrets_dev" {
+  provider = doppler.frontend
   for_each = terraform.workspace == "stg" ? local.frontend_secrets : {}
 
   project = var.doppler_project
@@ -75,6 +77,7 @@ resource "doppler_secret" "frontend_secrets_dev" {
 
 # Save secrets to Doppler backend config matching current terraform workspace (stg or prd)
 resource "doppler_secret" "backend_secrets" {
+  provider = doppler.backend
   for_each = local.backend_secrets
 
   project  = local.doppler_project_backend
@@ -86,6 +89,7 @@ resource "doppler_secret" "backend_secrets" {
 # Also save secrets to Doppler backend dev config
 # This only runs when working from stg workspace to avoid duplication
 resource "doppler_secret" "backend_secrets_dev" {
+  provider = doppler.backend
   for_each = terraform.workspace == "stg" ? local.backend_secrets : {}
 
   project  = local.doppler_project_backend
