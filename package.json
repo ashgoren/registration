@@ -65,7 +65,8 @@
     "terraform-prd": "terraform -chdir=terraform/environments workspace select prd && terraform -chdir=terraform/environments apply -var-file='prd.tfvars'",
     "disable-apis": "bash scripts/disable-apis.sh",
     "enable-apis": "bash scripts/enable-apis.sh",
-    "generate-firebaserc": "node scripts/generate-firebaserc.js"
+    "generate-firebaserc": "node scripts/generate-firebaserc.js",
+    "generate-tfvars": "node scripts/generate-tfvars.js"
   },
   "browserslist": {
     "production": [

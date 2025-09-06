@@ -56,13 +56,30 @@ Simple registration / admissions sales site for contra dance events.
 
 ---
 
-## Create files for terraform variables
+## Generate files for terraform variables
 
 ```sh
-touch terraform/bootstrap/terraform.tfvars
-touch terraform/environments/shared.auto.tfvars
-touch terraform/environments/stg.tfvars
-touch terraform/environments/prd.tfvars
+npm run generate-tfvars
+```
+
+---
+
+## Bootstrap Google Cloud projects
+
+> [!NOTE]
+> This script performs the following bootstrapping steps: 
+> - Creates production & staging projects, linked to a billing account
+> - Enables APIs required to bootstrap Terraform
+> - Initializes terraform directories
+> - Creates terraform prd/stg workspaces, importing the appropriate google cloud project into each
+> - Creates Doppler projects & environments
+> - Generates .firebaserc file
+
+> [!IMPORTANT]
+> Ensure `terraform/bootstrap/terraform.tfvars` is complete
+
+```sh
+npm run bootstrap <PROJECT_ID> <BILLING_ACCOUNT_ID>
 ```
 
 ---
@@ -113,46 +130,6 @@ touch terraform/environments/prd.tfvars
 
 ---
 
-## Config
-
-### Must configure before next step:
-
-- `terraform/bootstrap/terraform.tfvars`
-- `terraform/environments/shared.auto.tfvars`
-- `terraform/environments/staging.tfvars`
-- `terraform/environments/production.tfvars`
-
-### Configuration can be done now or later:
-
-- `functions/config.js`
-- `src/config` - including basics, fields, order summary, etc
-- `index.html` - site title and meta properties, e.g. description & [og:image](https://ogp.me/)
-- Update favicon - use a generator, e.g. [favicon-generator](https://www.favicon-generator.org)
-- Update logo - `public/logo.png` (set to desired height, likely <= 80px)
-- Update email receipts in `templates` folder
-
----
-
-## Bootstrap Google Cloud projects
-
-> [!NOTE]
-> This script performs the following bootstrapping steps: 
-> - Creates production & staging projects, linked to a billing account
-> - Enables APIs required to bootstrap Terraform
-> - Initializes terraform directories
-> - Creates terraform prd/stg workspaces, importing the appropriate google cloud project into each
-> - Creates Doppler projects & environments
-> - Generates .firebaserc file
-
-> [!IMPORTANT]
-> Ensure terraform tfvars files are updated before running this!
-
-```sh
-npm run bootstrap <PROJECT_ID> <BILLING_ACCOUNT_ID>
-```
-
----
-
 ## Configure OAuth consent screen
 
 > [!IMPORTANT]
@@ -167,10 +144,27 @@ npm run bootstrap <PROJECT_ID> <BILLING_ACCOUNT_ID>
 
 ## Terraform - Build Infrastructure
 
+> [!IMPORTANT]
+> Ensure values are set in the following files:
+> - `terraform/environments/shared.auto.tfvars`
+> - `terraform/environments/staging.tfvars`
+> - `terraform/environments/production.tfvars`
+
 ```sh
 npm run terraform-stg
 npm run terraform-prd
 ```
+
+---
+
+## Config
+
+- `functions/config.js`
+- `src/config` - including basics, fields, order summary, etc
+- `index.html` - site title and meta properties, e.g. description & [og:image](https://ogp.me/)
+- Update favicon - use a generator, e.g. [favicon-generator](https://www.favicon-generator.org)
+- Update logo - `public/logo.png` (set to desired height, likely <= 80px)
+- Update email receipts in `templates` folder
 
 ---
 
