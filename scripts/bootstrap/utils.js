@@ -7,7 +7,7 @@ import { execSync } from 'child_process';
 function parseArgs() {
   const [projectId] = process.argv.slice(2);
   if (!projectId) {
-    log.error('\nError: projectId is required\n');
+    log.error('\n❌ Error: projectId is required\n');
     process.exit(1);
   }
   return { projectId };
@@ -27,13 +27,13 @@ const log = {
   plain: (msg) => console.log(msg)
 };
 
-function runCommand(command, description, options = {}) {
-  log.info(description);
+function runCommand(command, description, options = { stdio: 'inherit' }) {
+  if (description) log.info(description);
   try {
-    execSync(command, { stdio: 'inherit', ...options });
+    execSync(command, { ...options });
     return true;
   } catch (error) {
-    log.error(`Failed to execute: ${command}`);
+    log.error(`❌ Failed to execute: ${command}`);
     log.error(`Error: ${error.message}\n`);
     return false;
   }

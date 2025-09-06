@@ -22,7 +22,7 @@ export async function gatherValues(gcp_project_id) {
       throw new Error('Unable to gathering values');
     }
 
-    log.success('\n✓ Successfully gathered inputs');
+    log.success('\n✅ Successfully gathered inputs');
     return {
       gcp_project_id,
       doppler_project,
@@ -32,7 +32,7 @@ export async function gatherValues(gcp_project_id) {
       github_repo
     };
   } catch (error) {
-    log.error('\nError gathering values:', error);
+    log.error('\n❌ Error gathering values:', error);
     return null;
   }
 }

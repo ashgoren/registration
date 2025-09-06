@@ -1,10 +1,15 @@
 #!/usr/bin/env node
 
+// Note: script is idempotent except:
+// - creation of tfvars files overwrites existing contents
+// - creation of Doppler project fails if already exists
+
 import { checkPrerequisites } from './checkPrerequisites.js';
 import { gatherValues } from './gatherValues.js';
 import { configureProjects } from './configureProjects.js'
 import { generateTfvarsFiles } from './generate-tfvars.js'
 import { generateFirebaserc } from './generate-firebaserc.js';
+import { bootstrapDoppler } from './bootstrapDoppler.js';
 import { parseArgs, log } from './utils.js';
 
 async function main() {
@@ -15,6 +20,7 @@ async function main() {
   log.plain('• Enable required Google Cloud APIs');
   log.plain('• Generate Terraform tfvars files\n');
   log.plain('• Generate .firebaserc file');
+  log.plain('• Bootstrap Doppler');
 
   log.info('\n🚀 Checking prerequisites...\n');
   // Validate credentials
@@ -43,8 +49,14 @@ async function main() {
   }
 
   log.info('\n🚀 Generating .firebaserc file...\n');
-  if (!await generateFirebaserc(projectId)) {
+  if (!generateFirebaserc(projectId)) {
     log.error('🔴 Failed to generate .firebaserc file\n');
+    process.exit(1);
+  }
+
+  log.info('\n🚀 Bootstrapping Doppler...\n');
+  if (!await bootstrapDoppler(projectId)) {
+    log.error('🔴 Failed to bootstrap Doppler\n');
     process.exit(1);
   }
 

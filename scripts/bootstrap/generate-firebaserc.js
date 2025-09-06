@@ -14,10 +14,10 @@ export function generateFirebaserc(projectId) {
     fs.writeFileSync('.firebaserc', JSON.stringify(firebaserc, null, 2) + '\n');
     console.log(fs.readFileSync('.firebaserc', 'utf8'));
 
-    log.success('✓ .firebaserc file generated successfully');
+    log.success('✅ .firebaserc file generated successfully');
     return true;
   } catch (error) {
-    log.error('Error generating .firebaserc file:', error);
+    log.error('❌ Error generating .firebaserc file:', error);
     return false;
   }
 }

@@ -37,11 +37,11 @@ paypal_client_id = ""`
       const dir = filePath.split('/').slice(0, -1).join('/');
       await mkdir(dir, { recursive: true });
       await writeFile(filePath, content);
-      log.success(`✓ Created ${filePath}`);
+      log.success(`✅ Created ${filePath}`);
     }
     return true;
   } catch (error) {
-    log.error('Error generating files:', error);
+    log.error('❌ Error generating files:', error);
     return false;
   }
 }

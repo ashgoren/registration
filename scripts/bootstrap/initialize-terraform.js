@@ -29,7 +29,7 @@ async function parseArgs() {
 
 function ensureDirectory(dirPath) {
   if (!existsSync(dirPath)) {
-    log.error(`Directory ${dirPath} must exist\n`);
+    log.error(`❌ Directory ${dirPath} must exist\n`);
     process.exit(1);
   }
 }

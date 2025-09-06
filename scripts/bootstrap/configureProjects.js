@@ -26,7 +26,7 @@ async function configureProject(projectId, billingAccount) {
     return false;
   }
 
-  log.success(`✓ Project ${projectId} configured\n`);
+  log.success(`✅ Project ${projectId} configured\n`);
   return true;
 }
 
@@ -40,7 +40,7 @@ export async function configureProjects(projectId, billingAccount) {
     }
     return true;
   } catch (error) {
-    log.error(`Error: ${error.message}`);
+    log.error(`❌ Error: ${error.message}`);
     return false;
   }
 }

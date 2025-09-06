@@ -10,12 +10,12 @@ function validateGcloudCredentials() {
     ).trim();
     
     if (!activeAccount) {
-      log.error('No active gcloud account found. Please run: gcloud auth login');
+      log.error('❌ No active gcloud account found. Please run: gcloud auth login');
       return false;
     }
-    log.success(`✓ Authenticated with gcloud as: ${activeAccount}`);
+    log.success(`✅ Authenticated with gcloud as: ${activeAccount}`);
   } catch (error) {
-    log.error('gcloud not found or not authenticated. Please run: gcloud auth login');
+    log.error('❌ gcloud not found or not authenticated. Please run: gcloud auth login');
     return false;
   }
 
@@ -27,10 +27,10 @@ function validateGcloudCredentials() {
     );
     
     if (adcInfo.trim()) {
-      log.success('✓ Application Default Credentials are configured');
+      log.success('✅ Application Default Credentials are configured');
     }
   } catch (error) {
-    log.error('Application Default Credentials not found.');
+    log.error('❌ Application Default Credentials not found.');
     log.error('Please run: gcloud auth application-default login');
     return false;
   }
@@ -45,9 +45,9 @@ function validateGcloudBilling() {
     if (!billingAccounts || billingAccounts.length === 0) {
       throw new Error('No billing accounts found');
     }
-    log.success('✓ Billing account found');
+    log.success('✅ Billing account found');
   } catch {
-    log.error('No billing account found. Please enable billing on your Google Cloud account.');
+    log.error('❌ No billing account found. Please enable billing on your Google Cloud account.');
     return false;
   }
 
@@ -56,15 +56,13 @@ function validateGcloudBilling() {
 
 function validateDopplerCredentials() {
   try {
-    const dopplerOutput = runCommandWithResult('doppler configure get token --json');
-    const doppler_token = JSON.parse(dopplerOutput).token;
-
+    const doppler_token = runCommandWithResult('doppler configure get token --plain');
     if (!doppler_token) {
       throw new Error('No Doppler token found');
     }
-    log.success('✓ Authenticated with Doppler');
+    log.success('✅ Authenticated with Doppler');
   } catch {
-    log.error('Doppler not found or not authenticated. Please run: doppler login');
+    log.error('❌ Doppler not found or not authenticated. Please run: doppler login');
     return false;
   }
   return true;
@@ -77,9 +75,9 @@ function validateGitHubRepo() {
     if (repoUrl.hostname !== 'github.com') {
       throw new Error('Not a GitHub repository');
     }
-    log.success('✓ Valid GitHub repository');
+    log.success('✅ Valid GitHub repository');
   } catch {
-    log.error('No GitHub repository found!');
+    log.error('❌ No GitHub repository found!');
     return false;
   }
   return true;
