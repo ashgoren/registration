@@ -69,7 +69,7 @@ gcloud projects create PROJECT_ID-stg
 
 ---
 
-## Bootstrap Google Cloud projects
+## Bootstrap Google Cloud, Firebase, Terraform, Doppler
 
 > [!NOTE]
 > This script performs the following bootstrapping steps:
@@ -77,6 +77,7 @@ gcloud projects create PROJECT_ID-stg
 > - Enables APIs required to bootstrap Terraform
 > - Generates .firebaserc file
 > - Generates Terraform variables files
+> - Creates Doppler projects
 
 ```sh
 npm run bootstrap <PROJECT_ID>
@@ -88,7 +89,7 @@ npm run bootstrap <PROJECT_ID>
 
 - Generate a new spreadsheet from [template](https://docs.google.com/spreadsheets/d/1gQ9l8wBTgNmiI0KmpECsDzCqePSPMnZFaecuj0VO_cU/template/preview)
 - Update fields/columns as needed in spreadsheet _and_ in `functions/shared/fields.js`
-- Set the new spreadsheet's URL as `spreadsheet_url` in `terraform/environments/shared.auto.tfvars`
+- Set the new spreadsheet's URL as `spreadsheet_url` in `terraform/shared.auto.tfvars`
 - Share spreadsheet (with edit permissions) to the following service addresses:
   - sheets@<PROJECT_ID>.iam.gserviceaccount.com
   - sheets@<PROJECT_ID>-stg.iam.gserviceaccount.com
@@ -98,20 +99,20 @@ npm run bootstrap <PROJECT_ID>
 ## Email
 
 - Create Amazon SES SMTP credentials [here](https://console.aws.amazon.com/ses/home#/smtp)
-  - Set "SMTP user name" as `email_amazonses_smtp_user` in `terraform/environments/shared.auto.tfvars`
-  - Set "SMTP password" as `email_amazonses_smtp_password` in `terraform/environments/shared.auto.tfvars`
+  - Set "SMTP user name" as `email_amazonses_smtp_user` in `terraform/shared.auto.tfvars`
+  - Set "SMTP password" as `email_amazonses_smtp_password` in `terraform/shared.auto.tfvars`
 
 - Verify email domain in Amazon SES console [here](https://console.aws.amazon.com/ses/home#/identities)
   - Follow instructions to verify the domain, including DKIM and MAIL FROM verification
   - Add required records to DNS provider and wait for verification
 
-- Set the following in `terraform/environments/shared.auto.tfvars`:
+- Set the following in `terraform/shared.auto.tfvars`:
   - `email_from_name`
   - `email_from_address` - domain must be verified in amazon ses
   - `email_admin_notifications`
   - `email_test_domains` - test domains to ignore for receipts etc - e.g. "example.com,test.com,testing.com"
 
-- Set the following in `terraform/environments/shared.auto.tfvars` only if needed:
+- Set the following in `terraform/shared.auto.tfvars` only if needed:
   - `email_reply_to` - use a custom reply-to address
   - `email_amazonses_email_endpoint` - required if email domain was verified in an aws region other than us-east-2
 
@@ -158,17 +159,15 @@ npm run bootstrap <PROJECT_ID>
 
 > [!IMPORTANT]
 > Ensure values are set in the following files:
-> - `terraform/bootstrap/terraform.tfvars`
-> - `terraform/environments/shared.auto.tfvars`
-> - `terraform/environments/staging.tfvars`
-> - `terraform/environments/production.tfvars`
+> - `terraform/shared.auto.tfvars`
+> - `terraform/staging.tfvars`
+> - `terraform/production.tfvars`
 
 > [!TIP]
 > Leave `frontend_domain` blank if you don't plan to have a custom domain for your website.
 
 ```sh
 npm run initialize-terraform # initializes terraform with workspaces, imports GCP projects
-npm run terraform-bootstrap # creates doppler projects
 npm run terraform-stg # builds staging project
 npm run terraform-prd # builds production project
 ```

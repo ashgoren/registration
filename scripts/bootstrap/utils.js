@@ -43,7 +43,9 @@ const runCommandWithResult = (command) => {
   try {
     return execSync(command, { encoding: 'utf8' }).trim();
   } catch (error) {
-    console.error(`\nError running command: ${command}\n`);
+    if (process.env.DEBUG) {
+      console.error(`\nError running command: ${command}\n`);
+    }
     return null;
   }
 };

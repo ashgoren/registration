@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 
-// Note: script is idempotent except:
-// - creation of tfvars files overwrites existing contents
-// - creation of Doppler project fails if already exists
+// Note: script is idempotent except creation of tfvars files overwrites existing contents
 
 import { checkPrerequisites } from './checkPrerequisites.js';
 import { gatherValues } from './gatherValues.js';
