@@ -1,6 +1,6 @@
 ######## SET IN STG.TFVARS OR PRD.TFVARS ########
 
-# production project ID (globally unique)
+# production project ID
 variable "project_id" {
   description = "ID of the Firebase / Google Cloud project"
   type        = string
@@ -45,41 +45,43 @@ variable "doppler_project" {
   type        = string
 }
 
+# To find this: doppler configure get token
+variable "doppler_token" {
+  description = "Doppler API token"
+  type        = string
+}
+
+# To find this: gcloud organizations list
+variable "gcp_organization_id" {
+  description = "The Google Cloud organization to associate with the project"
+  type        = string
+}
+
+# To find this: gcloud billing accounts list
+variable "gcp_billing_account_id" {
+  description = "The Google Cloud billing account to associate with the project"
+  type        = string
+}
+
+# Desired google cloud region - e.g. us-west1 or us-central1
+variable "gcp_region" {
+  description = "The region where the Firebase / Google Cloud project will be located"
+  type        = string
+  default     = "us-west1"
+}
+
 # GitHub repository
 variable "github_repo" {
   description = "The name of the GitHub repository"
   type        = string
 }
 
-# To find this: gcloud organizations list
-variable "organization_id" {
-  description = "The Google Cloud organization to associate with the project"
-  type        = string
-}
-
-# To find this: gcloud billing accounts list
-variable "billing_account_id" {
-  description = "The Google Cloud billing account to associate with the project"
-  type        = string
-}
-
-# Desired region - e.g. us-west1 or us-central1
-variable "region" {
-  description = "The region where the Firebase / Google Cloud project is located"
-  type        = string
-  default     = "us-west1"
-}
-
-# Domain where the front-end will be hosted
-variable "domain" {
+# Domain where the front-end will be hosted, used by address autocomplete key
+# Leave blank if not using a custom domain
+variable "frontend_domain" {
   description = "The domain for the deployed application"
   type        = string
-}
-
-# To find this: doppler configure get token
-variable "doppler_token" {
-  description = "Doppler API token"
-  type        = string
+  default     = ""
 }
 
 variable "spreadsheet_url" {
@@ -87,7 +89,7 @@ variable "spreadsheet_url" {
   type        = string
 }
 
-# Note that verified domains in Amazon SES are region-specific
+# Note: verified domains in Amazon SES are region-specific
 variable "email_amazonses_email_endpoint" {
   description = "Amazon SES email endpoint (e.g. email-smtp.us-east-2.amazonaws.com)"
   type        = string
@@ -114,6 +116,11 @@ variable "email_from_email" {
   type        = string
 }
 
+variable "email_admin_notifications" {
+  description = "Email address to receive budget alert & other notifications"
+  type        = string
+}
+
 variable "email_reply_to" {
   description = "Reply-to email address for sending email receipts"
   type        = string
@@ -124,10 +131,4 @@ variable "email_test_domains" {
   description = "Comma-separated list of test domains to ignore for receipts and reports"
   type        = string
   default     = "example.com,test.com,testing.com"
-}
-
-# Email for budget alert & other notifications
-variable "email_admin_notifications" {
-  description = "Email address to receive budget alert & other notifications"
-  type        = string
 }

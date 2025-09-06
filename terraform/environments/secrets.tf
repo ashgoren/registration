@@ -8,7 +8,7 @@ locals {
   frontend_secrets = {
     PROJECT_ID            = var.project_id
     VITE_SANDBOX_MODE     = terraform.workspace == "prd" ? "false" : "true"
-    VITE_FUNCTIONS_REGION = var.region
+    VITE_FUNCTIONS_REGION = var.gcp_region
     VITE_FIREBASE_CONFIG  = jsonencode({
       apiKey            = data.google_firebase_web_app_config.default.api_key
       authDomain        = data.google_firebase_web_app_config.default.auth_domain

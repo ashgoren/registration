@@ -40,7 +40,7 @@ data "archive_file" "secret_cleanup_source" {
 # Storage bucket for function source code
 resource "google_storage_bucket" "function_source" {
   name     = "${var.project_id}-function-source"
-  location = var.region
+  location = var.gcp_region
 }
 
 # Upload the zipped function to storage
@@ -66,7 +66,7 @@ resource "google_project_iam_member" "function_secret_access" {
 # Create the Cloud Function
 resource "google_cloudfunctions2_function" "secret_cleanup" {
   name        = "secret-manager-cleanup"
-  location    = var.region
+  location    = var.gcp_region
   description = "Cleanup old versions of secrets in Google Cloud Secret Manager"
 
   build_config {
@@ -88,7 +88,7 @@ resource "google_cloudfunctions2_function" "secret_cleanup" {
   }
 
   event_trigger {
-    trigger_region = var.region
+    trigger_region = var.gcp_region
     event_type     = "google.cloud.pubsub.topic.v1.messagePublished"
     pubsub_topic   = google_pubsub_topic.secret_created.id
     retry_policy   = "RETRY_POLICY_RETRY"

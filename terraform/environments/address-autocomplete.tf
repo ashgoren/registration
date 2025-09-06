@@ -6,7 +6,11 @@ resource "google_apikeys_key" "places_maps" {
 
   restrictions {
     browser_key_restrictions {
-      allowed_referrers = ["${var.project_id}.web.app/*", "${var.domain}/*", "*.${var.domain}/*"]
+      allowed_referrers = compact([
+        "${var.project_id}.web.app/*",
+        var.frontend_domain != "" ? "${var.frontend_domain}/*" : "",
+        var.frontend_domain != "" ? "*.${var.frontend_domain}/*" : ""
+      ])
     }
     api_targets { service = "places.googleapis.com" }
     api_targets { service = "maps-backend.googleapis.com" }

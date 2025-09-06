@@ -9,6 +9,6 @@
 resource "google_project" "project" {
   name              = var.project_id
   project_id        = var.project_id
-  billing_account   = var.billing_account_id
-  org_id            = var.organization_id
+  billing_account   = var.gcp_billing_account_id
+  org_id            = var.gcp_organization_id
 }

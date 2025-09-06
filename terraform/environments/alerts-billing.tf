@@ -6,7 +6,7 @@ resource "google_pubsub_topic" "budget_alerts" {
 }
 
 resource "google_billing_budget" "main_budget" {
-  billing_account = var.billing_account_id
+  billing_account = var.gcp_billing_account_id
   display_name    = "${var.project_id} Budget"
 
   budget_filter {
