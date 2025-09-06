@@ -34,7 +34,7 @@ resource "google_pubsub_topic_iam_member" "secret_created" {
 data "archive_file" "secret_cleanup_source" {
   type        = "zip"
   output_path = "${path.module}/tmp/secret-manager-cleanup.zip"
-  source_dir  = "${path.module}/../../cloud-functions/secret-manager-cleanup/"
+  source_dir  = "${path.module}/../cloud-functions/secret-manager-cleanup/"
 }
 
 # Storage bucket for function source code

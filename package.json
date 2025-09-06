@@ -61,8 +61,8 @@
     "localtunnel-stripe": "stripe listen --events payment_intent.succeeded --forward-to localhost:5001/<PROJECT_ID>/us-west1/stripeWebhook",
     "bootstrap": "node scripts/bootstrap/main.js",
     "initialize-terraform": "node scripts/bootstrap/initialize-terraform.js",
-    "terraform-stg": "terraform -chdir=terraform workspace select stg && terraform -chdir=terraform apply -var-file='stg.tfvars'",
-    "terraform-prd": "terraform -chdir=terraform workspace select prd && terraform -chdir=terraform apply -var-file='prd.tfvars'",
+    "terraform-stg": "node scripts/bootstrap/terraformWrapper.js stg",
+    "terraform-prd": "node scripts/bootstrap/terraformWrapper.js prd",
     "disable-apis": "bash scripts/disable-apis.sh",
     "enable-apis": "bash scripts/enable-apis.sh"
   },

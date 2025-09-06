@@ -26,7 +26,7 @@ provider "google" {
 # to authenticate, enter cli token in tfvars file
 # to retrieve cli token: doppler configure get token
 provider "doppler" {
-  doppler_token = var.doppler_token
+  doppler_token = var.DOPPLER_TOKEN
 }
 
 # to authenticate via cli: gh auth login

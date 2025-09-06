@@ -151,8 +151,8 @@ npm run bootstrap <PROJECT_ID>
 > Leave `frontend_domain` blank if you don't plan to have a custom domain for your website.
 
 ```sh
-npm run terraform-stg # builds staging project
-npm run terraform-prd # builds production project
+npm run terraform-stg <PROJECT_ID> # builds staging project
+npm run terraform-prd <PROJECT_ID> # builds production project
 ```
 
 ---

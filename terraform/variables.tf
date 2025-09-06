@@ -31,15 +31,15 @@ variable "paypal_client_secret" {
 
 ####### SET IN SHARED.AUTO.TFVARS ########
 
-# Doppler frontend project name
-variable "doppler_project" {
-  description = "Name of the Doppler frontend project"
+# Set in Doppler bootstrap project and then run terraform via doppler run -- terraform
+variable "DOPPLER_TOKEN" {
+  description = "Doppler API token"
   type        = string
 }
 
-# Set in Doppler bootstrap project and then run terraform via doppler run -- terraform
-variable "doppler_token" {
-  description = "Doppler API token"
+# Doppler frontend project name
+variable "doppler_project" {
+  description = "Name of the Doppler frontend project"
   type        = string
 }
 
