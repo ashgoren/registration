@@ -29,9 +29,7 @@ paypal_client_secret = ""`,
 
   'terraform/environments/prd.tfvars': `project_id = "${tfvars.gcp_project_id}"
 stripe_publishable_key = ""
-stripe_secret_key = ""
-paypal_client_id = ""
-paypal_client_secret = ""`
+paypal_client_id = ""`
 };
 
   try {

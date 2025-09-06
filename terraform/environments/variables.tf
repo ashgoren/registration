@@ -11,6 +11,7 @@ variable "stripe_publishable_key" {
   type        = string
 }
 
+# Enter in stg.tfvars only; managed directly by Doppler for prd
 variable "stripe_secret_key" {
   description = "Stripe secret key"
   type        = string
@@ -21,6 +22,7 @@ variable "paypal_client_id" {
   type        = string
 }
 
+# Enter in stg.tfvars only; managed directly by Doppler for prd
 variable "paypal_client_secret" {
   description = "PayPal client secret"
   type        = string
@@ -91,6 +93,7 @@ variable "email_amazonses_smtp_user" {
   type        = string
 }
 
+# Enter in stg.tfvars only; managed directly by Doppler for prd
 variable "email_amazonses_smtp_password" {
   description = "Amazon SES SMTP password"
   type        = string

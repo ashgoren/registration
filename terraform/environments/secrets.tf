@@ -23,13 +23,12 @@ locals {
     CLOUD_FUNCTIONS_TRIGGER_TOKEN = random_password.cloud_functions_trigger_token.result
   }
 
-  backend_secrets = {
+  # Secrets that are safe to manage via Terraform (non-sensitive or generated)
+  backend_managed_secrets = {
     SHEETS_SHEET_ID                     = local.spreadsheet_id
     SHEETS_SERVICE_ACCOUNT_CLIENT_EMAIL = google_service_account.sheets.email
     SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY  = google_service_account_key.sheets.private_key
-    STRIPE_SECRET_KEY                   = var.stripe_secret_key
     PAYPAL_CLIENT_ID                    = var.paypal_client_id
-    PAYPAL_CLIENT_SECRET                = var.paypal_client_secret
     EMAIL_ENDPOINT                      = var.email_amazonses_email_endpoint
     EMAIL_USER                          = var.email_amazonses_smtp_user
     EMAIL_PASSWORD                      = var.email_amazonses_smtp_password
@@ -39,6 +38,14 @@ locals {
     EMAIL_IGNORE_TEST_DOMAINS           = var.email_test_domains
     CLOUD_FUNCTIONS_TRIGGER_TOKEN       = random_password.cloud_functions_trigger_token.result
   }
+
+  # Highly sensitive production secrets - managed here for dev/stg, but set prd values directly via Doppler
+  backend_sensitive_passthrough_secrets = terraform.workspace == "stg" ? {
+    STRIPE_SECRET_KEY                     = var.stripe_secret_key
+    PAYPAL_CLIENT_SECRET                  = var.paypal_client_secret
+  } : {}
+
+  backend_secrets = merge(local.backend_managed_secrets, local.backend_sensitive_passthrough_secrets)
 }
 
 ####### SAVE DOPPLER FRONTEND SECRETS ########
