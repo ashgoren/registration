@@ -1,8 +1,17 @@
 // ****************************************
-// used by project setup scripts
+// used by project bootstrapping scripts
 // ****************************************
 
 import { execSync } from 'child_process';
+
+function parseArgs() {
+  const [projectId] = process.argv.slice(2);
+  if (!projectId) {
+    log.error('\nError: projectId is required\n');
+    process.exit(1);
+  }
+  return { projectId };
+}
 
 const colors = {
   red: '\x1b[31m',
@@ -30,4 +39,13 @@ function runCommand(command, description, options = {}) {
   }
 }
 
-export { log, runCommand };
+const runCommandWithResult = (command) => {
+  try {
+    return execSync(command, { encoding: 'utf8' }).trim();
+  } catch (error) {
+    console.error(`\nError running command: ${command}\n`);
+    return null;
+  }
+};
+
+export { log, runCommand, runCommandWithResult, parseArgs };

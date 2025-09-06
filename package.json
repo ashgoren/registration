@@ -59,14 +59,13 @@
     "emulator:isolated": "doppler run -- firebase emulators:start",
     "localtunnel-paypal": "lt -p 5001 -s <PROJECT_ID>",
     "localtunnel-stripe": "stripe listen --events payment_intent.succeeded --forward-to localhost:5001/<PROJECT_ID>/us-west1/stripeWebhook",
-    "bootstrap": "node ./scripts/bootstrap.js",
+    "bootstrap": "node scripts/bootstrap/main.js",
+    "initialize-terraform": "node scripts/bootstrap/initialize-terraform.js",
     "terraform-bootstrap": "terraform -chdir=terraform/bootstrap apply",
     "terraform-stg": "terraform -chdir=terraform/environments workspace select stg && terraform -chdir=terraform/environments apply -var-file='stg.tfvars'",
     "terraform-prd": "terraform -chdir=terraform/environments workspace select prd && terraform -chdir=terraform/environments apply -var-file='prd.tfvars'",
     "disable-apis": "bash scripts/disable-apis.sh",
-    "enable-apis": "bash scripts/enable-apis.sh",
-    "generate-firebaserc": "node scripts/generate-firebaserc.js",
-    "generate-tfvars": "node scripts/generate-tfvars.js"
+    "enable-apis": "bash scripts/enable-apis.sh"
   },
   "browserslist": {
     "production": [

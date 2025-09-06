@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 
+// NOTE: Must be run after tfvars files are filled in!
+// (terraform import requires all variables to have values)
+
 // Initialize Terraform directories
 // Create stg & prd workspaces in terraform/environments
 // Import existing stg & prd GCP projects into Terraform
+
 
 import { execSync } from 'child_process';
 import { existsSync } from 'fs';
