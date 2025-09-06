@@ -87,10 +87,11 @@ variable "spreadsheet_url" {
   type        = string
 }
 
+# Note that verified domains in Amazon SES are region-specific
 variable "email_amazonses_email_endpoint" {
-  description = "Amazon SES email endpoint (e.g. email-smtp.us-west-2.amazonaws.com)"
+  description = "Amazon SES email endpoint (e.g. email-smtp.us-east-2.amazonaws.com)"
   type        = string
-  default     = "email-smtp.us-west-2.amazonaws.com"
+  default     = "email-smtp.us-east-2.amazonaws.com"
 }
 
 variable "email_amazonses_smtp_user" {

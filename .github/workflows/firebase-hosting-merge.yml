@@ -8,6 +8,7 @@ on:
 
 jobs:
   build_and_deploy:
+    if: '${{ vars.PROJECT_ID }}'
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name == 'main' && 'prd' || 'stg' }}
     env:

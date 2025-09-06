@@ -90,7 +90,7 @@ npm run bootstrap <PROJECT_ID> <BILLING_ACCOUNT_ID>
 - Generate a new spreadsheet from [template](https://docs.google.com/spreadsheets/d/1gQ9l8wBTgNmiI0KmpECsDzCqePSPMnZFaecuj0VO_cU/template/preview)
 - Update fields/columns as needed in spreadsheet _and_ in `functions/shared/fields.js`
 - Set the new spreadsheet's URL as `spreadsheet_url` in `terraform/environments/shared.auto.tfvars`
-- Share spreadsheet (with edit permissions) with both stg & prd sheets service account emails:
+- Share spreadsheet (with edit permissions) to the following service addresses:
   - sheets@<PROJECT_ID>.iam.gserviceaccount.com
   - sheets@<PROJECT_ID>-stg.iam.gserviceaccount.com
 
@@ -98,11 +98,15 @@ npm run bootstrap <PROJECT_ID> <BILLING_ACCOUNT_ID>
 
 ## Email
 
-- Create AWS account and enable SES
-- Verify your domain in SES console (add required records to DNS provider and wait for verification)
-- Set the following in terraform `shared.auto.tfvars`:
-  - `email_amazonses_smtp_user` (from amazon ses)
-  - `email_amazonses_smtp_password` (from amazon ses)
+- Create Amazon SES SMTP credentials [here](https://console.aws.amazon.com/ses/home#/smtp)
+  - Set "SMTP user name" as `email_amazonses_smtp_user` in `terraform/environments/shared.auto.tfvars`
+  - Set "SMTP password" as `email_amazonses_smtp_password` in `terraform/environments/shared.auto.tfvars`
+
+- Verify email domain in Amazon SES console [here](https://console.aws.amazon.com/ses/home#/identities)
+  - Follow instructions to verify the domain, including DKIM and MAIL FROM verification
+  - Add required records to DNS provider and wait for verification
+
+- Set the following in `terraform/environments/shared.auto.tfvars`:
   - `email_from_name`
   - `email_from_address` (domain must be verified in amazon ses)
   - `email_reply_to` (if different from email_from_address)
