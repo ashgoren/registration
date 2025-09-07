@@ -63,8 +63,9 @@ Simple registration / admissions sales site for contra dance events.
 > - Creates Google Cloud production & staging projects
 > - Links Google Cloud projects to a billing account
 > - Enables APIs required to bootstrap Terraform
-> - Generates .firebaserc file
+> - Initializes Terraform directory & workspaces
 > - Generates Terraform variables files
+> - Generates .firebaserc file
 > - Creates Doppler projects
 
 > [!IMPORTANT]
