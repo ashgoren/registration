@@ -33,16 +33,9 @@ variable "paypal_client_secret" {
 
 ####### SET IN SHARED.AUTO.TFVARS ########
 
-# Set in Doppler bootstrap project and then run terraform via doppler run -- terraform
-variable "DOPPLER_TOKEN_FRONTEND" {
-  description = "Doppler Service Token for the Doppler frontend project"
-  type        = string
-  sensitive   = true
-}
-
-# Set in Doppler bootstrap project and then run terraform via doppler run -- terraform
-variable "DOPPLER_TOKEN_BACKEND" {
-  description = "Doppler Service Token for the Doppler backend project"
+# Set as environment variable
+variable "DOPPLER_TOKEN" {
+  description = "Doppler cli or personal token"
   type        = string
   sensitive   = true
 }

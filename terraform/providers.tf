@@ -23,16 +23,9 @@ provider "google" {
   billing_project = var.project_id
 }
 
-# to authenticate, enter cli token in tfvars file
-# to retrieve cli token: doppler configure get token
+# provide as environment variable
 provider "doppler" {
-  alias         = "frontend"
-  doppler_token = var.DOPPLER_TOKEN_FRONTEND
-}
-
-provider "doppler" {
-  alias         = "backend" 
-  doppler_token = var.DOPPLER_TOKEN_BACKEND
+  doppler_token = var.DOPPLER_TOKEN
 }
 
 # to authenticate via cli: gh auth login

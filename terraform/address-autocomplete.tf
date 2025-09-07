@@ -21,7 +21,6 @@ resource "google_apikeys_key" "places_maps" {
 
 # Save the key to the correct Doppler config for the current workspace
 resource "doppler_secret" "places_maps_key" {
-  provider   = doppler.frontend
   project    = var.doppler_project
   config     = terraform.workspace # terraform workspace names match Doppler config environments
   name       = "VITE_GOOGLE_PLACES_API_KEY"
@@ -54,7 +53,6 @@ resource "google_apikeys_key" "places_maps_dev" {
 # Save the key to the dev Doppler config
 # Only runs from the stg terraform workspace to avoid duplication
 resource "doppler_secret" "places_maps_key_dev" {
-  provider   = doppler.frontend
   count      = terraform.workspace == "stg" ? 1 : 0
 
   project    = var.doppler_project

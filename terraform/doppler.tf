@@ -2,7 +2,6 @@
 
 # Create doppler frontend project service token for use by github actions
 resource "doppler_service_token" "frontend" {
-  provider = doppler.frontend
   project  = var.doppler_project
   config   = terraform.workspace # stg|prd (matches doppler environment name)
   name     = "github-actions ${terraform.workspace} token"
@@ -44,7 +43,6 @@ resource "google_service_account_key" "doppler_secret_manager" {
 
 # setup doppler -> google cloud secret manager integration for backend doppler project (part 1)
 resource "doppler_integration_gcp_secret_manager" "backend" {
-  provider          = doppler.backend
   name              = "gcp-secret-manager-integration-${terraform.workspace}"
   gcp_key           = base64decode(google_service_account_key.doppler_secret_manager.private_key)
   gcp_secret_prefix = ""
@@ -52,7 +50,6 @@ resource "doppler_integration_gcp_secret_manager" "backend" {
 
 # setup doppler -> google cloud secret manager integration for backend doppler project (part 2)
 resource "doppler_secrets_sync_gcp_secret_manager" "backend" {
-  provider    = doppler.backend
   integration = doppler_integration_gcp_secret_manager.backend.id
   project     = local.doppler_project_backend
   config      = terraform.workspace # stg|prd (matches doppler environment name)
