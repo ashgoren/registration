@@ -3,6 +3,7 @@
 // ****************************************
 
 import { execSync } from 'child_process';
+import readline from 'readline';
 
 function parseArgs() {
   const [projectId] = process.argv.slice(2);
@@ -12,6 +13,17 @@ function parseArgs() {
   }
   return { projectId };
 }
+
+const promptInput = async (question) => {
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  const answer = await new Promise((resolve) => {
+    rl.question(question, (response) => {
+      resolve(response.trim());
+    });
+  });
+  rl.close();
+  return answer;
+};
 
 const colors = {
   red: '\x1b[31m',
@@ -50,4 +62,4 @@ const runCommandWithResult = (command) => {
   }
 };
 
-export { log, runCommand, runCommandWithResult, parseArgs };
+export { log, runCommand, runCommandWithResult, parseArgs, promptInput };

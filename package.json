@@ -63,6 +63,7 @@
     "initialize-terraform": "node scripts/bootstrap/initialize-terraform.js",
     "terraform-stg": "node scripts/bootstrap/terraformWrapper.js stg",
     "terraform-prd": "node scripts/bootstrap/terraformWrapper.js prd",
+    "set-payment-secrets": "node scripts/bootstrap/setPaymentSecrets.js",
     "disable-apis": "bash scripts/disable-apis.sh",
     "enable-apis": "bash scripts/enable-apis.sh"
   },

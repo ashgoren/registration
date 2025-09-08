@@ -123,20 +123,22 @@ npm run bootstrap <PROJECT_ID>
 > - On Stripe console, disable all payment methods except Cards, Apple Pay, Google Pay
 > - Apple Pay: requires stripe domain auth
 
-- Set the *test mode* publishable & secret keys in terraform `stg.tfvars`
-- Set the *live mode* publishable key in terraform `prd.tfvars`
-- Set the *live mode* secret key manually in Doppler backend prd config:
-  - `echo -n <STRIPE_SECRET_KEY_VALUE> | doppler secrets set -p <PROJECT_ID>-backend -c prd STRIPE_SECRET_KEY --silent`
+- Create 2 sandbox accounts - dev & staging
+- Run interactive script 3 times, to set payment secrets for each environment:
+  - `npm run set-payment-secrets <PROJECT_ID> stripe dev`
+  - `npm run set-payment-secrets <PROJECT_ID> stripe stg`
+  - `npm run set-payment-secrets <PROJECT_ID> stripe prd`
 
 ### PayPal
 
 > [!TIP]
 > Don't want to accept Venmo? Comment out the venmo line in `configPaypal.jsx`.
 
-- Set the *test mode* client id & client secret in terraform `stg.tfvars`
-- Set the *live mode* client id in terraform `prd.tfvars`
-- Set the *live mode* client secret manually in Doppler backend prd config:
-  - `echo -n <PAYPAL_CLIENT_SECRET_VALUE> | doppler secrets set -p <PROJECT_ID>-backend -c prd PAYPAL_CLIENT_SECRET --silent`
+- Create 2 REST API apps in Sandbox mode - dev & staging
+- Run interactive script 3 times, to set payment secrets for each environment:
+  - `npm run set-payment-secrets <PROJECT_ID> paypal dev`
+  - `npm run set-payment-secrets <PROJECT_ID> paypal stg`
+  - `npm run set-payment-secrets <PROJECT_ID> paypal prd`
 
 ---
 
