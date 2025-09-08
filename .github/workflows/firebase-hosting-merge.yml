@@ -15,6 +15,7 @@ jobs:
       DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
       DOPPLER_STAGE: ${{ (github.ref_name == 'main' && 'prd') || 'stg' }}
       IS_PRODUCTION: ${{ github.ref_name == 'main' && 'true' || 'false' }}
+      VITE_ENV: ${{ github.ref_name == 'main' && 'prd' || 'stg' }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
