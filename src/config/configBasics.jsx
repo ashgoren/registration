@@ -23,7 +23,7 @@ const baseConfig = {
   INCLUDE_PRONOUNS_ON_NAMETAG: false,
   INCLUDE_LAST_ON_NAMETAG: true,
 
-  PAYMENT_METHODS: ['paypal', 'check'], // options are stripe|paypal|check (first is default)
+  PAYMENT_METHODS: ['stripe', 'check'], // options are stripe|paypal|check (first is default)
 
   EVENT_TITLE: 'Example Contra Weekend 2025',
   EVENT_LOCATION: 'Example place, Example place',

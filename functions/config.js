@@ -1,12 +1,12 @@
 // deployOptions are needed before doppler secrets can be parsed
 export const deployOptions = {
-  REGION: 'us-central1',  // recommended: 'us-west1'
+  REGION: 'us-west1',
   TIMEZONE: 'America/Los_Angeles',
   DOPPLER_SECRETS: ['backend']
 };
 
 const baseOptions = {
-  PAYMENT_PROCESSOR: 'paypal',
+  PAYMENT_PROCESSOR: 'stripe',
   EVENT_TITLE: 'Example Contra Weekend 2025',
   EMAIL_SUBJECT: 'Example Contra Weekend Registration',
   STRIPE_STATEMENT_DESCRIPTOR_SUFFIX: '', // max 22 chars
