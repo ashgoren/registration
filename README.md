@@ -206,12 +206,6 @@ npm install
 npm install --prefix functions
 ```
 
-Configure local doppler to use the right frontend and backend projects:
-```sh
-doppler setup -p <PROJECT_ID> -c dev
-cd functions && doppler setup -p <PROJECT_ID>-backend -c dev && cd ..
-```
-
 Usage in development:
 ```sh
 npm run emulator # optional (to use emulators for firebase functions)
