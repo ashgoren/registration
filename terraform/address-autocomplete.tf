@@ -16,7 +16,7 @@ resource "google_apikeys_key" "places_maps" {
     api_targets { service = "maps-backend.googleapis.com" }
   }
 
-  depends_on = [google_project_service.apis]
+  depends_on = [time_sleep.wait_for_apis]
 }
 
 # Save the key to the correct Doppler config for the current workspace
@@ -47,7 +47,7 @@ resource "google_apikeys_key" "places_maps_dev" {
     api_targets { service = "maps-backend.googleapis.com" }
   }
 
-  depends_on = [google_project_service.apis]
+  depends_on = [time_sleep.wait_for_apis]
 }
 
 # Save the key to the dev Doppler config

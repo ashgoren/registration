@@ -4,7 +4,7 @@
 resource "google_pubsub_topic" "secret_created" {
   name = "secret_created"
 
-  depends_on = [google_project_service.apis]
+  depends_on = [time_sleep.wait_for_apis]
 }
 
 # create logging sink that publishes to that topic when a secret version is added
@@ -24,7 +24,7 @@ resource "google_pubsub_topic_iam_member" "secret_created" {
   role   = "roles/pubsub.publisher"
   member = google_logging_project_sink.secret_created.writer_identity
 
-  depends_on = [google_project_service.apis]
+  depends_on = [time_sleep.wait_for_apis]
 }
 
 

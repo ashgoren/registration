@@ -3,7 +3,7 @@ resource "google_firebase_project" "default" {
   provider    = google
   project     = var.project_id
 
-  depends_on = [google_project_service.apis]
+  depends_on = [time_sleep.wait_for_apis]
 }
 
 # Create the default Firestore database, which also sets the region for Firestore
