@@ -86,7 +86,6 @@ npm run bootstrap <PROJECT_ID>
 ## 3. Spreadsheet (part 1)
 
 - Generate a new spreadsheet from [template](https://docs.google.com/spreadsheets/d/1gQ9l8wBTgNmiI0KmpECsDzCqePSPMnZFaecuj0VO_cU/template/preview)
-- Update fields/columns as needed in spreadsheet _and_ in `functions/shared/fields.js`
 - Set the new spreadsheet's URL as `spreadsheet_url` in `terraform/shared.auto.tfvars`
 
 ---
@@ -116,10 +115,10 @@ npm run bootstrap <PROJECT_ID>
 ## 5. Terraform - Build Infrastructure
 
 > [!IMPORTANT]
-> Ensure all required values are set in `terraform/shared.auto.tfvars`.
+> Ensure all required values are set in `terraform/shared.auto.tfvars`
 
 > [!TIP]
-> - Leave `frontend_domain` blank if you don't plan to have a custom domain for your website.
+> - Leave `frontend_domain` blank if you don't plan to have a custom domain for your website
 > - If terraform fails, try running again (google api's take some time to start)
 
 ```sh
@@ -141,6 +140,7 @@ Share spreadsheet (with edit permissions) to the following service addresses:
 
 - `functions/config.js`
 - `src/config` - including basics, fields, order summary, etc
+- Update fields/columns as needed in spreadsheet _and_ in `functions/shared/fields.js`
 - `index.html` - site title and meta properties, e.g. description & [og:image](https://ogp.me/)
 - Update favicon - use a generator, e.g. [favicon-generator](https://www.favicon-generator.org)
 - Update logo - `public/logo.png` (set to desired height, likely <= 80px)
@@ -195,14 +195,13 @@ Share spreadsheet (with edit permissions) to the following service addresses:
 ### First time
 
 ```sh
-npm install
-npm install --prefix functions
+npm install && npm install --prefix functions
 ```
 
 ### Usage in development
 
 ```sh
-npm run emulator # to use firebase emulators
+npm run emulator # firebase emulators
 npm run dev
 ```
 
@@ -210,17 +209,15 @@ npm run dev
 
 # Deployment
 
-### Deploy backend (Firebase Functions)
+### Deploy to staging
 
-```sh
-firebase deploy --only functions -P staging
-firebase deploy --only functions -P production
-```
+- frontend: push/merge to _staging_ branch on GitHub
+- backend: `firebase deploy --only functions -P staging`
 
-### Deploy frontend (Firebase Hosting)
+### Deploy to production
 
-- staging: push/merge to _staging_ branch on GitHub
-- production: push/merge to _main_ branch on GitHub
+- frontend: merge to _main_ branch on GitHub
+- backend: `firebase deploy --only functions -P production`
 
 ### Configure Firebase Hosting URL
 
