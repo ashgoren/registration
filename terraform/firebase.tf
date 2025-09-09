@@ -62,7 +62,7 @@ resource "github_actions_environment_secret" "firebase_service_account" {
   repository      = var.github_repo
   environment     = terraform.workspace
   secret_name     = "FIREBASE_SERVICE_ACCOUNT"
-  plaintext_value = google_service_account_key.firebase_deploy.private_key
+  plaintext_value = base64decode(google_service_account_key.firebase_deploy.private_key)
 
   depends_on      = [github_repository_environment.env]
 }

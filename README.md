@@ -132,7 +132,7 @@ npm run terraform-prd # builds production project
 
 ---
 
-## 6. Configure OAuth consent screen
+<!-- ## 6. Configure OAuth consent screen
 
 > [!IMPORTANT]
 > Make sure to configure the OAuth consent screen for both production and staging projects.
@@ -140,7 +140,7 @@ npm run terraform-prd # builds production project
 > [!TIP]
 > Set user type to internal (other values are unimportant & no scopes are required)
 
-[Configure OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent)
+[Configure OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent) -->
 
 ---
 
@@ -168,10 +168,10 @@ npm run terraform-prd # builds production project
 
 - Create 2 sandbox accounts - dev & staging
 
-- Create Stripe webhook endpoint(s) from the command line using the Stripe CLI (or from the Stripe Dashboard):
-  - prd: `stripe webhook_endpoints create --url https://<REGION>-<PROJECT_ID>.cloudfunctions.net/stripeWebhook --enabled-events payment_intent.succeeded`
-  - stg (optional): `stripe webhook_endpoints create --url https://<REGION>-<PROJECT_ID>-stg.cloudfunctions.net/stripeWebhook --enabled-events payment_intent.succeeded`
-  - dev (optional): `stripe listen --events payment_intent.succeeded --forward-to localhost:5001/<PROJECT_ID>/<REGION>/stripeWebhook`
+- Create Stripe webhook endpoint(s), selecting only the **payment_intent.succeeded** event:
+  - prd endpoint: `https://<REGION>-<PROJECT_ID>.cloudfunctions.net/stripeWebhook`
+  - stg endpoint (optional): `https://<REGION>-<PROJECT_ID>-stg.cloudfunctions.net/stripeWebhook`
+  - dev (optional) using stripe cli: `stripe listen --events payment_intent.succeeded --forward-to localhost:5001/<PROJECT_ID>/<REGION>/stripeWebhook`
 
 - Run interactive script 3 times, to set payment secrets (publishable key, secret key, webhook secret) for each environment:
   - `npm run set-payment-secrets <PROJECT_ID> stripe dev`
@@ -185,7 +185,7 @@ npm run terraform-prd # builds production project
 
 - Create 2 REST API apps in Sandbox mode - dev & staging
 
-- Create PayPal webhook(s) from the website, selecting only the **payment capture completed** event:
+- Create PayPal webhook(s), selecting only the **payment capture completed** event:
   - prd endpoint: `https://<REGION>-<PROJECT_ID>.cloudfunctions.net/paypalWebhook`
   - stg endpoint (optional): `https://<REGION>-<PROJECT_ID>-stg.cloudfunctions.net/paypalWebhook`
   - dev endpoint (optional): `https://<localtunnel-url>/<PROJECT_ID>/<REGION>/paypalWebhook` (requires using localtunnel, e.g. `lt -p 5001 -s <PROJECT_ID>`)
@@ -199,14 +199,14 @@ npm run terraform-prd # builds production project
 
 # Development 
 
-### First time:
+### First time
 
 ```sh
 npm install
 npm install --prefix functions
 ```
 
-### Usage in development:
+### Usage in development
 
 ```sh
 npm run emulator # to use firebase emulators
@@ -217,13 +217,13 @@ npm run dev
 
 # Deployment
 
-### Deploy backend (Firebase Functions):
+### Deploy backend (Firebase Functions)
 
 ```sh
 firebase deploy --only functions
 ```
 
-### Deploy frontend (Firebase Hosting):
+### Deploy frontend (Firebase Hosting)
 
 - Push or merge to staging branch on GitHub to deploy staging project
 - Push or merge to main branch on GitHub to deploy production project
