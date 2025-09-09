@@ -3,6 +3,8 @@ import { log } from './utils.js';
 
 export async function generateTfvarsFiles(tfvars) {
   const files = {
+  'terraform/prd.tfvars': `project_id = "${tfvars.gcp_project_id}"`,
+  'terraform/stg.tfvars': `project_id = "${tfvars.gcp_project_id}-stg"`,
   'terraform/shared.auto.tfvars': `doppler_project = "${tfvars.doppler_project}"
 gcp_organization_id = "${tfvars.gcp_organization_id}"
 gcp_billing_account_id = "${tfvars.gcp_billing_account_id}"
@@ -16,16 +18,6 @@ email_from_name = ""
 email_from_email = ""
 email_admin_notifications = ""
 email_test_domains = "example.com,test.com,testing.com"`,
-
-  'terraform/stg.tfvars': `project_id = "${tfvars.gcp_project_id}-stg"
-stripe_publishable_key = ""
-stripe_secret_key = ""
-paypal_client_id = ""
-paypal_client_secret = ""`,
-
-  'terraform/prd.tfvars': `project_id = "${tfvars.gcp_project_id}"
-stripe_publishable_key = ""
-paypal_client_id = ""`
 };
 
   try {

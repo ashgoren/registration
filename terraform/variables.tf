@@ -1,35 +1,10 @@
-######## SET IN STG.TFVARS OR PRD.TFVARS ########
+######## SET IN STG.TFVARS AND PRD.TFVARS ########
 
 # production project ID
 variable "project_id" {
   description = "ID of the Firebase / Google Cloud project"
   type        = string
 }
-
-variable "stripe_publishable_key" {
-  description = "Stripe publishable key"
-  type        = string
-}
-
-# Enter in stg.tfvars only; managed directly by Doppler for prd
-variable "stripe_secret_key" {
-  description = "Stripe secret key"
-  type        = string
-  sensitive   = true
-}
-
-variable "paypal_client_id" {
-  description = "PayPal client ID"
-  type        = string
-}
-
-# Enter in stg.tfvars only; managed directly by Doppler for prd
-variable "paypal_client_secret" {
-  description = "PayPal client secret"
-  type        = string
-  sensitive   = true
-}
-
 
 ####### SET IN SHARED.AUTO.TFVARS ########
 

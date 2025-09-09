@@ -53,6 +53,7 @@ Simple registration / admissions sales site for contra dance events.
 ## 1. Generate GitHub Repository
 
 - Generate a new GitHub repository from [template](https://github.com/ashgoren/registration/generate)
+- Clone your new repo: `git clone <REPO_URL>`
 
 ---
 
@@ -73,7 +74,7 @@ Simple registration / admissions sales site for contra dance events.
 > It must be globally unique. (This script will inform you if it's taken.)
 
 > [!TIP]
-> Firebase Hosting built-in project site will be https://<PROJECT_ID>.web.app.
+> Firebase Hosting built-in project site will be `https://<PROJECT_ID>.web.app`.
 > (You may of course ignore that and use your own domain.)
 
 ```sh
@@ -118,10 +119,7 @@ npm run bootstrap <PROJECT_ID>
 ## 5. Terraform - Build Infrastructure
 
 > [!IMPORTANT]
-> Ensure values are set in the following files:
-> - `terraform/shared.auto.tfvars`
-> - `terraform/stg.tfvars`
-> - `terraform/prd.tfvars`
+> Ensure all required values are set in `terraform/shared.auto.tfvars`.
 
 > [!TIP]
 > Leave `frontend_domain` blank if you don't plan to have a custom domain for your website.
