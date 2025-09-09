@@ -200,15 +200,17 @@ npm run terraform-prd # builds production project
 
 # Development 
 
-First time:
+### First time:
+
 ```sh
 npm install
 npm install --prefix functions
 ```
 
-Usage in development:
+### Usage in development:
+
 ```sh
-npm run emulator # optional (to use emulators for firebase functions)
+npm run emulator # to use firebase emulators
 npm run dev
 ```
 
@@ -216,31 +218,31 @@ npm run dev
 
 # Deployment
 
-## Deploy backend (Firebase Functions):
+### Deploy backend (Firebase Functions):
 
 ```sh
-npm install --prefix functions
 firebase deploy --only functions
 ```
 
-## Deploy frontend (Firebase Hosting):
+### Deploy frontend (Firebase Hosting):
 
 - Push or merge to staging branch on GitHub to deploy staging project
 - Push or merge to main branch on GitHub to deploy production project
 
-## Configure Firebase Hosting URL
+### Configure Firebase Hosting URL
 
 - In Firebase Console add custom domain (if desired)
 
----
+### Hibernation for projects not actively in use
 
-# After updating stg/prd secrets
+```sh
+npm run disable-apis <PROJECT_ID> # npm run enable-apis to remove from hibernation
+```
 
-- After updating Doppler stg/prd secrets, must redeploy front-end + firebase functions with `--force`
+### Switching to live mode
 
----
-
-# Switching to live mode
+> [!TIP]
+> After updating Doppler stg/prd secrets, must redeploy front-end + firebase functions with `--force`
 
 - Ensure that Doppler prd config has live mode values for these:
   - frontend: `VITE_STRIPE_PUBLISHABLE_KEY`
@@ -257,16 +259,6 @@ firebase deploy --only functions
 
 ---
 
-# Hibernation for projects not actively in use
-
-Putting a project into hibernation:
-- `npm run disable-apis <PROJECT_ID>`
-
-Removing a project from hibernation:
-- `npm run enable-apis <PROJECT_ID>`
-
----
-
 # Helper scripts
 
-See `scripts/README.md` for details on scripts to query Firestore and Google Sheets.
+See `scripts/README.md` for details on scripts to query database and payment processor.

@@ -9,10 +9,6 @@
 
 - checks that there are no electronic payments missing from the database
 
-### Doppler set
-
-- helper to set Doppler secrets
-
 ---
 
 ## Configuration
