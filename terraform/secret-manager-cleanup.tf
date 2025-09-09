@@ -54,6 +54,8 @@ resource "google_storage_bucket_object" "secret_cleanup_zip" {
 resource "google_service_account" "secret_cleanup" {
   account_id   = "secret-manager-cleanup"
   display_name = "Secret Manager Cleanup Function"
+
+  depends_on = [time_sleep.wait_for_apis]
 }
 
 # Grant the service account permission to manage secrets

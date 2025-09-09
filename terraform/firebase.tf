@@ -44,6 +44,8 @@ resource "google_firebase_hosting_site" "default" {
 resource "google_service_account" "firebase_deploy" {
   account_id   = "firebase-deploy"
   display_name = "Firebase Deploy Service Account"
+
+  depends_on = [time_sleep.wait_for_apis]
 }
 
 resource "google_service_account_key" "firebase_deploy" {

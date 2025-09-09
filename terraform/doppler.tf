@@ -27,6 +27,8 @@ resource "github_actions_environment_secret" "frontend" {
 resource "google_service_account" "doppler_secret_manager" {
   account_id   = "doppler-secret-manager"
   display_name = "Doppler Secret Manager"
+
+  depends_on = [time_sleep.wait_for_apis]
 }
 
 # Grant the service account access to manage secrets in secret manager

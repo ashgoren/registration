@@ -14,4 +14,6 @@ resource "google_artifact_registry_repository" "gcf_artifacts" {
       older_than = "1d"
     }
   }
+
+  depends_on = [time_sleep.wait_for_apis]
 }
