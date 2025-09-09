@@ -39,13 +39,15 @@ export const getConfig = () => {
   if (config) return config;
 
   let parsedSecrets = {};
-  if (process.env.backend) {
+  if (process.env.DOPPLER_ENVIRONMENT !== 'dev') {
+    console.log('DEBUG: parsing backend');
     try {
       parsedSecrets = JSON.parse(process.env.backend);
     } catch (error) {
       throw new Error('Malformed backend environment variable');
     }
   } else {
+    console.log('DEBUG: using env variables');
     parsedSecrets = envVariables.reduce((acc, varName) => {
       acc[varName] = process.env[varName];
       return acc;

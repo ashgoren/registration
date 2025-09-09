@@ -213,13 +213,14 @@ npm run dev
 ### Deploy backend (Firebase Functions)
 
 ```sh
-firebase deploy --only functions
+firebase deploy --only functions -P staging
+firebase deploy --only functions -P production
 ```
 
 ### Deploy frontend (Firebase Hosting)
 
-- Push or merge to staging branch on GitHub to deploy staging project
-- Push or merge to main branch on GitHub to deploy production project
+- staging: push/merge to _staging_ branch on GitHub
+- production: push/merge to _main_ branch on GitHub
 
 ### Configure Firebase Hosting URL
 
@@ -237,13 +238,10 @@ npm run disable-apis <PROJECT_ID> # npm run enable-apis to remove from hibernati
 > After updating Doppler stg/prd secrets, must redeploy front-end + firebase functions with `--force`
 
 - Ensure that Doppler prd config has live mode values for these:
-  - frontend: `VITE_STRIPE_PUBLISHABLE_KEY`
-  - frontend: `VITE_PAYPAL_CLIENT_ID`
-  - backend: `STRIPE_SECRET_KEY`
-  - backend: `STRIPE_WEBHOOK_SECRET`
-  - backend: `PAYPAL_CLIENT_ID`
-  - backend: `PAYPAL_CLIENT_SECRET`
-  - backend: `PAYPAL_WEBHOOK_ID`
+  - frontend: `VITE_STRIPE_PUBLISHABLE_KEY` or `VITE_PAYPAL_CLIENT_ID`
+  - backend: `PAYPAL_CLIENT_ID` (if using paypal)
+  - backend: `STRIPE_SECRET_KEY` or `PAYPAL_CLIENT_SECRET`
+  - backend: `STRIPE_WEBHOOK_SECRET` or `PAYPAL_WEBHOOK_ID`
 - Make registration link live on homepage & navbar
 - Redeploy: front-end, back-end, firebase functions with `--force`
 - Clear Spreadsheet
