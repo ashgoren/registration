@@ -24,8 +24,7 @@ locals {
   # Secrets that are safe to manage via Terraform (non-sensitive or generated)
   backend_secrets = {
     SHEETS_SHEET_ID                     = local.spreadsheet_id
-    SHEETS_SERVICE_ACCOUNT_CLIENT_EMAIL = google_service_account.sheets.email
-    SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY  = base64decode(google_service_account_key.sheets.private_key)
+    SHEETS_SERVICE_ACCOUNT_KEY          = base64decode(google_service_account_key.sheets.private_key)
     EMAIL_ENDPOINT                      = var.email_amazonses_email_endpoint
     EMAIL_USER                          = var.email_amazonses_smtp_user
     EMAIL_PASSWORD                      = var.email_amazonses_smtp_password

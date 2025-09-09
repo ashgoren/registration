@@ -34,10 +34,11 @@ async function appendAllLines(lines) {
 }
 
 async function googleSheetsOperation({ operation, params }, attempt = 0) {
-  const { SHEETS_SHEET_ID, SHEETS_SHEET_RANGE, SHEETS_SERVICE_ACCOUNT_CLIENT_EMAIL, SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY } = getConfig();
+  const { SHEETS_SHEET_ID, SHEETS_SHEET_RANGE, SHEETS_SERVICE_ACCOUNT_KEY } = getConfig();
   const SHEETS_AUTH_URL = 'https://www.googleapis.com/auth/spreadsheets';
-  const key = SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY.replace(/\\n/g, '\n');
-  const client = new google.auth.JWT(SHEETS_SERVICE_ACCOUNT_CLIENT_EMAIL, null, key, [SHEETS_AUTH_URL]);
+  const serviceAccountKey = JSON.parse(SHEETS_SERVICE_ACCOUNT_KEY);
+  const client = google.auth.fromJSON(serviceAccountKey);
+  client.scopes = [SHEETS_AUTH_URL];
 
   try {
     const operationParams = {

@@ -83,14 +83,11 @@ npm run bootstrap <PROJECT_ID>
 
 ---
 
-## 3. Spreadsheet
+## 3. Spreadsheet (part 1)
 
 - Generate a new spreadsheet from [template](https://docs.google.com/spreadsheets/d/1gQ9l8wBTgNmiI0KmpECsDzCqePSPMnZFaecuj0VO_cU/template/preview)
 - Update fields/columns as needed in spreadsheet _and_ in `functions/shared/fields.js`
 - Set the new spreadsheet's URL as `spreadsheet_url` in `terraform/shared.auto.tfvars`
-- Share spreadsheet (with edit permissions) to the following service addresses:
-  - sheets@<PROJECT_ID>.iam.gserviceaccount.com
-  - sheets@<PROJECT_ID>-stg.iam.gserviceaccount.com
 
 ---
 
@@ -132,15 +129,11 @@ npm run terraform-prd # builds production project
 
 ---
 
-<!-- ## 6. Configure OAuth consent screen
+## 6. Spreadsheet (part 2)
 
-> [!IMPORTANT]
-> Make sure to configure the OAuth consent screen for both production and staging projects.
-
-> [!TIP]
-> Set user type to internal (other values are unimportant & no scopes are required)
-
-[Configure OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent) -->
+Share spreadsheet (with edit permissions) to the following service addresses:
+- sheets@<PROJECT_ID>.iam.gserviceaccount.com
+- sheets@<PROJECT_ID>-stg.iam.gserviceaccount.com
 
 ---
 
