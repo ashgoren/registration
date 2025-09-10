@@ -209,30 +209,27 @@ npm run dev
 
 # Deployment
 
-### Deploy to staging
+> [!NOTE]
+> Github workflow handles the following:
+> - Deploys frontend to Firebase Hosting
+> - Deploys backend to Firebase Functions
+> - Syncs Doppler secrets to Google Cloud Secret Manager
 
-- frontend: push/merge to _staging_ branch on GitHub
-- backend: `firebase deploy --only functions -P staging`
+**Deploy to staging:** push/merge to staging branch on GitHub
+**Deploy to production:** merge to main branch on GitHub
 
-### Deploy to production
+---
 
-- frontend: merge to _main_ branch on GitHub
-- backend: `firebase deploy --only functions -P production`
+# Post-deployment
 
 ### Configure Firebase Hosting URL
 
 - In Firebase Console add custom domain (if desired)
 
-### Hibernation for projects not actively in use
-
-```sh
-npm run disable-apis <PROJECT_ID> # npm run enable-apis to remove from hibernation
-```
-
 ### Switching to live mode
 
-> [!TIP]
-> After updating Doppler stg/prd secrets, must redeploy front-end + firebase functions with `--force`
+> [!IMPORTANT]
+> After updating Doppler stg/prd secrets, must redeploy!
 
 - Ensure that Doppler prd config has live mode values for these:
   - frontend: `VITE_STRIPE_PUBLISHABLE_KEY` or `VITE_PAYPAL_CLIENT_ID`
@@ -240,12 +237,15 @@ npm run disable-apis <PROJECT_ID> # npm run enable-apis to remove from hibernati
   - backend: `STRIPE_SECRET_KEY` or `PAYPAL_CLIENT_SECRET`
   - backend: `STRIPE_WEBHOOK_SECRET` or `PAYPAL_WEBHOOK_ID`
 - Make registration link live on homepage & navbar
-- Redeploy: front-end, back-end, firebase functions with `--force`
 - Clear Spreadsheet
 - Clear production Firestore DB if necessary
 
----
+### Hibernation for projects not actively in use
 
-# Helper scripts
+```sh
+npm run disable-apis <PROJECT_ID> # npm run enable-apis to remove from hibernation
+```
+
+### Helper scripts
 
 See `scripts/README.md` for details on scripts to query database and payment processor.
