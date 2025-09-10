@@ -1,118 +1,128 @@
-# Registration site
+# Contra Registration
+_Simple event registration / admissions sales site_
 
-Simple registration / admissions sales site for contra dance events.
+## Tech Stack
 
-- Front-end: Vite + React + Material-UI
-- Hosting: Firebase Hosting
-- Database: Firebase Firestore
-- Serverless functions: Firebase Functions
-- Logging: Google Cloud Logging
-- Secrets management: Doppler & Google Cloud Secret Manager
-- Address autocomplete: Google Places API
-- Email: Amazon SES
-- Payment: Stripe or PayPal
-- IaC: Terraform
-
-# Configuration
-
-## Required accounts and command-line tools:
-
-> [!IMPORTANT]
-> Run commands from a Unix-compatible CLI, e.g. `Terminal` on Mac or [Git Bash](https://git-scm.com/downloads) on Windows.
-
-- Account: [GitHub](https://github.com/)
-- Account: [Firebase](https://firebase.google.com/)
-- Account: [Google Cloud](https://cloud.google.com/)
-- Account: [Google Cloud Billing](https://console.cloud.google.com/billing)
-- Account: [Doppler](https://www.doppler.com/)
-- Account: [Amazon SES](https://aws.amazon.com/ses/)
-- Account: [Stripe](https://stripe.com/) or [PayPal](https://www.paypal.com/)
-
-- Install: [Terraform](https://developer.hashicorp.com/terraform/install)
-
-- Install: [Node](https://nodejs.org/)
-
-- Install: [GitHub CLI](https://cli.github.com/)
-  - Login to GitHub CLI: `gh auth login`
-
-- Install: [Firebase CLI](https://firebase.google.com/docs/cli)
-  - Login to the Firebase CLI: `firebase login`
-
-- Install: [Doppler CLI](https://www.doppler.com/docs/cli)
-  - Login to the Doppler CLI: `doppler login`
-
-- Install: [Google Cloud CLI](https://cloud.google.com/sdk/docs/install-sdk)
-  - Login to the Google Cloud CLI: `gcloud auth login`
-  - Create local default credentials (needed for Terraform): `gcloud auth application-default login`
-
-- Install: [Stripe CLI](https://stripe.com/docs/stripe-cli) (if desired)
-  - Login to the Stripe CLI: `stripe login`
+**Front-end:** Vite + React + Material-UI  
+**Hosting:** Firebase Hosting  
+**Database:** Firebase Firestore  
+**Serverless functions:** Firebase Functions  
+**Logging:** Google Cloud Logging  
+**Secrets management:** Doppler & Google Cloud Secret Manager  
+**Address autocomplete:** Google Places API  
+**Email:** Amazon SES  
+**Payment:** Stripe or PayPal  
+**IaC:** Terraform  
 
 ---
 
-## 1. Generate GitHub Repository
-
-- Generate a new GitHub repository from [template](https://github.com/ashgoren/registration/generate)
-- Clone your new repo: `git clone <REPO_URL>`
+## Table of Contents
+1. [Prerequisites](#1-prerequisites)
+2. [Generate Repository](#2-generate-repository)
+3. [Bootstrap Projects](#3-bootstrap-projects)
+4. [Spreadsheet Setup](#4-spreadsheet-setup)
+5. [Email Configuration](#5-email-setup)
+6. [Deploy Infrastructure](#6-deploy-infrastructure)
+7. [Grant Spreadsheet Access](#7-grant-spreadsheet-access)
+8. [Application Configuration](#8-site-configuration)
+9. [Payment Setup](#9-payment-setup)
+10. [Development](#10-development)
+11. [Deployment](#11-deployment)
+12. [Post-Deployment](#12-post-deployment)
 
 ---
 
-## 2. Create & Bootstrap GCP/Firebase Projects, Terraform, Doppler
-
-> [!NOTE]
-> This script performs the following bootstrapping steps:
-> - Creates Google Cloud production & staging projects
-> - Links Google Cloud projects to a billing account
-> - Enables APIs required to bootstrap Terraform
-> - Initializes Terraform directory & workspaces
-> - Generates Terraform variables files
-> - Generates .firebaserc file
-> - Creates Doppler projects
+## 1. Prerequisites 
 
 > [!IMPORTANT]
-> PROJECT_ID is your desired unique identifier for your project.
-> It must be globally unique. (This script will inform you if it's taken.)
+> Run commands from a Unix-compatible CLI (e.g. Terminal on Mac or [Git Bash](https://git-scm.com/downloads) on Windows).
+
+### Required Accounts
+✅ **[GitHub](https://github.com/)** - Code Repository  
+✅ **[Firebase](https://firebase.google.com/)** - Hosting, Database, Backend  
+✅ **[Google Cloud](https://cloud.google.com/)** - Infrastructure ([billing required](https://console.cloud.google.com/billing))  
+✅ **[Doppler](https://www.doppler.com/)** - Secrets Management  
+✅ **[Amazon SES](https://aws.amazon.com/ses/)** - Email Delivery  
+✅ **[Stripe](https://stripe.com/)** or **[PayPal](https://www.paypal.com/)** - Payment Processing  
+
+### Required CLI Tools
+
+| Tool | Authentication |
+|------|----------------|
+| [Node.js](https://nodejs.org/) | - |
+| [Terraform](https://developer.hashicorp.com/terraform/install) | - |
+| [GitHub CLI](https://cli.github.com/) | `gh auth login` |
+| [Firebase CLI](https://firebase.google.com/docs/cli) | `firebase login` |
+| [Doppler CLI](https://www.doppler.com/docs/cli) | `doppler login` |
+| [Google Cloud CLI](https://cloud.google.com/sdk/docs/install-sdk) | `gcloud auth login` + `gcloud auth application-default login` |
+| [Stripe CLI](https://stripe.com/docs/stripe-cli) _(optional)_ | `stripe login` |
+
+---
+
+## 2. Generate Repository
+
+1. Generate repository from [template](https://github.com/ashgoren/registration/generate)
+2. Clone: `git clone <REPO_URL>`
+3. Navigate to project: `cd <your-repo-name>`
+
+---
+
+## 3. Bootstrap Projects
+
+> [!NOTE]  
+> **What this does:** Creates production & staging GCP projects linked to your billing account, enables APIs, initializes Terraform, generates .firebaserc file, creates Doppler projects
 
 > [!TIP]
-> Firebase Hosting built-in project site will be `https://<PROJECT_ID>.web.app`.
-> (You may of course ignore that and use your own domain.)
+> **PROJECT_ID format:** Use lowercase letters, numbers, hyphens. Must be globally unique.  
+> **Example:** `my-dance-event-2025` → Complimentary site will be at `https://my-dance-event-2025.web.app`  
 
-```sh
+```bash
 npm run bootstrap <PROJECT_ID>
 ```
 
 ---
 
-## 3. Spreadsheet (part 1)
+## 4. Spreadsheet Setup
 
-- Generate a new spreadsheet from [template](https://docs.google.com/spreadsheets/d/1gQ9l8wBTgNmiI0KmpECsDzCqePSPMnZFaecuj0VO_cU/template/preview)
-- Set the new spreadsheet's URL as `spreadsheet_url` in `terraform/shared.auto.tfvars`
-
----
-
-## 4. Email
-
-- Create Amazon SES SMTP credentials [here](https://console.aws.amazon.com/ses/home#/smtp)
-  - Set "SMTP user name" as `email_amazonses_smtp_user` in `terraform/shared.auto.tfvars`
-  - Set "SMTP password" as `email_amazonses_smtp_password` in `terraform/shared.auto.tfvars`
-
-- Verify email domain in Amazon SES console [here](https://console.aws.amazon.com/ses/home#/identities)
-  - Follow instructions to verify the domain, including DKIM and MAIL FROM verification
-  - Add required records to DNS provider and wait for verification
-
-- Set the following in `terraform/shared.auto.tfvars`:
-  - `email_from_name`
-  - `email_from_address` - domain must be verified in amazon ses
-  - `email_admin_notifications`
-  - `email_test_domains` - test domains to ignore for receipts etc
-
-- Set the following in `terraform/shared.auto.tfvars` only if needed:
-  - `email_reply_to` - use a custom reply-to address
-  - `email_amazonses_email_endpoint` - required if email domain was verified in an aws region other than us-east-2
+1. Create spreadsheet from [template](https://docs.google.com/spreadsheets/d/1gQ9l8wBTgNmiI0KmpECsDzCqePSPMnZFaecuj0VO_cU/template/preview)
+2. Rename spreadsheet to desired name
+3. Add URL to `terraform/shared.auto.tfvars`:
+```hcl
+   spreadsheet_url = "YOUR_SPREADSHEET_URL"
+```
 
 ---
 
-## 5. Terraform - Build Infrastructure
+## 5. Email Setup
+
+### Step 5a: Verify Domain
+1. Go to [SES Identities](https://console.aws.amazon.com/ses/home#/identities)
+2. Follow verification steps, including DKIM and MAIL FROM verification (DNS records required)
+
+### Step 5b: Create SMTP Credentials
+1. Go to [Amazon SES SMTP](https://console.aws.amazon.com/ses/home#/smtp)
+2. Add credentials to `terraform/shared.auto.tfvars`:
+```hcl
+   email_amazonses_smtp_user = "YOUR_SMTP_USER"
+   email_amazonses_smtp_password = "YOUR_SMTP_PASSWORD"
+```
+
+### Step 5c: Configure Other Email Settings
+Fill in email settings in `terraform/shared.auto.tfvars`:
+```hcl
+email_from_name
+email_from_address # domain must be verified in amazon ses
+email_admin_notifications
+
+# optional
+email_test_domains - domains to ignore for receipts, etc
+email_reply_to
+email_amazonses_email_endpoint - required only if email_from_address domain was verified in an aws region other than us-east-2
+```
+
+---
+
+## 6. Deploy Infrastructure
 
 > [!IMPORTANT]
 > Ensure all required values are set in `terraform/shared.auto.tfvars`
@@ -121,137 +131,176 @@ npm run bootstrap <PROJECT_ID>
 > - Leave `frontend_domain` blank if you don't plan to have a custom domain for your website
 > - If terraform fails, try running again (google api's take some time to start)
 
-```sh
-npm run terraform-stg # builds staging project
-npm run terraform-prd # builds production project
+```bash
+npm run terraform-stg # deploys staging infrastructure
+npm run terraform-prd # deploys production infrastructure
 ```
 
 ---
 
-## 6. Spreadsheet (part 2)
+## 7. Grant Spreadsheet Access
 
-Share spreadsheet (with edit permissions) to the following service addresses:
-- sheets@<PROJECT_ID>.iam.gserviceaccount.com
-- sheets@<PROJECT_ID>-stg.iam.gserviceaccount.com
-
----
-
-## 7. Config
-
-- `functions/config.js`
-- `src/config` - including basics, fields, order summary, etc
-- Update fields/columns as needed in spreadsheet _and_ in `functions/shared/fields.js`
-- `index.html` - site title and meta properties, e.g. description & [og:image](https://ogp.me/)
-- Update favicon - use a generator, e.g. [favicon-generator](https://www.favicon-generator.org)
-- Update logo - `public/logo.png` (set to desired height, likely <= 80px)
-- Update email receipts in `templates` folder
+Share your spreadsheet (edit permissions) with:
+- `sheets@<PROJECT_ID>.iam.gserviceaccount.com`
+- `sheets@<PROJECT_ID>-stg.iam.gserviceaccount.com`
 
 ---
 
-## 8. Payment Processor
+## 8. Site Configuration
+
+| File | About |
+|------|---------|
+| `src/config/` | Frontend config (including basics, fields, order summary) |
+| `functions/config.js` | Backend config |
+| `functions/shared/fields.js` | Data fields - _also update spreadsheet columns_ |
+| `templates/` | Email receipt templates |
+| `index.html` | Site title, metadata description, [og:image](https://ogp.me/) |
+| `public/logo.png` | Your logo (≤80px height recommended) |
+| `public/` favicon files | use a generator, e.g. [favicon-generator](https://www.favicon-generator.org) |
+
+---
+
+## 9. Payment Setup
 
 > [!NOTE]
-> Staging & Development mode webhooks are optional, only if desired for testing the webhook feature.
+> Staging & Dev mode webhooks are optional (only needed for testing webhook functionality)
 
-### Stripe
+<!-- ###### STRIPE SETUP ####### -->
 
-> [!TIP]
-> - On Stripe console, disable all payment methods except Cards, Apple Pay, Google Pay
-> - Apple Pay: requires stripe domain auth
+<details>
+<summary><span style="font-size:20px;">**Option A: Stripe**</span></summary>
 
-- Create 2 sandbox accounts - dev & staging
+#### Step 8a: Configure Stripe Payment Methods
+- Disable all payment methods except: Cards, Apple Pay, Google Pay
+- Apple Pay requires Stripe domain verification
 
-- Create Stripe webhook endpoint(s), selecting only the **payment_intent.succeeded** event:
-  - prd endpoint: `https://<REGION>-<PROJECT_ID>.cloudfunctions.net/stripeWebhook`
-  - stg endpoint (optional): `https://<REGION>-<PROJECT_ID>-stg.cloudfunctions.net/stripeWebhook`
-  - dev (optional) using stripe cli: `stripe listen --events payment_intent.succeeded --forward-to localhost:5001/<PROJECT_ID>/<REGION>/stripeWebhook`
+#### Step 8b: Create Stripe sandbox accounts
+- Create 2 sandbox accounts - dev & stg
 
-- Run interactive script 3 times, to set payment secrets (publishable key, secret key, webhook secret) for each environment:
-  - `npm run set-payment-secrets <PROJECT_ID> stripe dev`
-  - `npm run set-payment-secrets <PROJECT_ID> stripe stg`
-  - `npm run set-payment-secrets <PROJECT_ID> stripe prd`
+#### Step 8c: Create Stripe Webhook Endpoints
+Create webhooks for **payment_intent.succeeded** event only:
 
-### PayPal
+| Environment | Endpoint URL |
+|-------------|-------------|
+| Production | `https://<REGION>-<PROJECT_ID>.cloudfunctions.net/stripeWebhook` |
+| Stg (optional) | `https://<REGION>-<PROJECT_ID>-stg.cloudfunctions.net/stripeWebhook` |
+| Dev (optional) | Use Stripe CLI: `stripe listen --events payment_intent.succeeded --forward-to localhost:5001/<PROJECT_ID>/<REGION>/stripeWebhook` |
 
-> [!TIP]
-> Don't want to accept Venmo? Comment out the venmo line in `configPaypal.jsx`.
+#### Step 8d: Set Stripe Secrets
+Run for each environment to set webhook secret and publishable + secret keys:
+```bash
+npm run set-payment-secrets <PROJECT_ID> stripe dev
+npm run set-payment-secrets <PROJECT_ID> stripe stg
+npm run set-payment-secrets <PROJECT_ID> stripe prd
+```
+</details>
 
-- Create 2 REST API apps in Sandbox mode - dev & staging
+<!-- ###### PAYPAL SETUP ####### -->
 
-- Create PayPal webhook(s), selecting only the **payment capture completed** event:
-  - prd endpoint: `https://<REGION>-<PROJECT_ID>.cloudfunctions.net/paypalWebhook`
-  - stg endpoint (optional): `https://<REGION>-<PROJECT_ID>-stg.cloudfunctions.net/paypalWebhook`
-  - dev endpoint (optional): `https://<localtunnel-url>/<PROJECT_ID>/<REGION>/paypalWebhook` (requires using localtunnel, e.g. `lt -p 5001 -s <PROJECT_ID>`)
+<details>
+<summary><span style="font-size:20px;">**Option B: PayPal**</span></summary>
 
-- Run interactive script 3 times, to set payment secrets (client id, client secret, webhook id) for each environment:
-  - `npm run set-payment-secrets <PROJECT_ID> paypal dev`
-  - `npm run set-payment-secrets <PROJECT_ID> paypal stg`
-  - `npm run set-payment-secrets <PROJECT_ID> paypal prd`
+#### Step 8a: Configure PayPal Payment Methods
+- Don't want Venmo? Comment out the venmo line in `configPaypal.jsx`
+
+#### Step 8b: Create PayPal REST API Apps
+- Create 2 REST API apps in Sandbox mode (dev & stg)
+- Also create production REST API app if it doesn't yet exist
+
+#### Step 8c: Create PayPal Webhook Endpoints
+Create webhooks for **payment capture completed** event only:
+
+| Environment | Endpoint URL |
+|-------------|-------------|
+| Production | `https://<REGION>-<PROJECT_ID>.cloudfunctions.net/paypalWebhook` |
+| Stg (optional) | `https://<REGION>-<PROJECT_ID>-stg.cloudfunctions.net/paypalWebhook` |
+| Dev (optional) | `https://<localtunnel-url>/<PROJECT_ID>/<REGION>/paypalWebhook` (requires using [localtunnel](https://localtunnel.github.io/www/), e.g. `lt -p 5001 -s <PROJECT_ID>`) |
+
+#### Step 8d: Set PayPal Secrets
+Run for each environment to set webhook id and client id + client secret:
+```bash
+npm run set-payment-secrets <PROJECT_ID> paypal dev
+npm run set-payment-secrets <PROJECT_ID> paypal stg
+npm run set-payment-secrets <PROJECT_ID> paypal prd
+```
+</details>
 
 ---
 
-# Development 
+## 10. Development 
 
-### First time
+### First Time Setup
 
-```sh
+```bash
 npm install && npm install --prefix functions
+git checkout -b staging
 ```
 
-### Usage in development
+### Daily Development
 
-```sh
-npm run emulator # firebase emulators
-npm run dev
-```
-
----
-
-# Deployment
-
-> [!NOTE]
-> Github workflow handles the following:
-> - Deploys frontend to Firebase Hosting
-> - Deploys backend to Firebase Functions
-> - Syncs Doppler secrets to Google Cloud Secret Manager
-
-### Deploy to staging
-
-- push/merge to staging branch on GitHub
-
-### Deploy to production:
-
-- merge to main branch on GitHub
-
----
-
-# Post-deployment
-
-### Configure Firebase Hosting URL
-
-- In Firebase Console add custom domain (if desired)
-
-### Switching to live mode
-
-> [!IMPORTANT]
-> After updating Doppler stg/prd secrets, must redeploy!
-
-- Ensure that Doppler prd config has live mode values for these:
-  - frontend: `VITE_STRIPE_PUBLISHABLE_KEY` or `VITE_PAYPAL_CLIENT_ID`
-  - backend: `PAYPAL_CLIENT_ID` (if using paypal)
-  - backend: `STRIPE_SECRET_KEY` or `PAYPAL_CLIENT_SECRET`
-  - backend: `STRIPE_WEBHOOK_SECRET` or `PAYPAL_WEBHOOK_ID`
-- Make registration link live on homepage & navbar
-- Clear Spreadsheet
-- Clear production Firestore DB if necessary
-- Update `robots.txt` to allow indexing (if sharing direct link)
-
-### Hibernation for projects not actively in use
-
-```sh
-npm run disable-apis <PROJECT_ID> # npm run enable-apis to remove from hibernation
+```bash
+npm run emulator # Start Firebase emulators
+npm run dev # Start frontend dev server
 ```
 
 ### Helper scripts
 
-See `scripts/README.md` for details on scripts to query database and payment processor.
+See `scripts/README.md` for database and payment processor query tools.
+
+---
+
+## 11. Deployment
+
+> [!NOTE]  
+> GitHub Actions automatically handles:
+> - Frontend deployment to Firebase Hosting
+> - Backend deployment to Firebase Functions  
+> - Doppler secrets sync to Google Cloud Secret Manager
+
+> [!IMPORTANT]
+> **You must redeploy after any changes to Doppler secrets!**
+
+### Deploy to Staging
+```bash
+git push origin staging
+```
+
+### Deploy to Production
+```bash
+# 1. Ensure staging branch is up to date on GitHub
+git push origin staging
+
+# 2. Create and merge the pull request from staging to main
+gh pr create --base main --head staging --fill
+gh pr merge staging --auto --squash --delete-branch
+
+# 3. Update local main branch
+git checkout main
+git pull origin main
+
+# 4. Recreate staging branch from main
+git branch -D staging && git checkout -b staging
+```
+
+---
+
+## 12. Post-deployment
+
+### 1. Configure Custom Domain (optional)
+- Add custom domain in Firebase Console
+
+### 2. Go Live Checklist
+- [ ] Confirm Stripe/PayPal production secrets are set in Doppler  
+  **prd_frontend:** `VITE_STRIPE_PUBLISHABLE_KEY` or `VITE_PAYPAL_CLIENT_ID`  
+  **prd_backend:** `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET` *or* `PAYPAL_CLIENT_ID` + `PAYPAL_CLIENT_SECRET` + `PAYPAL_WEBHOOK_ID`  
+- [ ] Update registration links on homepage & navbar
+- [ ] Clear spreadsheet data
+- [ ] Clear production Firestore if needed
+- [ ] Update `robots.txt` to allow indexing (if sharing direct link)
+- [ ] Redeployed after any updates to Doppler secrets or source code
+
+### 3. Hibernation (optional)
+For inactive projects:
+```bash
+npm run disable-apis   # npm run enable-apis to wake up
+```
