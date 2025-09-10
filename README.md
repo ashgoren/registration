@@ -21,10 +21,10 @@ _Simple event registration / admissions sales site_
 2. [Generate Repository](#2-generate-repository)
 3. [Bootstrap Projects](#3-bootstrap-projects)
 4. [Spreadsheet Setup](#4-spreadsheet-setup)
-5. [Email Configuration](#5-email-setup)
+5. [Email Setup](#5-email-setup)
 6. [Deploy Infrastructure](#6-deploy-infrastructure)
 7. [Grant Spreadsheet Access](#7-grant-spreadsheet-access)
-8. [Application Configuration](#8-site-configuration)
+8. [Site Configuration](#8-site-configuration)
 9. [Payment Setup](#9-payment-setup)
 10. [Development](#10-development)
 11. [Deployment](#11-deployment)
@@ -168,7 +168,7 @@ Share your spreadsheet (edit permissions) with:
 <!-- ###### STRIPE SETUP ####### -->
 
 <details>
-<summary><span style="font-size:20px;">**Option A: Stripe**</span></summary>
+<summary><span style="font-size:20px; font-weight:bold">Option A: Stripe</span></summary>
 
 #### Step 8a: Configure Stripe Payment Methods
 - Disable all payment methods except: Cards, Apple Pay, Google Pay
@@ -198,7 +198,7 @@ npm run set-payment-secrets <PROJECT_ID> stripe prd
 <!-- ###### PAYPAL SETUP ####### -->
 
 <details>
-<summary><span style="font-size:20px;">**Option B: PayPal**</span></summary>
+<summary><span style="font-size:20px; font-weight:bold">Option B: PayPal</span></summary>
 
 #### Step 8a: Configure PayPal Payment Methods
 - Don't want Venmo? Comment out the venmo line in `configPaypal.jsx`
@@ -291,8 +291,6 @@ git branch -D staging && git checkout -b staging
 
 ### 2. Go Live Checklist
 - [ ] Confirm Stripe/PayPal production secrets are set in Doppler  
-  **prd_frontend:** `VITE_STRIPE_PUBLISHABLE_KEY` or `VITE_PAYPAL_CLIENT_ID`  
-  **prd_backend:** `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET` *or* `PAYPAL_CLIENT_ID` + `PAYPAL_CLIENT_SECRET` + `PAYPAL_WEBHOOK_ID`  
 - [ ] Update registration links on homepage & navbar
 - [ ] Clear spreadsheet data
 - [ ] Clear production Firestore if needed
