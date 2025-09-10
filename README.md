@@ -216,6 +216,7 @@ npm run dev
 > - Syncs Doppler secrets to Google Cloud Secret Manager
 
 **Deploy to staging:** push/merge to staging branch on GitHub
+
 **Deploy to production:** merge to main branch on GitHub
 
 ---
