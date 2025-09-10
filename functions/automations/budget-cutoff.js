@@ -15,7 +15,6 @@ import { sendMail } from '../shared/email.js';
 import { getConfig } from '../config.js';
 // import 'dotenv/config'; // for local emulation, but breaks production deployment
 
-const COST_THRESHOLD = 100;
 const APIS_TO_DISABLE = [
   'run.googleapis.com', // 2nd Gen Firebase Functions
   'firestore.googleapis.com', // Firestore
@@ -34,12 +33,12 @@ export const disableProjectAPIsHandler = async (event) => {
 
   // Early exit if Pub/Sub msg is invalid or costAmount is below threshold
   try {
-    const costAmount = parseCostAmount(event);
-    if (costAmount < COST_THRESHOLD) {
-      console.log('Cost is below threshold, no action taken.');
-      return; // Early exit if cost is below threshold
+    const { budgetAmount, costAmount } = parseBudgetMessage(event);
+    if (costAmount < budgetAmount) {
+      console.log(`Cost ($${costAmount}) is within budget ($${budgetAmount}), no action taken.`);
+      return;
     }
-    console.log(`Cost (${costAmount}) exceeds threshold, proceeding to disable APIs...`);
+    console.log(`Cost ($${costAmount}) exceeds budget ($${budgetAmount}), proceeding to disable APIs...`);
   } catch (error) {
     console.error('Error parsing Pub/Sub message:', error.message);
     return; // Early exit if invalid Pub/Sub message
@@ -69,21 +68,24 @@ export const disableProjectAPIsHandler = async (event) => {
   await logAndEmail(apis);
 };
 
-const parseCostAmount = (event) => {
+const parseBudgetMessage = (event) => {
   const msg = Buffer.from(event.data.message.data, 'base64').toString('utf-8');
   console.log('Received Pub/Sub message:', msg);
   try {
-    const costAmount = parseFloat(JSON.parse(msg.trim()).costAmount);
-    if (isNaN(costAmount)) {
-      throw new Error('Cost amount is not a valid number');
+    const parsedMsg = JSON.parse(msg.trim());
+    const costAmount = parseFloat(parsedMsg.costAmount);
+    const budgetAmount = parseFloat(parsedMsg.budgetAmount);
+    if (isNaN(costAmount) || isNaN(budgetAmount)) {
+      throw new Error('Budget or cost amount is not a valid number');
     }
     console.log('Cost amount:', costAmount);
-    return costAmount;
+    console.log('Budget amount:', budgetAmount);
+    return { budgetAmount, costAmount };
   } catch (error) {
     console.error('Error parsing Pub/Sub message:', error.message);
     throw error;
   }
-}
+};
 
 const initializeGoogleServiceUsageClient = async () => {
   const auth = await google.auth.getClient({
