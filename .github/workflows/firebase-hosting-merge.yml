@@ -51,7 +51,7 @@ jobs:
         env:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN_BACKEND }}
         run: |
-          doppler secrets download --format=json > secrets.json
+          doppler secrets download -c ${DOPPLER_STAGE}_backend --format=json > secrets.json
           gcloud secrets versions add backend --data-file=secrets.json
           rm secrets.json
 
