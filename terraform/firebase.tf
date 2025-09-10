@@ -68,3 +68,58 @@ resource "github_actions_environment_secret" "firebase_service_account" {
 
   depends_on      = [github_repository_environment.env]
 }
+
+
+###### FIREBASE FUNCTIONS SERVICE ACCOUNT ######
+
+locals {
+  roles = [
+    "roles/cloudfunctions.admin",
+    "roles/run.admin",
+    "roles/iam.serviceAccountUser",
+    "roles/iam.serviceAccountTokenCreator",
+    "roles/cloudbuild.builds.editor",
+    "roles/artifactregistry.writer",
+    "roles/storage.admin",
+    "roles/eventarc.admin",
+    "roles/pubsub.admin",
+    "roles/datastore.user",
+    "roles/secretmanager.admin",
+    "roles/logging.logWriter",
+    "roles/cloudscheduler.admin",
+    "roles/firebaserules.admin",
+    "roles/datastore.indexAdmin",
+    "roles/resourcemanager.projectIamAdmin",
+    "roles/serviceusage.serviceUsageAdmin",
+    "roles/monitoring.admin",
+    "roles/firebaseextensions.developer"
+  ]
+}
+
+resource "google_service_account" "firebase_functions" {
+  account_id   = "firebase-functions"
+  display_name = "Firebase Functions Service Account"
+
+  depends_on = [time_sleep.wait_for_apis]
+}
+
+resource "google_service_account_key" "firebase_functions" {
+  service_account_id = google_service_account.firebase_functions.name
+}
+
+resource "google_project_iam_member" "firebase_functions" {
+  for_each = toset(local.roles)
+
+  project = var.project_id
+  role    = each.value
+  member  = "serviceAccount:${google_service_account.firebase_functions.email}"
+}
+
+resource "github_actions_environment_secret" "firebase_functions_service_account" {
+  repository      = var.github_repo
+  environment     = terraform.workspace
+  secret_name     = "FIREBASE_FUNCTIONS_SERVICE_ACCOUNT"
+  plaintext_value = base64decode(google_service_account_key.firebase_functions.private_key)
+
+  depends_on      = [github_repository_environment.env]
+}

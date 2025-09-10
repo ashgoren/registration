@@ -55,6 +55,17 @@ jobs:
           gcloud secrets versions add backend --data-file=secrets.json
           rm secrets.json
 
+      - name: Install Firebase Function Dependencies
+        run: npm install
+        working-directory: ./functions
+
+      - name: Deploy Firebase Functions
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only functions --project ${{ vars.PROJECT_ID }}
+        env:
+          GCP_SA_KEY: ${{ secrets.FIREBASE_FUNCTIONS_SERVICE_ACCOUNT }}
+
       - name: Build Project
         run: npm run build
 
