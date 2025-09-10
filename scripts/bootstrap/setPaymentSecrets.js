@@ -25,45 +25,48 @@ const main = async () => {
   }
 
   try {
-    const publishableLabel = provider === 'stripe' ? 'publishable key' : 'client ID';
-    const secretLabel = provider === 'stripe' ? 'secret key' : 'client secret';
+    const publishableLabel = provider === 'stripe' ? 'PUBLISHABLE key' : 'client ID';
+    const secretLabel = provider === 'stripe' ? 'SECRET key' : 'client SECRET';
     const webhookLabel = provider === 'stripe' ? 'webhook secret' : 'webhook ID';
 
     const publishableKey = await promptInput(`Enter ${provider} ${environment} ${publishableLabel}: `);
     const secretKey = await promptInput(`Enter ${provider} ${environment} ${secretLabel}: `);
     const webhookKey = await promptInput(`Enter ${provider} ${environment} ${webhookLabel} (leave blank to skip): `);
 
+    const frontendConfig = `${environment}_frontend`;
+    const backendConfig = `${environment}_backend`;
+
     // Set frontend publishable key
     const frontendKeyName = provider === 'stripe' ? 'VITE_STRIPE_PUBLISHABLE_KEY' : 'VITE_PAYPAL_CLIENT_ID';
-    if (!runCommand(`doppler secrets set ${frontendKeyName}="${publishableKey}" -p "${projectId}" -c "${environment}" --silent`)) {
+    if (!runCommand(`doppler secrets set ${frontendKeyName}="${publishableKey}" -p "${projectId}" -c "${frontendConfig}" --silent`)) {
       throw new Error(`Failed to set ${frontendKeyName}`);
     }
-    log.success(`✅ Set ${frontendKeyName} in doppler project ${projectId} config ${environment}`);
+    log.success(`✅ Set ${frontendKeyName} in doppler project ${projectId} config ${frontendConfig}`);
 
     // If PayPal, also set client ID in backend
     if (provider === 'paypal') {
-      if (!runCommand(`doppler secrets set PAYPAL_CLIENT_ID="${publishableKey}" -p "${projectId}-backend" -c "${environment}" --silent`)) {
+      if (!runCommand(`doppler secrets set PAYPAL_CLIENT_ID="${publishableKey}" -p "${projectId}" -c "${backendConfig}" --silent`)) {
         throw new Error(`Failed to set PAYPAL_CLIENT_ID`);
       }
-      log.success(`✅ Set PAYPAL_CLIENT_ID in doppler project ${projectId}-backend config ${environment}`);
+      log.success(`✅ Set PAYPAL_CLIENT_ID in doppler project ${projectId} config ${backendConfig}`);
     }
 
     // Set backend secret key
     const backendSecretName = provider === 'stripe' ? 'STRIPE_SECRET_KEY' : 'PAYPAL_CLIENT_SECRET';
-    if (!runCommand(`doppler secrets set ${backendSecretName}="${secretKey}" -p "${projectId}-backend" -c "${environment}" --silent`)) {
+    if (!runCommand(`doppler secrets set ${backendSecretName}="${secretKey}" -p "${projectId}" -c "${backendConfig}" --silent`)) {
       throw new Error(`Failed to set ${backendSecretName}`);
     }
-    log.success(`✅ Set ${backendSecretName} in doppler project ${projectId}-backend config ${environment}`);
+    log.success(`✅ Set ${backendSecretName} in doppler project ${projectId} config ${backendConfig}`);
 
     // Set backend webhook key
     const webhookSecretName = provider === 'stripe' ? 'STRIPE_WEBHOOK_SECRET' : 'PAYPAL_WEBHOOK_ID';
     if (webhookKey) {
-      if (!runCommand(`doppler secrets set ${webhookSecretName}="${webhookKey}" -p "${projectId}-backend" -c "${environment}" --silent`)) {
+      if (!runCommand(`doppler secrets set ${webhookSecretName}="${webhookKey}" -p "${projectId}" -c "${backendConfig}" --silent`)) {
         throw new Error(`Failed to set ${webhookSecretName}`);
       }
-      log.success(`✅ Set ${webhookSecretName} in doppler project ${projectId}-backend config ${environment}`);
+      log.success(`✅ Set ${webhookSecretName} in doppler project ${projectId} config ${backendConfig}`);
     } else {
-      log.info(`Skipped setting ${webhookSecretName} in doppler project ${projectId}-backend config ${environment}`);
+      log.info(`Skipped setting ${webhookSecretName} in doppler project ${projectId} config ${backendConfig}`);
     }
 
   } catch (error) {

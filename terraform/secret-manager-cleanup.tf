@@ -102,3 +102,11 @@ resource "google_cloudfunctions2_function" "secret_cleanup" {
     google_artifact_registry_repository.gcf_artifacts
   ]
 }
+
+# Create an initial backend secret
+resource "google_secret_manager_secret" "backend" {
+  secret_id = "backend"
+  replication {
+    auto {}
+  }
+}
