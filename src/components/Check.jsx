@@ -3,6 +3,7 @@ import { Typography, Button } from '@mui/material';
 import { Loading } from 'components/layouts';
 import { useOrder } from 'hooks/useOrder';
 import { useOrderSaving } from 'hooks/useOrderSaving';
+import { logErrorDebug } from 'src/logger';
 import { config } from 'config';
 const { CHECK_ADDRESS, CHECK_TO, SANDBOX_MODE, TECH_CONTACT } = config;
 
@@ -21,7 +22,7 @@ export const Check = () => {
       updateOrder({ paymentId: 'check', charged: 0 });
       setCurrentPage('processing');
     } catch (error) { // instance of HttpsError from backend or other error
-      console.error('Error saving pending order:', error);
+      logErrorDebug('Error saving pending order:', error);
       setError(
 				<>
 					We're sorry, but we experienced an issue saving your order.<br />

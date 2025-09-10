@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { useField } from 'formik';
 import { FormControl, FormHelperText, FormControlLabel, Checkbox } from '@mui/material';
 import { Label } from 'components/layouts/SharedStyles';
+// import { logDebug } from 'src/logger';
 
 const CheckboxOption = memo(({ name, option, onChange, ...props }) => {
   const [field] = useField(name);
@@ -26,7 +27,7 @@ const CheckboxOption = memo(({ name, option, onChange, ...props }) => {
 export const CheckboxInput = memo(({ name, label, options, onChange, ...props }) => {
   const [, { touched, error }] = useField(name);
 
-  // console.log('render CheckboxInput:', name);
+  // logDebug('render CheckboxInput:', name);
 
   return (
     <FormControl error={Boolean(touched && error)}>

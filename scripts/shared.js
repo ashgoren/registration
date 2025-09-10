@@ -59,7 +59,7 @@ async function getOrders(collection) {
 // const sheets = google.sheets({ version: 'v4', auth: sheetsClient });
 // const readSheet = async () => sheets.spreadsheets.values.get({ spreadsheetId, range: 'Orders' });
 
-function log({ email, message }) {
+function logInfo({ email, message }) {
   const isTestEmail = testDomains.some((domain) => email.includes(domain));
   if (!isTestEmail) {
     console.log(message);

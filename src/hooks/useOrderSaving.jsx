@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useOrder } from 'hooks/useOrder';
 import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
-import { log, logError } from 'src/logger';
+import { logInfo, logError } from 'src/logger';
 
 export const useOrderSaving = () => {
   const { order, orderId, setOrderId } = useOrder();
@@ -10,7 +10,7 @@ export const useOrderSaving = () => {
   const savePendingOrder = useCallback(async () => {
     setIsSaving(true);
     const { email } = order.people[0];
-    log('Saving pending order', { email, orderId, order });
+    logInfo('Saving pending order', { email, orderId, order });
 
     try {
       const { data: { id } } = await firebaseFunctionDispatcher({
@@ -20,7 +20,7 @@ export const useOrderSaving = () => {
 
       if (!id) throw new Error('Missing orderId from Firestore.');
       setOrderId(id);
-      log('Pending order saved', { email, id });
+      logInfo('Pending order saved', { email, id });
       setIsSaving(false);
       return id;
     } catch (error) {

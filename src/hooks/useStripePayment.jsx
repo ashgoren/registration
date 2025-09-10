@@ -1,10 +1,10 @@
-import { log, logError } from 'src/logger';
+import { logInfo, logError } from 'src/logger';
 
 export const useStripePayment = ({ order, stripe, elements, clientSecret }) => {
   const { email } = order.people[0]; // for logging
 
   const processPayment = async () => {
-    log('Capturing Stripe payment', { email, order });
+    logInfo('Capturing Stripe payment', { email, order });
 
     if (!stripe || !elements || !clientSecret) {
       logError('stripe, elements, or clientSecret missing', { email, stripe, elements, clientSecret });
@@ -25,7 +25,7 @@ export const useStripePayment = ({ order, stripe, elements, clientSecret }) => {
 
       const { id: paymentId, amount } = paymentIntent;
 
-      log('Payment captured', { email, paymentId, amount: Number(amount) / 100 });
+      logInfo('Payment captured', { email, paymentId, amount: Number(amount) / 100 });
       return { paymentId, amount: Number(amount) / 100 };
     } catch (error) { // catch any error (from stripe or our validation) and just re-throw it
       logError('Error processing Stripe payment', { email, error });

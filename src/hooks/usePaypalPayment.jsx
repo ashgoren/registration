@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { log, logError } from 'src/logger';
+import { logInfo, logError } from 'src/logger';
 import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
 
 export const usePaypalPayment = ({ order, id: paymentIntentId }) => {
@@ -7,7 +7,7 @@ export const usePaypalPayment = ({ order, id: paymentIntentId }) => {
 	const idempotencyKeyRef = useRef(crypto.randomUUID());
 
 	const processPayment = async () => {
-		log('Capturing PayPal payment', { email, order });
+		logInfo('Capturing PayPal payment', { email, order });
 		try {
 			const { data } = await firebaseFunctionDispatcher({
 				action: 'capturePaypalOrder',
@@ -21,7 +21,7 @@ export const usePaypalPayment = ({ order, id: paymentIntentId }) => {
       validatePaymentResponse(data);
 
 			const { id: paymentId, email: paymentEmail, amount } = data;
-			log('Payment captured', { email, paymentEmail, paymentId, amount });
+			logInfo('Payment captured', { email, paymentEmail, paymentId, amount });
       idempotencyKeyRef.current = crypto.randomUUID(); // reset after successful order creation
 			return { paymentId, paymentEmail, amount: Number(amount) };
 		} catch (error) {

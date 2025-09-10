@@ -4,7 +4,7 @@ import { OrderProvider } from 'contexts/OrderContext';
 import { Home, About, Staff, Seattle, Contact, Schedule, PaymentExplanation } from 'components/Static';
 import { Registration } from 'components/Registration';
 import { config } from 'config';
-import { logEnvironment } from '../logger';
+import { logEnvironment } from 'src/logger';
 const { TECH_CONTACT } = config;
 
 export const App = () => {

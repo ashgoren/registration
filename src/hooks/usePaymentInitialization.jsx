@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { log, logError } from 'src/logger';
+import { logInfo, logError } from 'src/logger';
 import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
 import { useOrder } from 'hooks/useOrder';
 import { config } from 'config';
@@ -19,7 +19,7 @@ export const usePaymentInitialization = () => {
 
     setIsInitializing(true);
     const { email } = order.people[0]; // for logging
-    log('Initializing payment', { email, order });
+    logInfo('Initializing payment', { email, order });
     setAmountToCharge(null);
 
     const idempotencyKey = crypto.randomUUID(); // generate a new idempotency key for each call
@@ -43,7 +43,7 @@ export const usePaymentInitialization = () => {
       setElectronicPaymentDetails({ id, clientSecret }); // save for payment updates and/or capture
       setAmountToCharge(amount); // display total from payment intent
 
-      log('Payment initialized', { id });
+      logInfo('Payment initialized', { id });
       setIsInitializing(false);
     } catch (error) {
       logError('Error initializing payment', { email, error, userAgent: navigator.userAgent });

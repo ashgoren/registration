@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { log, logError } from 'src/logger';
+import { logInfo, logError } from 'src/logger';
 import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
 import { useOrder } from 'hooks/useOrder';
 import { Receipt } from 'components/Receipt';
@@ -22,14 +22,14 @@ export const useOrderFinalization = () => {
 
     const saveFinalOrderToFirebase = async (order) => {
       const { email } = order.people[0]; // for logging
-      log('Saving final order to firebase', { email });
+      logInfo('Saving final order to firebase', { email });
       try {
         await firebaseFunctionDispatcher({
           action: 'saveFinalOrder',
           data: { orderId, order },
           email
         });
-        log('Final order saved', { email });
+        logInfo('Final order saved', { email });
       } catch (error) {
         logError('Error saving final order to firebase', { email, error, order });
         throw error;

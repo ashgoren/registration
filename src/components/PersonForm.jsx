@@ -4,9 +4,10 @@ import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
 import { useOrder } from 'hooks/useOrder';
 import { ContactInfo } from './ContactInfo';
 import { MiscInfo } from './MiscInfo';
+import { logDebug } from 'src/logger';
 
 export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerson, resetForm, formikRef }) => {
-  console.log('PersonForm rendered');
+  logDebug('PersonForm rendered');
 
   const { order, updateOrder, warmedUp, setWarmedUp } = useOrder();
 
@@ -59,7 +60,7 @@ export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerso
     const isValid = await validatePersonForm();
     if (isValid) {
       if (!warmedUp) {
-        console.log('warming up firebase functions');
+        logDebug('warming up firebase functions');
         firebaseFunctionDispatcher({ action: 'caffeinate' });
         setWarmedUp(true);
       }
