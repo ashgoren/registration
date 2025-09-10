@@ -66,6 +66,13 @@ jobs:
         env:
           GCP_SA_KEY: ${{ secrets.FIREBASE_FUNCTIONS_SERVICE_ACCOUNT }}
 
+      - name: Deploy Firestore indexes
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only firestore:indexes --project ${{ vars.PROJECT_ID }}
+        env:
+          GCP_SA_KEY: ${{ secrets.FIREBASE_FUNCTIONS_SERVICE_ACCOUNT }}
+
       - name: Build Project
         run: npm run build
 
