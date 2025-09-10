@@ -1,4 +1,4 @@
-# This creates secrets in Doppler stg/prd configs
+# This creates secrets in Doppler stg/prd frontend/backend configs
 # and also uses stg config to create a dev config
 
 # Note that VITE_GOOGLE_PLACES_API_KEY is set in address-autocomplete.tf
@@ -21,7 +21,6 @@ locals {
     CLOUD_FUNCTIONS_TRIGGER_TOKEN = random_password.cloud_functions_trigger_token.result
   }
 
-  # Secrets that are safe to manage via Terraform (non-sensitive or generated)
   backend_secrets = {
     SHEETS_SHEET_ID                     = local.spreadsheet_id
     SHEETS_SERVICE_ACCOUNT_KEY          = base64decode(google_service_account_key.sheets.private_key)
@@ -43,7 +42,7 @@ resource "doppler_secret" "frontend_secrets" {
   for_each = local.frontend_secrets
 
   project = var.doppler_project
-  config  = terraform.workspace
+  config  = "${terraform.workspace}_frontend"
   name    = each.key
   value   = each.value
 }
@@ -54,7 +53,7 @@ resource "doppler_secret" "frontend_secrets_dev" {
   for_each = terraform.workspace == "stg" ? local.frontend_secrets : {}
 
   project = var.doppler_project
-  config  = "dev"
+  config  = "dev_frontend"
   name    = each.key
   value   = each.value
 }
@@ -65,8 +64,8 @@ resource "doppler_secret" "frontend_secrets_dev" {
 resource "doppler_secret" "backend_secrets" {
   for_each = local.backend_secrets
 
-  project  = local.doppler_project_backend
-  config   = terraform.workspace
+  project  = var.doppler_project
+  config   = "${terraform.workspace}_backend"
   name     = each.key
   value    = each.value
 }
@@ -76,8 +75,8 @@ resource "doppler_secret" "backend_secrets" {
 resource "doppler_secret" "backend_secrets_dev" {
   for_each = terraform.workspace == "stg" ? local.backend_secrets : {}
 
-  project  = local.doppler_project_backend
-  config   = "dev"
+  project  = var.doppler_project
+  config   = "dev_backend"
   name     = each.key
   value    = each.value
 }

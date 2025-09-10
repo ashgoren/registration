@@ -11,7 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name == 'main' && 'prd' || 'stg' }}
     env:
-      DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
       DOPPLER_STAGE: ${{ (github.ref_name == 'main' && 'prd') || 'stg' }}
       IS_PRODUCTION: ${{ github.ref_name == 'main' && 'true' || 'false' }}
       VITE_ENV: ${{ github.ref_name == 'main' && 'prd' || 'stg' }}
@@ -28,12 +27,44 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Fetch Secrets from Doppler
+      - name: Inject Frontend Secrets into Environment
         uses: dopplerhq/secrets-fetch-action@v1.3.0
         id: doppler
         with:
-          doppler-token: ${{ env.DOPPLER_TOKEN }}
+          doppler-token: ${{ secrets.DOPPLER_TOKEN_FRONTEND }}
           inject-env-vars: true
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          credentials_json: '${{ secrets.GCP_SECRET_MANAGER_KEY }}'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Install Doppler CLI
+        uses: dopplerhq/cli-action@v3
+        with:
+          version: 'latest'
+
+      - name: Sync Backend Secrets to GCP
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN_BACKEND }}
+        run: |
+          doppler secrets download -c ${DOPPLER_STAGE}_backend --format=json --no-file > secrets.json
+          gcloud secrets versions add backend --data-file=secrets.json
+          rm secrets.json
+
+      - name: Install Firebase Function Dependencies
+        run: npm install
+        working-directory: ./functions
+
+      - name: Deploy Firebase Functions
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only functions --project ${{ vars.PROJECT_ID }}
+        env:
+          GCP_SA_KEY: ${{ secrets.FIREBASE_FUNCTIONS_SERVICE_ACCOUNT }}
 
       - name: Build Project
         run: npm run build
