@@ -7,6 +7,7 @@ import { useOrder } from 'hooks/useOrder';
 import { useOrderSaving } from 'hooks/useOrderSaving';
 import { useOrderFinalization } from 'hooks/useOrderFinalization';
 import { OrderSummary } from 'components/OrderSummary';
+import { logDebug, logErrorDebug } from 'src/logger';
 import { config } from 'config';
 const { SANDBOX_MODE, TECH_CONTACT } = config;
 
@@ -29,7 +30,7 @@ export const Waitlist = ({ handleClickBackButton }) => {
     if (order.paymentId !== 'waitlist') return;
 
     const finalize = async () => {
-      console.log('FINALIZE WAITLIST');
+      logDebug('FINALIZE WAITLIST');
       try {
         await finalizeOrder();
         setProcessing(false);
@@ -51,7 +52,7 @@ export const Waitlist = ({ handleClickBackButton }) => {
       await savePendingOrder();
       updateOrder({ paymentId: 'waitlist', charged: 0 });
     } catch (error) { // instance of HttpsError from backend or other error
-      console.error('Error saving pending order:', error);
+      logErrorDebug('Error saving pending order:', error);
       setError(
 				<>
 					We're sorry, but we experienced an issue saving your order.<br />

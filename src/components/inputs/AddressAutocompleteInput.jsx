@@ -2,6 +2,7 @@ import { memo, useMemo, useEffect, useState, useCallback, useRef } from 'react';
 import { useField } from 'formik';
 import { TextField, Popper, Paper, List, ListItemButton, ListItemText, ClickAwayListener } from '@mui/material';
 import { usePlacesAutocomplete } from 'hooks/usePlacesAutocomplete';
+import { logErrorDebug } from 'src/logger';
 const { VITE_GOOGLE_PLACES_API_KEY } = import.meta.env;
 
 const PLACES_FIELD_MAPPING = {
@@ -80,7 +81,7 @@ export const AddressAutocompleteInput = memo(({ label, name, ...props }) => {
         }
       }
     } catch (err) {
-      console.error('Error selecting prediction:', err);
+      logErrorDebug('Error selecting prediction:', err);
     } finally {
       setFocusedSuggestionIndex(-1); // Reset focus after selection
       // note: getPlaceDetails refreshes session token before returning place or error

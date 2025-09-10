@@ -3,11 +3,12 @@ import { Box } from '@mui/material';
 import { Title } from 'components/layouts/SharedStyles';
 import { useScrollToTop } from 'hooks/useScrollToTop';
 import { Field } from 'components/inputs';
+import { logDebug } from 'src/logger';
 import { config } from 'config';
 const { FIELD_CONFIG, PERSON_MISC_FIELDS } = config;
 
 export const MiscInfo = ({ index, formikRef }) => {
-  console.log('MiscInfo rendered');
+  logDebug('MiscInfo rendered');
   
   const [showPhotoCommentsField, setShowPhotoCommentsField] = useState(formikRef?.current?.values?.people?.[index]?.photo === 'Other');
   

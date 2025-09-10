@@ -2,7 +2,9 @@ import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
 import { config } from 'config';
 const { ENV } = config;
 
-export const log = (message, metadata) => logger('info', message, metadata);
+// log to firebase logger
+
+export const logInfo = (message, metadata) => logger('info', message, metadata);
 export const logWarn = (message, metadata) => logger('warn', message, metadata);
 export const logError = (message, metadata) => logger('error', message, metadata);
 
@@ -33,6 +35,13 @@ const logger = (level, message, metadata = {}) => {
   }
 };
 
+
+// local debug logger
+export const logInfoDebug = ENV !== 'prd' ? (...args) => console.log(...args) : () => {};
+export const logWarnDebug = ENV !== 'prd' ? (...args) => console.warn(...args) : () => {};
+export const logErrorDebug = ENV !== 'prd' ? (...args) => console.error(...args) : () => {};
+export const logDebug = logInfoDebug;
+
 // devtools console logger util
 export const logEnvironment = () => {
   const styles = {
@@ -40,5 +49,5 @@ export const logEnvironment = () => {
     stg: 'color: black; background: gold; padding: 2px 6px; border-radius: 4px; font-weight: bold',
     prd: 'color: white; background: crimson; padding: 2px 6px; border-radius: 4px; font-weight: bold'
   };
-  console.log(`%cEnvironment is ${ENV}`, styles[ENV] || '');
+  console.log(`%cEnvironment is ${ENV}`, styles[ENV] || ''); // keep the console.log here!
 };

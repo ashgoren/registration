@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
+import { logErrorDebug } from 'src/logger';
 
 export const usePlacesAutocomplete = (apiKey) => {
   const [placesApi, setPlacesApi] = useState(null);
@@ -29,11 +30,11 @@ export const usePlacesAutocomplete = (apiKey) => {
           setPlacesApi(placesLibrary);
           setError(null);
         } else {
-          console.error('Places API could not be initialized');
+          logErrorDebug('Places API could not be initialized');
           setError('Places API could not be initialized');
         }
       } catch (err) {
-        console.error(`Failed to load Google Places API: ${err.message}`);
+        logErrorDebug(`Failed to load Google Places API: ${err.message}`);
         setError(`Failed to load Google Places API: ${err.message}`);
       }
     };
@@ -61,7 +62,7 @@ export const usePlacesAutocomplete = (apiKey) => {
       setPredictions(results);
       return results;
     } catch (err) {
-      console.error(`Error fetching suggestions: ${err.message}`);
+      logErrorDebug(`Error fetching suggestions: ${err.message}`);
       setPredictions([]);
       return [];
     }

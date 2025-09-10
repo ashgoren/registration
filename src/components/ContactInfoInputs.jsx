@@ -2,10 +2,11 @@ import { memo, useState } from 'react';
 import { Grid, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
 import { Field } from 'components/inputs';
 import { config } from 'config';
+import { logDebug } from 'src/logger';
 const { FIELD_CONFIG, INCLUDE_LAST_ON_NAMETAG } = config;
 
 export const ContactInfoInputs = memo(({ fields, index, formikRef }) => {
-  console.log('ContactInfoInputs rendered');
+  logDebug('ContactInfoInputs rendered');
 
   const addressFields = fields.filter((field) => ['address', 'apartment', 'city', 'state', 'zip', 'country'].includes(field));
   const otherFields = fields.filter((field) => !addressFields.includes(field));

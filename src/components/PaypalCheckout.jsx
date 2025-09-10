@@ -3,7 +3,7 @@ import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { Box } from '@mui/material';
 import { Loading } from 'components/layouts';
 import { TestCardBox } from 'components/layouts/SharedStyles';
-import { log } from 'src/logger';
+import { logInfo } from 'src/logger';
 import { useOrder } from 'hooks/useOrder';
 import { useOrderSaving } from 'hooks/useOrderSaving';
 import { usePaypalPayment } from 'hooks/usePaypalPayment';
@@ -39,7 +39,7 @@ export const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, se
 	};
 
 	const onError = (error) => {
-		log('PayPal onError', { email: order.people[0].email, error });
+		logInfo('PayPal onError', { email: order.people[0].email, error });
 		setPaying(false);
 		setError(`PayPal encountered an error: ${error}. Please try again or contact ${TECH_CONTACT}.`);
 	};

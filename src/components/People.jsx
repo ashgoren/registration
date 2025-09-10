@@ -7,11 +7,12 @@ import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
 import { useOrder } from 'hooks/useOrder';
 import { PersonForm } from './PersonForm';
 import { PersonSummary } from 'components/OrderSummary';
+import { logDebug } from 'src/logger';
 import { config } from 'config';
 const { ADMISSION_QUANTITY_MAX, PERSON_DEFAULTS } = config;
 
 export const People = ({ formikRef }) => {
-  console.log('People rendered');
+  logDebug('People rendered');
 
   const { order, updateOrder } = useOrder();
   const [editIndex, setEditIndex] = useState(order.people[0].email === '' ? 0 : null);

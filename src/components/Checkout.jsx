@@ -11,11 +11,12 @@ import { TogglePaymentMode } from 'components/TogglePaymentMode';
 import { StripeCheckout } from 'components/StripeCheckout';
 import { PaypalCheckout } from 'components/PaypalCheckout';
 import { Check } from 'components/Check';
+import { logDebug } from 'src/logger';
 import { config } from 'config';
 const { NUM_PAGES, TECH_CONTACT } = config;
 
 export const Checkout = () => {
-  console.log('RENDER Checkout');
+  logDebug('RENDER Checkout');
 
   const { order, setCurrentPage, processing, processingMessage, error, setError, paymentMethod, amountToCharge } = useOrder();
   const { initializePayment, isInitializing } = usePaymentInitialization();

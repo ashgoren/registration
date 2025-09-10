@@ -4,12 +4,13 @@ import { People } from './People';
 import { PaymentForm } from './PaymentForm';
 import { Waitlist } from './Waitlist';
 import { config } from 'config';
+import { logDebug } from 'src/logger';
 const { WAITLIST_MODE } = config;
 
 export const FormContents = ({ formikRef }) => {
   const { updateOrder, currentPage, setCurrentPage } = useOrder();
 
-  console.log('FormContents rendered');
+  logDebug('FormContents rendered');
 
   function handleClickBackButton() {
     const { values, setSubmitting } = formikRef.current;

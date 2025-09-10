@@ -1,4 +1,4 @@
-import { pending, pendingOrders, finalOrders, log } from './shared.js';
+import { pending, pendingOrders, finalOrders, logInfo } from './shared.js';
 
 console.log(pending ? '\nPENDING ORDERS\n' : '\nFINAL ORDERS\n');
 const theOrders = pending ? pendingOrders : finalOrders;
@@ -11,7 +11,7 @@ try {
     const purchaser = people[0];
     const email = purchaser.email;
     const formattedPeople = formatPeople(people);
-    log({
+    logInfo({
       message: `${formattedPeople}, ${key}, ${date}, ${email}, ${paymentId}`,
       email
     });
