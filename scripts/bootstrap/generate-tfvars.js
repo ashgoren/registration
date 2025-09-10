@@ -17,7 +17,7 @@ email_amazonses_smtp_password = ""
 email_from_name = ""
 email_from_email = ""
 email_admin_notifications = ""
-email_test_domains = "example.com,test.com,testing.com"`,
+email_test_domains = "example.com,test.com,testing.com"`
 };
 
   try {

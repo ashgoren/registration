@@ -96,6 +96,9 @@ npm run bootstrap <PROJECT_ID>
 ## 5. Email Setup
 
 ### Step 5a: Verify Domain
+> [!IMPORTANT]
+> You must verify the domain of your `email_from_address` in Amazon SES.
+
 1. Go to [SES Identities](https://console.aws.amazon.com/ses/home#/identities)
 2. Follow verification steps, including DKIM and MAIL FROM verification (DNS records required)
 
@@ -110,14 +113,18 @@ npm run bootstrap <PROJECT_ID>
 ### Step 5c: Configure Other Email Settings
 Fill in email settings in `terraform/shared.auto.tfvars`:
 ```hcl
-email_from_name
-email_from_address # domain must be verified in amazon ses
-email_admin_notifications
+email_from_name = "Example Dance Weekend"
+email_from_address = "someone@yourdomain.com"
+email_admin_notifications = "admin@yourdomain.com"
 
-# optional
-email_test_domains - domains to ignore for receipts, etc
-email_reply_to
-email_amazonses_email_endpoint - required only if email_from_address domain was verified in an aws region other than us-east-2
+# Optional: if different from email_from_address
+email_reply_to = ""
+
+# Optional: domains to skip for email confirmation & data validation
+email_test_domains = "example.com,test.com,testing.com"
+
+# Required only if domain was verified in an aws region other than us-east-2
+email_amazonses_email_endpoint = ""
 ```
 
 ---
@@ -170,14 +177,14 @@ Share your spreadsheet (edit permissions) with:
 <details>
 <summary><span style="font-size:20px; font-weight:bold">Option A: Stripe</span></summary>
 
-#### Step 8a: Configure Stripe Payment Methods
+#### Step 9a: Configure Stripe Payment Methods
 - Disable all payment methods except: Cards, Apple Pay, Google Pay
 - Apple Pay requires Stripe domain verification
 
-#### Step 8b: Create Stripe sandbox accounts
+#### Step 9b: Create Stripe sandbox accounts
 - Create 2 sandbox accounts - dev & stg
 
-#### Step 8c: Create Stripe Webhook Endpoints
+#### Step 9c: Create Stripe Webhook Endpoints
 Create webhooks for **payment_intent.succeeded** event only:
 
 | Environment | Endpoint URL |
@@ -186,7 +193,7 @@ Create webhooks for **payment_intent.succeeded** event only:
 | Stg (optional) | `https://<REGION>-<PROJECT_ID>-stg.cloudfunctions.net/stripeWebhook` |
 | Dev (optional) | Use Stripe CLI: `stripe listen --events payment_intent.succeeded --forward-to localhost:5001/<PROJECT_ID>/<REGION>/stripeWebhook` |
 
-#### Step 8d: Set Stripe Secrets
+#### Step 9d: Set Stripe Secrets
 Run for each environment to set webhook secret and publishable + secret keys:
 ```bash
 npm run set-payment-secrets <PROJECT_ID> stripe dev
@@ -200,14 +207,14 @@ npm run set-payment-secrets <PROJECT_ID> stripe prd
 <details>
 <summary><span style="font-size:20px; font-weight:bold">Option B: PayPal</span></summary>
 
-#### Step 8a: Configure PayPal Payment Methods
+#### Step 9a: Configure PayPal Payment Methods
 - Don't want Venmo? Comment out the venmo line in `configPaypal.jsx`
 
-#### Step 8b: Create PayPal REST API Apps
+#### Step 9b: Create PayPal REST API Apps
 - Create 2 REST API apps in Sandbox mode (dev & stg)
 - Also create production REST API app if it doesn't yet exist
 
-#### Step 8c: Create PayPal Webhook Endpoints
+#### Step 9c: Create PayPal Webhook Endpoints
 Create webhooks for **payment capture completed** event only:
 
 | Environment | Endpoint URL |
@@ -216,7 +223,7 @@ Create webhooks for **payment capture completed** event only:
 | Stg (optional) | `https://<REGION>-<PROJECT_ID>-stg.cloudfunctions.net/paypalWebhook` |
 | Dev (optional) | `https://<localtunnel-url>/<PROJECT_ID>/<REGION>/paypalWebhook` (requires using [localtunnel](https://localtunnel.github.io/www/), e.g. `lt -p 5001 -s <PROJECT_ID>`) |
 
-#### Step 8d: Set PayPal Secrets
+#### Step 9d: Set PayPal Secrets
 Run for each environment to set webhook id and client id + client secret:
 ```bash
 npm run set-payment-secrets <PROJECT_ID> paypal dev
@@ -274,12 +281,8 @@ git push origin staging
 gh pr create --base main --head staging --fill
 gh pr merge staging --auto --squash --delete-branch
 
-# 3. Update local main branch
-git checkout main
-git pull origin main
-
-# 4. Recreate staging branch from main
-git branch -D staging && git checkout -b staging
+# 3. Recreate staging branch from main
+git checkout -b staging
 ```
 
 ---
