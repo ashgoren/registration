@@ -244,6 +244,7 @@ npm run dev
 - Make registration link live on homepage & navbar
 - Clear Spreadsheet
 - Clear production Firestore DB if necessary
+- Update `robots.txt` to allow indexing (if sharing direct link)
 
 ### Hibernation for projects not actively in use
 
