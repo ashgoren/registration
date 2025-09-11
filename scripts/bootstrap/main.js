@@ -8,9 +8,9 @@ import { checkPrerequisites } from './checkPrerequisites.js';
 import { gatherValues } from './gatherValues.js';
 import { createProjects } from './createProjects.js';
 import { configureProjects } from './configureProjects.js'
-import { initializeTerraform } from './initialize-terraform.js'
-import { generateTfvarsFiles } from './generate-tfvars.js'
-import { generateFirebaserc } from './generate-firebaserc.js';
+import { initializeTerraform } from './initializeTerraform.js'
+import { generateTfvarsFiles } from './generateTfvars.js'
+import { generateFirebaserc } from './generateFirebaserc.js';
 import { bootstrapDoppler } from './bootstrapDoppler.js';
 import { parseArgs, log } from './utils.js';
 
