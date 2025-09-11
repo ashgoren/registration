@@ -10,8 +10,9 @@ import { Processing } from 'components/Processing';
 import { Confirmation } from 'components/Confirmation';
 import { IntroHeader } from 'components/IntroHeader';
 import { OrderSummary } from 'components/OrderSummary';
+import { WaitlistNote } from 'components/WaitlistNote';
 import { config } from 'config';
-const { PAYMENT_METHODS, PAYPAL_OPTIONS, TITLE, CONFIRMATION_CHECK_TITLE, CONFIRMATION_ELECTRONIC_TITLE, SANDBOX_MODE, SHOW_PRE_REGISTRATION } = config;
+const { PAYMENT_METHODS, PAYPAL_OPTIONS, TITLE, CONFIRMATION_CHECK_TITLE, CONFIRMATION_ELECTRONIC_TITLE, SANDBOX_MODE, SHOW_PRE_REGISTRATION, WAITLIST_MODE } = config;
 
 export const Registration = () => {
   const [registering, setRegistering] = useState(false);
@@ -45,6 +46,7 @@ const RealRegistration = () => {
       {error && <Error />}
 
       <Header titleText={currentPage === 'confirmation' ? CONFIRMATION_TITLE : TITLE}>
+        {currentPage === 1 && WAITLIST_MODE && <WaitlistNote />}
         {currentPage === 1 && <IntroHeader />}
         {currentPage === 'checkout' && <OrderSummary order={order} currentPage={currentPage} />}
       </Header>

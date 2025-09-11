@@ -3,9 +3,11 @@ import { Typography, Button } from '@mui/material';
 import { Loading } from 'components/layouts';
 import { useOrder } from 'hooks/useOrder';
 import { useOrderSaving } from 'hooks/useOrderSaving';
+import { StyledLink } from 'components/layouts/SharedStyles';
+import { mailtoLink } from 'utils';
 import { logErrorDebug } from 'src/logger';
 import { config } from 'config';
-const { CHECK_ADDRESS, CHECK_TO, SANDBOX_MODE, TECH_CONTACT } = config;
+const { SHOW_CHECK_ADDRESS, CHECK_ADDRESS, CHECK_TO, SANDBOX_MODE, TECH_CONTACT, EMAIL_CONTACT } = config;
 
 export const Check = () => {
   const { processing, setCurrentPage, updateOrder, error, setError } = useOrder();
@@ -39,12 +41,25 @@ export const Check = () => {
       {error && <Typography color='error' sx={{ mb: 4 }}>Error: {error}</Typography>}
       {!processing &&
         <>
+          {SHOW_CHECK_ADDRESS ?
+            <>
+              <Typography sx={{ mt: 2 }}>
+                Make your check out to {CHECK_TO}<br />
+                Write your name in the memo area, and mail to:
+              </Typography>
+              <Typography sx={{ mt: 2 }}>
+                {CHECK_ADDRESS }
+              </Typography>
+            </>
+          :
+            <Typography sx={{ mt: 2 }}>
+              Email <StyledLink to={mailtoLink(EMAIL_CONTACT)}>{EMAIL_CONTACT}</StyledLink> for info on filling out and mailing your check.
+            </Typography>
+          }
+
           <Typography sx={{ mt: 2 }}>
-            Make your check out to {CHECK_TO}<br />
-            Write your name in the memo area, and mail to:
-          </Typography>
-          <Typography sx={{ mt: 2 }}>
-            {CHECK_ADDRESS }
+            Your registration will be processed once we receive your check.<br />
+            If you have any questions, please contact <StyledLink to={mailtoLink(EMAIL_CONTACT)}>{EMAIL_CONTACT}</StyledLink>.
           </Typography>
 
           {!ready && <Loading />}
