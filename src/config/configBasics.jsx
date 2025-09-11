@@ -38,6 +38,7 @@ const baseConfig = {
   COVID_POLICY_URL: 'example.com/covid',
   SAFETY_POLICY_URL: 'example.com/safety',
   DIRECT_PAYMENT_URL: 'example.com/directpayment',
+  SHOW_CHECK_ADDRESS: true,
   CHECK_TO: 'Example Check To',
   CHECK_ADDRESS: <>Example Address line 1<br />Example Address line 2<br />Example Address line 3<br />Example Address line 4</>,
   PAYMENT_DUE_DATE: 'Example Payment Due Date'
