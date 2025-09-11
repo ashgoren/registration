@@ -24,8 +24,8 @@ _Simple event registration / admissions sales site_
 5. [Email Setup](#5-email-setup)
 6. [Deploy Infrastructure](#6-deploy-infrastructure)
 7. [Grant Spreadsheet Access](#7-grant-spreadsheet-access)
-8. [Site Configuration](#8-site-configuration)
-9. [Payment Setup](#9-payment-setup)
+8. [Payment Setup](#8-payment-setup)
+9. [Site Configuration](#9-site-configuration)
 10. [Development](#10-development)
 11. [Deployment](#11-deployment)
 12. [Post-Deployment](#12-post-deployment)
@@ -152,21 +152,7 @@ Share your spreadsheet (edit permissions) with:
 
 ---
 
-## 8. Site Configuration
-
-| File | About |
-|------|---------|
-| `src/config/` | Frontend config (including basics, fields, order summary) |
-| `functions/config.js` | Backend config |
-| `functions/shared/fields.js` | Data fields - _you must also update spreadsheet columns_ |
-| `templates/` | Email receipt templates |
-| `index.html` | Site title, metadata description, [og:image](https://ogp.me/) |
-| `public/logo.png` | Optional Navbar logo (≤80px height recommended) |
-| `public/` favicon files | use a generator, e.g. [favicon-generator](https://www.favicon-generator.org) |
-
----
-
-## 9. Payment Setup
+## 8. Payment Setup
 
 > [!NOTE]
 > Staging & Dev mode webhooks are optional (only needed for testing webhook functionality)
@@ -176,14 +162,14 @@ Share your spreadsheet (edit permissions) with:
 <details>
 <summary><span style="font-size:20px; font-weight:bold">Option A: Stripe</span></summary>
 
-#### Step 9a: Configure Stripe Payment Methods
+#### Step 8a: Configure Stripe Payment Methods
 - Disable all payment methods except: Cards, Apple Pay, Google Pay
 - Apple Pay requires Stripe domain verification
 
-#### Step 9b: Create Stripe sandbox accounts
+#### Step 8b: Create Stripe sandbox accounts
 - Create 2 sandbox accounts - dev & stg
 
-#### Step 9c: Create Stripe Webhook Endpoints
+#### Step 8c: Create Stripe Webhook Endpoints
 Create webhooks for **payment_intent.succeeded** event only:
 
 | Environment | Endpoint URL |
@@ -192,7 +178,7 @@ Create webhooks for **payment_intent.succeeded** event only:
 | Stg (optional) | `https://<REGION>-<PROJECT_ID>-stg.cloudfunctions.net/stripeWebhook` |
 | Dev (optional) | Use Stripe CLI: `stripe listen --events payment_intent.succeeded --forward-to localhost:5001/<PROJECT_ID>/<REGION>/stripeWebhook` |
 
-#### Step 9d: Set Stripe Secrets
+#### Step 8d: Set Stripe Secrets
 Run for each environment to set webhook secret and publishable + secret keys:
 ```bash
 npm run set-payment-secrets <PROJECT_ID> stripe dev
@@ -206,14 +192,14 @@ npm run set-payment-secrets <PROJECT_ID> stripe prd
 <details>
 <summary><span style="font-size:20px; font-weight:bold">Option B: PayPal</span></summary>
 
-#### Step 9a: Configure PayPal Payment Methods
+#### Step 8a: Configure PayPal Payment Methods
 - Don't want Venmo? Comment out the venmo line in `configPaypal.jsx`
 
-#### Step 9b: Create PayPal REST API Apps
+#### Step 8b: Create PayPal REST API Apps
 - Create 2 REST API apps in Sandbox mode (dev & stg)
 - Also create production REST API app if it doesn't yet exist
 
-#### Step 9c: Create PayPal Webhook Endpoints
+#### Step 8c: Create PayPal Webhook Endpoints
 Create webhooks for **payment capture completed** event only:
 
 | Environment | Endpoint URL |
@@ -222,7 +208,7 @@ Create webhooks for **payment capture completed** event only:
 | Stg (optional) | `https://<REGION>-<PROJECT_ID>-stg.cloudfunctions.net/paypalWebhook` |
 | Dev (optional) | `https://<localtunnel-url>/<PROJECT_ID>/<REGION>/paypalWebhook` (requires using [localtunnel](https://localtunnel.github.io/www/), e.g. `lt -p 5001 -s <PROJECT_ID>`) |
 
-#### Step 9d: Set PayPal Secrets
+#### Step 8d: Set PayPal Secrets
 Run for each environment to set webhook id and client id + client secret:
 ```bash
 npm run set-payment-secrets <PROJECT_ID> paypal dev
@@ -230,6 +216,20 @@ npm run set-payment-secrets <PROJECT_ID> paypal stg
 npm run set-payment-secrets <PROJECT_ID> paypal prd
 ```
 </details>
+
+---
+
+## 9. Site Configuration
+
+| File | About |
+|------|---------|
+| `src/config/` | Frontend config (including basics, fields, order summary) |
+| `functions/config.js` | Backend config |
+| `functions/shared/fields.js` | Data fields - _you must also update spreadsheet columns_ |
+| `templates/` | Email receipt templates |
+| `index.html` | Site title, metadata description, [og:image](https://ogp.me/) |
+| `public/logo.png` | Optional Navbar logo (≤80px height recommended) |
+| `public/` favicon files | use a generator, e.g. [favicon-generator](https://www.favicon-generator.org) |
 
 ---
 
