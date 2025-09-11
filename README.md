@@ -70,7 +70,7 @@ _Simple event registration / admissions sales site_
 ## 3. Bootstrap Projects
 
 > [!NOTE]  
-> **What this does:** Creates production & staging GCP projects linked to your billing account, enables APIs, initializes Terraform, generates .firebaserc file, creates Doppler projects
+> **What this does:** Creates production & staging Google Cloud projects linked to your billing account, enables APIs, initializes Terraform, generates .firebaserc file, creates Doppler projects (see [scripts/bootstrap/README.md](scripts/bootstrap/README.md) for details)
 
 > [!TIP]
 > **PROJECT_ID format:** Use lowercase letters, numbers, hyphens. Must be globally unique.  
@@ -136,7 +136,7 @@ email_amazonses_email_endpoint = ""
 
 > [!TIP]
 > - Leave `frontend_domain` blank if you don't plan to have a custom domain for your website
-> - If terraform fails, try running again (google api's take some time to start)
+> - If terraform fails, try running again (google APIs take some time to start)
 
 ```bash
 npm run terraform-stg # deploys staging infrastructure
@@ -159,10 +159,10 @@ Share your spreadsheet (edit permissions) with:
 |------|---------|
 | `src/config/` | Frontend config (including basics, fields, order summary) |
 | `functions/config.js` | Backend config |
-| `functions/shared/fields.js` | Data fields - _also update spreadsheet columns_ |
+| `functions/shared/fields.js` | Data fields - _you must also update spreadsheet columns_ |
 | `templates/` | Email receipt templates |
 | `index.html` | Site title, metadata description, [og:image](https://ogp.me/) |
-| `public/logo.png` | Your logo (≤80px height recommended) |
+| `public/logo.png` | Optional Navbar logo (≤80px height recommended) |
 | `public/` favicon files | use a generator, e.g. [favicon-generator](https://www.favicon-generator.org) |
 
 ---
