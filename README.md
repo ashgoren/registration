@@ -135,8 +135,7 @@ email_amazonses_email_endpoint = ""
 > Ensure all required values are set in `terraform/shared.auto.tfvars`
 
 > [!TIP]
-> - Leave `frontend_domain` blank if you don't plan to have a custom domain for your website
-> - If terraform fails, try running again (google APIs take some time to start)
+> Leave `frontend_domain` blank if you don't plan to have a custom domain for your website
 
 ```bash
 npm run terraform-stg # deploys staging infrastructure

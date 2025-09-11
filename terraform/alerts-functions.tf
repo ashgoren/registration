@@ -7,7 +7,7 @@ resource "google_monitoring_notification_channel" "email" {
     email_address = var.email_admin_notifications
   }
 
-  depends_on = [time_sleep.wait_for_apis]
+  depends_on = [google_project_service.apis]
 }
 
 # Alert for any firebase function v2 errors

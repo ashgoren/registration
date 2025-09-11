@@ -36,8 +36,8 @@ resource "google_project_service" "apis" {
   depends_on = [google_project.project]
 }
 
-resource "time_sleep" "wait_for_apis" {
-  create_duration = "2m"
+# resource "time_sleep" "wait_for_apis" {
+#   create_duration = "2m"
 
-  depends_on = [google_project_service.apis]
-}
+#   depends_on = [google_project_service.apis]
+# }

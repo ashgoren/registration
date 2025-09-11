@@ -40,7 +40,7 @@ resource "google_service_account" "gcp_secret_manager" {
   account_id   = "gcp-secret-manager"
   display_name = "GCP Secret Manager"
 
-  depends_on = [time_sleep.wait_for_apis]
+  depends_on = [google_project_service.apis]
 }
 
 # Grant the service account access to manage secrets in secret manager

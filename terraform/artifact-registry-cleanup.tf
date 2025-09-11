@@ -15,5 +15,5 @@ resource "google_artifact_registry_repository" "gcf_artifacts" {
     }
   }
 
-  depends_on = [time_sleep.wait_for_apis]
+  depends_on = [google_project_service.apis]
 }

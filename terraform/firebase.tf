@@ -3,7 +3,7 @@ resource "google_firebase_project" "default" {
   provider    = google
   project     = var.project_id
 
-  depends_on = [time_sleep.wait_for_apis]
+  depends_on = [google_project_service.apis]
 }
 
 # Create the default Firestore database, which also sets the region for Firestore
@@ -45,7 +45,7 @@ resource "google_service_account" "firebase_deploy" {
   account_id   = "firebase-deploy"
   display_name = "Firebase Deploy Service Account"
 
-  depends_on = [time_sleep.wait_for_apis]
+  depends_on = [google_project_service.apis]
 }
 
 resource "google_service_account_key" "firebase_deploy" {
@@ -100,7 +100,7 @@ resource "google_service_account" "firebase_functions" {
   account_id   = "firebase-functions"
   display_name = "Firebase Functions Service Account"
 
-  depends_on = [time_sleep.wait_for_apis]
+  depends_on = [google_project_service.apis]
 }
 
 resource "google_service_account_key" "firebase_functions" {

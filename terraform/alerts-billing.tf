@@ -2,7 +2,7 @@
 resource "google_pubsub_topic" "budget_alerts" {
   name = "budget_alerts"
 
-  depends_on = [time_sleep.wait_for_apis]
+  depends_on = [google_project_service.apis]
 }
 
 resource "google_billing_budget" "main_budget" {
@@ -47,7 +47,7 @@ resource "google_billing_budget" "main_budget" {
     pubsub_topic = google_pubsub_topic.budget_alerts.id
   }
 
-  depends_on = [time_sleep.wait_for_apis]
+  depends_on = [google_project_service.apis]
 }
 
 # Give the billing service account permission to publish to the topic
@@ -56,5 +56,5 @@ resource "google_pubsub_topic_iam_member" "budget_alerts" {
   role   = "roles/pubsub.publisher"
   member = "serviceAccount:billing-budget-alert@system.gserviceaccount.com"
 
-  depends_on = [time_sleep.wait_for_apis]
+  depends_on = [google_project_service.apis]
 }

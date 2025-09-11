@@ -4,6 +4,8 @@ resource "google_secret_manager_secret" "backend" {
   replication {
     auto {}
   }
+
+  depends_on = [google_project_service.apis]
 }
 
 resource "google_secret_manager_secret_iam_member" "backend_accessor" {
