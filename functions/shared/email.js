@@ -1,6 +1,6 @@
 import { logger } from 'firebase-functions/v2';
 import nodemailer from 'nodemailer';
-import { getConfig } from '../config.js';
+import { getConfig } from '../config/internal/config.js';
 
 // Configure the email transport with SMTP
 let mailTransport = null;

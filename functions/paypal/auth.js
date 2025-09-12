@@ -1,6 +1,6 @@
 import { Client, Environment, LogLevel } from '@paypal/paypal-server-sdk';
 import { createError, ErrorType } from '../shared/errorHandler.js';
-import { getConfig } from '../config.js';
+import { getConfig } from '../config/internal/config.js';
 
 let paypalApiUrl = null;
 let client = null;

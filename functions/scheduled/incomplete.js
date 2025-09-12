@@ -8,7 +8,7 @@ import { logger } from 'firebase-functions/v2';
 import { getPendingOrdersMissingFromFinalOrders } from '../shared/orders.js';
 import { getOrderEmail, getOrderDomain } from '../shared/helpers.js';
 import { sendMail } from '../shared/email.js';
-import { getConfig } from '../config.js';
+import { getConfig } from '../config/internal/config.js';
 
 // Scheduled function to email list of pending orders missing from final orders
 export const emailIncompleteOrdersHandler = async () => {

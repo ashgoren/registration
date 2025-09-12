@@ -2,7 +2,7 @@ import { logger } from 'firebase-functions/v2';
 import { ordersCollection } from './orders.js';
 import { sendMail } from './email.js';
 import { createError, ErrorType } from './errorHandler.js';
-import { getConfig } from '../config.js';
+import { getConfig } from '../config/internal/config.js';
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 5000; // 5 seconds

@@ -1,6 +1,6 @@
 import { logger } from 'firebase-functions/v2';
 import { sendMail } from '../shared/email.js';
-import { getConfig } from '../config.js';
+import { getConfig } from '../config/internal/config.js';
 
 // onDocumentUpdated
 export const sendEmailConfirmationsHandler = async (event) => {

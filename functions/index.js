@@ -4,7 +4,7 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { onMessagePublished } from 'firebase-functions/v2/pubsub';
 import { handleFunctionError } from './shared/errorHandler.js';
-import { deployOptions } from './config.js';
+import { deployOptions } from './config/internal/config.js';
 
 // Functions called by firebaseFunctionDispatcher
 import { logEvent } from './api/logEvent.js';

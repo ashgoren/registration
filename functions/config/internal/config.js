@@ -1,18 +1,24 @@
+// You should not need to modify this file.
+// Modify config in userConfig.js instead.
+
+import userConfig from '../userConfig.js';
+
 // deployOptions are needed before doppler secrets can be parsed
 export const deployOptions = {
-  REGION: 'us-west1',
-  TIMEZONE: 'America/Los_Angeles',
+  REGION: userConfig.system.region,
+  TIMEZONE: userConfig.system.timezone,
   DOPPLER_SECRETS: ['backend']
 };
 
 const baseOptions = {
-  PAYMENT_PROCESSOR: 'stripe',
-  EVENT_TITLE: 'Example Contra Weekend 2025',
-  EMAIL_SUBJECT: 'Example Contra Weekend Registration',
-  STRIPE_STATEMENT_DESCRIPTOR_SUFFIX: '', // max 22 chars
-  SHEETS_SHEET_RANGE: 'A:AZ',
-  SHEETS_KEY_COLUMN: '0',
-  SHEETS_EMAIL_COLUMN: '5'
+  PAYMENT_PROCESSOR: userConfig.payment.processor,
+  EVENT_TITLE: userConfig.event.title,
+  EMAIL_SUBJECT: `${userConfig.event.title} Registration`,
+  STRIPE_STATEMENT_DESCRIPTOR_SUFFIX: userConfig.payment.statementDescriptorSuffix,
+  FIELD_ORDER: userConfig.spreadsheet.fieldOrder,
+  SHEETS_EMAIL_COLUMN: userConfig.spreadsheet.fieldOrder.indexOf('email'),
+  SHEETS_KEY_COLUMN: 0,
+  SHEETS_SHEET_RANGE: 'A:AZ'
 };
 
 const envVariables = [
