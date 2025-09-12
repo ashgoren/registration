@@ -13,7 +13,7 @@ const pages = [
   { title: 'Itinerary', path: '/schedule' },
   { title: 'Seattle', path: '/seattle' },
   { title: 'Contact', path: '/contact' },
-  { title: 'Payment info', path: '/paymentinfo' },
+  { title: 'Payment info', path: '/paymentexplanation' },
   { title: 'Registration', path: '/registration' }
 ];
 

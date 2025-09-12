@@ -9,6 +9,7 @@ import configBasics from './configBasics';
 import configTheme from './configTheme';
 import configContent from './configContent';
 import configOrderSummary from './configOrderSummary';
+import configStaticPages from './configStaticPages';
 import configEnv from './configEnv';
 import { FIELD_CONFIG, PERSON_CONTACT_FIELDS, PERSON_MISC_FIELDS, PERSON_PAYMENT_FIELDS } from './configFields';
 
@@ -31,6 +32,7 @@ export const config = {
   ...configTheme,
   ...configContent,
   ...configOrderSummary,
+  ...configStaticPages,
   FIELD_CONFIG,
   PERSON_CONTACT_FIELDS,
   PERSON_MISC_FIELDS,
