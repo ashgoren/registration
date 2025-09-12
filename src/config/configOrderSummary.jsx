@@ -1,4 +1,4 @@
-import { FIELD_CONFIG } from './configFields';
+import { fieldConfig } from './configFields';
 
 const ORDER_SUMMARY_OPTIONS = [
   {
@@ -25,12 +25,12 @@ const ORDER_SUMMARY_OPTIONS = [
   {
     property: 'dietaryPreferences',
     label: 'Dietary Preferences',
-    mapping: FIELD_CONFIG['dietaryPreferences'].options
+    mapping: fieldConfig['dietaryPreferences'].options
   },
   {
     property: 'dietaryRestrictions',
     label: 'Dietary Restrictions',
-    mapping: FIELD_CONFIG['dietaryRestrictions'].options
+    mapping: fieldConfig['dietaryRestrictions'].options
   },
   {
     property: 'allergies',
@@ -39,17 +39,17 @@ const ORDER_SUMMARY_OPTIONS = [
   {
     property: 'carpool',
     label: 'Transportation',
-    mapping: FIELD_CONFIG['carpool'].options
+    mapping: fieldConfig['carpool'].options
   },
   {
     property: 'bedding',
     label: 'Bedding',
-    mapping: FIELD_CONFIG['bedding'].options
+    mapping: fieldConfig['bedding'].options
   },
   {
     property: 'volunteer',
     label: 'Volunteering',
-    mapping: FIELD_CONFIG['volunteer'].options
+    mapping: fieldConfig['volunteer'].options
   },
   {
     property: 'housing',

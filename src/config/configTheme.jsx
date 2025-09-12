@@ -11,7 +11,7 @@ const NAVBAR_COLOR_DARK = false; // options: true|false (if false, dark mode nav
 
 // force navbar background color for both light and dark mode
 // overrides NAVBAR_COLOR & NAVBAR_COLOR_DARK
-const NAVBAR_BACKGROUND_OVERRIDE = false; // options: false (to disable) | MUI or CSS color - e.g. green[900] or '#333'
+const NAVBAR_BACKGROUND_OVERRIDE = false; // MUI or CSS color - e.g. green[900] or '#333' (or false to disable)
 
 const config = {
   PALETTE,

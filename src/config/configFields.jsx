@@ -1,13 +1,13 @@
 import * as Yup from 'yup';
 import { StyledLink } from 'components/layouts/SharedStyles';
 import { websiteLink } from 'utils';
-import { STATE_OPTIONS } from './constants';
-import { NAME_VALIDATION, PRONOUNS_VALIDATION, EMAIL_VALIDATION, PHONE_VALIDATION } from './configValidations';
-import configBasics from './configBasics';
+import { STATE_OPTIONS } from './internal/constants';
+import { NAME_VALIDATION, PRONOUNS_VALIDATION, EMAIL_VALIDATION, PHONE_VALIDATION } from './internal/configValidations';
+import configBasics from './internal/configBasics';
 const { ADMISSION_COST_DEFAULT, ADMISSION_COST_RANGE, EVENT_TITLE, SAFETY_POLICY_URL } = configBasics;
 
 // config for all form fields (which may include fields not used in this instance)
-export const FIELD_CONFIG = {
+export const fieldConfig = {
   first: {
     label: 'First name',
     validation: NAME_VALIDATION.required('Please enter first name.'),
