@@ -48,7 +48,7 @@ export const Check = () => {
                 Write your name in the memo area, and mail to:
               </Typography>
               <Typography sx={{ mt: 2 }}>
-                {CHECK_ADDRESS }
+                { CHECK_ADDRESS.map(line => (<span key={line}>{line}<br /></span>)) }
               </Typography>
             </>
           :

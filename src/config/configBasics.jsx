@@ -26,12 +26,13 @@ const baseConfig = {
   PAYMENT_METHODS: ['stripe', 'check'], // options are stripe|paypal|check (first is default)
 
   EVENT_TITLE: 'Example Contra Weekend 2025',
+  REGISTRATION_TITLE: 'Example Contra Weekend 2025 Registration',
+  CONFIRMATION_ELECTRONIC_TITLE: 'Example Contra Weekend 2025 Confirmation',
+  CONFIRMATION_CHECK_TITLE: 'Example Contra Weekend 2025 Registration',
+
   EVENT_LOCATION: 'Example place, Example place',
   EVENT_LOCATION_2: 'Example address',
   EVENT_DATE: 'Example dates',
-  TITLE: 'Example Contra Weekend 2025 Registration',
-  CONFIRMATION_ELECTRONIC_TITLE: 'Example Dance Weekend Confirmation',
-  CONFIRMATION_CHECK_TITLE: 'Example Dance Weekend Registration',
   EMAIL_CONTACT: 'contact@example.com',
   TECH_CONTACT: 'tech@example.com',
   MORE_INFO_URL: 'example.com/',
