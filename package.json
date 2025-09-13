@@ -56,6 +56,7 @@
     "cleanup-artifacts": "doppler run -- node ./scripts/cleanupArtifacts.js",
     "matchPayments": "doppler run -- node ./scripts/matchPayments.js",
     "emulator": "node ./scripts/start-emulator.js",
+    "functions-shell": "node ./scripts/start-functions-shell.js",
     "localtunnel-paypal": "lt -p 5001 -s <PROJECT_ID>",
     "localtunnel-stripe": "stripe listen --events payment_intent.succeeded --forward-to localhost:5001/<PROJECT_ID>/us-west1/stripeWebhook",
     "bootstrap": "node scripts/bootstrap/main.js",

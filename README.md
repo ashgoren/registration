@@ -197,6 +197,9 @@ npm run set-payment-secrets <PROJECT_ID> stripe prd
 - Don't want Venmo? Comment out the venmo line in `configPaypal.jsx`
 
 #### Step 8b: Create PayPal REST API Apps
+> [!IMPORTANT]
+> You must enable the "Transaction search" feature on each REST API app to facilitate the the payment matching script.
+
 - Create 2 REST API apps in Sandbox mode (dev & stg)
 - Also create production REST API app if it doesn't yet exist
 

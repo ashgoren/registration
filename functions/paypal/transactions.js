@@ -60,14 +60,20 @@ const fetchTransactionChunk = async (accessToken, startDate, endDate) => {
     'page_size': '500'
   });
 
+  let response;
   const paypalApiUrl = getPaypalApiUrl();
-  const response = await fetch(`${paypalApiUrl}/v1/reporting/transactions?${params}`, {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
-    }
-  });
+
+  try {
+    response = await fetch(`${paypalApiUrl}/v1/reporting/transactions?${params}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      }
+    });
+  } catch (err) {
+    throw createError(ErrorType.PAYPAL_API, `Error fetching PayPal transactions. Does the REST API app have "transaction search" enabled? Is the API URL correct? ${err.message}`);
+  }
 
   if (!response.ok) {
     const errorText = await response.text();

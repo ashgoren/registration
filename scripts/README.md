@@ -1,5 +1,13 @@
 # Helper Scripts
 
+### start-functions-shell
+
+Run emulated firebase functions from local shell:
+
+```sh
+npm run functions-shell
+```
+
 ### Query Firestore
 
 - list all final orders

@@ -12,10 +12,11 @@ const SHEET_OPERATIONS = {
 };
 
 async function readSheet() {
+  const { SHEETS_ORDERS_TAB_NAME } = getConfig();
   return googleSheetsOperation({
     operation: SHEET_OPERATIONS.READ,
     params: {
-      range: 'Orders'
+      range: SHEETS_ORDERS_TAB_NAME || 'Orders'
     }
   });
 }
