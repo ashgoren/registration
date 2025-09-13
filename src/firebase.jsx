@@ -1,8 +1,9 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFunctions, connectFunctionsEmulator, httpsCallable } from 'firebase/functions';
 import userConfig from 'config/configEvent.jsx';
+const isDev = import.meta.env.DEV;
 
-const useFirebaseEmulator = userConfig.dev.use_firebase_emulator;
+const useFirebaseEmulator = isDev && userConfig.dev.use_firebase_emulator;
 
 const { VITE_FIREBASE_CONFIG, VITE_FUNCTIONS_REGION } = import.meta.env;
 

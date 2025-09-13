@@ -225,13 +225,13 @@ npm run set-payment-secrets <PROJECT_ID> paypal prd
 | File | About |
 |------|-------|
 | `functions/config/userConfig.js` | Backend config |
-| `src/config/` files | Frontend config (event, fields, order-summary, theme) |
+| `src/config/` | Frontend config - event, fields, order-summary, theme |
 | `src/templates/` | Email receipt templates |
 | `src/components/Static/` | Static pages (e.g. Home, About, Contact) |
 | `src/components/IntroHeader.jsx` | Registration form header |
 | `index.html` | Site title, metadata description, [og:image](https://ogp.me/) |
 | `public/logo.png` | Optional Navbar logo (≤80px height recommended) |
-| `public/` favicon files | use a generator, e.g. [favicon-generator](https://www.favicon-generator.org) |
+| `public/` | favicon files - use a generator, e.g. [favicon-generator](https://www.favicon-generator.org) |
 
 ---
 
