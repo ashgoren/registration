@@ -1,7 +1,7 @@
 import DOMPurify from 'dompurify';
 import MarkdownIt from 'markdown-it';
 import Handlebars from 'handlebars';
-import { STATE_OPTIONS } from 'config/constants';
+import { STATE_OPTIONS } from 'config/internal/constants.js';
 
 export const clamp = (value, range) => Math.min(Math.max(Number(value), range[0]), range[1]);
 

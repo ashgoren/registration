@@ -4,7 +4,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { Link as RouterLink } from 'react-router-dom';
 import { ColorModeToggle } from 'components/layouts';
 import { config } from 'config';
-const { TITLE, REGISTRATION_ONLY, NAVBAR_COLOR, NAVBAR_COLOR_DARK, NAVBAR_BACKGROUND_OVERRIDE } = config;
+const { REGISTRATION_TITLE, REGISTRATION_ONLY, NAVBAR_COLOR, NAVBAR_COLOR_DARK, NAVBAR_BACKGROUND_OVERRIDE } = config;
 
 const pages = [
   { title: 'Home', path: '/' },
@@ -13,7 +13,7 @@ const pages = [
   { title: 'Itinerary', path: '/schedule' },
   { title: 'Seattle', path: '/seattle' },
   { title: 'Contact', path: '/contact' },
-  { title: 'Payment info', path: '/paymentinfo' },
+  { title: 'Payment info', path: '/paymentexplanation' },
   { title: 'Registration', path: '/registration' }
 ];
 
@@ -103,10 +103,10 @@ export const Navbar = ({ toggleColorMode }) => {
         <img src={'/logo.png'} alt="" style={{ margin: '10px 10px 10px 0px' }}/>
       </Box>
       <ListItem sx={{ display: {xs: 'none', sm: 'block' }, my: 2, color: 'inherit' }}>
-        <Typography variant="h4" textAlign="center">{TITLE}</Typography>
+        <Typography variant="h4" textAlign="center">{REGISTRATION_TITLE}</Typography>
       </ListItem>
       <ListItem sx={{ display: {xs: 'block', sm: 'none' }, my: 2, color: 'inherit' }}>
-        <Typography variant="h5" textAlign="center">{TITLE}</Typography>
+        <Typography variant="h5" textAlign="center">{REGISTRATION_TITLE}</Typography>
       </ListItem>
     </>
   );

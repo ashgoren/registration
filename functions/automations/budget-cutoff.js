@@ -12,7 +12,7 @@
 
 import { google } from 'googleapis';
 import { sendMail } from '../shared/email.js';
-import { getConfig } from '../config.js';
+import { getConfig } from '../config/internal/config.js';
 // import 'dotenv/config'; // for local emulation, but breaks production deployment
 
 const APIS_TO_DISABLE = [

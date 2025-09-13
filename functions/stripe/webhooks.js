@@ -1,7 +1,7 @@
 import { getStripe } from './auth.js';
 import { logger } from 'firebase-functions/v2';
 import { handlePaymentVerification } from '../shared/webhooks.js';
-import { getConfig } from '../config.js';
+import { getConfig } from '../config/internal/config.js';
 
 // onRequest function to handle Stripe webhooks
 export const stripeWebhookHandler = async (req, res) => {

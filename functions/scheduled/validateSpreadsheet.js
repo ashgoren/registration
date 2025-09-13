@@ -10,7 +10,7 @@ import { getOrders } from '../shared/orders.js';
 import { readSheet } from '../shared/spreadsheet.js';
 import { sendMail } from '../shared/email.js';
 import { getOrderEmail, getOrderDomain } from '../shared/helpers.js';
-import { getConfig } from '../config.js';
+import { getConfig } from '../config/internal/config.js';
 
 // Scheduled function to check for missing orders in the spreadsheet
 export const missingFromSpreadsheetHandler = async () => {

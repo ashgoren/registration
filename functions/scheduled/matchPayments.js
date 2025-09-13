@@ -12,7 +12,7 @@ import { listPaypalTransactions } from '../paypal/index.js';
 import { listStripeTransactions } from '../stripe/index.js';
 import { getOrders } from '../shared/orders.js';
 import { sendMail } from '../shared/email.js';
-import { getConfig } from '../config.js';
+import { getConfig } from '../config/internal/config.js';
 
 // On-demand (onRequest) wrapper for matching payments
 export const matchPaymentsOnDemandHandler = async (req, res) => {

@@ -1,6 +1,6 @@
 import { logger } from 'firebase-functions/v2';
 import { google } from 'googleapis';
-import { getConfig } from '../config.js';
+import { getConfig } from '../config/internal/config.js';
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 500;

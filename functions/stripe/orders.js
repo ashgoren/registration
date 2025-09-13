@@ -1,7 +1,7 @@
 import { getStripe } from './auth.js';
 import { logger } from 'firebase-functions/v2';
 import { createError, ErrorType } from '../shared/errorHandler.js';
-import { getConfig } from '../config.js';
+import { getConfig } from '../config/internal/config.js';
 
 export const getStripePaymentIntent = async ({ email, name, amount, description, idempotencyKey, id }) => {
   logger.info('getStripePaymentIntent', { email, idempotencyKey });

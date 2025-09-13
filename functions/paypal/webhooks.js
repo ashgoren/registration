@@ -2,7 +2,7 @@ import { logger } from 'firebase-functions/v2';
 import { handlePaymentVerification } from '../shared/webhooks.js';
 import { createError, ErrorType } from '../shared/errorHandler.js';
 import { getPayPalAccessToken, getPaypalApiUrl } from './auth.js'
-import { getConfig } from '../config.js';
+import { getConfig } from '../config/internal/config.js';
 
 // onRequest handler for PayPal webhooks
 export const paypalWebhookHandler = async (req, res) => {

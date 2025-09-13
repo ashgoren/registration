@@ -1,7 +1,7 @@
 import { Box, Grid } from '@mui/material';
 import { StyledLink, StyledPaper, PageTitle, Paragraph, SectionDivider } from 'components/layouts/SharedStyles';
-import { config } from 'config';
-const { DANCES } = config;
+
+const DANCES = [];
 
 const halfLength = Math.ceil(DANCES.length / 2);
 const col1 = DANCES.slice(0, halfLength);

@@ -86,7 +86,8 @@ npm run bootstrap <PROJECT_ID>
 
 1. Create spreadsheet from [template](https://docs.google.com/spreadsheets/d/1gQ9l8wBTgNmiI0KmpECsDzCqePSPMnZFaecuj0VO_cU/template/preview)
 2. Rename spreadsheet to desired name
-3. Add URL to `terraform/shared.auto.tfvars`:
+3. Update columns as desired
+4. Add URL to `terraform/shared.auto.tfvars`:
 ```hcl
    spreadsheet_url = "YOUR_SPREADSHEET_URL"
 ```
@@ -222,14 +223,15 @@ npm run set-payment-secrets <PROJECT_ID> paypal prd
 ## 9. Site Configuration
 
 | File | About |
-|------|---------|
-| `src/config/` | Frontend config (including basics, fields, order summary) |
-| `functions/config.js` | Backend config |
-| `functions/shared/fields.js` | Data fields - _you must also update spreadsheet columns_ |
-| `templates/` | Email receipt templates |
+|------|-------|
+| `functions/config/userConfig.js` | Backend config |
+| `src/config/` | Frontend config - event, fields, order-summary, theme |
+| `src/templates/` | Email receipt templates |
+| `src/components/Static/` | Static pages (e.g. Home, About, Contact) |
+| `src/components/IntroHeader.jsx` | Registration form header |
 | `index.html` | Site title, metadata description, [og:image](https://ogp.me/) |
 | `public/logo.png` | Optional Navbar logo (≤80px height recommended) |
-| `public/` favicon files | use a generator, e.g. [favicon-generator](https://www.favicon-generator.org) |
+| `public/` | favicon files - use a generator, e.g. [favicon-generator](https://www.favicon-generator.org) |
 
 ---
 
