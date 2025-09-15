@@ -18,7 +18,8 @@ const baseOptions = {
   FIELD_ORDER: userConfig.spreadsheet.fieldOrder,
   SHEETS_EMAIL_COLUMN: userConfig.spreadsheet.fieldOrder.indexOf('email'),
   SHEETS_KEY_COLUMN: 0,
-  SHEETS_SHEET_RANGE: 'A:AZ'
+  SHEETS_SHEET_RANGE: 'A:AZ',
+  SHEETS_ORDERS_TAB_NAME: 'Orders'
 };
 
 const envVariables = [

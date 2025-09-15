@@ -22,7 +22,7 @@ export const matchPaymentsOnDemandHandler = async (req, res) => {
     return;
   }
   try {
-    const result = await matchPaymentsHandler();
+    const result = await matchPaymentsHandler({ skipEmail: true });
     res.status(200).json({ success: true, data: result });
   } catch (error) {
     res.status(500).json({ error: 'Function failed', details: error.message });
@@ -30,7 +30,7 @@ export const matchPaymentsOnDemandHandler = async (req, res) => {
 };
 
 // Scheduled function to match payments with orders
-export const matchPaymentsHandler = async () => {
+export const matchPaymentsHandler = async ({ skipEmail } = {}) => {
   const { EVENT_TITLE, PAYMENT_PROCESSOR, IS_SANDBOX } = getConfig();
 
   logger.info(`matchPayments triggered for event: ${EVENT_TITLE}`);
@@ -54,7 +54,7 @@ export const matchPaymentsHandler = async () => {
 
   logResults({ matchingOrders, extraDatabaseOrders, extraTransactions });
 
-  if (extraTransactions.length) {
+  if (extraTransactions.length && !skipEmail) {
     await sendEmailNotification(extraTransactions);
   }
 
