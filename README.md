@@ -256,7 +256,7 @@ npm run dev # Start frontend dev server
 
 ### Helper scripts
 
-See `scripts/README.md` for database and payment processor query tools.
+See [scripts/README.md](scripts/README.md) for database and payment processor query tools.
 
 ---
 
@@ -302,9 +302,9 @@ git checkout -b staging
   - **prd_backend:** `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET` *or* `PAYPAL_CLIENT_ID` + `PAYPAL_CLIENT_SECRET` + `PAYPAL_WEBHOOK_ID`
 - [ ] Update registration links on homepage & navbar
 - [ ] Clear spreadsheet data
-- [ ] Clear production Firestore if needed
+- [ ] Clear production Firestore data if needed
 - [ ] Update `robots.txt` to allow indexing (if sharing direct link)
-- [ ] Redeployed after any updates to Doppler secrets or source code
+- [ ] Redeploy after any updates to Doppler secrets or source code
 
 ### 3. Hibernation (optional)
 For inactive projects:
