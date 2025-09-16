@@ -282,7 +282,7 @@ git push origin staging
 git push origin staging
 
 # 2. Create and merge the pull request from staging to main
-gh pr create --base main --head staging --fill
+gh pr create --base main --head staging --fill --title "<SQUASH_COMMIT_MESSAGE>"
 gh pr merge staging --auto --squash --delete-branch
 
 # 3. Recreate staging branch from main
