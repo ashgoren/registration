@@ -22,7 +22,7 @@ const APIS_TO_DISABLE = [
   'eventarc.googleapis.com' // To stop event triggers
 ];
 
-// onMessagePublished to budget-cutoff topic
+// onMessagePublished to budget_alerts topic
 export const disableProjectAPIsHandler = async (event) => {
   const { PROJECT_ID } = getConfig();
 

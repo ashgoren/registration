@@ -114,7 +114,7 @@ const onMessagePublishedFunctions = [
   {
     name: 'disableProjectAPIs',
     handler: disableProjectAPIsHandler, // budget-cutoff.js
-    topic: 'budget-cutoff',
+    topic: 'budget_alerts',
   },
 ];
 
