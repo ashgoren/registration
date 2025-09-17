@@ -10,7 +10,7 @@ resource "google_billing_budget" "main_budget" {
   display_name    = "${var.project_id} Budget"
 
   budget_filter {
-    projects = ["projects/${google_project.project.number}"]
+    projects = ["projects/${data.google_project.project.number}"]
   }
 
   amount {

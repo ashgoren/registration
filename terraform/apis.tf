@@ -33,7 +33,7 @@ resource "google_project_service" "apis" {
   service                    = each.key
   disable_dependent_services = false
 
-  depends_on = [google_project.project]
+  depends_on = [data.google_project.project]
 }
 
 # resource "time_sleep" "wait_for_apis" {
