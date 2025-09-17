@@ -41,6 +41,10 @@ export const getClient = () => {
 // Manually get token for use with REST API since server sdk doesn't support transactions list
 export const getPayPalAccessToken = async () => {
   const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = getConfig();
+  console.log('Getting PayPal access token...');
+  if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
+    throw createError(ErrorType.PAYPAL_API, 'Missing PayPal client ID or secret');
+  }
 
   const auth = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_CLIENT_SECRET}`).toString('base64');
   const paypalApiUrl = getPaypalApiUrl();

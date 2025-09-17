@@ -8,12 +8,8 @@ const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 5000; // 5 seconds
 
 const getOrderByPaymentId = async (paymentId) => {
-  const { IS_SANDBOX } = getConfig();
   try {
-    const snapshot = await ordersCollection
-      .where('paymentId', '==', paymentId)
-      .where('isTestOrder', '==', IS_SANDBOX)
-      .get();
+    const snapshot = await ordersCollection.where('paymentId', '==', paymentId).get();
     if (snapshot.empty) {
       return null;
     }

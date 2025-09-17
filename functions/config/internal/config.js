@@ -61,15 +61,20 @@ export const getConfig = () => {
     }, {});
   }
 
-  const { FIREBASE_AUTH_EMULATOR_HOST, FIRESTORE_EMULATOR_HOST, FUNCTIONS_EMULATOR, GCLOUD_PROJECT } = process.env;
+  const { FIRESTORE_EMULATOR_HOST, FUNCTIONS_EMULATOR, GCLOUD_PROJECT } = process.env;
+
+  const PROJECT_ID = GCLOUD_PROJECT;
+  const IS_SANDBOX = PROJECT_ID.includes('-stg');
+  const IS_EMULATOR = !!FIRESTORE_EMULATOR_HOST || !!FUNCTIONS_EMULATOR;
 
   config = {
     ...deployOptions,
     ...baseOptions,
     ...parsedSecrets,
-    PROJECT_ID: GCLOUD_PROJECT,
-    IS_SANDBOX: GCLOUD_PROJECT.includes('-stg'),
-    IS_EMULATOR: !!FIREBASE_AUTH_EMULATOR_HOST || !!FIRESTORE_EMULATOR_HOST || !!FUNCTIONS_EMULATOR
+    PROJECT_ID,
+    IS_SANDBOX,
+    IS_EMULATOR,
+    ENV: IS_EMULATOR ? 'dev' : IS_SANDBOX ? 'stg' : 'prd'
   };
 
   return config;

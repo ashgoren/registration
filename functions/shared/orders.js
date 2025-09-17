@@ -3,11 +3,8 @@ import { createError, ErrorType } from './errorHandler.js';
 
 export const ordersCollection = getFirestore().collection('orders');
 
-export const getOrders = async ({ pending = false, testMode = 'all' } = {}) => {
-  let query = ordersCollection.where('status', '==', pending ? 'pending' : 'final').orderBy('createdAt', 'asc');
-  if (testMode !== 'all') {
-    query = query.where('isTestOrder', '==', testMode);
-  }
+export const getOrders = async ({ pending = false } = {}) => {
+  const query = ordersCollection.where('status', '==', pending ? 'pending' : 'final').orderBy('createdAt', 'asc');
   try {
     const snapshot = await query.get();
     if (snapshot.empty) {

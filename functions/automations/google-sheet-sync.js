@@ -78,7 +78,7 @@ const mapOrderToSpreadsheetLines = (order) => {
       charged: isPurchaser ? order.charged : '-',
       status,
       purchaser: isPurchaser ? firstPersonPurchaserField : `${people[0].first} ${people[0].last}`,
-      isTestOrder: order.isTestOrder ? 'test order' : '',
+      environment: order.environment === 'prd' ? '' : order.environment
     };
     const personFields = isPurchaser ? { ...orderFields, ...personFieldsBuilder } : personFieldsBuilder;
     const line = fieldOrder.map(field => personFields[field] || '');
