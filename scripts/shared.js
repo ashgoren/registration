@@ -1,6 +1,6 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import fs from 'fs/promises';
+// import fs from 'fs/promises';
 import admin from 'firebase-admin';
 import { getFirestore } from 'firebase-admin/firestore';
 // import { google } from 'googleapis';
@@ -33,11 +33,14 @@ const testDomains = includeTestEmails ? [] : SCRIPTS_TEST_DOMAINS?.split(',')?.m
 console.log(includeTestEmails ? '' : 'Excluding test emails!\n');
 
 // setup firebase
-const firebaseServiceKeyPath = `keys/firebase-service-key.json`;
-const firebaseServiceAccount = JSON.parse(await fs.readFile(new URL(firebaseServiceKeyPath, import.meta.url), 'utf-8'));
-admin.initializeApp({ credential: admin.credential.cert(firebaseServiceAccount) });
+// const firebaseServiceKeyPath = `keys/firebase-service-key.json`;
+// const firebaseServiceAccount = JSON.parse(await fs.readFile(new URL(firebaseServiceKeyPath, import.meta.url), 'utf-8'));
+// admin.initializeApp({ credential: admin.credential.cert(firebaseServiceAccount) });
+// const projectId = firebaseServiceAccount.project_id;
 
-const projectId = firebaseServiceAccount.project_id;
+const projectId = process.env.PROJECT_ID;
+admin.initializeApp({ projectId });
+
 console.log(`\nPROJECT: ${projectId}`);
 
 // get data from firestore
@@ -66,4 +69,4 @@ function logInfo({ email, message }) {
   }
 }
 
-export { pending, finalOrders, pendingOrders, projectId, log };
+export { pending, finalOrders, pendingOrders, projectId, logInfo };
