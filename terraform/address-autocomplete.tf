@@ -1,6 +1,10 @@
+resource "random_id" "key_suffix" {
+  byte_length = 4
+}
+
 # Create a single, environment-specific API key for Places and Maps
 resource "google_apikeys_key" "places_maps" {
-  name         = "places-maps-api-key-${terraform.workspace}"
+  name         = "places-maps-api-key-${terraform.workspace}-${random_id.key_suffix.hex}"
   display_name = "Places and Maps API Key (${terraform.workspace})"
   project      = var.project_id
 
@@ -35,7 +39,7 @@ resource "doppler_secret" "places_maps_key" {
 resource "google_apikeys_key" "places_maps_dev" {
   count        = terraform.workspace == "stg" ? 1 : 0
 
-  name         = "places-maps-api-key-dev"
+  name         = "places-maps-api-key-dev-${random_id.key_suffix.hex}"
   display_name = "Places and Maps API Key (dev)"
   project      = var.project_id
 
