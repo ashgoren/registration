@@ -8,4 +8,8 @@ resource "google_project" "project" {
   project_id        = var.project_id
   billing_account   = var.gcp_billing_account_id
   org_id            = var.gcp_organization_id
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }

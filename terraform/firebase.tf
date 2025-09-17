@@ -1,4 +1,8 @@
-# Create the Firebase project resource
+import {
+  to = google_firebase_project.default
+  id = var.project_id
+}
+
 resource "google_firebase_project" "default" {
   provider    = google
   project     = var.project_id
