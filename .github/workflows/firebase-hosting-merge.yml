@@ -8,7 +8,13 @@ on:
 
 jobs:
   build_and_deploy:
-    if: ${{ !contains(github.event.head_commit.message, '[skip deploy]') }}
+    if: ${{
+        !contains(github.event.head_commit.message, 'Initial commit') &&
+        !contains(github.event.head_commit.message, 'skip deploy') &&
+        !contains(github.event.head_commit.message, 'skip-deploy') &&
+        !contains(github.event.head_commit.message, 'skip ci') &&
+        !contains(github.event.head_commit.message, 'skip-ci')
+      }}
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name == 'main' && 'prd' || 'stg' }}
     env:
