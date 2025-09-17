@@ -31,12 +31,12 @@ export const matchPaymentsOnDemandHandler = async (req, res) => {
 
 // Scheduled function to match payments with orders
 export const matchPaymentsHandler = async ({ skipEmail } = {}) => {
-  const { EVENT_TITLE, PAYMENT_PROCESSOR, IS_SANDBOX } = getConfig();
+  const { EVENT_TITLE, PAYMENT_PROCESSOR, ENV } = getConfig();
 
-  logger.info(`matchPayments triggered for event: ${EVENT_TITLE}`);
+  logger.info(`matchPayments triggered for event: ${EVENT_TITLE} (${ENV})`);
 
-  // get final orders from db (test mode or live mode)
-  const finalOrders = await getOrders({ pending: false, testMode: IS_SANDBOX });
+  // get final orders from db
+  const finalOrders = await getOrders({ pending: false });
   const orders = finalOrders.filter(order => order.paymentId && order.paymentId !== 'check');
 
   // get list of payments from paypal or stripe
@@ -104,10 +104,10 @@ const logResults = ({ matchingOrders, extraDatabaseOrders, extraTransactions }) 
 };
 
 const sendEmailNotification = async (extraTransactions) => {
-  const { EVENT_TITLE, EMAIL_NOTIFY_TO } = getConfig();
+  const { EVENT_TITLE, EMAIL_NOTIFY_TO, ENV } = getConfig();
   await sendMail({
     to: EMAIL_NOTIFY_TO,
-    subject: `${EVENT_TITLE}: Unmatched Payment Transactions`,
+    subject: `${EVENT_TITLE} (${ENV}): Unmatched Payment Transactions`,
     text: `Payment transactions missing from DB: \n${extraTransactions.map(txn => `${txn.id} (${txn.email})`).join('\n')}`
   });
 };

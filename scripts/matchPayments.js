@@ -1,8 +1,11 @@
+// run in staging: doppler run -- node scripts/matchPayments.js
+// run in production: doppler run -c prd_frontend -- node scripts/matchPayments.js
+
 import dotenv from 'dotenv';
 dotenv.config();
 const { VITE_FUNCTIONS_REGION, PROJECT_ID, CLOUD_FUNCTIONS_TRIGGER_TOKEN } = process.env;
 
-console.log('Triggering matchPayments function...');
+console.log(`Triggering matchPayments function on ${PROJECT_ID.includes('stg') ? 'STAGING' : 'PRODUCTION'}...`);
 
 const url = `https://${VITE_FUNCTIONS_REGION}-${PROJECT_ID}.cloudfunctions.net/matchPaymentsOnDemand`;
 console.log(`Request URL: ${url}`);
