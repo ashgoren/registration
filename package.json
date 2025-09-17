@@ -63,6 +63,7 @@
     "terraform-prd": "node scripts/bootstrap/terraformWrapper.js prd",
     "terraform-destroy-stg": "node scripts/bootstrap/terraformWrapper.js stg destroy",
     "terraform-destroy-prd": "node scripts/bootstrap/terraformWrapper.js prd destroy",
+    "shutdown": "bash scripts/shutdown-firebase.sh",
     "set-payment-secrets": "node scripts/bootstrap/setPaymentSecrets.js",
     "disable-apis": "bash scripts/disable-apis.sh",
     "enable-apis": "bash scripts/enable-apis.sh"

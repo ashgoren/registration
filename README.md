@@ -313,3 +313,12 @@ For inactive projects:
 ```bash
 npm run disable-apis   # npm run enable-apis to wake up
 ```
+
+### 4. Shutdown (optional)
+> [!IMPORTANT]
+> This will run terraform destroy, delete firebase functions, and delete firestore database for both staging and production projects.  
+> It will not delete the Google Cloud or Doppler projects themselves.
+
+```bash
+npm run shutdown <PROJECT_ID>
+```
