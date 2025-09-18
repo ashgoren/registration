@@ -7,26 +7,35 @@ import { getConfig } from '../config/internal/config.js';
 export const stripeWebhookHandler = async (req, res) => {
   logger.debug('Received Stripe webhook', { headers: req.headers, body: req.body });
   
-  const { STRIPE_WEBHOOK_SECRET, IS_SANDBOX } = getConfig();
+  const { STRIPE_WEBHOOK_SECRET, ENV, PAYMENT_DESCRIPTION } = getConfig();
 
   const sig = req.headers['stripe-signature'];
   let event;
 
-  // Verify the webhook signature
+  // Validate the webhook signature
   try {
     event = getStripe().webhooks.constructEvent(req.rawBody, sig, STRIPE_WEBHOOK_SECRET);
   } catch (err) {
-    logger.error('Error verifying Stripe webhook signature', { error: err });
+    logger.error('Error validating Stripe webhook signature', { error: err });
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
+  // Only process payment_intent.succeeded events with matching description
   if (event.type !== 'payment_intent.succeeded') {
-    logger.info(`Ignoring irrelevant webhook: ${event.type}`);
+    logger.info(`Webhook ignored: type != payment_intent.succeeded: ${event.type}`);
+    return res.status(200).json({ received: true });
+  }
+  if (!event.data?.object?.description) {
+    logger.error('No description found in Stripe webhook event data', { event });
+    return res.status(500).send('No description in webhook');
+  }
+  if (event.data?.object?.description !== PAYMENT_DESCRIPTION) {
+    logger.info(`Webhook ignored: description (${event.data?.object?.description}) != ${PAYMENT_DESCRIPTION}`);
     return res.status(200).json({ received: true });
   }
 
-  logger.info('Received webhook for Stripe payment_intent succeeded', { id: event.id, IS_SANDBOX });
-
+  // Process the webhook event
+  logger.info(`Received ${ENV} webhook for Stripe payment_intent succeeded`, { id: event.id, ENV });
   const paymentIntent = event.data.object;
   const paymentId = paymentIntent.id;
 
