@@ -66,6 +66,8 @@ export const getConfig = () => {
   const PROJECT_ID = GCLOUD_PROJECT;
   const IS_SANDBOX = PROJECT_ID.includes('-stg');
   const IS_EMULATOR = !!FIRESTORE_EMULATOR_HOST || !!FUNCTIONS_EMULATOR;
+  const ENV = IS_EMULATOR ? 'dev' : IS_SANDBOX ? 'stg' : 'prd';
+  const PAYMENT_DESCRIPTION = ENV === 'prd' ? baseOptions.EVENT_TITLE : `${baseOptions.EVENT_TITLE} - ${ENV}`;
 
   config = {
     ...deployOptions,
@@ -74,7 +76,8 @@ export const getConfig = () => {
     PROJECT_ID,
     IS_SANDBOX,
     IS_EMULATOR,
-    ENV: IS_EMULATOR ? 'dev' : IS_SANDBOX ? 'stg' : 'prd'
+    ENV,
+    PAYMENT_DESCRIPTION
   };
 
   return config;

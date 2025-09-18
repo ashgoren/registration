@@ -177,7 +177,7 @@ Create webhooks for **payment_intent.succeeded** event only:
 |-------------|-------------|
 | Production | `https://<REGION>-<PROJECT_ID>.cloudfunctions.net/stripeWebhook` |
 | Stg (optional) | `https://<REGION>-<PROJECT_ID>-stg.cloudfunctions.net/stripeWebhook` |
-| Dev (optional) | Use Stripe CLI: `stripe listen --events payment_intent.succeeded --forward-to localhost:5001/<PROJECT_ID>-stg/<REGION>/stripeWebhook` |
+| Dev (optional) | `https://<localtunnel-url>/<PROJECT_ID>-stg/<REGION>/stripeWebhook` (requires using [localtunnel](https://localtunnel.github.io/www/), e.g. `lt -p 5001 -s <PROJECT_ID>`) |
 
 #### Step 8d: Set Stripe Secrets
 Run for each environment to set webhook secret and publishable + secret keys:

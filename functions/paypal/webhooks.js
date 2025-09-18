@@ -1,6 +1,5 @@
 import { logger } from 'firebase-functions/v2';
 import { handlePaymentVerification } from '../shared/webhooks.js';
-import { createError, ErrorType } from '../shared/errorHandler.js';
 import { getPayPalAccessToken, getPaypalApiUrl } from './auth.js'
 import { getConfig } from '../config/internal/config.js';
 
@@ -8,9 +7,14 @@ import { getConfig } from '../config/internal/config.js';
 export const paypalWebhookHandler = async (req, res) => {
   logger.debug('Received PayPal webhook', { headers: req.headers, body: req.body });
 
+  const { ENV, PAYMENT_DESCRIPTION } = getConfig();
+
+  const accessToken = await getPayPalAccessToken();
+  const paypalApiUrl = getPaypalApiUrl();
+
   try {
     // Validate the webhook signature
-    const isValid = await validateWebhookSignature(req);
+    const isValid = await validateWebhookSignature(req, accessToken, paypalApiUrl);
     if (!isValid) {
       logger.warn('Invalid PayPal webhook signature', { headers: req.headers });
       return res.status(400).send('Invalid signature');
@@ -20,16 +24,37 @@ export const paypalWebhookHandler = async (req, res) => {
     return res.status(500).send('Internal Server Error');
   }
 
+  // Parse webhook payload
   const { event_type, resource } = req.body;
-  const { id: paymentId, status } = resource || {};
+  const { id: paymentId, status, supplementary_data } = resource || {};
+
+  // Only process completed payment captures with matching description
   if (event_type !== 'PAYMENT.CAPTURE.COMPLETED' || status !== 'COMPLETED') {
     logger.info('Ignoring irrelevant webhook', { eventType: event_type });
-    return res.status(200).send('Event ignored - not completed payment capture');
+    return res.status(200).json({ received: true });
+  }
+  const orderId = supplementary_data?.related_ids?.order_id;
+  if (!orderId) {
+    logger.error('No order ID found in PayPal webhook resource', { resource, ENV });
+    return res.status(500).send('No order ID in webhook');
+  }
+  const order = await getOrder(orderId, accessToken, paypalApiUrl);
+  const description = order?.purchase_units?.[0]?.description;
+  if (!order) {
+    logger.error('Failed to retrieve PayPal order', { orderId });
+    return res.status(500).send('Failed to retrieve order');
+  }
+  if (!description) {
+    logger.error('No description found in PayPal order', { order, orderId });
+    return res.status(500).send('No description in order');
+  }
+  if (description !== PAYMENT_DESCRIPTION) {
+    logger.info(`Webhook ignored: description (${description}) != ${PAYMENT_DESCRIPTION}`);
+    return res.status(200).json({ received: true });
   }
 
   // Process the webhook event
-  const usingSandbox = getConfig().IS_SANDBOX || getConfig().IS_EMULATOR;
-  logger.info('Received webhook for PayPal payment capture', { paymentId, usingSandbox });
+  logger.info(`Received ${ENV} webhook for PayPal payment capture`, { paymentId, ENV });
 
   // Check if the payment is in the DB
   try {
@@ -41,13 +66,7 @@ export const paypalWebhookHandler = async (req, res) => {
   }
 };
 
-const validateWebhookSignature = async (req) => {
-  const accessToken = await getPayPalAccessToken();
-  if (!accessToken) {
-    throw createError(ErrorType.PAYPAL_API, 'Failed to retrieve PayPal access token');
-  }
-
-  const paypalApiUrl = getPaypalApiUrl();
+const validateWebhookSignature = async (req, accessToken, paypalApiUrl) => {
   const response = await fetch(`${paypalApiUrl}/v1/notifications/verify-webhook-signature`, {
     method: 'POST',
     headers: {
@@ -72,4 +91,21 @@ const validateWebhookSignature = async (req) => {
 
   const data = await response.json();
   return data.verification_status === 'SUCCESS';
+};
+
+const getOrder = async (orderId, accessToken, paypalApiUrl) => {
+  const response = await fetch(`${paypalApiUrl}/v2/checkout/orders/${orderId}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    }
+  });
+
+  if (!response.ok) {
+    logger.warn('Failed to retrieve PayPal order', { status: response.status, orderId });
+    return null;
+  }
+
+  return await response.json();
 };
