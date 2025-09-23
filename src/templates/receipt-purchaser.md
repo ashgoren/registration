@@ -31,8 +31,12 @@
 {{else}} ${{ORDER_TOTAL}} to secure your spot.
 {{/if}}
 
+{{#if SHOW_CHECK_ADDRESS}}
 - Make your check payable to **{{CHECK_TO}}** and mail it to:
   {{CHECK_ADDRESS}}
+{{else}}
+- Email us to get the mailing address for your check.
+{{/if}}
 
 {{/if}}
 {{! <!---- END CHECK PAYMENT SECTION ----> }}

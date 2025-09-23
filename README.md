@@ -101,7 +101,14 @@ npm run bootstrap <PROJECT_ID>
 > You must verify the domain of your `email_from_address` in Amazon SES.
 
 1. Go to [SES Identities](https://console.aws.amazon.com/ses/home#/identities)
-2. Follow verification steps, including DKIM and MAIL FROM verification (DNS records required)
+2. Create Identity → Domain → Enter your domain (e.g. `yourdomain.com`)
+3. Check "Use a custom MAIL FROM domain" → Enter `amazonses` (this is not visible to recipients but improves deliverability)
+4. Advanced DKIM settings → "Easy DKIM" with a 2048-bit key
+5. Uncheck "Publish DNS records to Route53" in both spots on the page (unless using Route53 for DNS)
+6. Leave "DKIM Signatures" checked
+7. Click "Create Identity"
+8. Publish the provided DNS records (likely 6 records total, from 3 sections - DKIM, MAIL FROM, and DMARC)
+9. Wait and check back until all 3 sections show as verified
 
 ### Step 5b: Create SMTP Credentials
 1. Go to [Amazon SES SMTP](https://console.aws.amazon.com/ses/home#/smtp)

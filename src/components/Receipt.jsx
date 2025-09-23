@@ -8,7 +8,7 @@ import { renderMarkdownTemplate, formatCurrency } from 'utils';
 import { useScrollToTop } from 'hooks/useScrollToTop';
 import { OrderSummary, PersonSummary } from 'components/OrderSummary';
 import { config } from 'config';
-const { CHECK_TO, CHECK_ADDRESS, EVENT_TITLE, PAYMENT_DUE_DATE, DIRECT_PAYMENT_URL } = config;
+const { SHOW_CHECK_ADDRESS, CHECK_TO, CHECK_ADDRESS, EVENT_TITLE, PAYMENT_DUE_DATE, DIRECT_PAYMENT_URL } = config;
 
 // relies on passing order as prop to ensure is updated
 export const Receipt = ({ order, paymentMethod, person, isPurchaser }) => {
@@ -22,6 +22,7 @@ export const Receipt = ({ order, paymentMethod, person, isPurchaser }) => {
     AMOUNT_PAID: formatCurrency(order.charged),
     DEPOSIT_TOTAL: order.deposit,
     ORDER_TOTAL: formatCurrency(order.total),
+    SHOW_CHECK_ADDRESS,
     CHECK_TO,
     CHECK_ADDRESS: renderToStaticMarkup(CHECK_ADDRESS).replace(/<br\s*\/?>/g, ', '),
     EVENT_TITLE,
