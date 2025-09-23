@@ -45,7 +45,7 @@ const mapOrderToSpreadsheetLines = (order) => {
     } else {
       deposit = 0;
       admission = parseInt(person.admission);
-      total = isPurchaser ? admission + order.donation : admission;
+      total = isPurchaser ? admission + (order.donation || 0) : admission;
     }
     const fees = order.fees || 0;
     let paid, status;
