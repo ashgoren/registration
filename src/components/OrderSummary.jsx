@@ -127,14 +127,25 @@ function formatNametag(person) {
 function formatAddress(person) {
   const { address, apartment, city, state, zip, country } = person;
   if (!address && !city && !state && !zip) return null;
-  let streetAddress;
+  const parts = [];
   if (address) {
-    const displayApartment = apartment?.length > 0 && isFinite(apartment.slice(0,1)) ? `#${apartment}` : apartment;
-    streetAddress = apartment ? `${address} ${displayApartment}` : address;
+    if (apartment) {
+      const displayApartment = /^\d/.test(apartment) ? `#${apartment}` : apartment;
+      parts.push(`${address} ${displayApartment}`);
+    } else {
+      parts.push(address);
+    }
   }
-  const cityStateZip = city ? `${city}, ${state} ${zip}` : `${state} ${zip}`;
-  const cityStateZipWithCountry = country ? `${cityStateZip}, ${country}` : cityStateZip;
-  return <>{streetAddress && <>{streetAddress}, </>}{cityStateZipWithCountry}</>
+  const locationParts = [city, state].filter(Boolean);
+  if (locationParts.length > 0) {
+    const cityState = locationParts.join(', ');
+    const withZip = zip ? `${cityState} ${zip}` : cityState;
+    parts.push(withZip);
+  }
+  if (country) {
+    parts.push(country);
+  }
+  return <>{parts.join(', ')}</>;
 }
 
 function formatArray(data, defaultValue, mapping) {
