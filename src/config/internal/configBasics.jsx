@@ -33,6 +33,7 @@ const baseConfig = {
   EVENT_DATE: event.date,
   EMAIL_CONTACT: contacts.info,
   TECH_CONTACT: contacts.tech,
+  HOUSING_CONTACT: contacts.housing,
   MORE_INFO_URL: external_links.more_info,
   COVID_POLICY_URL: external_links.policies.covid,
   SAFETY_POLICY_URL: external_links.policies.safety,

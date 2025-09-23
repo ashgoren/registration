@@ -5,9 +5,9 @@ const config = {
   },
 
   event: {
-    title: "NW New Year's Camp 2025", // also must set in backend config
-    location: "Camp Sealth Vashon Island Washington",
-    date: "Monday December 29 2025 - Thursday January 1 2026"
+    title: "Example Event Title", // also must set in backend config
+    location: "Example Event Location, City, State",
+    date: "Example Event Dates"
   },
 
   registration: {
@@ -54,12 +54,13 @@ const config = {
   },
 
   contacts: {
-    info: 'registrar@bashonvashon.org',
-    tech: 'ash@pdxcontra.org'
+    info: 'info@example.com',
+    tech: 'tech@example.com',
+    housing: 'housing@example.com'
   },
 
   external_links: {
-    more_info: 'bashonvashon.org',
+    more_info: 'example.com',
     policies: {
       covid: 'example.com/covid',
       safety: 'example.com/safety'
