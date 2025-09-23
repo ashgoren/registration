@@ -72,7 +72,7 @@ export const PaymentForm = ({ handleClickBackButton }) => {
         <StyledPaper className='admissions-cost'>
 
           <Title>Sliding scale</Title>
-          <Paragraph>Please read the sliding scale and deposit explanations above.</Paragraph>
+          <Paragraph>Please read the sliding scale {DEPOSIT_OPTION ? 'and deposit ' : ''}explanation above.</Paragraph>
 
           {!DEPOSIT_OPTION && <PaymentFormFullPayment order={order} />}
 
