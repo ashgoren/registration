@@ -13,6 +13,7 @@ export const deployOptions = {
 const baseOptions = {
   PAYMENT_PROCESSOR: userConfig.payment.processor,
   EVENT_TITLE: userConfig.event.title,
+  EVENT_TITLE_WITH_YEAR: userConfig.event.title_with_year,
   EMAIL_SUBJECT: `${userConfig.event.title} Registration`,
   STRIPE_STATEMENT_DESCRIPTOR_SUFFIX: userConfig.payment.statementDescriptorSuffix,
   FIELD_ORDER: userConfig.spreadsheet.fieldOrder,
@@ -67,7 +68,7 @@ export const getConfig = () => {
   const IS_SANDBOX = PROJECT_ID.includes('-stg');
   const IS_EMULATOR = !!FIRESTORE_EMULATOR_HOST || !!FUNCTIONS_EMULATOR;
   const ENV = IS_EMULATOR ? 'dev' : IS_SANDBOX ? 'stg' : 'prd';
-  const PAYMENT_DESCRIPTION = ENV === 'prd' ? baseOptions.EVENT_TITLE : `${baseOptions.EVENT_TITLE} - ${ENV}`;
+  const PAYMENT_DESCRIPTION = ENV === 'prd' ? baseOptions.EVENT_TITLE_WITH_YEAR : `${baseOptions.EVENT_TITLE_WITH_YEAR} - ${ENV}`;
 
   config = {
     ...deployOptions,

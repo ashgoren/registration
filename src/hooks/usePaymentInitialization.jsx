@@ -3,7 +3,7 @@ import { logInfo, logError } from 'src/logger';
 import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
 import { useOrder } from 'hooks/useOrder';
 import { config } from 'config';
-const { EVENT_TITLE, ENV } = config;
+const { EVENT_TITLE_WITH_YEAR, ENV } = config;
 
 export const usePaymentInitialization = () => {
   const { order, paymentMethod, electronicPaymentDetails, setElectronicPaymentDetails, setAmountToCharge } = useOrder();
@@ -33,7 +33,7 @@ export const usePaymentInitialization = () => {
           paymentId: electronicPaymentDetails?.id, // pass existing payment intent id; null for new orders
           paymentMethod,
           idempotencyKey,
-          description: ENV === 'prd' ? EVENT_TITLE : `${EVENT_TITLE} - ${ENV}`
+          description: ENV === 'prd' ? EVENT_TITLE_WITH_YEAR : `${EVENT_TITLE_WITH_YEAR} - ${ENV}`
         }
       });
 

@@ -5,7 +5,8 @@ const config = {
   },
 
   event: {
-    title: "Example Event Title", // also must set in backend config
+    title: "Example Event Title",
+    title_with_year: "Example Event Title 2025", // must match backend config
     location: "Example Event Location, City, State",
     date: "Example Event Dates"
   },
