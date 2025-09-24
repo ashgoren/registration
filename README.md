@@ -241,6 +241,7 @@ npm run set-payment-secrets <PROJECT_ID> paypal prd
 | `src/templates/` | Email receipt templates |
 | `src/components/Static/` | Static pages (e.g. Home, About, Contact) |
 | `src/components/IntroHeader.jsx` | Registration form header |
+| `src/components/layouts/Navbar.jsx` | Navbar |
 | `index.html` | Site title, metadata description, [og:image](https://ogp.me/) |
 | `public/logo.png` | Optional Navbar logo (≤80px height recommended) |
 | `public/` | favicon files - use a generator, e.g. [favicon-generator](https://www.favicon-generator.org) |

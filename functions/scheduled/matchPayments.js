@@ -31,9 +31,9 @@ export const matchPaymentsOnDemandHandler = async (req, res) => {
 
 // Scheduled function to match payments with orders
 export const matchPaymentsHandler = async ({ skipEmail } = {}) => {
-  const { EVENT_TITLE, PAYMENT_PROCESSOR, ENV } = getConfig();
+  const { PAYMENT_DESCRIPTION, PAYMENT_PROCESSOR } = getConfig();
 
-  logger.info(`matchPayments triggered for event: ${EVENT_TITLE} (${ENV})`);
+  logger.info(`matchPayments triggered for event: ${PAYMENT_DESCRIPTION}`);
 
   // get final orders from db
   const finalOrders = await getOrders({ pending: false });
@@ -41,8 +41,8 @@ export const matchPaymentsHandler = async ({ skipEmail } = {}) => {
 
   // get list of payments from paypal or stripe
   const transactions = PAYMENT_PROCESSOR === 'paypal'
-    ? await listPaypalTransactions(EVENT_TITLE)
-    : await listStripeTransactions(EVENT_TITLE);
+    ? await listPaypalTransactions(PAYMENT_DESCRIPTION)
+    : await listStripeTransactions(PAYMENT_DESCRIPTION);
 
   if (!orders?.length || !transactions?.length) {
     if (!orders?.length) logger.warn('No final electronic payment orders found in db');
@@ -104,10 +104,10 @@ const logResults = ({ matchingOrders, extraDatabaseOrders, extraTransactions }) 
 };
 
 const sendEmailNotification = async (extraTransactions) => {
-  const { EVENT_TITLE, EMAIL_NOTIFY_TO, ENV } = getConfig();
+  const { PAYMENT_DESCRIPTION, EMAIL_NOTIFY_TO } = getConfig();
   await sendMail({
     to: EMAIL_NOTIFY_TO,
-    subject: `${EVENT_TITLE} (${ENV}): Unmatched Payment Transactions`,
+    subject: `${PAYMENT_DESCRIPTION}: Unmatched Payment Transactions`,
     text: `Payment transactions missing from DB: \n${extraTransactions.map(txn => `${txn.id} (${txn.email})`).join('\n')}`
   });
 };
