@@ -1,6 +1,6 @@
 const config = {
   dev: {
-    skip_mandatory_fields: true,
+    skip_mandatory_fields: false,
     use_firebase_emulator: true
   },
 
@@ -33,6 +33,7 @@ const config = {
     payment_due_date: 'Example Payment Due Date',
     direct_payment_url: 'example.com/directpayment', // electronic payment option to pay remaining balance after selecting deposit or check payment
     cover_fees_checkbox: true,
+    payment_summary: true, // show summary of costs in payment section
     checks: {
       allowed: true, // If false, the below fields are ignored
       show_postal_address: false, // If false, shows contact email

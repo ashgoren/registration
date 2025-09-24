@@ -11,9 +11,10 @@ import { useOrder } from 'hooks/useOrder';
 import { PaymentExplanation } from 'components/Static/PaymentExplanation';
 import { PaymentFormDonation } from './PaymentFormDonation';
 import { PaymentFormFees } from './PaymentFormFees';
+import { PaymentFormTotal } from './PaymentFormTotal';
 import { PaymentFormFullPayment } from './PaymentFormFullPayment';
 import { config } from 'config';
-const { DEPOSIT_OPTION, COVER_FEES_OPTION, DEPOSIT_COST, ADMISSION_COST_RANGE, DONATION_OPTION, PAYMENT_DUE_DATE } = config;
+const { DEPOSIT_OPTION, COVER_FEES_OPTION, DEPOSIT_COST, ADMISSION_COST_RANGE, DONATION_OPTION, PAYMENT_DUE_DATE, SHOW_PAYMENT_SUMMARY } = config;
 
 export const isSlidingScale = ADMISSION_COST_RANGE[0] < ADMISSION_COST_RANGE[1];
 
@@ -49,6 +50,14 @@ export const PaymentForm = ({ handleClickBackButton }) => {
   const fees = useMemo(() => {
     return (0.0245 * total + 0.5).toFixed(2);
   }, [total]);
+
+  const feesTotal = useMemo(() => {
+    return coverFees ? Number(fees) : 0;
+  }, [fees, coverFees]);
+
+  const totalWithFees = useMemo(() => {
+    return total + feesTotal;
+  }, [total, feesTotal]);
 
   useEffect(() => {
     updateOrder({
@@ -110,6 +119,14 @@ export const PaymentForm = ({ handleClickBackButton }) => {
           />
         }
 
+        {SHOW_PAYMENT_SUMMARY && (
+          <PaymentFormTotal
+            admissionTotal={admissionTotal}
+            donationTotal={donationTotal}
+            feesTotal={feesTotal}
+            totalWithFees={totalWithFees}
+          />
+        )}
       </div>
 
       <NavButtons

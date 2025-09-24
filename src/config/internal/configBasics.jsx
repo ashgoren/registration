@@ -9,6 +9,7 @@ const baseConfig = {
   REGISTRATION_ONLY: registration.registration_only,
 
   PAYMENT_METHODS: payments.checks.allowed ? [payments.processor, 'check'] : [payments.processor],
+  SHOW_PAYMENT_SUMMARY: payments.payment_summary,
 
   ADMISSION_QUANTITY_MAX: registration.admission_quantity_max,
   ADMISSION_COST_RANGE: pricing.cost_range,
