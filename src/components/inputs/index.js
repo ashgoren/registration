@@ -5,5 +5,6 @@ export { AutocompleteInput } from './AutocompleteInput';
 export { TextArea } from './TextArea';
 export { CheckboxInput } from './CheckboxInput';
 export { RadioButtons } from './RadioButtons';
+export { SelectInput } from './SelectInput';
 export { ButtonInput } from './ButtonInput';
 export { Field } from './Field';

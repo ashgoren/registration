@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import { Label } from 'components/layouts/SharedStyles';
-import { ButtonInput, CheckboxInput, RadioButtons, NumericInput, TextArea, AddressAutocompleteInput, TextInput, AutocompleteInput } from './';
+import { ButtonInput, CheckboxInput, RadioButtons, NumericInput, TextArea, AddressAutocompleteInput, TextInput, AutocompleteInput, SelectInput } from './';
 
 const inputComponents = {
   text: TextInput,
@@ -11,6 +11,7 @@ const inputComponents = {
   textarea: TextArea,
   checkbox: CheckboxInput,
   radio: RadioButtons,
+  select: SelectInput,
   button: ButtonInput
 };
 
