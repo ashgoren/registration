@@ -6,12 +6,12 @@ import { execSync } from 'child_process';
 import readline from 'readline';
 
 function parseArgs() {
-  const [projectId] = process.argv.slice(2);
+  const [projectId, secondArg] = process.argv.slice(2);
   if (!projectId) {
     log.error('\n❌ Error: projectId is required\n');
     process.exit(1);
   }
-  return { projectId };
+  return { projectId, secondArg };
 }
 
 const promptInput = async (question) => {

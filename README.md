@@ -76,8 +76,11 @@ _Simple event registration / admissions sales site_
 > **PROJECT_ID format:** Use lowercase letters, numbers, hyphens. Must be globally unique.  
 > **Example:** `my-dance-event-2025` → Complimentary site will be at `https://my-dance-event-2025.web.app`  
 
+> [!TIP]
+> If the Google Cloud projects already exist (i.e. redeploying an existing site), add `skip-project-creation` as a second argument.
+
 ```bash
-npm run bootstrap <PROJECT_ID>
+npm run bootstrap <PROJECT_ID> [skip-project-creation]
 ```
 
 ---

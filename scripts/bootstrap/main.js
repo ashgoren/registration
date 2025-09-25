@@ -15,7 +15,8 @@ import { bootstrapDoppler } from './bootstrapDoppler.js';
 import { parseArgs, log } from './utils.js';
 
 async function main() {
-  const { projectId } = parseArgs();
+  const { projectId, secondArg } = parseArgs();
+  const skipProjectCreation = secondArg === 'skip-project-creation';
 
   log.plain('\nThis script will:');
   log.plain('• Create Google Cloud projects');
@@ -40,10 +41,14 @@ async function main() {
     process.exit(1);
   }
 
-  log.info('\n🚀 Creating Google Cloud projects...\n');
-  if (!await createProjects(projectId)) {
-    log.error('🔴 Failed to create Google Cloud projects\n');
-    process.exit(1);
+  if (skipProjectCreation) {
+    log.info('\n⚠️ Skipping Google Cloud project creation\n');
+  } else {
+    log.info('\n🚀 Creating Google Cloud projects...\n');
+    if (!await createProjects(projectId)) {
+      log.error('🔴 Failed to create Google Cloud projects\n');
+      process.exit(1);
+    }
   }
   
   log.info('\n🚀 Linking projects to billing account and enabling APIs...\n');
