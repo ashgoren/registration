@@ -27,7 +27,7 @@ export const capturePaypalOrder = async ({ id, idempotencyKey }) => {
 export const createOrUpdatePaypalOrder = async ({ id, email, description, amount, idempotencyKey }) => {
   logger.info('createOrUpdatePaypalOrder', { email, idempotencyKey });
 
-  const result = id
+  const result = id && await orderExists(id)
     ? await updateOrder({ id, amount, idempotencyKey })
     : await createOrder({ description, amount, idempotencyKey });
 
@@ -113,6 +113,15 @@ const getOrder = async (id) => {
     handlePaypalError(error, 'getOrder');
   }
 }
+
+const orderExists = async (id) => {
+  try {
+    await getOrder(id);
+    return true;
+  } catch {
+    return false;
+  }
+};
 
 const parseResult = (result) => {
   let id, email, amount;
