@@ -116,7 +116,7 @@ export const PaymentForm = ({ handleClickBackButton }) => {
           />
         }
 
-        {SHOW_PAYMENT_SUMMARY && (
+        {SHOW_PAYMENT_SUMMARY &&
           <PaymentFormTotal
             admissionTotal={admissionTotal}
             depositTotal={depositTotal}
@@ -125,7 +125,7 @@ export const PaymentForm = ({ handleClickBackButton }) => {
             feesTotal={feesTotal}
             totalWithFees={totalWithFees}
           />
-        )}
+        }
       </div>
 
       <NavButtons

@@ -8,6 +8,12 @@ const costDefaultMapping = {
   'tiered': admissions.sliding_scale.cost_default // default for tiered is ignored; actual default is set in PersonForm#saveUpdatedOrder
 };
 
+const costRangeMapping = {
+  'sliding-scale': admissions.sliding_scale.cost_range,
+  'fixed': [admissions.fixed.cost, admissions.fixed.cost],
+  'tiered': [0, 999]
+}
+
 const baseConfig = {
   STATIC_PAGES: static_pages.components,
 
@@ -23,7 +29,7 @@ const baseConfig = {
   ADMISSIONS_MODE: admissions.mode,
 
   // Sliding scale settings
-  ADMISSION_COST_RANGE: admissions.sliding_scale.cost_range,
+  ADMISSION_COST_RANGE: costRangeMapping[admissions.mode],
   ADMISSION_COST_DEFAULT: costDefaultMapping[admissions.mode],
 
   // Fixed cost settings
