@@ -18,6 +18,8 @@ export const PaymentFormSlidingScale = ({ people }) => {
 
   return (
     <>
+      <Paragraph>Please read the sliding scale explanation above.</Paragraph>
+
       {isMultiplePeople && <Paragraph>How much is each person able to pay?</Paragraph>}
       {people.map((person, index) =>
         <Field

@@ -5,6 +5,9 @@ import { useOrder } from 'hooks/useOrder';
 import { ContactInfo } from './ContactInfo';
 import { MiscInfo } from './MiscInfo';
 import { logDebug } from 'src/logger';
+import { getDefaultAdmission } from 'config/configTieredPricing';
+import { config } from 'config';
+const { ADMISSIONS_MODE } = config;
 
 export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerson, resetForm, formikRef }) => {
   logDebug('PersonForm rendered');
@@ -15,6 +18,7 @@ export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerso
     const { validateForm, setTouched } = formikRef.current;
     const errors = await validateForm();
     if (Object.keys(errors).length > 0) {
+      logDebug('validatePersonForm errors:', errors);
       setTouched(errors, true); // show errors
       // scroll to first invalid field; refactor to use ref instead of directly accessing DOM
       const firstInvalidFieldName = getFirstInvalidFieldName(errors);
@@ -36,23 +40,24 @@ export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerso
     const submittedOrder = Object.assign({}, values);
     const sanitizedOrder = sanitizeObject(submittedOrder);
 
-    // get country for the person being edited
+    // get the person being edited
     const person = sanitizedOrder.people[editIndex];
-    const country = getCountry(person);
 
-    // add country to the person being edited
-    const orderWithCountry = {
+    // determine country & admission for the person being edited
+    const country = getCountry(person);
+    const admission = ADMISSIONS_MODE === 'tiered' ? getDefaultAdmission(person) : person.admission;
+
+    // update formik field value for country & admission
+    setFieldValue(`people[${editIndex}].country`, country);
+    setFieldValue(`people[${editIndex}].admission`, admission);
+
+    // update order context with country & admission for the person being edited
+    updateOrder({
       ...sanitizedOrder,
       people: sanitizedOrder.people.map((person, index) =>
-        index === editIndex ? { ...person, country } : person
+        index === editIndex ? { ...person, country, admission } : person
       )
-    };
-
-    // update formik field value for country
-    setFieldValue(`people[${editIndex}].country`, country);
-
-    // update order context
-    updateOrder(orderWithCountry);
+    });
   }
 
   // saves updated order, which includes the new or edited person

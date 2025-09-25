@@ -118,6 +118,21 @@ export const fieldConfig = {
     autoComplete: 'country',
     hidden: true
   },
+  age: {
+    type: 'radio',
+    title: "Age",
+    label: "Please choose one.",
+    options: [
+      { label: 'Adult', value: 'adult' },
+      { label: '13-17 yr old', value: '13-17' },
+      { label: '6-12 yr old', value: '6-12' },
+      { label: '3-5 yr old', value: '3-5' },
+      { label: '0-2 yr old', value: '0-2' },
+    ],
+    required: true,
+    validation: Yup.string().required('Please select age range.'),
+    defaultValue: '',
+  },
   share: {
     title: "Roster",
     type: 'checkbox',

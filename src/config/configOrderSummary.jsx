@@ -18,6 +18,11 @@ const ORDER_SUMMARY_OPTIONS = [
     label: 'Address'
   },
   {
+    property: 'age',
+    label: 'Age',
+    mapping: fieldConfig['age'].options
+  },
+  {
     property: 'share',
     label: 'Include on roster',
     defaultValue: 'do not share'

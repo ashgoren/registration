@@ -1,15 +1,15 @@
 import { PaymentFormSlidingScale } from './PaymentFormSlidingScale';
 import { PaymentFormFixedCost } from './PaymentFormFixedCost';
+import { PaymentFormOptions } from './PaymentFormOptions';
 import { config } from 'config';
-const { ADMISSION_COST_RANGE } = config;
-
-const isSlidingScale = ADMISSION_COST_RANGE[0] < ADMISSION_COST_RANGE[1];
+const { ADMISSIONS_MODE } = config;
 
 export const PaymentFormFullPayment = ({ order }) => {
-  return (
-    isSlidingScale ?
-      <PaymentFormSlidingScale people={order.people} />
-      :
-      <PaymentFormFixedCost numPeople={order.people.length} />
-  );
+  if (ADMISSIONS_MODE === 'fixed') {
+    return <PaymentFormFixedCost numPeople={order.people.length} />;
+  } else if (ADMISSIONS_MODE === 'sliding-scale') {
+    return <PaymentFormSlidingScale people={order.people} />;
+  } else if (ADMISSIONS_MODE === 'tiered') {
+    return <PaymentFormOptions people={order.people} />;
+  }
 };

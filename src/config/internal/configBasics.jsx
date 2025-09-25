@@ -1,22 +1,41 @@
+import { fromZonedTime } from 'date-fns-tz';
 import userConfig from '../configEvent.jsx';
-const { event, registration, nametags, payments, pricing, contacts, external_links } = userConfig;
+const { event, static_pages, registration, nametags, admissions, payments, contacts, external_links } = userConfig;
+
+const costDefaultMapping = {
+  'sliding-scale': admissions.sliding_scale.cost_default,
+  'fixed': admissions.fixed.cost,
+  'tiered': admissions.sliding_scale.cost_default // default for tiered is ignored; actual default is set in PersonForm#saveUpdatedOrder
+};
 
 const baseConfig = {
-  STATIC_PAGES: registration.static_pages,
+  STATIC_PAGES: static_pages.components,
 
+  REGISTRATION_ONLY: static_pages.enabled === false,
   WAITLIST_MODE: registration.waitlist_mode,
   SHOW_PRE_REGISTRATION: registration.show_preregistration,
-  REGISTRATION_ONLY: registration.registration_only,
 
   PAYMENT_METHODS: payments.checks.allowed ? [payments.processor, 'check'] : [payments.processor],
+  SHOW_PAYMENT_SUMMARY: payments.show_payment_summary,
 
   ADMISSION_QUANTITY_MAX: registration.admission_quantity_max,
-  ADMISSION_COST_RANGE: pricing.cost_range,
-  ADMISSION_COST_DEFAULT: pricing.cost_default,
-  DEPOSIT_OPTION: pricing.deposit.enabled,
-  DEPOSIT_COST: pricing.deposit.amount,
-  DONATION_OPTION: pricing.donation.enabled,
-  DONATION_MAX: pricing.donation.max,
+
+  ADMISSIONS_MODE: admissions.mode,
+
+  // Sliding scale settings
+  ADMISSION_COST_RANGE: admissions.sliding_scale.cost_range,
+  ADMISSION_COST_DEFAULT: costDefaultMapping[admissions.mode],
+
+  // Fixed cost settings
+  ADMISSION_COST_FIXED: admissions.fixed.cost,
+
+  // Tiered cost settings
+  EARLYBIRD_CUTOFF: fromZonedTime(`${admissions.tiered.earlybird_cutoff}T23:59:59.999`, event.timezone),
+
+  DEPOSIT_OPTION: payments.deposit.enabled,
+  DEPOSIT_COST: payments.deposit.amount,
+  DONATION_OPTION: payments.donation.enabled,
+  DONATION_MAX: payments.donation.max,
   COVER_FEES_OPTION: payments.cover_fees_checkbox,
   DIRECT_PAYMENT_URL: payments.direct_payment_url,
   SHOW_CHECK_ADDRESS: payments.checks.show_postal_address,
@@ -40,7 +59,7 @@ const baseConfig = {
   SAFETY_POLICY_URL: external_links.policies.safety,
 
   INCLUDE_PRONOUNS_ON_NAMETAG: nametags.include_pronouns,
-  INCLUDE_LAST_ON_NAMETAG: nametags.include_last_name
+  INCLUDE_LAST_ON_NAMETAG: nametags.include_last_name,
 };
 
 export default baseConfig;
