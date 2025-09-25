@@ -1,4 +1,8 @@
 const config = {
+  prd: {
+    live: false
+  },
+
   dev: {
     skip_mandatory_fields: false,
     use_firebase_emulator: true

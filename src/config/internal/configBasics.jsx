@@ -1,6 +1,6 @@
 import { fromZonedTime } from 'date-fns-tz';
 import userConfig from '../configEvent.jsx';
-const { event, static_pages, registration, nametags, admissions, payments, contacts, external_links } = userConfig;
+const { prd, event, static_pages, registration, nametags, admissions, payments, contacts, external_links } = userConfig;
 
 const costDefaultMapping = {
   'sliding-scale': admissions.sliding_scale.cost_default,
@@ -15,6 +15,8 @@ const costRangeMapping = {
 }
 
 const baseConfig = {
+  PRD_LIVE: prd.live,
+
   STATIC_PAGES: static_pages.components,
 
   REGISTRATION_ONLY: static_pages.enabled === false,

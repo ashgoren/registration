@@ -7,12 +7,12 @@ import { StyledLink } from 'components/layouts/SharedStyles';
 import { mailtoLink } from 'utils';
 import { logErrorDebug } from 'src/logger';
 import { config } from 'config';
-const { SHOW_CHECK_ADDRESS, CHECK_ADDRESS, CHECK_TO, SANDBOX_MODE, TECH_CONTACT, EMAIL_CONTACT } = config;
+const { SHOW_CHECK_ADDRESS, CHECK_ADDRESS, CHECK_TO, ENV, TECH_CONTACT, EMAIL_CONTACT } = config;
 
 export const Check = () => {
   const { processing, setCurrentPage, updateOrder, error, setError } = useOrder();
   const { savePendingOrder, isSaving } = useOrderSaving();
-  const [ready, setReady] = useState(SANDBOX_MODE);
+  const [ready, setReady] = useState(ENV === 'dev');
 
   setTimeout(() => {
     setReady(true);

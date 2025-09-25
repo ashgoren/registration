@@ -9,13 +9,13 @@ import { useOrderFinalization } from 'hooks/useOrderFinalization';
 import { OrderSummary } from 'components/OrderSummary';
 import { logDebug, logErrorDebug } from 'src/logger';
 import { config } from 'config';
-const { SANDBOX_MODE, TECH_CONTACT } = config;
+const { ENV, TECH_CONTACT } = config;
 
 export const Waitlist = ({ handleClickBackButton }) => {
   const { order, updateOrder, error, setError, processing, setProcessing, processingMessage, setProcessingMessage } = useOrder();
   const { savePendingOrder, isSaving } = useOrderSaving();
   const { finalizeOrder } = useOrderFinalization();
-  const [ready, setReady] = useState(SANDBOX_MODE);
+  const [ready, setReady] = useState(ENV === 'dev');
   const [confirmed, setConfirmed] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 

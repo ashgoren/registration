@@ -11,20 +11,25 @@ import { Confirmation } from 'components/Confirmation';
 import { IntroHeader } from 'components/IntroHeader';
 import { OrderSummary } from 'components/OrderSummary';
 import { WaitlistNote } from 'components/WaitlistNote';
+import { PreRegistration } from 'components/Static/PreRegistration';
 import { config } from 'config';
-const { PAYMENT_METHODS, PAYPAL_OPTIONS, TITLE, CONFIRMATION_CHECK_TITLE, CONFIRMATION_ELECTRONIC_TITLE, SANDBOX_MODE, SHOW_PRE_REGISTRATION, WAITLIST_MODE } = config;
+const { PAYMENT_METHODS, PAYPAL_OPTIONS, TITLE, CONFIRMATION_CHECK_TITLE, CONFIRMATION_ELECTRONIC_TITLE, PRD_LIVE, ENV, SHOW_PRE_REGISTRATION, WAITLIST_MODE } = config;
 
 export const Registration = () => {
   const [registering, setRegistering] = useState(false);
 
-  return (
-    SHOW_PRE_REGISTRATION || (SANDBOX_MODE && window.location.hostname !== 'localhost') ? (
-      registering ? <RealRegistration /> : <PreRegistration setRegistering={setRegistering} />
-    ) : <RealRegistration />
-  );
+  if (registering) {
+    return <RealRegistration />;
+  } else if (ENV === 'stg' || (ENV === 'prd' && !PRD_LIVE)) {
+    return <TestModeWarning setRegistering={setRegistering} />;
+  } else if (SHOW_PRE_REGISTRATION) {
+    return <PreRegistration setRegistering={setRegistering} />;
+  } else {
+    return <RealRegistration />;
+  }
 };
 
-const PreRegistration = ({ setRegistering }) => {
+const TestModeWarning = ({ setRegistering }) => {
   return(
     <StyledPaper>
       <Typography variant="h4" color='error' sx={{ fontWeight: "bold"}}>TEST MODE ONLY</Typography>
