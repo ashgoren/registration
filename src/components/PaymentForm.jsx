@@ -14,9 +14,7 @@ import { PaymentFormFees } from './PaymentFormFees';
 import { PaymentFormTotal } from './PaymentFormTotal';
 import { PaymentFormFullPayment } from './PaymentFormFullPayment';
 import { config } from 'config';
-const { DEPOSIT_OPTION, COVER_FEES_OPTION, DEPOSIT_COST, ADMISSION_COST_RANGE, DONATION_OPTION, PAYMENT_DUE_DATE, SHOW_PAYMENT_SUMMARY } = config;
-
-export const isSlidingScale = ADMISSION_COST_RANGE[0] < ADMISSION_COST_RANGE[1];
+const { DEPOSIT_OPTION, COVER_FEES_OPTION, DEPOSIT_COST, ADMISSION_COST_RANGE, DONATION_OPTION, PAYMENT_DUE_DATE, SHOW_PAYMENT_SUMMARY, ADMISSIONS_MODE } = config;
 
 export const PaymentForm = ({ handleClickBackButton }) => {
   const { order, updateOrder } = useOrder();
@@ -80,8 +78,7 @@ export const PaymentForm = ({ handleClickBackButton }) => {
       <div className='admissions-section'>
         <StyledPaper className='admissions-cost'>
 
-          <Title>Sliding scale</Title>
-          <Paragraph>Please read the sliding scale {DEPOSIT_OPTION ? 'and deposit ' : ''}explanation above.</Paragraph>
+          <Title>{ADMISSIONS_MODE === 'sliding-scale' ? 'Sliding scale' : 'Payment'}</Title>
 
           {!DEPOSIT_OPTION && <PaymentFormFullPayment order={order} />}
 
@@ -122,6 +119,8 @@ export const PaymentForm = ({ handleClickBackButton }) => {
         {SHOW_PAYMENT_SUMMARY && (
           <PaymentFormTotal
             admissionTotal={admissionTotal}
+            depositTotal={depositTotal}
+            isDeposit={paymentTab === 'deposit'}
             donationTotal={donationTotal}
             feesTotal={feesTotal}
             totalWithFees={totalWithFees}
