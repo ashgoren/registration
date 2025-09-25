@@ -27,11 +27,21 @@ export const capturePaypalOrder = async ({ id, idempotencyKey }) => {
 export const createOrUpdatePaypalOrder = async ({ id, email, description, amount, idempotencyKey }) => {
   logger.info('createOrUpdatePaypalOrder', { email, idempotencyKey });
 
-  const result = id && await orderExists(id)
-    ? await updateOrder({ id, amount, idempotencyKey })
-    : await createOrder({ description, amount, idempotencyKey });
+  let result;
+  if (id && await orderExists(id)) {
+    logger.info(`Order ${id} exists, updating order`);
+    result = await updateOrder({ id, amount, idempotencyKey });
+    validateOrderResponse(result, id, amount);
+  } else if (id) {
+    logger.info(`Order ID ${id} provided but does not exist, creating new order`);
+    result = await createOrder({ description, amount, idempotencyKey });
+    validateOrderResponse(result, null, amount);
+  } else {
+    logger.info(`No Order ID provided, creating new order`);
+    result = await createOrder({ description, amount, idempotencyKey });
+    validateOrderResponse(result, null, amount);
+  }
 
-  validateOrderResponse(result, id, amount);
   return parseResult(result);
 };
 
@@ -116,7 +126,7 @@ const getOrder = async (id) => {
 
 const orderExists = async (id) => {
   try {
-    await getOrder(id);
+    await getOrdersController().ordersGet({ id }); // throws error if not found
     return true;
   } catch {
     return false;
@@ -155,12 +165,14 @@ const validateOrderResponse = (result, expectedId = null, expectedAmount = null)
   );
 
   if (expectedId && expectedId !== id) throw createError(
-    ErrorType.VALIDATION_AMOUNT_MISMATCH,
+    logger.info('expected id vs actual', { expectedId, id }),
+    ErrorType.VALIDATION_ID_MISMATCH,
     'Order ID mismatch',
     { expected: expectedId, received: id }
   );
 
   if (expectedAmount && formatCurrency(expectedAmount) !== formatCurrency(amount)) throw createError(
+    logger.info('expected amount vs actual', { expectedAmount, amount }),
     ErrorType.VALIDATION_AMOUNT_MISMATCH,
     'Amount mismatch',
     { expected: expectedAmount, received: amount }
