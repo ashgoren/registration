@@ -5,7 +5,7 @@ import * as StaticComponents from 'components/Static';
 import { Registration } from 'components/Registration';
 import { config } from 'config';
 import { logEnvironment } from 'src/logger';
-const { STATIC_PAGES, TECH_CONTACT, REGISTRATION_ONLY } = config;
+const { STATIC_PAGES, TECH_CONTACT, REGISTRATION_ONLY, PRD_LIVE, ENV } = config;
 
 export const App = () => {
   logEnvironment();
@@ -13,8 +13,7 @@ export const App = () => {
   //   document.title = EVENT_TITLE;
   // }, []);
 
-  // checking localhost for easier local testing of registration
-  const RootElement = REGISTRATION_ONLY || window.location.hostname === 'localhost' ? Registration : StaticComponents.Home;
+  const RootElement = REGISTRATION_ONLY ? Registration : StaticComponents.Home;
 
   return (
     <>
@@ -29,7 +28,9 @@ export const App = () => {
                 const Component = StaticComponents[page];
                 return <Route key={route} exact path={`/${route}`} element={<Component />} />;
               })}
-              <Route path="/registration" element={<Registration />} />
+              {(PRD_LIVE || ENV !== 'prd') &&
+                <Route path="/registration" element={<Registration />} />
+              }
               <Route exact path="/error-contact-support" element={<Error error={`Unexpected payment processing error. Please email ${TECH_CONTACT}`} />} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
