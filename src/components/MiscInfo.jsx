@@ -11,6 +11,7 @@ export const MiscInfo = ({ index, formikRef }) => {
   logDebug('MiscInfo rendered');
   
   const [showPhotoCommentsField, setShowPhotoCommentsField] = useState(formikRef?.current?.values?.people?.[index]?.photo === 'Other');
+  const fields = index === 0 ? PERSON_MISC_FIELDS : PERSON_MISC_FIELDS.filter(f => f !== 'agreement');
   
   useScrollToTop();
 
@@ -62,8 +63,11 @@ export const MiscInfo = ({ index, formikRef }) => {
 
   return (
     <Box className='MiscInfo' sx={{ mt: 4 }}>
-      {PERSON_MISC_FIELDS
-        .map(field => ({ field, ...FIELD_CONFIG[field] }))
+      {fields
+        .map(field => {
+          const { validation, conditionalValidation, ...domProps } = FIELD_CONFIG[field];
+          return { field, ...domProps };
+        })
         .map((input) => {
           const { field, type, title, label, options, hidden, ...props } = input;
           if (field === 'photoComments' && !showPhotoCommentsField) return null;

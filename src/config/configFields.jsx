@@ -315,12 +315,22 @@ export const fieldConfig = {
   agreement: {
     type: 'checkbox',
     title: 'Values and Expectations',
-    label: <>Do you agree to follow {EVENT_TITLE}'s <StyledLink to={websiteLink(SAFETY_POLICY_URL)}>values and expectations</StyledLink>?</>,
+    label: <>Do you agree that everyone you are registering will follow {EVENT_TITLE}'s <StyledLink to={websiteLink(SAFETY_POLICY_URL)}>values and expectations</StyledLink>?</>,
     options: [
       { label: 'Yes', value: 'yes' }
     ],
-    required: true,
-    validation: Yup.array().min(1, 'You must agree to the values and expectations.'),
+    validation: Yup.array(),
+    conditionalValidation: {
+      message: `You must agree to the values and expectations.`,
+      testFn: function (value) {
+        const personIndex = this.path.match(/people\[(\d+)\]/)?.[1];
+        if (Number(personIndex) === 0) { // required for primary registrant only
+          return Array.isArray(value) && value.includes('yes');
+        } else {
+          return true; // not required for additional members of party
+        }
+      }
+    },
     defaultValue: [],
   },
   admission: {
