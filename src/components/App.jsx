@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { MaterialLayout, Error, ScrollToAnchor } from 'components/layouts';
 import { OrderProvider } from 'contexts/OrderContext';
 import * as StaticComponents from 'components/Static';
+import { Placeholder } from 'components/Static';
 import { Registration } from 'components/Registration';
 import { config } from 'config';
 import { logEnvironment } from 'src/logger';
@@ -12,6 +13,10 @@ export const App = () => {
   // useEffect(() => {
   //   document.title = EVENT_TITLE;
   // }, []);
+
+  if (REGISTRATION_ONLY && ENV === 'prd' && !PRD_LIVE) {
+    return <Placeholder />;
+  }
 
   const RootElement = REGISTRATION_ONLY ? Registration : StaticComponents.Home;
 
