@@ -8,3 +8,4 @@ export { Schedule } from './Schedule';
 export { Seattle } from './Seattle';
 export { Staff } from './Staff';
 export { WaysToPay } from './WaysToPay';
+export { Placeholder } from './Placeholder';
