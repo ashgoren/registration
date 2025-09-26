@@ -4,7 +4,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { Link as RouterLink } from 'react-router-dom';
 import { ColorModeToggle } from 'components/layouts';
 import { config } from 'config';
-const { REGISTRATION_TITLE, REGISTRATION_ONLY, NAVBAR_COLOR, NAVBAR_COLOR_DARK, NAVBAR_BACKGROUND_OVERRIDE } = config;
+const { REGISTRATION_TITLE, REGISTRATION_ONLY, NAVBAR_COLOR, NAVBAR_COLOR_DARK, NAVBAR_BACKGROUND_OVERRIDE, PRD_LIVE, ENV } = config;
 
 const pages = [
   { title: 'Home', path: '/' },
@@ -14,8 +14,11 @@ const pages = [
   { title: 'Seattle', path: '/seattle' },
   { title: 'Contact', path: '/contact' },
   { title: 'Payment info', path: '/paymentexplanation' },
-  { title: 'Registration', path: '/registration' }
 ];
+
+if (PRD_LIVE || ENV !== 'prd') {
+  pages.push({ title: 'Registration', path: '/registration' });
+}
 
 const row1 = pages.slice(0, 5);
 const row2 = pages.slice(5);
