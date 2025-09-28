@@ -10,11 +10,14 @@ export const sendEmailConfirmationsHandler = async (event) => {
   const { before, after } = event.data;
   if (before?.data()?.status === 'pending' && after.data().status === 'final') {
     const { people } = after.data();
-    for (const person of people) {
+    const firstPerson = people[0];
+    for (const [index, person] of people.entries()) {
       const { email, receipt } = person;
       const [emailUsername, emailDomain] = email.split('@');
       if (testDomains.includes(emailDomain) && !emailUsername.includes('receipt')) {
-        logger.info(`SKIPPING RECEIPT SEND: ${email}`);
+        logger.info(`SKIPPING RECEIPT SEND (TEST DOMAIN): ${email}`);
+      } else if (person.email === firstPerson.email && index > 0) {
+        logger.info(`SKIPPING RECEIPT SEND (DUPLICATE EMAIL): ${email}`);
       } else {
         await sendMail({
           from: EMAIL_FROM,
