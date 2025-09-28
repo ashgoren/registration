@@ -3,7 +3,6 @@
 import purchaserTemplate from 'templates/receipt-purchaser.md?raw';
 import additionalPersonTemplate from 'templates/receipt-additional-person.md?raw';
 import { Divider, Typography } from '@mui/material';
-import { renderToStaticMarkup } from 'react-dom/server';
 import { renderMarkdownTemplate, formatCurrency } from 'utils';
 import { useScrollToTop } from 'hooks/useScrollToTop';
 import { OrderSummary, PersonSummary } from 'components/OrderSummary';
@@ -24,7 +23,7 @@ export const Receipt = ({ order, paymentMethod, person, isPurchaser }) => {
     ORDER_TOTAL: formatCurrency(order.total),
     SHOW_CHECK_ADDRESS,
     CHECK_TO,
-    CHECK_ADDRESS: renderToStaticMarkup(CHECK_ADDRESS).replace(/<br\s*\/?>/g, ', '),
+    CHECK_ADDRESS: CHECK_ADDRESS.join(', '),
     EVENT_TITLE,
     PAYMENT_DUE_DATE,
     DIRECT_PAYMENT_URL
