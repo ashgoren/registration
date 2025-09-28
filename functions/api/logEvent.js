@@ -3,6 +3,6 @@
 import { logger } from 'firebase-functions/v2';
 
 export const logEvent = (payload) => {
-  logger.info('[Frontend]', payload);
+  logger.info(`[Frontend] ${payload.message}`, payload);
   return { status: 'ok' };
 };
