@@ -77,7 +77,7 @@ const fetchTransactionChunk = async (accessToken, startDate, endDate) => {
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw createError(ErrorType.PAYPAL_API, `Failed to fetch transactions: ${response.status} ${errorText}`);
+    throw createError(ErrorType.PAYPAL_API, `Failed to fetch transactions with start_date ${startDate.toISOString()} and end_date ${endDate.toISOString()}: ${response.status} ${errorText}`);
   }
 
   const data = await response.json();
