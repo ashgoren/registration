@@ -9,11 +9,19 @@ const config = {
   },
 
   event: {
-    title: "Example Event Title",
-    title_with_year: "Example Event Title 2025", // must match backend config
-    location: "Example Event Location, City, State",
-    date: "Example Event Dates",
-    timezone: "America/Los_Angeles"
+    title: 'Example Event Title',
+    title_with_year: 'Example Event Title 2025', // must match backend config
+    location: 'Example Event Location, City, State',
+    date: 'Example Event Dates',
+    timezone: 'America/Los_Angeles'
+  },
+
+  calendar: {
+    title: 'Example Event Title',
+    description: 'Join us for an exciting event! More details at https://example.com',
+    location: 'Example Event Location, City, State',
+    start: '2025-10-03T19:00:00-07:00', // ISO 8601 format
+    end: '2025-10-05T15:00:00-07:00' // ISO 8601 format
   },
 
   contacts: {
@@ -36,7 +44,7 @@ const config = {
   },
 
   static_pages: {
-    enabled: false,
+    enabled: true,
     components: ['Home', 'About', 'Staff', 'Seattle', 'Contact', 'Schedule', 'PaymentExplanation'], // These must exist in src/components/Static
   },
 

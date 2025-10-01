@@ -2,6 +2,7 @@ import { useTheme } from '@mui/system';
 import { Typography, Box } from '@mui/material';
 import { StyledLink, StyledPaper, PageTitle, SectionDivider, Paragraph } from 'components/layouts/SharedStyles';
 import { mailtoLink} from 'utils';
+import { CalendarLinks } from 'components/CalendarLinks';
 import { config } from 'config';
 const { EMAIL_CONTACT, EVENT_TITLE, EVENT_LOCATION, EVENT_DATE, WAITLIST_MODE } = config;
 
@@ -42,6 +43,10 @@ export const Home = () => {
       <Paragraph>
         Registration: $120-240 sliding scale ($180 break-even)
       </Paragraph>
+
+      <CalendarLinks />
+
+      <SectionDivider />
 
       <Paragraph sx={{ mb: 2 }}>
         some_event will follow mask guidelines of the weekly Seattle contras.<br />
