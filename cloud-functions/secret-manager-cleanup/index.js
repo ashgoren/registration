@@ -13,13 +13,15 @@ export const onSecretVersionHandler = async (message, context) => {
     const projectId = auditLog.resource.labels.project_id;
     console.log(`${projectId}: Secret "${secretName}" version ${versionNumber} added`);
 
+    const VERSIONS_TO_KEEP = projectId.includes('-stg') ? 2 : 5;
+
     const [versions] = await client.listSecretVersions({
       parent,
       filter: "state:ENABLED OR state:DISABLED",
     });
 
-    if (versions.length <= 1) {
-      console.log("No old versions to destroy.");
+    if (versions.length <= VERSIONS_TO_KEEP) {
+      console.log(`Not enough old versions to destroy (keeping the latest ${VERSIONS_TO_KEEP}).`);
       return;
     }
 
@@ -29,7 +31,7 @@ export const onSecretVersionHandler = async (message, context) => {
       return timeB - timeA;
     });
 
-    const oldVersions = versions.slice(1);
+    const oldVersions = versions.slice(VERSIONS_TO_KEEP);
 
     console.log(`  - Found ${oldVersions.length} old versions to destroy.`);
 
