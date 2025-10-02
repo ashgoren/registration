@@ -313,10 +313,11 @@ git checkout -b staging
 - [ ] Confirm Stripe/PayPal production secrets are set in Doppler  
   - **prd_frontend:** `VITE_STRIPE_PUBLISHABLE_KEY` or `VITE_PAYPAL_CLIENT_ID`
   - **prd_backend:** `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET` *or* `PAYPAL_CLIENT_ID` + `PAYPAL_CLIENT_SECRET` + `PAYPAL_WEBHOOK_ID`
-- [ ] Update registration link on homepage
+- [ ] Update registration link on homepage (if applicable)
+- [ ] Update `robots.txt` to allow indexing (if sharing direct link)
+- [ ] Set prd.live to true in `configEvent.jsx`
 - [ ] Clear spreadsheet data
 - [ ] Clear production Firestore data if needed
-- [ ] Update `robots.txt` to allow indexing (if sharing direct link)
 - [ ] Redeploy after any updates to Doppler secrets or source code
 
 ### 3. Hibernation (optional)
