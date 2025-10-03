@@ -317,6 +317,7 @@ git checkout -b staging
 - [ ] Update `robots.txt` to allow indexing (if sharing direct link)
 - [ ] Set prd.live to true in `configEvent.jsx`
 - [ ] Clear spreadsheet data
+- [ ] Clear staging Firestore data
 - [ ] Clear production Firestore data if needed
 - [ ] Redeploy after any updates to Doppler secrets or source code
 

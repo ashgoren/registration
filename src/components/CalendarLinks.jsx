@@ -3,15 +3,15 @@ import { google, ics } from 'calendar-link';
 import { Button, Menu, MenuItem } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import userConfig from 'config/configEvent.jsx';
-const { calendar } = userConfig;
+import { config } from 'config';
+const { CALENDAR } = config;
 
 const event = {
-  title: calendar.title,
-  description: calendar.description,
-  location: calendar.location,
-  start: new Date(calendar.start),
-  end: new Date(calendar.end),
+  title: CALENDAR.title,
+  description: CALENDAR.description,
+  location: CALENDAR.location,
+  start: new Date(CALENDAR.start),
+  end: new Date(CALENDAR.end),
 };
 
 export const CalendarLinks = () => {
