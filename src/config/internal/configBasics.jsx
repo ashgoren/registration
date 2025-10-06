@@ -53,7 +53,7 @@ const baseConfig = {
 
   EVENT_TITLE: event.title,
   EVENT_TITLE_WITH_YEAR: event.title_with_year,
-  REGISTRATION_TITLE: `${event.title} Registration`,
+  NAVBAR_REGISTRATION_TITLE: `${event.title} Registration`,
   CONFIRMATION_ELECTRONIC_TITLE: `${event.title} Confirmation`,
   CONFIRMATION_CHECK_TITLE: `${event.title} Registration`,
 

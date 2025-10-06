@@ -4,7 +4,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { Link as RouterLink } from 'react-router-dom';
 import { ColorModeToggle } from 'components/layouts';
 import { config } from 'config';
-const { REGISTRATION_TITLE, REGISTRATION_ONLY, NAVBAR_COLOR, NAVBAR_COLOR_DARK, NAVBAR_BACKGROUND_OVERRIDE, PRD_LIVE, ENV } = config;
+const { NAVBAR_REGISTRATION_TITLE, REGISTRATION_ONLY, NAVBAR_COLOR, NAVBAR_COLOR_DARK, NAVBAR_BACKGROUND_OVERRIDE, PRD_LIVE, ENV } = config;
 
 const pages = [
   { title: 'Home', path: '/' },
@@ -106,10 +106,10 @@ export const Navbar = ({ toggleColorMode }) => {
         <img src={'/logo.png'} alt="" style={{ margin: '10px 10px 10px 0px' }}/>
       </Box>
       <ListItem sx={{ display: {xs: 'none', sm: 'block' }, my: 2, color: 'inherit' }}>
-        <Typography variant="h4" textAlign="center">{REGISTRATION_TITLE}</Typography>
+        <Typography variant="h4" textAlign="center">{NAVBAR_REGISTRATION_TITLE}</Typography>
       </ListItem>
       <ListItem sx={{ display: {xs: 'block', sm: 'none' }, my: 2, color: 'inherit' }}>
-        <Typography variant="h5" textAlign="center">{REGISTRATION_TITLE}</Typography>
+        <Typography variant="h5" textAlign="center">{NAVBAR_REGISTRATION_TITLE}</Typography>
       </ListItem>
     </>
   );
