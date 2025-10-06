@@ -7,7 +7,7 @@ import { Label } from 'components/layouts/SharedStyles';
 const CheckboxOption = memo(({ name, option, onChange, ...props }) => {
   const [field] = useField(name);
   return (
-    <FormControlLabel
+    <FormControlLabel sx={{ alignItems: 'flex-start' }}
       control={
         <Checkbox
           {...field}
@@ -16,6 +16,7 @@ const CheckboxOption = memo(({ name, option, onChange, ...props }) => {
           value={option.value}
           color="secondary"
           onChange={onChange || field.onChange}
+          sx={{ pt: 0.1 }}
           {...props}
         />
       }
