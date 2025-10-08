@@ -43,7 +43,7 @@ const baseConfig = {
   DEPOSIT_OPTION: payments.deposit.enabled,
   DEPOSIT_COST: payments.deposit.amount,
   DONATION_OPTION: payments.donation.enabled,
-  DONATION_MAX: payments.donation.max,
+  DONATION_MAX: payments.donation.max || 0,
   COVER_FEES_OPTION: payments.cover_fees_checkbox,
   DIRECT_PAYMENT_URL: payments.direct_payment_url,
   SHOW_CHECK_ADDRESS: payments.checks.show_postal_address,
