@@ -2,7 +2,6 @@
 
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
-import eslint from 'vite-plugin-eslint'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -10,12 +9,7 @@ export default defineConfig({
     sourcemap: true
   },
   plugins: [
-    react(),
-    eslint({
-      include: ['src/**/*.js', 'src/**/*.jsx', 'src/**/*.ts', 'src/**/*.tsx'],
-      emitWarning: true,
-      emitError: true
-    })
+    react()
   ],
   resolve: {
     alias: {
@@ -39,7 +33,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'happy-dom', // default: jsdom
-    setupFiles: './src/setupTests.js',
+    setupFiles: './src/setupTests.ts',
     css: true,
     reporters: ['verbose'],
     coverage: {
