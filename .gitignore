@@ -42,3 +42,7 @@ tmp/
 .firebase/
 .firebase-emulator-data/
 .firebaserc
+
+# lint
+tsconfig.tsbuildinfo
+*.tsbuildinfo
