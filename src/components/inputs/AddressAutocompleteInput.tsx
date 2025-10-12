@@ -3,9 +3,40 @@ import { useField } from 'formik';
 import { TextField, Popper, Paper, List, ListItemButton, ListItemText, ClickAwayListener } from '@mui/material';
 import { usePlacesAutocomplete } from 'hooks/usePlacesAutocomplete';
 import { logErrorDebug } from 'src/logger';
+import type { ChangeEvent, KeyboardEvent } from 'react';
+import type { TextFieldProps } from '@mui/material';
 const { VITE_GOOGLE_PLACES_API_KEY } = import.meta.env;
 
-const PLACES_FIELD_MAPPING = {
+interface AddressAutocompleteInputProps extends Omit<TextFieldProps, 'name' | 'label'> {
+  label: string;
+  name: string;
+}
+
+interface AddressData {
+  address?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+  country?: string;
+}
+
+interface AddressComponent {
+  types: string[];
+  shortText?: string;
+  longText?: string;
+}
+
+interface FieldUpdater {
+  fieldName: string;
+  setValue: (text: string) => void;
+  setError: (text: string) => void;
+}
+
+interface FieldMapping {
+  [key: string]: string[];
+}
+
+const PLACES_FIELD_MAPPING: FieldMapping = {
   address: ['street_number', 'route'],
   city: ['locality', 'sublocality_level_1'],
   state: ['administrative_area_level_1'],
@@ -13,7 +44,7 @@ const PLACES_FIELD_MAPPING = {
   country: ['country'],
 };
 
-export const AddressAutocompleteInput = memo(({ label, name, ...props }) => {
+export const AddressAutocompleteInput = memo(({ label, name, ...props }: AddressAutocompleteInputProps) => {
   // --- Formik field setup ---
   const [field, meta, helpers] = useField(name);
   const { touched, error } = meta;
@@ -24,7 +55,7 @@ export const AddressAutocompleteInput = memo(({ label, name, ...props }) => {
   const relatedFieldUpdaters = useRelatedFieldUpdaters(personIndex);
 
   // --- UI state ---
-  const textFieldRef = useRef(null); // to anchor the Popper
+  const textFieldRef = useRef<HTMLDivElement>(null); // to anchor the Popper
   const [focusedSuggestionIndex, setFocusedSuggestionIndex] = useState(-1); // index of the focused suggestion
   const wasManuallyTriggered = useRef(false);
 
@@ -42,7 +73,7 @@ export const AddressAutocompleteInput = memo(({ label, name, ...props }) => {
   }, [field.value, relatedFieldUpdaters, setError]);
 
   // --- Handle Input Change & Fetch Predictions ---
-  const handleInputChange = useCallback(async (event) => {
+  const handleInputChange = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value;
     setValue(inputValue);
     setFocusedSuggestionIndex(-1); // Reset focus when input text changes
@@ -58,7 +89,7 @@ export const AddressAutocompleteInput = memo(({ label, name, ...props }) => {
   }, [getPredictions, clearPredictions, setValue]);
 
   // --- Handle Prediction Selection ---
-  const handlePredictionSelect = useCallback(async (suggestion) => {
+  const handlePredictionSelect = useCallback(async (suggestion: google.maps.places.AutocompleteSuggestion) => {
     try {
       if (!suggestion?.placePrediction) return;
 
@@ -76,7 +107,7 @@ export const AddressAutocompleteInput = memo(({ label, name, ...props }) => {
 
         // Set values for related fields (city, state, zip, country)
         for (const { fieldName, setValue: setRelatedValue, setError: setRelatedError } of relatedFieldUpdaters) {
-          setRelatedValue(addressData[fieldName] || '');
+          setRelatedValue(addressData[fieldName as keyof AddressData] || '');
           setRelatedError('');
         }
       }
@@ -89,7 +120,7 @@ export const AddressAutocompleteInput = memo(({ label, name, ...props }) => {
   }, [getPlaceDetails, clearPredictions, setValue, setError, relatedFieldUpdaters]);
 
   // --- Allow keyboard navigation of suggestions ---
-  const handleKeyDown = useCallback((event) => {
+  const handleKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
     if (
       (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) || // Printable characters
       event.key === 'Backspace' ||
@@ -166,8 +197,13 @@ export const AddressAutocompleteInput = memo(({ label, name, ...props }) => {
         >
           <Paper elevation={3} style={{ maxHeight: '200px', overflowY: 'auto' }}>
             <List dense>
-              {predictions.map((suggestion, index) => {
+              {predictions.map((suggestion: google.maps.places.AutocompleteSuggestion, index: number) => {
                 const placePrediction = suggestion.placePrediction;
+                if (!placePrediction) {
+                  logErrorDebug('Invalid suggestion format:', suggestion);
+                  return null;
+                }
+
                 const displayText = typeof placePrediction.text === 'string'
                   ? placePrediction.text
                   : placePrediction.text?.toString();
@@ -192,7 +228,7 @@ export const AddressAutocompleteInput = memo(({ label, name, ...props }) => {
 
 // helpers
 
-const extractAddressComponents = (addressComponents, fieldMapping) => {
+const extractAddressComponents = (addressComponents: AddressComponent[], fieldMapping: FieldMapping): AddressData => {
   if (!addressComponents) return {};
   
   return Object.entries(fieldMapping).reduce((fields, [fieldName, componentTypes]) => {
@@ -202,10 +238,10 @@ const extractAddressComponents = (addressComponents, fieldMapping) => {
       }).join(' ').trim();
     
     return { ...fields, [fieldName]: value };
-  }, {});
+  }, {} as AddressData);
 };
 
-const useRelatedFieldUpdaters = (personIndex) => {
+const useRelatedFieldUpdaters = (personIndex: string): FieldUpdater[] => {
   const [, , cityHelpers] = useField(`people[${personIndex}].city`);
   const [, , stateHelpers] = useField(`people[${personIndex}].state`);
   const [, , zipHelpers] = useField(`people[${personIndex}].zip`);
@@ -214,23 +250,23 @@ const useRelatedFieldUpdaters = (personIndex) => {
   return useMemo(() => [
     {
       fieldName: 'city',
-      setValue: (text) => cityHelpers.setValue(text || ''),
-      setError: (text) => cityHelpers.setError(text || '')
+      setValue: (text: string) => cityHelpers.setValue(text || ''),
+      setError: (text: string) => cityHelpers.setError(text || '')
     },
     {
       fieldName: 'state',
-      setValue: (text) => stateHelpers.setValue(text || ''),
-      setError: (text) => stateHelpers.setError(text || '')
+      setValue: (text: string) => stateHelpers.setValue(text || ''),
+      setError: (text: string) => stateHelpers.setError(text || '')
     },
     {
       fieldName: 'zip',
-      setValue: (text) => zipHelpers.setValue(text || ''),
-      setError: (text) => zipHelpers.setError(text || '')
+      setValue: (text: string) => zipHelpers.setValue(text || ''),
+      setError: (text: string) => zipHelpers.setError(text || '')
     },
     {
       fieldName: 'country',
-      setValue: (text) => countryHelpers.setValue(text || ''),
-      setError: (text) => countryHelpers.setError(text || '')
+      setValue: (text: string) => countryHelpers.setValue(text || ''),
+      setError: (text: string) => countryHelpers.setError(text || '')
     }
   ], [cityHelpers, stateHelpers, zipHelpers, countryHelpers]);
 };

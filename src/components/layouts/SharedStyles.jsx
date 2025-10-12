@@ -84,7 +84,7 @@ const SectionDivider = ({ children, ...props }) => {
   )
 }
 
-const Label  = ({ children, name, required=false, sx={} }) => {
+const Label  = ({ children, name = '', required=false, sx={} }) => {
   return (
     <Box sx={sx}>
       <FormLabel component='legend' htmlFor={name}>

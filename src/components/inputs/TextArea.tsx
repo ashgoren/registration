@@ -3,7 +3,13 @@ import { useField } from 'formik';
 import { TextField, FormHelperText } from '@mui/material';
 import { Label } from 'components/layouts/SharedStyles';
 
-export const TextArea = memo(({ label, name, rows }) => {
+interface TextAreaProps {
+  label?: string;
+  name: string;
+  rows?: number;
+}
+
+export const TextArea = memo(({ label, name, rows }: TextAreaProps) => {
   const [field, { touched, error }, { setError }] = useField(name);
 
   return (

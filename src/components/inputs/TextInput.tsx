@@ -1,8 +1,19 @@
 import { memo } from 'react';
 import { useField } from 'formik';
 import { Box, TextField } from '@mui/material';
+import type { FocusEventHandler } from 'react';
+import type { TextFieldProps } from '@mui/material';
 
-export const TextInput = memo(({ label, name, type, hidden, onBlur, ...props }) => {
+interface TextInputProps extends Omit<TextFieldProps, 'name' | 'error' | 'helperText'> {
+  label?: string;
+  name: string;
+  type?: string;
+  hidden?: boolean;
+  onBlur?: FocusEventHandler<HTMLInputElement>;
+  width?: string | number;
+}
+
+export const TextInput = memo(({ label, name, type, hidden, onBlur, width, ...props }: TextInputProps) => {
   const [field, { touched, error }, { setError }] = useField(name);
 
   const handleFocus = () => setError('');
@@ -11,7 +22,7 @@ export const TextInput = memo(({ label, name, type, hidden, onBlur, ...props }) 
   const textFieldStyles = {
     mb: '.3rem',
     display: hidden ? 'none' : undefined,
-    ...(props.width && { width: props.width })
+    ...(width && { width })
   };
   
   return (
