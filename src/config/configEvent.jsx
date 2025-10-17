@@ -59,7 +59,7 @@ const config = {
   },
 
   admissions: {
-    mode: 'tiered', // sliding-scale|fixed|tiered
+    mode: 'sliding-scale', // sliding-scale|fixed|tiered
     sliding_scale: {
       cost_range: [120, 500],
       cost_default: 350

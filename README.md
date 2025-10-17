@@ -332,6 +332,10 @@ npm run disable-apis   # npm run enable-apis to wake up
 > This will run terraform destroy, delete firebase functions, and delete firestore database for both staging and production projects.  
 > It will not delete the Google Cloud or Doppler projects themselves.
 
+### 5. Sharing admin access
+
+- Necessary access for another developer to take over in a 'hit-by-the-bus' scenario: GitHub, Doppler, GCP, domain registration, spreadsheet
+
 ```bash
 npm run shutdown <PROJECT_ID>
 ```
