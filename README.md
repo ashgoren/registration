@@ -247,7 +247,7 @@ npm run set-payment-secrets <PROJECT_ID> paypal prd
 | `src/components/layouts/Navbar.jsx` | Navbar |
 | `index.html` | Site title, metadata description, [og:image](https://ogp.me/) |
 | `public/logo.png` | Optional Navbar logo (≤80px height recommended) |
-| `public/` | favicon files - use a generator, e.g. [favicon-generator](https://www.favicon-generator.org) |
+| `public/` | favicon files - use a generator, e.g. [favicon-generator](https://realfavicongenerator.net/) |
 
 ---
 
