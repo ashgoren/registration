@@ -81,8 +81,8 @@ export const Home = () => {
       <SectionDivider/>
 
       <Typography variant="h4" fontStyle="italic" gutterBottom>
-      <StyledLink internal={true} to="/registration">Registration open</StyledLink>
-      {/* Registration opening in early November */}
+      {/* <StyledLink internal={true} to="/registration">Registration open</StyledLink> */}
+      Registration opening in the future :)
       </Typography>
     </StyledPaper>
   );
