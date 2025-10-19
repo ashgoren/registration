@@ -82,7 +82,7 @@ export const Home = () => {
 
       <Typography variant="h4" fontStyle="italic" gutterBottom>
       {/* <StyledLink internal={true} to="/registration">Registration open</StyledLink> */}
-      Registration opening in the future
+      Registration opening in the future!
       </Typography>
     </StyledPaper>
   );
