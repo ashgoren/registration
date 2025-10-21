@@ -304,6 +304,17 @@ export const fieldConfig = {
     validation: Yup.array(),
     defaultValue: [],
   },
+  tests: {
+    type: 'checkbox',
+    title: "Covid Tests",
+    label: "You will need to test shortly before arriving at camp AND again on Saturday afternoon. Please also bring an extra test or two, for your own use if you should feel ill during the weekend. If you can not bring your own tests, please let us know here.",
+    options: [
+      { label: 'I need 1 test', value: '1' },
+      { label: 'I need 2 tests', value: '2' },
+    ],
+    validation: Yup.array(),
+    defaultValue: [],
+  },
   comments: {
     type: 'textarea',
     title: "Anything else?",
