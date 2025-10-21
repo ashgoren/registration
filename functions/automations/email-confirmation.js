@@ -4,8 +4,8 @@ import { getConfig } from '../config/internal/config.js';
 
 // onDocumentUpdated
 export const sendEmailConfirmationsHandler = async (event) => {
-  const { EMAIL_IGNORE_TEST_DOMAINS, EMAIL_FROM, EMAIL_SUBJECT, EMAIL_REPLY_TO, IS_EMULATOR, ENV } = getConfig();
-  const testDomains = EMAIL_IGNORE_TEST_DOMAINS ? EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
+  const { EMAIL_FROM, EMAIL_SUBJECT, EMAIL_REPLY_TO, IS_EMULATOR } = getConfig();
+  const testDomains = ['test.com', 'testing.com', 'example.com', 'example.org', 'example.net'];
 
   const { before, after } = event.data;
   if (before?.data()?.status === 'pending' && after.data().status === 'final') {
@@ -13,8 +13,8 @@ export const sendEmailConfirmationsHandler = async (event) => {
     const firstPerson = people[0];
     for (const [index, person] of people.entries()) {
       const { email, receipt } = person;
-      const [emailUsername, emailDomain] = email.split('@');
-      if (testDomains.includes(emailDomain) && !emailUsername.includes('receipt') && ENV !== 'prd') {
+      const emailDomain = email.split('@')[1].toLowerCase();
+      if (testDomains.includes(emailDomain)) {
         logger.info(`SKIPPING RECEIPT SEND (TEST DOMAIN): ${email}`);
       } else if (person.email === firstPerson.email && index > 0) {
         logger.info(`SKIPPING RECEIPT SEND (DUPLICATE EMAIL): ${email}`);
