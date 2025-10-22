@@ -137,7 +137,7 @@ onDocumentUpdatedFunctions.forEach(({ name, handler, document }) => {
 });
 
 onMessagePublishedFunctions.forEach(({ name, handler, topic }) => {
-  exports[name] = onMessagePublished({ topic, region, secrets }, handler);
+  exports[name] = onMessagePublished({ topic, region, secrets, maxInstances: 50 }, handler);
 });
 
 export const {
