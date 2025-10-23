@@ -2,10 +2,11 @@ import { Typography, Box } from '@mui/material';
 import { useOrder } from 'hooks/useOrder';
 import { MyStepper } from 'components/layouts';
 import { StyledPaper } from 'components/layouts/SharedStyles';
-import { config } from 'config';
-const { TITLE, REGISTRATION_ONLY, WAITLIST_MODE } = config;
+import { config } from 'src/config';
+import type { ReactNode } from 'react';
+const { REGISTRATION_ONLY, WAITLIST_MODE } = config;
 
-export const Header = ({ titleText = TITLE, children }) => {
+export const Header = ({ titleText, children }: { titleText: string, children: ReactNode }) => {
   const { currentPage } = useOrder();
 
   return (
@@ -18,7 +19,7 @@ export const Header = ({ titleText = TITLE, children }) => {
 
       {currentPage !== 'confirmation' && !WAITLIST_MODE &&
         <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-          <MyStepper currentPage={currentPage} />
+          <MyStepper />
         </Box>
       }
 

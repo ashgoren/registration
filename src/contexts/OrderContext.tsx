@@ -1,9 +1,10 @@
 import { createContext, useState, useReducer, useEffect, useCallback } from 'react';
-import { cache, cached } from 'utils';
-import { config } from 'config';
+import { cache, cached } from 'src/utils';
+import { config } from 'src/config';
+import type { ReactNode } from 'react';
 const { getOrderDefaults, PAYMENT_METHODS, WAITLIST_MODE } = config;
 
-export const OrderContext = createContext();
+export const OrderContext = createContext(null);
 
 function orderReducer(state, action) {
   switch (action.type) {
@@ -16,19 +17,19 @@ function orderReducer(state, action) {
   }
 }
 
-export const OrderProvider = ({ children }) => {
+export const OrderProvider = ({ children }: { children: ReactNode }) => {
   const initialOrderState = cached('order') || getOrderDefaults();
   const [order, dispatch] = useReducer(orderReducer, initialOrderState);
-  const [orderId, setOrderId] = useState(cached('orderId') || null);
-  const [amountToCharge, setAmountToCharge] = useState(null);
-  const [electronicPaymentDetails, setElectronicPaymentDetails] = useState(cached('electronicPaymentDetails') || { id: null, clientSecret: null });
-  const [currentPage, setCurrentPage] = useState(cached('currentPage') || 1);
-  const [processing, setProcessing] = useState(null);
-  const [processingMessage, setProcessingMessage] = useState(null);
-  const [paymentMethod, setPaymentMethod] = useState(WAITLIST_MODE ? 'waitlist' : PAYMENT_METHODS[0]);
-  const [error, setError] = useState(null);
-  const [warmedUp, setWarmedUp] = useState(false);
-  const [receipt, setReceipt] = useState(cached('receipt') || null);
+  const [orderId, setOrderId] = useState<string | null>(cached('orderId') || null);
+  const [amountToCharge, setAmountToCharge] = useState<number | null>(null);
+  const [electronicPaymentDetails, setElectronicPaymentDetails] = useState<{ id: string | null; clientSecret: string | null; }>(cached('electronicPaymentDetails') || { id: null, clientSecret: null });
+  const [currentPage, setCurrentPage] = useState<number | string>(cached('currentPage') || 1);
+  const [processing, setProcessing] = useState<boolean>(false);
+  const [processingMessage, setProcessingMessage] = useState<string | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<string>(WAITLIST_MODE ? 'waitlist' : PAYMENT_METHODS[0]);
+  const [error, setError] = useState<string | null>(null);
+  const [warmedUp, setWarmedUp] = useState<boolean>(false);
+  const [receipt, setReceipt] = useState<string | null>(cached('receipt') || null);
 
   const updateOrder = useCallback((updates) => dispatch({ type: 'UPDATE_ORDER', payload: updates }), []);
 
