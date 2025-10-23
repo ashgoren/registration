@@ -31,3 +31,12 @@ resource "google_monitoring_alert_policy" "firebase_function_errors" {
     }
   }
 }
+
+# Exclude no available instance alerts on disableprojectapis
+resource "google_logging_project_exclusion" "exclude_disableprojectapis_cold_start_errors" {
+  name        = "exclude-disableprojectapis-cold-start-errors"
+  description = "Exclude transient no available instance alerts on disableprojectapis"
+  filter      = "resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"disableprojectapis\" AND textPayload=~\"no available instance\""
+
+  depends_on = [google_project_service.apis]
+}
