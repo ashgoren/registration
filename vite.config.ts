@@ -12,6 +12,7 @@ export default defineConfig({
     react()
   ],
   resolve: {
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
     alias: {
       src: "/src",
       config: "/src/config",
