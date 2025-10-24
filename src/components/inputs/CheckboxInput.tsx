@@ -2,9 +2,18 @@ import { memo } from 'react';
 import { useField } from 'formik';
 import { FormControl, FormHelperText, FormControlLabel, Checkbox } from '@mui/material';
 import { Label } from 'components/layouts/SharedStyles';
+import type { CheckboxProps } from '@mui/material/Checkbox';
+import type { FormControlProps } from '@mui/material/FormControl';
 // import { logDebug } from 'src/logger';
 
-const CheckboxOption = memo(({ name, option, onChange, ...props }) => {
+type Option = { label: string; value: string; };
+
+interface CheckboxOptionProps extends Omit<CheckboxProps, 'name' | 'value'> {
+  name: string;
+  option: Option;
+}
+
+const CheckboxOption = memo(({ name, option, onChange }: CheckboxOptionProps) => {
   const [field] = useField(name);
   return (
     <FormControlLabel sx={{ alignItems: 'flex-start' }}
@@ -17,7 +26,6 @@ const CheckboxOption = memo(({ name, option, onChange, ...props }) => {
           color="secondary"
           onChange={onChange || field.onChange}
           sx={{ pt: 0.1 }}
-          {...props}
         />
       }
       label={option.label}
@@ -25,7 +33,13 @@ const CheckboxOption = memo(({ name, option, onChange, ...props }) => {
   );
 });
 
-export const CheckboxInput = memo(({ name, label, options, onChange, ...props }) => {
+interface CheckboxInputProps extends Omit<FormControlProps, 'error'> {
+  name: string;
+  label: string;
+  options: Option[];
+}
+
+export const CheckboxInput = memo(({ name, label, options, onChange }: CheckboxInputProps) => {
   const [, { touched, error }] = useField(name);
 
   // logDebug('render CheckboxInput:', name);
@@ -35,7 +49,7 @@ export const CheckboxInput = memo(({ name, label, options, onChange, ...props })
       <Label name={name} sx={{ mb: 1 }}>{label}</Label>
       {options.map((option) => (
         <div key={option.value}>
-          <CheckboxOption name={name} option={option} onChange={onChange} {...props} />
+          <CheckboxOption name={name} option={option} onChange={onChange} />
         </div>
       ))}
       {touched && error && <FormHelperText sx={{ mt: 2 }}>{error}</FormHelperText>}

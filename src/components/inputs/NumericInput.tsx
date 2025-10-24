@@ -3,8 +3,18 @@ import { useField } from 'formik';
 import { isMobile } from 'react-device-detect';
 import { PatternFormat } from 'react-number-format';
 import { Box, TextField } from '@mui/material';
+import type { FocusEventHandler } from 'react';
+import type { PatternFormatProps } from 'react-number-format';
 
-export const NumericInput = memo(({ variant, label, name, type, pattern, range, onBlur, ...props }) => {
+interface NumericInputProps extends Omit<PatternFormatProps, 'onValueChange' | 'value' | 'name' | 'format' | 'customInput' | 'size' | 'color'> {
+  variant?: 'filled' | 'outlined' | 'standard';
+  label: string;
+  name: string;
+  pattern: string;
+  onBlur?: FocusEventHandler<HTMLInputElement>;
+}
+
+export const NumericInput = memo(({ variant, label, name, pattern, onBlur, ...props }: NumericInputProps) => {
   const isPhoneInput = pattern === '###-###-####'; // replace with more generalizable solution
   const isYearInput = pattern === '####'; // replace with more generalizable solution
   const [field, { touched, error }, { setError }] = useField(name);

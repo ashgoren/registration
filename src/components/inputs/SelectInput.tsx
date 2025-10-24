@@ -1,12 +1,21 @@
 import { Field } from 'formik';
 import { Select, MenuItem, Typography } from '@mui/material';
+import type { FieldProps } from 'formik';
+import type { SelectProps } from '@mui/material/Select';
 
-export const SelectInput = ({ name, label, options, ...props }) => {
+type Option = { label: string; value: string; };
+
+interface SelectInputProps extends Omit<SelectProps, 'name' | 'children'> {
+  name: string;
+  options: Option[];
+}
+
+export const SelectInput = ({ name, options, ...props }: SelectInputProps) => {
   return (
     <>
-      <Typography gutterBottom htmlFor={name}>{label}</Typography>
+      {/* <Typography gutterBottom htmlFor={name}>{label}</Typography> */}
       <Field name={name}>
-        {({ field }) => (
+        {({ field }: FieldProps) => (
           <Select
             id={name}
             {...field}

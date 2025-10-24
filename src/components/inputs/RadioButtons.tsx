@@ -2,11 +2,21 @@ import { memo } from 'react';
 import { useField } from 'formik';
 import { FormControl, RadioGroup, FormControlLabel, Radio, FormHelperText } from '@mui/material';
 import { Label } from 'components/layouts/SharedStyles';
+import type { RadioGroupProps } from '@mui/material';
+import type { ChangeEvent } from 'react';
 
-export const RadioButtons = memo(({ name, label, options, required, ...props }) => {
+type Option = { label: string; value: string; };
+
+interface RadioButtonsProps extends Omit<RadioGroupProps, 'name' | 'value' | 'children'> {
+  name: string;
+  label?: string;
+  options: Option[];
+}
+
+export const RadioButtons = memo(({ name, label, options, ...props }: RadioButtonsProps) => {
   const [field, { touched, error }, { setError }] = useField(name);
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     field.onChange(e);
     setError('');
   };

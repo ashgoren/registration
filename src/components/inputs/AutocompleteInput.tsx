@@ -1,26 +1,44 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useField } from 'formik';
 import { TextField, Box } from '@mui/material';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+import type { SyntheticEvent, FocusEvent, KeyboardEvent } from 'react';
+import type { TextFieldProps, AutocompleteInputChangeReason } from '@mui/material';
 
-const defaultFilterOptions = createFilterOptions({
+interface Option {
+  id?: string;
+  fullName?: string;
+  abbreviation?: string;
+  country?: string;
+}
+
+interface AutocompleteInputProps extends Omit<TextFieldProps, 'name' | 'label'> {
+  label: string;
+  name: string;
+  suggestions?: Option[];
+  filterOptions?: typeof defaultFilterOptions;
+  width?: string | number;
+  freeSolo?: boolean;
+}
+
+const defaultFilterOptions = createFilterOptions<Option>({
   matchFrom: 'any',
   stringify: (option) => `${option?.fullName || ''} ${option?.abbreviation || ''}`
 });
 
-export const AutocompleteInput = ({ label, name, suggestions = [], filterOptions = defaultFilterOptions, ...props }) => {
+export const AutocompleteInput = ({ label, name, suggestions = [], filterOptions = defaultFilterOptions, ...props }: AutocompleteInputProps) => {
   const [field, { touched, error }, { setValue, setError, setTouched }] = useField(name);
   const [open, setOpen] = useState(false);
   const wasManuallyTriggered = useRef(false);
   const isAutofilling = useRef(false);
-  const textFieldRef = useRef(null);
+  const textFieldRef = useRef<HTMLInputElement>(null);
   const isFreeSoloActive = props.freeSolo !== false;
 
   const textFieldStyles = { mb: '.3rem', ...(props.width && { width: props.width })};
 
-  const getOptionLabel = (option) => typeof option === 'string' ? option : option?.abbreviation || '';
+  const getOptionLabel = (option: Option | string) => typeof option === 'string' ? option : option?.abbreviation || '';
 
-  let autocompleteValue = null;
+  let autocompleteValue: Option | string | null = null;
   if (field.value) {
     const foundOption = suggestions.find(opt => opt.abbreviation === field.value);
     if (foundOption) {
@@ -30,7 +48,7 @@ export const AutocompleteInput = ({ label, name, suggestions = [], filterOptions
     }
   }
 
-  const isOptionEqualToValue = (option, value) => {
+  const isOptionEqualToValue = (option: Option, value: Option | string): boolean => {
     if (typeof value === 'string') {
       return option.abbreviation === value || option.fullName === value;
     }
@@ -43,7 +61,7 @@ export const AutocompleteInput = ({ label, name, suggestions = [], filterOptions
     return false;
   };
 
-  const handleAutocompleteInputChange = (event, newValue, reason) => {
+  const handleAutocompleteInputChange = (event: SyntheticEvent, newValue: string, reason: AutocompleteInputChangeReason) => {
     if (reason === 'input') {
       const isLikelyAutofill = !wasManuallyTriggered.current && (!event || (event && event.type !== 'keydown' && event.type !== 'paste'));
 
@@ -74,7 +92,7 @@ export const AutocompleteInput = ({ label, name, suggestions = [], filterOptions
     setError('');
   };
 
-  const handleAutocompleteBlur = (event) => {
+  const handleAutocompleteBlur = (event: FocusEvent<HTMLInputElement>) => {
     setTouched(true);
     const value = event.target.value || '';
     const foundOption = suggestions.find(opt => opt.fullName?.toLowerCase() === value.toLowerCase() || opt.abbreviation?.toLowerCase() === value.toLowerCase());
@@ -98,7 +116,7 @@ export const AutocompleteInput = ({ label, name, suggestions = [], filterOptions
   // Some browsers trigger 'animationstart' event on inputs during autofill
   useEffect(() => {
     const inputElement = textFieldRef.current;
-    const handleAutofillAnimation = (event) => {
+    const handleAutofillAnimation = (event: AnimationEvent) => {
       if (event.animationName === 'mui-auto-fill' || event.animationName === 'mui-auto-fill-cancel') {
         isAutofilling.current = true;
         if (open) setOpen(false);
@@ -113,7 +131,7 @@ export const AutocompleteInput = ({ label, name, suggestions = [], filterOptions
     };
   }, [open]);
 
-  const handleLocalKeyDown = useCallback((event) => {
+  const handleLocalKeyDown = useCallback((event: KeyboardEvent<HTMLInputElement>) => {
     if ((event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) || ['Backspace', 'Delete'].includes(event.key)) {
       wasManuallyTriggered.current = true;
       isAutofilling.current = false;
@@ -126,7 +144,7 @@ export const AutocompleteInput = ({ label, name, suggestions = [], filterOptions
   }, []);
 
   return (
-    <Autocomplete
+    <Autocomplete<Option, undefined, undefined, boolean>
       open={open}
       onOpen={handleAutocompleteOpen}
       onClose={handleAutocompleteClose}
