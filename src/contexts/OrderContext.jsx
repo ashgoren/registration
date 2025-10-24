@@ -27,7 +27,6 @@ export const OrderProvider = ({ children }) => {
   const [processingMessage, setProcessingMessage] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState(WAITLIST_MODE ? 'waitlist' : PAYMENT_METHODS[0]);
   const [error, setError] = useState(null);
-  const [warmedUp, setWarmedUp] = useState(false);
   const [receipt, setReceipt] = useState(cached('receipt') || null);
 
   const updateOrder = useCallback((updates) => dispatch({ type: 'UPDATE_ORDER', payload: updates }), []);
@@ -46,7 +45,6 @@ export const OrderProvider = ({ children }) => {
     processingMessage, setProcessingMessage,
     error, setError,
     paymentMethod, setPaymentMethod,
-    warmedUp, setWarmedUp,
     amountToCharge, setAmountToCharge,
     electronicPaymentDetails, setElectronicPaymentDetails,
     receipt, setReceipt

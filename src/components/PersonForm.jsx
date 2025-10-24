@@ -4,7 +4,7 @@ import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
 import { useOrder } from 'hooks/useOrder';
 import { ContactInfo } from './ContactInfo';
 import { MiscInfo } from './MiscInfo';
-import { logDebug } from 'src/logger';
+import { logInfo, logDebug } from 'src/logger';
 import { getDefaultAdmission } from 'config/configTieredPricing';
 import { config } from 'config';
 const { ADMISSIONS_MODE } = config;
@@ -12,7 +12,7 @@ const { ADMISSIONS_MODE } = config;
 export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerson, resetForm, formikRef }) => {
   logDebug('PersonForm rendered');
 
-  const { order, updateOrder, warmedUp, setWarmedUp } = useOrder();
+  const { order, updateOrder } = useOrder();
 
   async function validatePersonForm() {
     const { validateForm, setTouched } = formikRef.current;
@@ -64,10 +64,9 @@ export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerso
   async function handleSaveButton() {
     const isValid = await validatePersonForm();
     if (isValid) {
-      if (!warmedUp) {
-        logDebug('warming up firebase functions');
-        firebaseFunctionDispatcher({ action: 'caffeinate' });
-        setWarmedUp(true);
+      if (editIndex === 0) {
+        const { values } = formikRef.current;
+        logInfo(`Registration started: ${values.people[0].email}`); // warms up firebase function
       }
       saveUpdatedOrder();
       setEditIndex(null);

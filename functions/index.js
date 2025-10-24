@@ -34,7 +34,6 @@ const firebaseFunctionDispatcherHandler = async (request) => {
 
   try {
     switch(action) {
-      case 'caffeinate': return { status: 'awake' };
       case 'initializePayment': return await initializePayment(
         data,
         getStripePaymentIntent,
