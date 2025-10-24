@@ -34,7 +34,8 @@
       "services/*": ["./src/services/*"],
       "utils/*": ["./src/utils/*"],
       "themes/*": ["./src/themes/*"],
-      "templates/*": ["./src/templates/*"]
+      "templates/*": ["./src/templates/*"],
+      "config": ["./src/config"]
     }
   },
   "include": ["src"],

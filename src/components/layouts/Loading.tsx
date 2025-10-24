@@ -5,7 +5,7 @@ const { TECH_CONTACT } = config;
 
 export const Loading = ({ text='Thinking...', isHeading=true, processing=false }) => {
   return (
-    <Box align='center' sx={{ my: 10 }}>
+    <Box sx={{ my: 10 }}>
       <TailSpin stroke='black' strokeWidth='2.5' />
       <Typography sx={{ mt: 5}} color={isHeading ? 'error' : 'secondary'}>
         {text}
