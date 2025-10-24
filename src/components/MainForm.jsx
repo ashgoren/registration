@@ -2,14 +2,16 @@ import { useRef } from 'react';
 import { Formik } from 'formik';
 import { sanitizeObject } from 'utils';
 import { validationSchema } from './validationSchema';
-import { useOrder } from 'hooks/useOrder';
+import { useOrderData } from 'contexts/OrderDataContext';
+import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { FormContents } from './FormContents';
 import { config } from 'config';
 const { NUM_PAGES, DEPOSIT_COST, ENV } = config;
 
 export const MainForm = () => {
   const formikRef = useRef();
-  const { order, updateOrder, currentPage, setCurrentPage } = useOrder();
+  const { order, updateOrder } = useOrderData();
+  const { currentPage, setCurrentPage } = useOrderFlow();
 
   // this is triggered after People submitted and after PaymentForm submitted
   // for now it's really just validating the PaymentForm page fields (?)

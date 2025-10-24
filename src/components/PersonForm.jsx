@@ -1,7 +1,7 @@
 import { Box, Button } from '@mui/material';
 import { getFirstInvalidFieldName, sanitizeObject, getCountry } from 'utils';
 import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
-import { useOrder } from 'hooks/useOrder';
+import { useOrderData } from 'contexts/OrderDataContext';
 import { ContactInfo } from './ContactInfo';
 import { MiscInfo } from './MiscInfo';
 import { logInfo, logDebug } from 'src/logger';
@@ -12,7 +12,7 @@ const { ADMISSIONS_MODE } = config;
 export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerson, resetForm, formikRef }) => {
   logDebug('PersonForm rendered');
 
-  const { order, updateOrder } = useOrder();
+  const { order, updateOrder } = useOrderData();
 
   async function validatePersonForm() {
     const { validateForm, setTouched } = formikRef.current;

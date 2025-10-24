@@ -2,13 +2,15 @@ import { useEffect } from 'react';
 import { Box } from '@mui/material';
 import { Loading, Error } from 'components/layouts';
 import { StyledPaper } from 'components/layouts/SharedStyles';
-import { useOrder } from 'hooks/useOrder';
+import { useOrderFlow } from 'contexts/OrderFlowContext';
+import { useOrderPayment } from 'contexts/OrderPaymentContext';
 import { useOrderFinalization } from 'hooks/useOrderFinalization';
 import { config } from 'config';
 const { TECH_CONTACT } = config;
 
 export const Processing = ({ isPaymentComplete }) => {
-  const { paymentMethod, setCurrentPage, error, setError } = useOrder();
+  const { paymentMethod } = useOrderPayment();
+  const { setCurrentPage, error, setError } = useOrderFlow();
   const { finalizeOrder } = useOrderFinalization();
 
   useEffect(() => {

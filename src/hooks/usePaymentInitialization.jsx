@@ -1,12 +1,14 @@
 import { useState, useCallback } from 'react';
 import { logInfo, logError } from 'src/logger';
 import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
-import { useOrder } from 'hooks/useOrder';
+import { useOrderData } from 'contexts/OrderDataContext';
+import { useOrderPayment } from 'contexts/OrderPaymentContext';
 import { config } from 'config';
 const { EVENT_TITLE_WITH_YEAR, ENV } = config;
 
 export const usePaymentInitialization = () => {
-  const { order, paymentMethod, electronicPaymentDetails, setElectronicPaymentDetails, setAmountToCharge } = useOrder();
+  const { order } = useOrderData();
+  const { paymentMethod, electronicPaymentDetails, setElectronicPaymentDetails, setAmountToCharge } = useOrderPayment();
   const [isInitializing, setIsInitializing] = useState(false);
 
   const initializePayment = useCallback(async () => {

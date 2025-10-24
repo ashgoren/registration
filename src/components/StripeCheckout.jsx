@@ -2,7 +2,9 @@ import { Elements, useStripe, useElements, PaymentElement } from '@stripe/react-
 import { loadStripe } from '@stripe/stripe-js';
 import { Box, Button } from '@mui/material';
 import { TestCardBox } from 'components/layouts/SharedStyles';
-import { useOrder } from 'hooks/useOrder';
+import { useOrderData } from 'contexts/OrderDataContext';
+import { useOrderPayment } from 'contexts/OrderPaymentContext';
+import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { useOrderSaving } from 'hooks/useOrderSaving';
 import { useStripePayment } from 'hooks/useStripePayment';
 import { config } from 'config';
@@ -27,7 +29,9 @@ export const StripeCheckout = ({ total }) => {
 function StripeCheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
-  const { order, updateOrder, setCurrentPage, processing, setProcessing, setError, electronicPaymentDetails: { clientSecret} } = useOrder();
+  const { order, updateOrder } = useOrderData();
+  const { electronicPaymentDetails: { clientSecret} } = useOrderPayment();
+  const { setCurrentPage, processing, setProcessing, setError } = useOrderFlow();
   const { savePendingOrder } = useOrderSaving();
   const { processPayment } = useStripePayment({ order, stripe, elements, clientSecret });
 
