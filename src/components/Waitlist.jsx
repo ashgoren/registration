@@ -3,7 +3,8 @@ import { Box, Typography, Button, Checkbox, FormControlLabel } from '@mui/materi
 import { NavButtons, Loading, Error } from 'components/layouts';
 import { StyledPaper, Paragraph } from 'components/layouts/SharedStyles';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
-import { useOrder } from 'hooks/useOrder';
+import { useOrderData } from 'contexts/OrderDataContext';
+import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { useOrderSaving } from 'hooks/useOrderSaving';
 import { useOrderFinalization } from 'hooks/useOrderFinalization';
 import { OrderSummary } from 'components/OrderSummary';
@@ -12,7 +13,8 @@ import { config } from 'config';
 const { ENV, TECH_CONTACT } = config;
 
 export const Waitlist = ({ handleClickBackButton }) => {
-  const { order, updateOrder, error, setError, processing, setProcessing, processingMessage, setProcessingMessage } = useOrder();
+  const { order, updateOrder } = useOrderData();
+  const { error, setError, processing, setProcessing, processingMessage, setProcessingMessage } = useOrderFlow();
   const { savePendingOrder, isSaving } = useOrderSaving();
   const { finalizeOrder } = useOrderFinalization();
   const [ready, setReady] = useState(ENV === 'dev');

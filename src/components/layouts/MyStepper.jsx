@@ -1,11 +1,11 @@
 import { Stepper, Step, StepLabel, MobileStepper, Button } from '@mui/material';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
-import { useOrder } from 'hooks/useOrder';
+import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { config } from 'config';
 const { STEPS } = config;
 
 export const MyStepper = () => {
-  const { currentPage } = useOrder();
+  const { currentPage } = useOrderFlow();
 
   return (
     <Stepper
@@ -26,7 +26,7 @@ export const MyStepper = () => {
 };
 
 export const MyMobileStepper = ({ backButtonProps, nextButtonProps }) => {
-  const { currentPage } = useOrder();
+  const { currentPage } = useOrderFlow();
 
   return (
     <MobileStepper

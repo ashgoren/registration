@@ -1,12 +1,12 @@
 import { Typography, Box } from '@mui/material';
-import { useOrder } from 'hooks/useOrder';
+import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { MyStepper } from 'components/layouts';
 import { StyledPaper } from 'components/layouts/SharedStyles';
 import { config } from 'config';
 const { REGISTRATION_ONLY, WAITLIST_MODE } = config;
 
 export const Header = ({ titleText, children }) => {
-  const { currentPage } = useOrder();
+  const { currentPage } = useOrderFlow();
 
   return (
     <StyledPaper>

@@ -1,10 +1,10 @@
 import { useState, useCallback } from 'react';
-import { useOrder } from 'hooks/useOrder';
+import { useOrderData } from 'contexts/OrderDataContext';
 import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
 import { logInfo, logError } from 'src/logger';
 
 export const useOrderSaving = () => {
-  const { order, orderId, setOrderId } = useOrder();
+  const { order, orderId, setOrderId } = useOrderData();
   const [isSaving, setIsSaving] = useState(false);
 
   const savePendingOrder = useCallback(async () => {

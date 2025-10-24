@@ -2,11 +2,13 @@ import { useCallback } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { logInfo, logError } from 'src/logger';
 import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
-import { useOrder } from 'hooks/useOrder';
+import { useOrderData } from 'contexts/OrderDataContext';
+import { useOrderPayment } from 'contexts/OrderPaymentContext';
 import { Receipt } from 'components/Receipt';
 
 export const useOrderFinalization = () => {
-  const { orderId, order, paymentMethod, setReceipt } = useOrder();
+  const { orderId, order, setReceipt } = useOrderData();
+  const { paymentMethod } = useOrderPayment();
 
   const finalizeOrder = useCallback(async () => {
     const appendReceiptsToOrder = (order) => {

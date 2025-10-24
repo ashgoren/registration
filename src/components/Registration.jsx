@@ -3,7 +3,9 @@ import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { Typography, Button } from '@mui/material';
 import { Error, Header, Loading } from 'components/layouts';
 import { StyledPaper, Paragraph } from 'components/layouts/SharedStyles';
-import { useOrder } from 'hooks/useOrder';
+import { useOrderData } from 'contexts/OrderDataContext';
+import { useOrderPayment } from 'contexts/OrderPaymentContext';
+import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { MainForm } from 'components/MainForm';
 import { Checkout } from 'components/Checkout';
 import { Processing } from 'components/Processing';
@@ -43,7 +45,9 @@ const TestModeWarning = ({ setRegistering }) => {
 }
 
 const RealRegistration = () => {
-  const { order, paymentMethod, currentPage, error } = useOrder();
+  const { order } = useOrderData();
+  const { paymentMethod } = useOrderPayment();
+  const { currentPage, error } = useOrderFlow();
   const CONFIRMATION_TITLE = paymentMethod === 'check' ? CONFIRMATION_CHECK_TITLE : CONFIRMATION_ELECTRONIC_TITLE;
 
   const content = (

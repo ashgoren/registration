@@ -7,7 +7,7 @@ import { StyledPaper, Title, Paragraph } from 'components/layouts/SharedStyles';
 import { clamp } from 'utils';
 import { useScrollToTop } from 'hooks/useScrollToTop';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
-import { useOrder } from 'hooks/useOrder';
+import { useOrderData } from 'contexts/OrderDataContext';
 import { PaymentExplanation } from 'components/Static/PaymentExplanation';
 import { PaymentFormDonation } from './PaymentFormDonation';
 import { PaymentFormFees } from './PaymentFormFees';
@@ -17,7 +17,7 @@ import { config } from 'config';
 const { DEPOSIT_OPTION, COVER_FEES_OPTION, DEPOSIT_COST, ADMISSION_COST_RANGE, DONATION_OPTION, PAYMENT_DUE_DATE, SHOW_PAYMENT_SUMMARY, ADMISSIONS_MODE } = config;
 
 export const PaymentForm = ({ handleClickBackButton }) => {
-  const { order, updateOrder } = useOrder();
+  const { order, updateOrder } = useOrderData();
   const { values, setFieldValue } = useFormikContext();
   const [coverFees, setCoverFees] = useState(order.fees > 0);
   const [paymentTab, setPaymentTab] = useState(order.deposit > 0 ? 'deposit' : 'fullpayment');

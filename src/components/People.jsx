@@ -4,7 +4,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { NavButtons } from 'components/layouts';
 import { StyledPaper, Paragraph } from 'components/layouts/SharedStyles';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
-import { useOrder } from 'hooks/useOrder';
+import { useOrderData } from 'contexts/OrderDataContext';
 import { PersonForm } from './PersonForm';
 import { PersonSummary } from 'components/OrderSummary';
 import { logDebug } from 'src/logger';
@@ -14,7 +14,7 @@ const { ADMISSION_QUANTITY_MAX, PERSON_DEFAULTS } = config;
 export const People = ({ formikRef }) => {
   logDebug('People rendered');
 
-  const { order, updateOrder } = useOrder();
+  const { order, updateOrder } = useOrderData();
   const [editIndex, setEditIndex] = useState(order.people[0].email === '' ? 0 : null);
   const [isNewPerson, setIsNewPerson] = useState(false);
 

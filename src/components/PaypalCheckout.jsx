@@ -4,14 +4,18 @@ import { Box } from '@mui/material';
 import { Loading } from 'components/layouts';
 import { TestCardBox } from 'components/layouts/SharedStyles';
 import { logInfo } from 'src/logger';
-import { useOrder } from 'hooks/useOrder';
+import { useOrderData } from 'contexts/OrderDataContext';
+import { useOrderPayment } from 'contexts/OrderPaymentContext';
+import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { useOrderSaving } from 'hooks/useOrderSaving';
 import { usePaypalPayment } from 'hooks/usePaypalPayment';
 import { config } from 'config';
 const { SANDBOX_MODE, TECH_CONTACT } = config;
 
 export const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, setPaying }) => {
-	const { processing, setProcessing, setCurrentPage, setError, order, updateOrder, electronicPaymentDetails: { id } } = useOrder();
+	const { order, updateOrder } = useOrderData();
+	const { electronicPaymentDetails: { id } } = useOrderPayment();
+	const { processing, setProcessing, setCurrentPage, setError } = useOrderFlow();
 	const { savePendingOrder } = useOrderSaving();
 	const { processPayment } = usePaypalPayment({ order, id });
 	const [, isResolved] = usePayPalScriptReducer();

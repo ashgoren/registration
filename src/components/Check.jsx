@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Typography, Button } from '@mui/material';
 import { Loading } from 'components/layouts';
-import { useOrder } from 'hooks/useOrder';
+import { useOrderData } from 'contexts/OrderDataContext';
+import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { useOrderSaving } from 'hooks/useOrderSaving';
 import { StyledLink } from 'components/layouts/SharedStyles';
 import { mailtoLink } from 'utils';
@@ -10,7 +11,8 @@ import { config } from 'config';
 const { SHOW_CHECK_ADDRESS, CHECK_ADDRESS, CHECK_TO, ENV, TECH_CONTACT, EMAIL_CONTACT } = config;
 
 export const Check = () => {
-  const { processing, setCurrentPage, updateOrder, error, setError } = useOrder();
+  const { updateOrder } = useOrderData();
+  const { processing, setCurrentPage, error, setError } = useOrderFlow();
   const { savePendingOrder, isSaving } = useOrderSaving();
   const [ready, setReady] = useState(ENV === 'dev');
 

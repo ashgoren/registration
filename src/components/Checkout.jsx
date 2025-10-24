@@ -5,7 +5,9 @@ import { StyledPaper, Title } from 'components/layouts/SharedStyles';
 import { formatCurrency } from 'utils';
 import { useScrollToTop } from 'hooks/useScrollToTop';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
-import { useOrder } from 'hooks/useOrder';
+import { useOrderData } from 'contexts/OrderDataContext';
+import { useOrderPayment } from 'contexts/OrderPaymentContext';
+import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { usePaymentInitialization } from 'hooks/usePaymentInitialization';
 import { TogglePaymentMode } from 'components/TogglePaymentMode';
 import { StripeCheckout } from 'components/StripeCheckout';
@@ -18,7 +20,9 @@ const { NUM_PAGES, TECH_CONTACT } = config;
 export const Checkout = () => {
   logDebug('RENDER Checkout');
 
-  const { order, setCurrentPage, processing, processingMessage, error, setError, paymentMethod, amountToCharge } = useOrder();
+  const { order } = useOrderData();
+  const { paymentMethod, amountToCharge } = useOrderPayment();
+  const { setCurrentPage, processing, processingMessage, error, setError } = useOrderFlow();
   const { initializePayment, isInitializing } = usePaymentInitialization();
   const [paying, setPaying] = useState(null);
   const [paypalButtonsLoaded, setPaypalButtonsLoaded] = useState(false);

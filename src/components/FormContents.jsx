@@ -1,5 +1,6 @@
 import { Form } from 'formik';
-import { useOrder } from 'hooks/useOrder';
+import { useOrderData } from 'contexts/OrderDataContext';
+import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { People } from './People';
 import { PaymentForm } from './PaymentForm';
 import { Waitlist } from './Waitlist';
@@ -8,7 +9,8 @@ import { logDebug } from 'src/logger';
 const { WAITLIST_MODE } = config;
 
 export const FormContents = ({ formikRef }) => {
-  const { updateOrder, currentPage, setCurrentPage } = useOrder();
+  const { updateOrder } = useOrderData();
+  const { currentPage, setCurrentPage } = useOrderFlow();
 
   logDebug('FormContents rendered');
 
