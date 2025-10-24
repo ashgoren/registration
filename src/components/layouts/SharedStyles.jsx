@@ -78,7 +78,7 @@ const Paragraph = ({ children, ...props }) => {
   )
 }
 
-const SectionDivider = ({ children, ...props }) => {
+const SectionDivider = () => {
   return (
     <Divider component="hr" sx={{borderBottomWidth: 4, my: 4 }}/>
   )

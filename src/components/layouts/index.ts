@@ -7,4 +7,4 @@ export { MyStepper, MyMobileStepper } from './MyStepper';
 export { Navbar } from './Navbar';
 export { NavButtons } from './NavButtons';
 export { ScrollToAnchor } from './ScrollToAnchor';
-export { Photo } from './Photo';
+// export { Photo } from './Photo';

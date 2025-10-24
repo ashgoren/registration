@@ -3,9 +3,10 @@ import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { MyStepper } from 'components/layouts';
 import { StyledPaper } from 'components/layouts/SharedStyles';
 import { config } from 'config';
+import type { ReactNode } from 'react';
 const { REGISTRATION_ONLY, WAITLIST_MODE } = config;
 
-export const Header = ({ titleText, children }) => {
+export const Header = ({ titleText, children }: { titleText: string; children: ReactNode }) => {
   const { currentPage } = useOrderFlow();
 
   return (

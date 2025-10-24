@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { ThemeProvider } from '@mui/system';
 import { CssBaseline, useMediaQuery, Box } from '@mui/material';
 import { Navbar } from './Navbar';
-import { lightTheme, darkTheme, rootStyle } from './LayoutStyles';
+import { lightTheme, darkTheme } from './LayoutStyles';
+import type { ReactNode } from 'react';
 
-export const MaterialLayout = ({ children }) => {
+export const MaterialLayout = ({ children }: { children: ReactNode }) => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const [theme, setTheme] = useState(prefersDarkMode ? darkTheme : lightTheme);
 
@@ -19,13 +20,13 @@ export const MaterialLayout = ({ children }) => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <div sx={rootStyle(theme)}>
+      {/* <Box sx={rootStyle(theme)}> */}
         <Navbar toggleColorMode={toggleColorMode} />
         {/* <Paper sx={paperStyle(theme)}>{children}</Paper> */}
         <Box sx={{ my: { xs: 0, sm: 2 } }}>
           {children}
         </Box>
-      </div>
+      {/* </Box> */}
     </ThemeProvider>
   );
 };

@@ -25,7 +25,10 @@ export const MyStepper = () => {
   );
 };
 
-export const MyMobileStepper = ({ backButtonProps, nextButtonProps }) => {
+export const MyMobileStepper = ({ backButtonProps, nextButtonProps }: {
+  backButtonProps?: { text: string; onClick: () => void };
+  nextButtonProps?: { text: string };
+}) => {
   const { currentPage } = useOrderFlow();
 
   return (
