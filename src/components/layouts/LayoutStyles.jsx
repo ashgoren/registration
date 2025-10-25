@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material';
 import { responsiveFontSizes } from '@mui/material/styles';
-import { cyan, grey, green, yellow } from '@mui/material/colors';
+import { cyan, green, yellow } from '@mui/material/colors';
 import config from 'config/configTheme';
 const { PALETTE } = config;
 
@@ -31,11 +31,6 @@ const palettes = {
   },
 };
 
-const greyButtonColors = {
-  light: { main: grey[800], hover: grey[900], active: grey[900], background: grey[200] },
-  dark: { main: grey[300], hover: grey[200], active: grey[200], background: grey[800] }
-};
-
 const breakpoints = {
   values: { xs: 0, sm: 674, md: 900, lg: 1190, xl: 1536 }
 };
@@ -45,7 +40,6 @@ const createCustomTheme = ({ mode, palette }) => {
     breakpoints,
     palette: {
       mode,
-      greyButton: greyButtonColors[mode],
       ...palette[mode]
     },
   });

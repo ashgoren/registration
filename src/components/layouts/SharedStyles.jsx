@@ -1,31 +1,12 @@
 import { Link as RouterLink } from 'react-router-dom';
-import { styled } from '@mui/material/styles';
 import { useTheme } from '@mui/system';
-import { Button, Paper, Link, Typography, Divider, FormLabel, Box } from '@mui/material';
+import { Paper, Link, Typography, Divider, FormLabel, Box } from '@mui/material';
 import { paperStyle } from './LayoutStyles';
 
 const StyledPaper = ({ extraStyles = {}, ...props }) => {
   const theme = useTheme();
   return <Paper sx={paperStyle(theme, extraStyles)} {...props} />;
 };
-
-const StyledButton = styled(Button)(({ theme, palette }) => ({
-  borderColor: theme.palette[palette].main,
-  color: theme.palette[palette].main,
-  '&:hover': { 
-    borderColor: theme.palette[palette].hover,
-    color: theme.palette[palette].hover,
-    backgroundColor: theme.palette[palette].background,
-  },
-  '&:active': { 
-    borderColor: theme.palette[palette].active,
-    color: theme.palette[palette].active,
-  },
-  '&:focus': {
-    borderColor: theme.palette[palette].hover,
-    color: theme.palette[palette].hover,
-  },
-}));
 
 const StyledLink = ({ children, internal=false, to, ...props }) => {
   if (internal) {
@@ -101,4 +82,4 @@ const TestCardBox = ({ number }) => (
   </Box>
 );
 
-export { StyledPaper, StyledButton, StyledLink, Title, PageTitle, Header, Paragraph, SectionDivider, Label, TestCardBox };
+export { StyledPaper, StyledLink, Title, PageTitle, Header, Paragraph, SectionDivider, Label, TestCardBox };
