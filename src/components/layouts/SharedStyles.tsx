@@ -10,8 +10,8 @@ interface StyledPaperProps extends PaperProps {
   extraStyles?: SxProps<Theme>;
 }
 
-const StyledPaper = ({ extraStyles = {}, ...props }: StyledPaperProps) => {
-  const theme = useTheme();
+const StyledPaper = ({ extraStyles, ...props }: StyledPaperProps) => {
+  const theme: Theme = useTheme();
   return <Paper sx={paperStyle(theme, extraStyles)} {...props} />;
 };
 

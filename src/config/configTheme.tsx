@@ -1,7 +1,8 @@
+import type { Palettes } from 'types/theme';
 // import { green } from '@mui/material/colors';
 
 // set MUI theme palette
-const PALETTE = 'default'; // options defined in LayoutStyles.js
+const PALETTE: keyof Palettes = 'default'; // options defined in LayoutStyles.js
 
 // navbar color for light mode
 const NAVBAR_COLOR: 'default' | 'primary' | 'secondary' = 'default';
