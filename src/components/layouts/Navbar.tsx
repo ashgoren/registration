@@ -4,9 +4,13 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { Link as RouterLink } from 'react-router-dom';
 import { ColorModeToggle } from 'components/layouts';
 import { config } from 'config';
+import type { MouseEvent } from 'react';
+
 const { NAVBAR_REGISTRATION_TITLE, REGISTRATION_ONLY, NAVBAR_COLOR, NAVBAR_COLOR_DARK, NAVBAR_BACKGROUND_OVERRIDE, PRD_LIVE, ENV } = config;
 
-const pages = [
+type Page = { title: string; path: string };
+
+const pages: Page[] = [
   { title: 'Home', path: '/' },
   { title: 'About', path: '/about' },
   { title: 'Bands & Callers', path: '/staff' },
@@ -23,10 +27,10 @@ if (PRD_LIVE || ENV !== 'prd') {
 const row1 = pages.slice(0, 5);
 const row2 = pages.slice(5);
 
-export const Navbar = ({ toggleColorMode }) => {
-  const [anchorElNav, setAnchorElNav] = useState(null);
+export const Navbar = ({ toggleColorMode }: { toggleColorMode: () => void }) => {
+  const [anchorElNav, setAnchorElNav] = useState<HTMLElement | null>(null);
 
-  const handleOpenNavMenu = (event) => {
+  const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
 
@@ -115,7 +119,12 @@ export const Navbar = ({ toggleColorMode }) => {
   );
 
   return (
-    <AppBar position="relative" color={NAVBAR_COLOR} enableColorOnDark={NAVBAR_COLOR_DARK} sx={{ background: NAVBAR_BACKGROUND_OVERRIDE }}>
+    // <AppBar position="relative" color={NAVBAR_COLOR} enableColorOnDark={NAVBAR_COLOR_DARK} sx={{ background: NAVBAR_BACKGROUND_OVERRIDE }}>
+    <AppBar position='relative'
+      color={NAVBAR_BACKGROUND_OVERRIDE ? undefined : NAVBAR_COLOR}
+      enableColorOnDark={NAVBAR_BACKGROUND_OVERRIDE ? undefined : NAVBAR_COLOR_DARK}
+      sx={NAVBAR_BACKGROUND_OVERRIDE ? { background: NAVBAR_BACKGROUND_OVERRIDE } : undefined}
+    >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
 
@@ -130,7 +139,12 @@ export const Navbar = ({ toggleColorMode }) => {
   );
 };
 
-const PageLinks = ({ pages, onClick }) => (
+interface PageLinksProps {
+  pages: Page[];
+  onClick: () => void;
+}
+
+const PageLinks = ({ pages, onClick }: PageLinksProps) => (
   pages.map((page) => (
     <Link
       component={RouterLink}
