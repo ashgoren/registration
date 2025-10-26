@@ -2,10 +2,9 @@ import { createContext, useContext, useState, useReducer, useEffect, useCallback
 import { cache, cached } from 'utils';
 import { config } from 'config';
 import type { ReactNode } from 'react';
+import type { Order } from 'types/order';
 
 const { getOrderDefaults } = config;
-
-type Order = ReturnType<typeof getOrderDefaults>;
 
 type OrderAction = { type: 'UPDATE_ORDER'; payload: Partial<Order> } | { type: 'RESET_ORDER' };
 

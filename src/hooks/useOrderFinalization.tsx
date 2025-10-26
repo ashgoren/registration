@@ -5,13 +5,14 @@ import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
 import { useOrderData } from 'contexts/OrderDataContext';
 import { useOrderPayment } from 'contexts/OrderPaymentContext';
 import { Receipt } from 'components/Receipt';
+import type { Order } from 'types/order';
 
 export const useOrderFinalization = () => {
   const { orderId, order, setReceipt } = useOrderData();
   const { paymentMethod } = useOrderPayment();
 
   const finalizeOrder = useCallback(async () => {
-    const appendReceiptsToOrder = (order) => {
+    const appendReceiptsToOrder = (order: Order) => {
       const peopleWithReceipts = order.people.map((person, i) => {
         const isPurchaser = i === 0;
         const receipt = <Receipt order={order} paymentMethod={paymentMethod} person={person} isPurchaser={isPurchaser} />;
@@ -22,8 +23,8 @@ export const useOrderFinalization = () => {
       return { ...order, people: peopleWithReceipts };
     };
 
-    const saveFinalOrderToFirebase = async (order) => {
-      const { email } = order.people[0]; // for logging
+    const saveFinalOrderToFirebase = async (order: Order) => {
+      const { email } = order.people[0] as { email: string }; // for logging
       logInfo('Saving final order to firebase', { email });
       try {
         await firebaseFunctionDispatcher({

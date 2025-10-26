@@ -1,10 +1,12 @@
 import { fieldConfig } from '../configFields';
 import userConfig from '../configEvent.tsx';
+import envConfig from './configEnv';
+
 const { dev, registration } = userConfig;
-const isDev = import.meta.env.DEV;
+const { ENV } = envConfig;
 
 const contactFields = registration.fields.contact;
-const miscFields = isDev && dev.skip_mandatory_fields ? registration.fields.misc.filter(f => !fieldConfig[f]?.required) : registration.fields.misc;
+const miscFields = ENV === 'dev' && dev.skip_mandatory_fields ? registration.fields.misc.filter(f => !fieldConfig[f]?.required) : registration.fields.misc;
 const paymentFields = ['admission'];
 const personFields = [...contactFields, ...miscFields, ...paymentFields];
 
@@ -13,7 +15,13 @@ const personDefaults = personFields.reduce((obj, field) => ({ ...obj, [field]: f
 const getOrderDefaults = () => ({
   people: [personDefaults],
   donation: 0,
-  deposit: 0
+  deposit: 0,
+  paymentId: null as string | null,
+  paymentEmail: null as string | null,
+  charged: null as number | null,
+  total: null as number | null,
+  fees: null as number | null,
+  environment: ENV as 'dev' | 'stg' | 'prd'
 });
 
 const configFields = {
