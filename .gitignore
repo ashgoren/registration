@@ -46,3 +46,6 @@ tmp/
 # lint
 tsconfig.tsbuildinfo
 *.tsbuildinfo
+
+# TypeScript declaration files
+*.d.ts
