@@ -1,28 +1,41 @@
 import { createContext, useContext, useState, useReducer, useEffect, useCallback } from 'react';
 import { cache, cached } from 'utils';
 import { config } from 'config';
+import type { ReactNode } from 'react';
+
 const { getOrderDefaults } = config;
 
-const OrderDataContext = createContext();
+type Order = ReturnType<typeof getOrderDefaults>;
 
-function orderReducer(state, action) {
+type OrderAction = { type: 'UPDATE_ORDER'; payload: Partial<Order> } | { type: 'RESET_ORDER' };
+
+type OrderDataContextType = {
+  order: Order;
+  updateOrder: (updates: Partial<Order>) => void;
+  orderId: string | null;
+  setOrderId: (id: string | null) => void;
+  receipt: string | null;
+  setReceipt: (receipt: string | null) => void;
+};
+
+const OrderDataContext = createContext<OrderDataContextType | null>(null);
+
+function orderReducer(state: Order, action: OrderAction) {
   switch (action.type) {
     case 'UPDATE_ORDER':
       return { ...state, ...action.payload };
     case 'RESET_ORDER':
       return getOrderDefaults();
-    default:
-      throw new Error(`Unhandled action type: ${action.type}`);
   }
 }
 
-export const OrderDataProvider = ({ children }) => {
+export const OrderDataProvider = ({ children }: { children: ReactNode }) => {
   const initialOrderState = cached('order') || getOrderDefaults();
   const [order, dispatch] = useReducer(orderReducer, initialOrderState);
-  const [orderId, setOrderId] = useState(cached('orderId') || null);
-  const [receipt, setReceipt] = useState(cached('receipt') || null);
+  const [orderId, setOrderId] = useState<string | null>(cached('orderId') || null);
+  const [receipt, setReceipt] = useState<string | null>(cached('receipt') || null);
 
-  const updateOrder = useCallback((updates) => dispatch({ type: 'UPDATE_ORDER', payload: updates }), []);
+  const updateOrder = useCallback((updates: Partial<Order>) => dispatch({ type: 'UPDATE_ORDER', payload: updates }), []);
 
   useEffect(() => { cache('order', order) }, [order]);
   useEffect(() => { cache('orderId', orderId) }, [orderId]);
@@ -41,7 +54,7 @@ export const OrderDataProvider = ({ children }) => {
 
 export const useOrderData = () => {
   const context = useContext(OrderDataContext);
-  if (context === undefined) {
+  if (context === null) {
     throw new Error('useOrderData must be used within an OrderDataProvider');
   }
   return context;
