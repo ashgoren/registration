@@ -19,4 +19,4 @@ export const config = {
   ...configFields,
   ...configTheme,
   ...configOrderSummary
-};
+} as const;

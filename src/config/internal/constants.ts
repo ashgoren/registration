@@ -63,4 +63,4 @@ export const STATE_OPTIONS = [
   { id: 'QC-CA', fullName: "Quebec", abbreviation: "QC", country: "Canada" },
   { id: 'SK-CA', fullName: "Saskatchewan", abbreviation: "SK", country: "Canada" },
   { id: 'YT-CA', fullName: "Yukon", abbreviation: "YT", country: "Canada" },
-];
+] as const;

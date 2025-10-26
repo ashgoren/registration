@@ -8,6 +8,6 @@ const config = {
     "currency": "USD",
     "locale": "en_US"
   }
-}
+} as const;
 
 export default config;

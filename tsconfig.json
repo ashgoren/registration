@@ -36,6 +36,7 @@
       "themes/*": ["./src/themes/*"],
       "templates/*": ["./src/templates/*"],
       "config": ["./src/config"],
+      "utils": ["./src/utils"],
       "types/*": ["./src/types/*"]
     }
   },

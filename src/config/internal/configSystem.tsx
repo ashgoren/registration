@@ -6,6 +6,6 @@ const configSystem = {
     {key: 2, label: 'Payment'},
     {key: 'checkout', label: 'Checkout'}
   ]
-};
+} as const;
 
 export default configSystem;

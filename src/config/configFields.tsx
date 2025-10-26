@@ -4,10 +4,40 @@ import { websiteLink } from 'utils';
 import { STATE_OPTIONS } from './internal/constants';
 import { NAME_VALIDATION, PRONOUNS_VALIDATION, EMAIL_VALIDATION, PHONE_VALIDATION } from './internal/configValidations';
 import configBasics from './internal/configBasics';
+import type { JSX } from 'react';
+
 const { ADMISSION_COST_DEFAULT, ADMISSION_COST_RANGE, EVENT_TITLE, SAFETY_POLICY_URL } = configBasics;
 
+type FieldType = 'text' | 'email' | 'pattern' | 'address' | 'radio' | 'checkbox' | 'textarea' | 'autocomplete';
+type Option = { label: string; value: string };
+type SuggestionMisc = { label: string; value: string };
+type SuggestionState = { id: string; fullName: string; abbreviation: string; country: string };
+
+export interface FormFieldConfig {
+  label?: string | JSX.Element;
+  title?: string;
+  type?: FieldType;
+  pattern?: string;
+  placeholder?: string;
+  options?: Option[];
+  validation: Yup.AnySchema;
+  conditionalValidation?: {
+    message: string;
+    testFn: (this: Yup.TestContext, value: string) => boolean;
+  };
+  defaultValue: number | string | string[];
+  width?: number;
+  rows?: number;
+  required?: boolean;
+  autoComplete?: string;
+  suggestions?: SuggestionMisc[] | readonly SuggestionState[];
+  hidden?: boolean;
+}
+
+type FieldConfig = { [key: string]: FormFieldConfig };
+
 // config for all form fields (which may include fields not used in this instance)
-export const fieldConfig = {
+export const fieldConfig: FieldConfig = {
   first: {
     label: 'First name',
     validation: NAME_VALIDATION.required('Please enter first name.'),
@@ -50,7 +80,7 @@ export const fieldConfig = {
   emailConfirmation: {
     label: 'Re-enter email',
     type: 'email',
-    validation: EMAIL_VALIDATION.required('Please re-enter your email address.').oneOf([Yup.ref('email'), null], 'Email addresses must match.'),
+    validation: EMAIL_VALIDATION.required('Please re-enter your email address.').equals([Yup.ref('email')], 'Email addresses must match.'),
     defaultValue: '',
     width: 6,
     required: true,
@@ -214,7 +244,7 @@ export const fieldConfig = {
     validation: Yup.string(),
     conditionalValidation: {
       message: 'Please provide relevant details about dietary restrictions.',
-      testFn: function (value) { // `value` is the value of 'allergies'
+      testFn: function (this: Yup.TestContext, value: string) { // `value` is the value of 'allergies'
         const { dietaryRestrictions } = this.parent; // `this.parent` is the person object
         if (dietaryRestrictions?.includes('other')) {
           return !!value && value.trim() !== ''; // Required and must not be only whitespace
@@ -261,7 +291,7 @@ export const fieldConfig = {
     validation: Yup.string(),
     conditionalValidation: {
       message: 'Please provide details for your photo consent preferences.',
-      testFn: function (value) { // `value` is the value of 'photoComments'
+      testFn: function (this: Yup.TestContext, value: string) { // `value` is the value of 'photoComments'
         const { photo } = this.parent;
         if (photo === 'Other') {
           return !!value && value.trim() !== ''; // Required and must not be only whitespace
@@ -333,7 +363,7 @@ export const fieldConfig = {
     validation: Yup.array(),
     conditionalValidation: {
       message: `You must agree to the values and expectations.`,
-      testFn: function (value) {
+      testFn: function (this: Yup.TestContext, value: string) {
         const personIndex = this.path.match(/people\[(\d+)\]/)?.[1];
         if (Number(personIndex) === 0) { // required for primary registrant only
           return Array.isArray(value) && value.includes('yes');
@@ -352,4 +382,4 @@ export const fieldConfig = {
     validation: Yup.number().min(0),
     defaultValue: 0,
   },
-};
+} as const satisfies FieldConfig;

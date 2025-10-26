@@ -1,15 +1,17 @@
 import { fromZonedTime } from 'date-fns-tz';
-import userConfig from '../configEvent.jsx';
+import userConfig from '../configEvent';
 const { prd, event, static_pages, registration, nametags, admissions, payments, contacts, external_links, calendar } = userConfig;
 
-const costDefaultMapping = {
+type AdmissionMode = 'sliding-scale' | 'fixed' | 'tiered';
+
+const costDefaultMapping: Record<AdmissionMode, number> = {
   'sliding-scale': admissions.sliding_scale.cost_default,
   'fixed': admissions.fixed.cost,
   'tiered': admissions.sliding_scale.cost_default // default for tiered is ignored; actual default is set in PersonForm#saveUpdatedOrder
 };
 
-const costRangeMapping = {
-  'sliding-scale': admissions.sliding_scale.cost_range,
+const costRangeMapping: Record<AdmissionMode, [number, number]> = {
+  'sliding-scale': admissions.sliding_scale.cost_range as [number, number],
   'fixed': [admissions.fixed.cost, admissions.fixed.cost],
   'tiered': [0, 999]
 }
@@ -31,8 +33,8 @@ const baseConfig = {
   ADMISSIONS_MODE: admissions.mode,
 
   // Sliding scale settings
-  ADMISSION_COST_RANGE: costRangeMapping[admissions.mode],
-  ADMISSION_COST_DEFAULT: costDefaultMapping[admissions.mode],
+  ADMISSION_COST_RANGE: costRangeMapping[admissions.mode as AdmissionMode],
+  ADMISSION_COST_DEFAULT: costDefaultMapping[admissions.mode as AdmissionMode],
 
   // Fixed cost settings
   ADMISSION_COST_FIXED: admissions.fixed.cost,
@@ -70,6 +72,6 @@ const baseConfig = {
   INCLUDE_LAST_ON_NAMETAG: nametags.include_last_name,
 
   CALENDAR: calendar
-};
+} as const;
 
 export default baseConfig;

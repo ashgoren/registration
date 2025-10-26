@@ -1,5 +1,5 @@
-import { fieldConfig } from '../configFields.jsx';
-import userConfig from '../configEvent.jsx';
+import { fieldConfig } from '../configFields';
+import userConfig from '../configEvent.tsx';
 const { dev, registration } = userConfig;
 const isDev = import.meta.env.DEV;
 
