@@ -1,7 +1,7 @@
 import { PageTitle, Paragraph, StyledPaper, StyledLink } from 'components/layouts/SharedStyles';
 import { websiteLink, mailtoLink } from 'utils';
 import { config } from 'config';
-const { PAYPAL_ME_URL, EMAIL_CONTACT } = config;
+const { DIRECT_PAYMENT_URL, EMAIL_CONTACT } = config;
 
 export const WaysToPay = () => {
   return (
@@ -19,7 +19,7 @@ export const WaysToPay = () => {
 
       <Paragraph>
         <strong>2. Pay electronically at a later date via PayPal.Me</strong><br />
-          If you prefer to pay electronically at a later date, you can pay via PayPal.Me <StyledLink to={websiteLink(PAYPAL_ME_URL)}>here</StyledLink>. 
+          If you prefer to pay electronically at a later date, you can pay via PayPal.Me <StyledLink to={websiteLink(DIRECT_PAYMENT_URL)}>here</StyledLink>. 
           This requires you to have a PayPal account, but you can sign up for one on the spot. You can then pay by credit card, debit card, or your bank account. 
           Please specify the registration amount and "Add a Note" to include your name. 
       </Paragraph>

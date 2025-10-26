@@ -10,7 +10,7 @@ export const Home = () => {
   const theme = useTheme();
 
   return (
-    <StyledPaper extraStyles={{ maxWidth: 750 }} align="center">
+    <StyledPaper extraStyles={{ maxWidth: 750, textAlign: 'center' }}>
       <PageTitle>
         {EVENT_TITLE}<br />
         {EVENT_LOCATION}<br />

@@ -1,7 +1,7 @@
 import { Box, Grid } from '@mui/material';
 import { StyledLink, StyledPaper, PageTitle, Paragraph, SectionDivider } from 'components/layouts/SharedStyles';
 
-const DANCES = [];
+const DANCES: string[] = [];
 
 const halfLength = Math.ceil(DANCES.length / 2);
 const col1 = DANCES.slice(0, halfLength);
@@ -9,14 +9,14 @@ const col2 = DANCES.slice(halfLength);
 
 export const Dances = () => {
   return (
-    <StyledPaper extraStyles={{ maxWidth: 750 }} align="center">
+    <StyledPaper extraStyles={{ maxWidth: 750, textAlign: 'center' }}>
       <PageTitle>
         List of Dances
       </PageTitle>
 
       <Paragraph>
         Find dance instructions, selected sheet music, and videos in 
-        the <StyledLink to="/ecdball/2023PortlandBall_DanceInstructions.pdf">Dance Instructions packet</StyledLink>.
+        the <StyledLink to='/ecdball/2023PortlandBall_DanceInstructions.pdf'>Dance Instructions packet</StyledLink>.
       </Paragraph>
 
       <Grid container>

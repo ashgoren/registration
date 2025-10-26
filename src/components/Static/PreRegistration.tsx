@@ -1,7 +1,7 @@
 import { Checkbox } from '@mui/material';
 import { StyledPaper, StyledLink, Paragraph } from 'components/layouts/SharedStyles';
 
-export const PreRegistration = ({ setRegistering }) => {
+export const PreRegistration = ({ setRegistering }: { setRegistering: (value: boolean) => void }) => {
   return(
     <StyledPaper>
       <p>Please read the Covid Policy and Safety Policy for the 2025 Corvallis Contra Dance Weekend:</p>

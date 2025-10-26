@@ -5,9 +5,19 @@ import { paperStyle } from './LayoutStyles';
 import type { ReactNode } from 'react';
 import type { SxProps, Theme } from '@mui/material';
 import type { PaperProps } from '@mui/material/Paper';
+import type { TypographyProps } from '@mui/material/Typography';
+import type { LinkProps } from '@mui/material/Link';
 
 interface StyledPaperProps extends PaperProps {
   extraStyles?: SxProps<Theme>;
+}
+
+interface TypographyComponentProps extends TypographyProps {
+  children: ReactNode;
+}
+
+interface LinkComponentProps extends LinkProps {
+  children: ReactNode;
 }
 
 const StyledPaper = ({ extraStyles, ...props }: StyledPaperProps) => {
@@ -19,11 +29,7 @@ const SectionDivider = () => {
   return <Divider component='hr' sx={{borderBottomWidth: 4, my: 4 }} />
 }
 
-interface BaseComponentProps {
-  children: ReactNode;
-}
-
-const Title = ({ children, ...props }: BaseComponentProps) => {
+const Title = ({ children, ...props }: TypographyComponentProps) => {
   return (
     <Typography variant='h6' gutterBottom sx={{ mb: 2 }} {...props}>
       {children}
@@ -31,7 +37,7 @@ const Title = ({ children, ...props }: BaseComponentProps) => {
   );
 };
 
-const PageTitle = ({ children, ...props }: BaseComponentProps) => {
+const PageTitle = ({ children, ...props }: TypographyComponentProps) => {
   return (
     <>
       <Typography variant='h4' align='center' {...props}>
@@ -42,7 +48,7 @@ const PageTitle = ({ children, ...props }: BaseComponentProps) => {
   );
 };
 
-const Header = ({ children, ...props }: BaseComponentProps) => {
+const Header = ({ children, ...props }: TypographyComponentProps) => {
   return (
     <Typography variant='h6' gutterBottom sx={{ mt: 3 }} {...props}>
       {children}
@@ -50,7 +56,7 @@ const Header = ({ children, ...props }: BaseComponentProps) => {
   );
 };
 
-const Paragraph = ({ children, ...props }: BaseComponentProps) => {
+const Paragraph = ({ children, ...props }: TypographyComponentProps) => {
   return (
     <Typography variant='body1' sx={{ my: 2 }} {...props}>
       {children}
@@ -58,7 +64,7 @@ const Paragraph = ({ children, ...props }: BaseComponentProps) => {
   )
 }
 
-interface StyledLinkProps extends BaseComponentProps {
+interface StyledLinkProps extends LinkComponentProps {
   internal?: boolean;
   to: string;
 }
