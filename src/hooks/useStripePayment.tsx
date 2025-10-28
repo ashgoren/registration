@@ -1,6 +1,16 @@
 import { logInfo, logError } from 'src/logger';
+import type { Order } from 'types/order';
+import type { useElements, useStripe } from '@stripe/react-stripe-js';
+import type { PaymentIntent, StripeError } from '@stripe/stripe-js';
 
-export const useStripePayment = ({ order, stripe, elements, clientSecret }) => {
+interface UseStripePaymentParams {
+  order: Order;
+  stripe: ReturnType<typeof useStripe>;
+  elements: ReturnType<typeof useElements>;
+  clientSecret: string;
+}
+
+export const useStripePayment = ({ order, stripe, elements, clientSecret }: UseStripePaymentParams) => {
   const { email } = order.people[0]; // for logging
 
   const processPayment = async () => {
@@ -23,7 +33,7 @@ export const useStripePayment = ({ order, stripe, elements, clientSecret }) => {
 
       validatePaymentResponse(paymentIntent, error);
 
-      const { id: paymentId, amount } = paymentIntent;
+      const { id: paymentId, amount } = paymentIntent as { id: string; amount: number };
 
       logInfo('Payment captured', { email, paymentId, amount: Number(amount) / 100 });
       return { paymentId, amount: Number(amount) / 100 };
@@ -39,12 +49,12 @@ export const useStripePayment = ({ order, stripe, elements, clientSecret }) => {
 
 // ===== Helpers =====
 
-const validatePaymentResponse = (paymentIntent, error) => {
+const validatePaymentResponse = (paymentIntent?: PaymentIntent, error?: StripeError) => {
   if (error) { // just re-throw if is a Stripe error (e.g. card declined)
     throw error;
   }
 
-  if (!paymentIntent && !error) {
+  if (!paymentIntent) {
     throw new Error('Invalid response from Stripe.');
   }
 

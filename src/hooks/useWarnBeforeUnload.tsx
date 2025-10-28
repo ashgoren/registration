@@ -5,7 +5,7 @@ export const useWarnBeforeUnload = (enabled = true) => {
     if (!enabled) return;
     if (window.location.hostname === 'localhost') return;
 
-    const warnBeforeUserLeavesSite = (event) => {
+    const warnBeforeUserLeavesSite = (event: BeforeUnloadEvent) => {
       event.preventDefault();
       event.returnValue = '';
     };
