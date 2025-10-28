@@ -75,10 +75,10 @@ export const usePlacesAutocomplete = (apiKey: string) => {
 
 
   // Get place details from a place prediction
-  const getPlaceDetails = useCallback(async (placePrediction: google.maps.places.AutocompleteSuggestion) => {
+const getPlaceDetails = useCallback(async (placePrediction: google.maps.places.PlacePrediction) => {
     if (!placesApi?.Place) throw new Error('Places API not initialized');
     try {
-      const place = (placePrediction as unknown as { toPlace: () => google.maps.places.Place }).toPlace();
+      const place = placePrediction.toPlace();
       await place.fetchFields({ fields: ['addressComponents'] });
       refreshToken(); // Reset token regardless of success/failure      
       return place;

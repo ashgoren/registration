@@ -20,11 +20,11 @@ interface AddressData {
   country?: string;
 }
 
-interface AddressComponent {
-  types: string[];
-  shortText?: string;
-  longText?: string;
-}
+// interface AddressComponent {
+//   types: string[];
+//   shortText?: string | null;
+//   longText?: string | null;
+// }
 
 interface FieldUpdater {
   fieldName: string;
@@ -228,7 +228,10 @@ export const AddressAutocompleteInput = memo(({ label, name, ...props }: Address
 
 // helpers
 
-const extractAddressComponents = (addressComponents: AddressComponent[], fieldMapping: FieldMapping): AddressData => {
+const extractAddressComponents = (
+  addressComponents: google.maps.places.AddressComponent[],
+  fieldMapping: FieldMapping
+): AddressData => {
   if (!addressComponents) return {};
   
   return Object.entries(fieldMapping).reduce((fields, [fieldName, componentTypes]) => {
