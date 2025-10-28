@@ -1,5 +1,7 @@
 export type Person = {
   email: string;
+  state?: string;
+  country?: string;
   [key: string]: unknown;
 };
 

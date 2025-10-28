@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { cache, cached } from 'utils';
 import { config } from 'config';
 import type { ReactNode } from 'react';
-import type { PaymentMethod } from 'types/payment';
+import type { PaymentMethod, ElectronicPaymentDetails } from 'types/payment';
 
 const { PAYMENT_METHODS, WAITLIST_MODE } = config;
 
@@ -11,8 +11,8 @@ type OrderPaymentContextType = {
   setPaymentMethod: (method: PaymentMethod) => void;
   amountToCharge: number | null;
   setAmountToCharge: (amount: number | null) => void;
-  electronicPaymentDetails: { id: string | null; clientSecret?: string | null };
-  setElectronicPaymentDetails: (details: { id: string | null; clientSecret?: string | null }) => void;
+  electronicPaymentDetails: ElectronicPaymentDetails;
+  setElectronicPaymentDetails: (details: ElectronicPaymentDetails) => void;
 };
 
 const OrderPaymentContext = createContext<OrderPaymentContextType | null>(null);
@@ -20,7 +20,7 @@ const OrderPaymentContext = createContext<OrderPaymentContextType | null>(null);
 export const OrderPaymentProvider = ({ children }: { children: ReactNode }) => {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(WAITLIST_MODE ? 'waitlist' : PAYMENT_METHODS[0] as PaymentMethod);
   const [amountToCharge, setAmountToCharge] = useState<number | null>(null);
-  const [electronicPaymentDetails, setElectronicPaymentDetails] = useState(cached('electronicPaymentDetails') || { id: null, clientSecret: null });
+  const [electronicPaymentDetails, setElectronicPaymentDetails] = useState<ElectronicPaymentDetails>(cached('electronicPaymentDetails') || { id: null, clientSecret: null });
 
   useEffect(() => { cache('electronicPaymentDetails', electronicPaymentDetails) }, [electronicPaymentDetails]);
 

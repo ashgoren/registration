@@ -4,11 +4,11 @@ const { ENV } = config;
 
 // log to firebase logger
 
-export const logInfo = (message, metadata) => logger('info', message, metadata);
-export const logWarn = (message, metadata) => logger('warn', message, metadata);
-export const logError = (message, metadata) => logger('error', message, metadata);
+export const logInfo = (message: string, metadata: Record<string, unknown>) => logger('info', message, metadata);
+export const logWarn = (message: string, metadata: Record<string, unknown>) => logger('warn', message, metadata);
+export const logError = (message: string, metadata: Record<string, unknown>) => logger('error', message, metadata);
 
-const logger = (level, message, metadata = {}) => {
+const logger = (level: 'info' | 'warn' | 'error', message: string, metadata: Record<string, unknown> = {}) => {
   // log locally
   console[level](message, ...(Object.keys(metadata).length ? [metadata] : []));
 
@@ -25,9 +25,9 @@ const logger = (level, message, metadata = {}) => {
 
 
 // local debug logger
-export const logInfoDebug = ENV !== 'prd' ? (...args) => console.log(...args) : () => {};
-export const logWarnDebug = ENV !== 'prd' ? (...args) => console.warn(...args) : () => {};
-export const logErrorDebug = ENV !== 'prd' ? (...args) => console.error(...args) : () => {};
+export const logInfoDebug = ENV !== 'prd' ? (...args: unknown[]) => console.log(...args) : () => {};
+export const logWarnDebug = ENV !== 'prd' ? (...args: unknown[]) => console.warn(...args) : () => {};
+export const logErrorDebug = ENV !== 'prd' ? (...args: unknown[]) => console.error(...args) : () => {};
 export const logDebug = logInfoDebug;
 
 // devtools console logger util
