@@ -2,6 +2,7 @@ import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFunctions, connectFunctionsEmulator, httpsCallable } from 'firebase/functions';
 import userConfig from 'config/configEvent.jsx';
 import type { Order } from 'types/order';
+import type { ElectronicPaymentMethod } from 'types/payment';
 
 const isDev = import.meta.env.DEV;
 
@@ -28,7 +29,7 @@ type FirebaseFunctionData = {
   capturePaypalOrder: { id: string; idempotencyKey: string  };
   initializePayment: {
     order: Order;
-    paymentMethod: 'paypal' | 'stripe';
+    paymentMethod: ElectronicPaymentMethod;
     paymentId: string | null;
     idempotencyKey: string;
     description: string;
@@ -41,11 +42,11 @@ type FirebaseFunctionData = {
   };
 }
 
-type FirebaseFunctionReturn = {
+export type FirebaseFunctionReturn = {
   savePendingOrder: { id: string };
   saveFinalOrder: void;
   capturePaypalOrder: {id: string; amount: string; email: string };
-  initializePayment: { id: string; amount: number; clientSecret?: string  };
+  initializePayment: { id: string; amount: number; clientSecret?: string };
   logEvent: void;
 }
 
@@ -95,7 +96,7 @@ export const saveFinalOrder = async (params: {
 
 export const initializePayment = async (params: {
   order: Order;
-  paymentMethod: 'paypal' | 'stripe';
+  paymentMethod: ElectronicPaymentMethod;
   paymentId: string | null;
   idempotencyKey: string;
   description: string;

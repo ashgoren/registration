@@ -2,18 +2,17 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { cache, cached } from 'utils';
 import { config } from 'config';
 import type { ReactNode } from 'react';
+import type { PaymentMethod } from 'types/payment';
 
 const { PAYMENT_METHODS, WAITLIST_MODE } = config;
-
-type PaymentMethod = 'stripe' | 'paypal' | 'waitlist' | 'check';
 
 type OrderPaymentContextType = {
   paymentMethod: PaymentMethod;
   setPaymentMethod: (method: PaymentMethod) => void;
   amountToCharge: number | null;
   setAmountToCharge: (amount: number | null) => void;
-  electronicPaymentDetails: { id: string | null; clientSecret: string | null };
-  setElectronicPaymentDetails: (details: { id: string | null; clientSecret: string | null }) => void;
+  electronicPaymentDetails: { id: string | null; clientSecret?: string | null };
+  setElectronicPaymentDetails: (details: { id: string | null; clientSecret?: string | null }) => void;
 };
 
 const OrderPaymentContext = createContext<OrderPaymentContextType | null>(null);

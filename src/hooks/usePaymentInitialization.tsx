@@ -4,6 +4,9 @@ import * as api from 'src/firebase';
 import { useOrderData } from 'contexts/OrderDataContext';
 import { useOrderPayment } from 'contexts/OrderPaymentContext';
 import { config } from 'config';
+import type { PaymentMethod, ElectronicPaymentMethod } from 'types/payment';
+import type { FirebaseFunctionReturn } from 'src/firebase';
+
 const { EVENT_TITLE_WITH_YEAR, ENV } = config;
 
 export const usePaymentInitialization = () => {
@@ -27,10 +30,10 @@ export const usePaymentInitialization = () => {
     const idempotencyKey = crypto.randomUUID(); // generate a new idempotency key for each call
 
     try {
-      const { data } = await api.initializePayment({
+      const data = await api.initializePayment({
         order,
         paymentId: electronicPaymentDetails?.id, // pass existing payment intent id; null for new orders
-        paymentMethod,
+        paymentMethod: paymentMethod as ElectronicPaymentMethod,
         idempotencyKey,
         description: ENV === 'prd' ? EVENT_TITLE_WITH_YEAR : `${EVENT_TITLE_WITH_YEAR} - ${ENV}`,
         email
@@ -65,16 +68,13 @@ const PAYMENT_VALIDATION_RULES = {
     requiredFields: ['amount', 'id'],
     validateAmount: true
   }
-};
+} as const;
 
-/**
- * @param {Object} data - Response data from payment processor
- * @param {string} paymentMethod - Payment method (stripe/paypal/check/waitlist)
- * @param {number} peopleCount - Number of people in the order
- * @throws {Error} - If required fields are missing or amount is out of range
- * @returns {void}
- */
-const validatePaymentResponse = ({ data, paymentMethod, peopleCount }) => {
+const validatePaymentResponse = ({ data, paymentMethod, peopleCount }: {
+  data: FirebaseFunctionReturn['initializePayment'];
+  paymentMethod: ElectronicPaymentMethod;
+  peopleCount: number
+}): void => {
   const { requiredFields, validateAmount } = PAYMENT_VALIDATION_RULES[paymentMethod];
   for (const field of requiredFields) {
     if (!data[field]) throw new Error(`Missing ${field} from payment processor`);
@@ -84,4 +84,4 @@ const validatePaymentResponse = ({ data, paymentMethod, peopleCount }) => {
   }
 };
 
-const isElectronicPayment = (paymentMethod) => ['stripe', 'paypal'].includes(paymentMethod);
+const isElectronicPayment = (paymentMethod: PaymentMethod): paymentMethod is ElectronicPaymentMethod => ['stripe', 'paypal'].includes(paymentMethod);
