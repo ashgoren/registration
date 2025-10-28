@@ -1,4 +1,4 @@
-import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
+import * as api from 'src/firebase';
 import { config } from 'config';
 const { ENV } = config;
 
@@ -14,23 +14,11 @@ const logger = (level, message, metadata = {}) => {
 
   // log to Google Cloud logging via Firebase Function (production only)
   if (import.meta.env.PROD) {
-    const { email, order, error, userAgent, ...rest } = metadata;
-
-    const payload = {
+    api.logEvent({
       level,
       message,
       timestamp: new Date().toISOString(),
-      ...email && { email },
-      ...userAgent && { userAgent },
-      ...order && { order },
-      ...error && { error },
-      ...(Object.keys(rest).length && { metadata: rest })
-    };
-
-    firebaseFunctionDispatcher({
-      action: 'logEvent',
-      data: payload,
-      ...email && { email }
+      metadata
     });
   }
 };

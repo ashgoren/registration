@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { logInfo, logError } from 'src/logger';
-import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
+import * as api from 'src/firebase';
 
 export const usePaypalPayment = ({ order, id: paymentIntentId }) => {
 	const { email } = order.people[0];
@@ -9,13 +9,10 @@ export const usePaypalPayment = ({ order, id: paymentIntentId }) => {
 	const processPayment = async () => {
 		logInfo('Capturing PayPal payment', { email, order });
 		try {
-			const { data } = await firebaseFunctionDispatcher({
-				action: 'capturePaypalOrder',
-				email,
-				data: {
-					id: paymentIntentId,
-					idempotencyKey: idempotencyKeyRef.current,
-				}
+			const data = await api.capturePaypalOrder({
+				paymentIntentId,
+				idempotencyKey: idempotencyKeyRef.current,
+				email
 			});
 
       validatePaymentResponse(data);

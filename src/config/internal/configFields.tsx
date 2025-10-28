@@ -1,6 +1,7 @@
 import { fieldConfig } from '../configFields';
 import userConfig from '../configEvent.tsx';
 import envConfig from './configEnv';
+import type { Order, Person } from 'types/order';
 
 const { dev, registration } = userConfig;
 const { ENV } = envConfig;
@@ -10,18 +11,18 @@ const miscFields = ENV === 'dev' && dev.skip_mandatory_fields ? registration.fie
 const paymentFields = ['admission'];
 const personFields = [...contactFields, ...miscFields, ...paymentFields];
 
-const personDefaults = personFields.reduce((obj, field) => ({ ...obj, [field]: fieldConfig[field]?.defaultValue }), {});
+const personDefaults = personFields.reduce((obj, field) => ({ ...obj, [field]: fieldConfig[field]?.defaultValue }), {}) as Person;
 
-const getOrderDefaults = () => ({
+const getOrderDefaults = (): Order => ({
   people: [personDefaults],
   donation: 0,
   deposit: 0,
-  paymentId: null as string | null,
-  paymentEmail: null as string | null,
-  charged: null as number | null,
-  total: null as number | null,
-  fees: null as number | null,
-  environment: ENV as 'dev' | 'stg' | 'prd'
+  paymentId: null,
+  paymentEmail: null,
+  charged: null,
+  total: null,
+  fees: null,
+  environment: ENV
 });
 
 const configFields = {

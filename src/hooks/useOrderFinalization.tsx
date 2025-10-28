@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { logInfo, logError } from 'src/logger';
-import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
+import * as api from 'src/firebase';
 import { useOrderData } from 'contexts/OrderDataContext';
 import { useOrderPayment } from 'contexts/OrderPaymentContext';
 import { Receipt } from 'components/Receipt';
@@ -24,14 +24,13 @@ export const useOrderFinalization = () => {
     };
 
     const saveFinalOrderToFirebase = async (order: Order) => {
-      const { email } = order.people[0] as { email: string }; // for logging
+      if (!orderId) {
+        throw new Error('Cannot save final order: missing orderId');
+      }
+      const { email } = order.people[0]; // for logging
       logInfo('Saving final order to firebase', { email });
       try {
-        await firebaseFunctionDispatcher({
-          action: 'saveFinalOrder',
-          data: { orderId, order },
-          email
-        });
+        await api.saveFinalOrder({ orderId, order });
         logInfo('Final order saved', { email });
       } catch (error) {
         logError('Error saving final order to firebase', { email, error, order });

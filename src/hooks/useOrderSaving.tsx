@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useOrderData } from 'contexts/OrderDataContext';
-import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
+import * as api from 'src/firebase';
 import { logInfo, logError } from 'src/logger';
 
 export const useOrderSaving = () => {
@@ -13,10 +13,7 @@ export const useOrderSaving = () => {
     logInfo('Saving pending order', { email, orderId, order });
 
     try {
-      const { data: { id } } = await firebaseFunctionDispatcher({
-        action: 'savePendingOrder',
-        data: { orderId, order }
-      });
+      const { id } = await api.savePendingOrder({ orderId, order });
 
       if (!id) throw new Error('Missing orderId from Firestore.');
       setOrderId(id);

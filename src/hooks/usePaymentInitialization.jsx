@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { logInfo, logError } from 'src/logger';
-import { firebaseFunctionDispatcher } from 'src/firebase.jsx';
+import * as api from 'src/firebase';
 import { useOrderData } from 'contexts/OrderDataContext';
 import { useOrderPayment } from 'contexts/OrderPaymentContext';
 import { config } from 'config';
@@ -27,16 +27,13 @@ export const usePaymentInitialization = () => {
     const idempotencyKey = crypto.randomUUID(); // generate a new idempotency key for each call
 
     try {
-      const { data } = await firebaseFunctionDispatcher({
-        action: 'initializePayment',
-        email,
-        data: {
-          order,
-          paymentId: electronicPaymentDetails?.id, // pass existing payment intent id; null for new orders
-          paymentMethod,
-          idempotencyKey,
-          description: ENV === 'prd' ? EVENT_TITLE_WITH_YEAR : `${EVENT_TITLE_WITH_YEAR} - ${ENV}`
-        }
+      const { data } = await api.initializePayment({
+        order,
+        paymentId: electronicPaymentDetails?.id, // pass existing payment intent id; null for new orders
+        paymentMethod,
+        idempotencyKey,
+        description: ENV === 'prd' ? EVENT_TITLE_WITH_YEAR : `${EVENT_TITLE_WITH_YEAR} - ${ENV}`,
+        email
       });
 
       validatePaymentResponse({ data, paymentMethod, peopleCount: order.people.length });
