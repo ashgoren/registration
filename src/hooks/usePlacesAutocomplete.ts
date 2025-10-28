@@ -1,12 +1,16 @@
+/// <reference types='google.maps' />
 import { useState, useEffect, useCallback } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import { logErrorDebug } from 'src/logger';
 
-export const usePlacesAutocomplete = (apiKey) => {
-  const [placesApi, setPlacesApi] = useState(null);
-  const [sessionToken, setSessionToken] = useState(null);
-  const [predictions, setPredictions] = useState([]);
-  const [error, setError] = useState(null);
+// Type assertion due to mismatch b/t @googlemaps/js-api-loader and @types/google.maps definitions
+type PlacesApiType = typeof google.maps.places;
+
+export const usePlacesAutocomplete = (apiKey: string) => {
+  const [placesApi, setPlacesApi] = useState<PlacesApiType | null>(null);
+  const [sessionToken, setSessionToken] = useState<InstanceType<PlacesApiType['AutocompleteSessionToken']> | null>(null);
+  const [predictions, setPredictions] = useState<InstanceType<PlacesApiType['AutocompleteSuggestion']>[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   // Create or refresh session token
   const refreshToken = useCallback(() => {
@@ -14,7 +18,7 @@ export const usePlacesAutocomplete = (apiKey) => {
       setSessionToken(new placesApi.AutocompleteSessionToken());
     }
   }, [placesApi]);
-  
+
   // Load Google Places API
   useEffect(() => {
     const loadPlacesAPI = async () => {
@@ -27,15 +31,16 @@ export const usePlacesAutocomplete = (apiKey) => {
         const placesLibrary = await loader.importLibrary('places');
         
         if (placesLibrary?.Place && placesLibrary?.AutocompleteSessionToken && placesLibrary?.AutocompleteService) {
-          setPlacesApi(placesLibrary);
+          setPlacesApi(placesLibrary as PlacesApiType);
           setError(null);
         } else {
           logErrorDebug('Places API could not be initialized');
           setError('Places API could not be initialized');
         }
       } catch (err) {
-        logErrorDebug(`Failed to load Google Places API: ${err.message}`);
-        setError(`Failed to load Google Places API: ${err.message}`);
+        const errMsg = err instanceof Error ? err.message : String(err);
+        logErrorDebug(`Failed to load Google Places API: ${errMsg}`);
+        setError(`Failed to load Google Places API: ${errMsg}`);
       }
     };
 
@@ -46,9 +51,9 @@ export const usePlacesAutocomplete = (apiKey) => {
   useEffect(() => {
     if (placesApi) refreshToken();
   }, [placesApi, refreshToken]);
-  
+
   // Fetch address predictions based on user input
-  const getPredictions = useCallback(async (input) => {
+  const getPredictions = useCallback(async (input: string) => {
     if (!placesApi || !sessionToken || input.trim() === '') {
       setPredictions([]); // Clear any old predictions if input is empty or API is not ready
       return [];
@@ -57,12 +62,12 @@ export const usePlacesAutocomplete = (apiKey) => {
       const response = await placesApi.AutocompleteSuggestion.fetchAutocompleteSuggestions({
         input,
         sessionToken
-      });      
+      });
       const results = response.suggestions || [];
       setPredictions(results);
       return results;
     } catch (err) {
-      logErrorDebug(`Error fetching suggestions: ${err.message}`);
+      logErrorDebug(`Error fetching suggestions: ${err instanceof Error ? err.message : String(err)}`);
       setPredictions([]);
       return [];
     }
@@ -70,10 +75,10 @@ export const usePlacesAutocomplete = (apiKey) => {
 
 
   // Get place details from a place prediction
-  const getPlaceDetails = useCallback(async (placePrediction) => {
+  const getPlaceDetails = useCallback(async (placePrediction: google.maps.places.AutocompleteSuggestion) => {
     if (!placesApi?.Place) throw new Error('Places API not initialized');
     try {
-      const place = placePrediction.toPlace();
+      const place = (placePrediction as unknown as { toPlace: () => google.maps.places.Place }).toPlace();
       await place.fetchFields({ fields: ['addressComponents'] });
       refreshToken(); // Reset token regardless of success/failure      
       return place;
