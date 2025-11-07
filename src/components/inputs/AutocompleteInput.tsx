@@ -5,7 +5,7 @@ import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import type { SyntheticEvent, FocusEvent, KeyboardEvent } from 'react';
 import type { TextFieldProps, AutocompleteInputChangeReason } from '@mui/material';
 
-interface Option {
+interface StateSuggestion {
   id?: string;
   fullName?: string;
   abbreviation?: string;
@@ -15,13 +15,13 @@ interface Option {
 interface AutocompleteInputProps extends Omit<TextFieldProps, 'name' | 'label'> {
   label: string;
   name: string;
-  suggestions?: Option[];
+  suggestions?: readonly StateSuggestion[];
   filterOptions?: typeof defaultFilterOptions;
   width?: string | number;
   freeSolo?: boolean;
 }
 
-const defaultFilterOptions = createFilterOptions<Option>({
+const defaultFilterOptions = createFilterOptions<StateSuggestion>({
   matchFrom: 'any',
   stringify: (option) => `${option?.fullName || ''} ${option?.abbreviation || ''}`
 });
@@ -36,9 +36,9 @@ export const AutocompleteInput = ({ label, name, suggestions = [], filterOptions
 
   const textFieldStyles = { mb: '.3rem', ...(props.width && { width: props.width })};
 
-  const getOptionLabel = (option: Option | string) => typeof option === 'string' ? option : option?.abbreviation || '';
+  const getOptionLabel = (option: StateSuggestion | string) => typeof option === 'string' ? option : option?.abbreviation || '';
 
-  let autocompleteValue: Option | string | null = null;
+  let autocompleteValue: StateSuggestion | string | null = null;
   if (field.value) {
     const foundOption = suggestions.find(opt => opt.abbreviation === field.value);
     if (foundOption) {
@@ -48,7 +48,7 @@ export const AutocompleteInput = ({ label, name, suggestions = [], filterOptions
     }
   }
 
-  const isOptionEqualToValue = (option: Option, value: Option | string): boolean => {
+  const isOptionEqualToValue = (option: StateSuggestion, value: StateSuggestion | string): boolean => {
     if (typeof value === 'string') {
       return option.abbreviation === value || option.fullName === value;
     }
@@ -144,7 +144,7 @@ export const AutocompleteInput = ({ label, name, suggestions = [], filterOptions
   }, []);
 
   return (
-    <Autocomplete<Option, undefined, undefined, boolean>
+    <Autocomplete<StateSuggestion, undefined, undefined, boolean>
       open={open}
       onOpen={handleAutocompleteOpen}
       onClose={handleAutocompleteClose}

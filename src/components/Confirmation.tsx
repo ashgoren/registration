@@ -8,6 +8,8 @@ const { EMAIL_CONTACT, EVENT_TITLE, MORE_INFO_URL } = config;
 export const Confirmation = () => {
   const { receipt } = useOrderData();
 
+  if (!receipt) throw new Error('No receipt found in order data context');
+
   return (
     <>
       <StyledPaper>

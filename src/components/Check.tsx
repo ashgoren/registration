@@ -31,7 +31,7 @@ export const Check = () => {
 				<>
 					We're sorry, but we experienced an issue saving your order.<br />
 					Please try again or contact {TECH_CONTACT} for assistance.<br />
-					Error: {error.message || error}
+					Error: {error instanceof Error ? error.message : String(error)}
 				</>
       );
       return;

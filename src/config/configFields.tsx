@@ -9,9 +9,6 @@ import type { JSX } from 'react';
 const { ADMISSION_COST_DEFAULT, ADMISSION_COST_RANGE, EVENT_TITLE, SAFETY_POLICY_URL } = configBasics;
 
 type FieldType = 'text' | 'email' | 'pattern' | 'address' | 'radio' | 'checkbox' | 'textarea' | 'autocomplete';
-type Option = { label: string; value: string };
-type SuggestionMisc = { label: string; value: string };
-type SuggestionState = { id: string; fullName: string; abbreviation: string; country: string };
 
 export interface FormFieldConfig {
   label?: string | JSX.Element;
@@ -19,7 +16,7 @@ export interface FormFieldConfig {
   type?: FieldType;
   pattern?: string;
   placeholder?: string;
-  options?: Option[];
+  options?: { label: string; value: string }[];
   validation: Yup.AnySchema;
   conditionalValidation?: {
     message: string;
@@ -30,7 +27,7 @@ export interface FormFieldConfig {
   rows?: number;
   required?: boolean;
   autoComplete?: string;
-  suggestions?: SuggestionMisc[] | readonly SuggestionState[];
+  suggestions?: readonly { id: string; fullName: string; abbreviation: string; country: string }[];
   hidden?: boolean;
 }
 

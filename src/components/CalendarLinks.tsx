@@ -4,6 +4,8 @@ import { Button, Menu, MenuItem } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { config } from 'config';
+import type { MouseEvent } from 'react';
+
 const { CALENDAR } = config;
 
 const event = {
@@ -15,10 +17,10 @@ const event = {
 };
 
 export const CalendarLinks = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<(null | HTMLElement)>(null);
   const isOpen = Boolean(anchorEl);
 
-  const handleOpen = (e) => {
+  const handleOpen = (e: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(e.currentTarget);
   };
 

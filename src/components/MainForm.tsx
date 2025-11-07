@@ -6,17 +6,20 @@ import { useOrderData } from 'contexts/OrderDataContext';
 import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { FormContents } from './FormContents';
 import { config } from 'config';
+import type { FormikProps } from 'formik';
+import type { Order } from 'types/order';
+
 const { NUM_PAGES, DEPOSIT_COST } = config;
 
 export const MainForm = () => {
-  const formikRef = useRef();
+  const formikRef = useRef<FormikProps<Order>>(null);
   const { order, updateOrder } = useOrderData();
   const { currentPage, setCurrentPage } = useOrderFlow();
 
   // this is triggered after People submitted and after PaymentForm submitted
   // for now it's really just validating the PaymentForm page fields (?)
   // note: it doesn't get here until all validations are passing (?)
-  function submitForm(values, actions) {
+  function submitForm(values: Order) {
     const submittedOrder = Object.assign({}, values);
     const sanitizedOrder = sanitizeObject(submittedOrder);
     updateOrder({
@@ -25,7 +28,7 @@ export const MainForm = () => {
       total: order.total,
       fees: order.fees,
     });
-    setCurrentPage(currentPage === NUM_PAGES ? 'checkout' : currentPage + 1);
+    setCurrentPage(currentPage === NUM_PAGES ? 'checkout' : (currentPage as number) + 1);
   }
 
   return (
@@ -34,7 +37,7 @@ export const MainForm = () => {
       validationSchema={validationSchema({ currentPage })}
       validateOnBlur={true}
       validateOnChange={false}
-      onSubmit={ (values, actions) => {submitForm(values, actions);} }
+      onSubmit={values => submitForm(values)}
       innerRef={formikRef}
     >
       <FormContents formikRef={formikRef} />

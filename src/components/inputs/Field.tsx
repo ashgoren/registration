@@ -17,15 +17,15 @@ type NumericInputProps = {
 };
 
 type FieldProps = BaseFieldProps & (
-  | ({ type?: 'text' | 'email' } & ComponentProps<typeof TextInput>)
-  | ({ type: 'pattern' } & NumericInputProps)
-  | ({ type: 'address' } & ComponentProps<typeof AddressAutocompleteInput>)
-  | ({ type: 'autocomplete' } & ComponentProps<typeof AutocompleteInput>)
-  | ({ type: 'textarea' } & ComponentProps<typeof TextArea>)
-  | ({ type: 'checkbox' } & ComponentProps<typeof CheckboxInput>)
-  | ({ type: 'radio' } & ComponentProps<typeof RadioButtons>)
-  | ({ type: 'select' } & ComponentProps<typeof SelectInput>)
-  | ({ type: 'button' } & ComponentProps<typeof ButtonInput>)
+  | ({ type?: 'text' | 'email' } & Partial<ComponentProps<typeof TextInput>>)
+  | ({ type: 'pattern' } & Partial<NumericInputProps>)
+  | ({ type: 'address' } & Partial<ComponentProps<typeof AddressAutocompleteInput>>)
+  | ({ type: 'autocomplete' } & Partial<ComponentProps<typeof AutocompleteInput>>)
+  | ({ type: 'textarea' } & Partial<ComponentProps<typeof TextArea>>)
+  | ({ type: 'checkbox' } & Partial<ComponentProps<typeof CheckboxInput>>)
+  | ({ type: 'radio' } & Partial<ComponentProps<typeof RadioButtons>>)
+  | ({ type: 'select' } & Partial<ComponentProps<typeof SelectInput>>)
+  | ({ type: 'button' } & Partial<ComponentProps<typeof ButtonInput>>)
 );
 
 export const Field = ({ alignRight, type = 'text', ...props }: FieldProps) => {

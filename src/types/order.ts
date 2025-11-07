@@ -2,6 +2,7 @@ export type Person = {
   email: string;
   state?: string;
   country?: string;
+  share?: string[];
   [key: string]: unknown;
 };
 

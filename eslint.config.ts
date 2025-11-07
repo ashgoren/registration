@@ -19,6 +19,10 @@ export default [
       "react/display-name": "off",
       "react/prop-types": "off",
       "react/no-unescaped-entities": "off",
+      "@typescript-eslint/no-unused-vars": ["error", { 
+        "varsIgnorePattern": "^_",
+        "argsIgnorePattern": "^_" 
+      }]
     },
   },
 ];

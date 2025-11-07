@@ -15,6 +15,8 @@ import { PaypalCheckout } from 'components/PaypalCheckout';
 import { Check } from 'components/Check';
 import { logDebug } from 'src/logger';
 import { config } from 'config';
+import type { Order } from 'types/order';
+
 const { NUM_PAGES, TECH_CONTACT } = config;
 
 export const Checkout = () => {
@@ -40,14 +42,14 @@ export const Checkout = () => {
         setError(null);
         await initializePayment();
         hasInitialized.current = true;
-      } catch (error) {
+      } catch (err) {
         setError(
           <>
             We're sorry, but we experienced an issue initializing your registration:<br />
             Error initializing payment<br />
             Please close this tab and start over.<br />
             If this error persists, please contact {TECH_CONTACT}.<br />
-            Error: {error.message || error}
+            Error: {getErrorMessage(err)}
           </>
         );
 
@@ -69,7 +71,7 @@ export const Checkout = () => {
   if (!amountToCharge || isInitializing) {
     return (
       <>
-        <StyledPaper align='center'>
+        <StyledPaper sx={{ textAlign: 'center' }}>
           {error && <Box sx={{ mb: 4 }}><Error /></Box>}
           <Loading text={`Retrieving total from ${paymentMethod}...`} />
         </StyledPaper>
@@ -80,7 +82,7 @@ export const Checkout = () => {
 
   return (
     <section>
-      <StyledPaper align='center'>
+      <StyledPaper sx={{ textAlign: 'center' }}>
 
         {processing && <Loading processing={true} text={processingMessage} />}
         {error && <Box sx={{ mb: 4 }}><Error /></Box>}
@@ -120,12 +122,17 @@ export const Checkout = () => {
   );
 };
 
-function isValidTotal(order) {
-  const orderTotal = parseInt(order.total) + parseFloat(order.fees);
+function isValidTotal(order: Order): boolean {
+  const orderTotal = Number(order.total) + Number(order.fees);
   const isDeposit = order.deposit > 0;
-  const admissions = order.people.map(person => person.admission);
+  const admissions = order.people.map(person => Number(person.admission));
   const admissionsTotal = admissions.reduce((total, admission) => total + admission, 0);
   const donation = order.donation;
   const fees = order.fees;
-  return isDeposit || orderTotal === admissionsTotal + donation + fees;
+  return isDeposit || orderTotal === admissionsTotal + donation + Number(fees);
 }
+
+const getErrorMessage = (err: unknown): string => {
+  const error = err as Error | string;
+  return error instanceof Error ? error.message : String(error);
+};

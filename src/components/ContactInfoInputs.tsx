@@ -3,19 +3,25 @@ import { Grid, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
 import { Field } from 'components/inputs';
 import { config } from 'config';
 import { logDebug } from 'src/logger';
+import type { FormikProps } from 'formik';
+import type { Order, Person } from 'types/order';
+import type { RefObject, FocusEvent } from 'react';
+
 const { FIELD_CONFIG, INCLUDE_LAST_ON_NAMETAG } = config;
 
-export const ContactInfoInputs = memo(({ fields, index, formikRef }) => {
+export const ContactInfoInputs = memo(({ fields, index, formikRef }:
+  { fields: string[]; index: number; formikRef: RefObject<FormikProps<Order>> }
+) => {
   logDebug('ContactInfoInputs rendered');
 
   const addressFields = fields.filter((field) => ['address', 'apartment', 'city', 'state', 'zip', 'country'].includes(field));
   const otherFields = fields.filter((field) => !addressFields.includes(field));
   const mainFields = fields.includes('address') ? otherFields : fields;
-  const firstPersonValues = index > 0 ? formikRef.current.values.people[0] : {};
+  const firstPersonValues = index > 0 ? formikRef.current.values.people[0] as Person : null;
   const [isChecked, setIsChecked] = useState(false);
 
   const triggerSetNametagField = `people[${index}].${INCLUDE_LAST_ON_NAMETAG ? 'last' : 'first'}`;
-  const setNametag = (e) => {
+  const setNametag = (e: FocusEvent<HTMLInputElement>) => {
     const { values, setFieldValue, handleBlur } = formikRef.current;
     handleBlur(e);  // bubble up to default Formik onBlur handler
     const { first, last, nametag } = values.people[index];
@@ -34,6 +40,11 @@ export const ContactInfoInputs = memo(({ fields, index, formikRef }) => {
           const fieldConfig = FIELD_CONFIG[field];
           const { label, type, pattern, placeholder, autoComplete, required, hidden, width } = fieldConfig;
           const fieldName = `people[${index}].${field}`;
+
+          if (typeof label !== 'string') {
+            throw new Error(`ContactInfoInputs: label for field "${field}" is not a string`);
+          }
+
           return (
             <Grid item xs={12} sm={width} key={`${index}-${field}`}>
               <Field
@@ -45,7 +56,6 @@ export const ContactInfoInputs = memo(({ fields, index, formikRef }) => {
                 autoComplete={autoComplete}
                 fullWidth
                 required={required}
-                mask='_'
                 variant='standard'
                 hidden={hidden}
                 onBlur={fieldName === triggerSetNametagField ? setNametag : undefined}
@@ -68,13 +78,13 @@ export const ContactInfoInputs = memo(({ fields, index, formikRef }) => {
                       if (checked) {
                         addressFields.forEach((field) => {
                           const fieldName = `people[${index}].${field}`;
-                          formikRef.current.setFieldValue(fieldName, firstPersonValues[field]);
+                          formikRef.current.setFieldValue(fieldName, (firstPersonValues as Person)[field]);
                         });
                       }
                     }}
                   />
                 }
-                label={`Copy address from ${firstPersonValues.first} ${firstPersonValues.last}`}
+                label={`Copy address from ${(firstPersonValues as Person).first} ${(firstPersonValues as Person).last}`}
               />
             )}
           </FormGroup>
@@ -84,6 +94,11 @@ export const ContactInfoInputs = memo(({ fields, index, formikRef }) => {
               const fieldConfig = FIELD_CONFIG[field];
               const { label, type, pattern, placeholder, autoComplete, required, hidden, width, suggestions } = fieldConfig;
               const fieldName = `people[${index}].${field}`;
+
+              if (typeof label !== 'string') {
+                throw new Error(`ContactInfoInputs: label for field "${field}" is not a string`);
+              }
+
               return (
                 <Grid item xs={12} sm={width} key={`${index}-${field}`}>
                   <Field
@@ -95,7 +110,6 @@ export const ContactInfoInputs = memo(({ fields, index, formikRef }) => {
                     autoComplete={autoComplete}
                     fullWidth
                     required={required}
-                    mask='_'
                     variant='standard'
                     hidden={hidden}
                     suggestions={suggestions}

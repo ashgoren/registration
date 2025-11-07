@@ -3,7 +3,9 @@ import { TailSpin } from 'react-loading-icons'
 import { config } from 'config';
 const { TECH_CONTACT } = config;
 
-export const Loading = ({ text='Thinking...', isHeading=true, processing=false }) => {
+export const Loading = ({ text='Thinking...', isHeading=true, processing=false }:
+  { text?: string | null; isHeading?: boolean; processing?: boolean }
+) => {
   return (
     <Box sx={{ my: 10 }}>
       <TailSpin stroke='black' strokeWidth='2.5' />
