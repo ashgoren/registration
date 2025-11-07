@@ -3,6 +3,7 @@ import { Label } from 'components/layouts/SharedStyles';
 import { ButtonInput, CheckboxInput, RadioButtons, NumericInput, TextArea, AddressAutocompleteInput, TextInput, AutocompleteInput, SelectInput } from '.';
 import type { ComponentProps } from 'react';
 import type { FocusEventHandler } from 'react';
+import type { ReactNode } from 'react';
 
 type BaseFieldProps = {
   alignRight?: boolean;
@@ -16,19 +17,19 @@ type NumericInputProps = {
   onBlur?: FocusEventHandler<HTMLInputElement>;
 };
 
-type FieldProps = BaseFieldProps & (
+export type CustomFieldProps = BaseFieldProps & (
   | ({ type?: 'text' | 'email' } & Partial<ComponentProps<typeof TextInput>>)
   | ({ type: 'pattern' } & Partial<NumericInputProps>)
   | ({ type: 'address' } & Partial<ComponentProps<typeof AddressAutocompleteInput>>)
   | ({ type: 'autocomplete' } & Partial<ComponentProps<typeof AutocompleteInput>>)
   | ({ type: 'textarea' } & Partial<ComponentProps<typeof TextArea>>)
-  | ({ type: 'checkbox' } & Partial<ComponentProps<typeof CheckboxInput>>)
+  | ({ type: 'checkbox'; label?: ReactNode } & Partial<Omit<ComponentProps<typeof CheckboxInput>, 'label'>>)
   | ({ type: 'radio' } & Partial<ComponentProps<typeof RadioButtons>>)
   | ({ type: 'select' } & Partial<ComponentProps<typeof SelectInput>>)
   | ({ type: 'button' } & Partial<ComponentProps<typeof ButtonInput>>)
 );
 
-export const Field = ({ alignRight, type = 'text', ...props }: FieldProps) => {
+export const Field = ({ alignRight, type = 'text', ...props }: CustomFieldProps) => {
   const inputProps = alignRight ? { ...props, label: undefined } : props;
 
   const renderInput = () => {
@@ -56,6 +57,9 @@ export const Field = ({ alignRight, type = 'text', ...props }: FieldProps) => {
   };
 
   if (alignRight) {
+    if (type === 'checkbox' || type === 'radio' || type === 'textarea') {
+      throw new Error(`${type} fields do not support alignRight`);
+    }
     const { label, name } = props as { label: string; name: string };
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

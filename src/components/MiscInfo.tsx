@@ -5,9 +5,14 @@ import { useScrollToTop } from 'hooks/useScrollToTop';
 import { Field } from 'components/inputs';
 import { logDebug } from 'src/logger';
 import { config } from 'config';
+import type { RefObject, ChangeEvent, } from 'react';
+import type { FormikProps } from 'formik';
+import type { Order } from 'types/order';
+import type { CustomFieldProps } from 'components/inputs/Field';
+
 const { FIELD_CONFIG, PERSON_MISC_FIELDS } = config;
 
-export const MiscInfo = ({ index, formikRef }) => {
+export const MiscInfo = ({ index, formikRef }: { index: number; formikRef: RefObject<FormikProps<Order> | null> }) => {
   logDebug('MiscInfo rendered');
   
   const [showPhotoCommentsField, setShowPhotoCommentsField] = useState(formikRef?.current?.values?.people?.[index]?.photo === 'Other');
@@ -15,7 +20,7 @@ export const MiscInfo = ({ index, formikRef }) => {
   
   useScrollToTop();
 
-  const updatePhotoCommentsField = useCallback((e) => {
+  const updatePhotoCommentsField = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     if (!formikRef.current) return;
     const { name, value } = e.target;
     const { setFieldValue, setFieldError, handleChange } = formikRef.current;
@@ -29,11 +34,15 @@ export const MiscInfo = ({ index, formikRef }) => {
     setFieldError(name, '');
   }, [formikRef, index]);
 
-  const updateShareCheckboxOptions = useCallback((e) => {
+  const updateShareCheckboxOptions = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     if (!formikRef.current) return;
     const { name: field, value, checked } = e.target;
     const { setFieldValue } = formikRef.current;
     const { share } = formikRef.current.values.people[index];
+    if (!Array.isArray(share)) {
+      throw new Error(`Expected share to be an array, got: ${share}`);
+    }
+    console.log('Updating share field:', field, value, checked, share);
     if (value === 'name') {
       // if 'name' gets unchecked, uncheck all options
       setFieldValue(field, checked ? ['name'] : []);
@@ -46,7 +55,7 @@ export const MiscInfo = ({ index, formikRef }) => {
     }
   }, [formikRef, index]);
 
-  const updateAgreementField = useCallback(async (e) => {
+  const updateAgreementField = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
     if (!formikRef.current) return;
     const { name, checked } = e.target;
     const { setFieldValue, setFieldTouched } = formikRef.current;
@@ -54,7 +63,7 @@ export const MiscInfo = ({ index, formikRef }) => {
     setFieldTouched(name, true);
   }, [formikRef]);
 
-  const getOnChangeHandler = (field) => {
+  const getOnChangeHandler = (field: string) => {
     if (field === 'share') return updateShareCheckboxOptions;
     if (field === 'photo') return updatePhotoCommentsField;
     if (field === 'agreement') return updateAgreementField;
@@ -65,25 +74,24 @@ export const MiscInfo = ({ index, formikRef }) => {
     <Box className='MiscInfo' sx={{ mt: 4 }}>
       {fields
         .map(field => {
-          const { validation, conditionalValidation, ...domProps } = FIELD_CONFIG[field];
+          const { validation: _, conditionalValidation: __, ...domProps } = FIELD_CONFIG[field];
           return { field, ...domProps };
         })
         .map((input) => {
-          const { field, type, title, label, options, hidden, ...props } = input;
+          const { field, type, title, label, options, ...props } = input;
           if (field === 'photoComments' && !showPhotoCommentsField) return null;
+          const fieldProps = {
+            type,
+            label,
+            name: `people[${index}].${field}`,
+            options: type === 'checkbox' || type === 'radio' ? options : undefined,
+            onChange: getOnChangeHandler(field),
+          ...props
+          } as CustomFieldProps;
           return (
             <Box sx={{ mb: 6 }} key={field}>
               <Title>{title}</Title>
-              <Field
-                type={type}
-                label={label}
-                name={`people[${index}].${field}`}
-                field={field}
-                index={index}
-                options={type === 'checkbox' || type === 'radio' ? options : undefined}
-                onChange={getOnChangeHandler(field)}
-                {...props}
-              />
+              <Field {...fieldProps} />
             </Box>
           );
         })
