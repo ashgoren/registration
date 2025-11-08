@@ -7,14 +7,25 @@ import type { ReactNode } from 'react';
 
 type BaseFieldProps = {
   alignRight?: boolean;
+  label?: string | ReactNode;
+  name?: string;
+  onBlur?: FocusEventHandler<HTMLInputElement>;
+  fullWidth?: boolean;
+  variant?: 'filled' | 'outlined' | 'standard';
+  placeholder?: string;
+  autoComplete?: string;
+  required?: boolean;
+  hidden?: boolean;
+  disabled?: boolean;
+  sx?: object;
+  range?: [number, number];
+  InputProps?: object;
+  autoFocus?: boolean;
+  suggestions?: readonly { id: string; fullName: string; abbreviation: string; country: string }[];
 };
 
 type NumericInputProps = {
-  variant?: 'filled' | 'outlined' | 'standard';
-  label: string;
-  name: string;
   pattern: string;
-  onBlur?: FocusEventHandler<HTMLInputElement>;
 };
 
 export type CustomFieldProps = BaseFieldProps & (
@@ -23,7 +34,7 @@ export type CustomFieldProps = BaseFieldProps & (
   | ({ type: 'address' } & Partial<ComponentProps<typeof AddressAutocompleteInput>>)
   | ({ type: 'autocomplete' } & Partial<ComponentProps<typeof AutocompleteInput>>)
   | ({ type: 'textarea' } & Partial<ComponentProps<typeof TextArea>>)
-  | ({ type: 'checkbox'; label?: ReactNode } & Partial<Omit<ComponentProps<typeof CheckboxInput>, 'label'>>)
+  | ({ type: 'checkbox' } & Partial<Omit<ComponentProps<typeof CheckboxInput>, 'label'>>)
   | ({ type: 'radio' } & Partial<ComponentProps<typeof RadioButtons>>)
   | ({ type: 'select' } & Partial<ComponentProps<typeof SelectInput>>)
   | ({ type: 'button' } & Partial<ComponentProps<typeof ButtonInput>>)

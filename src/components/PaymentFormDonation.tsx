@@ -5,15 +5,17 @@ import { StyledPaper, Title } from 'components/layouts/SharedStyles';
 import { Field } from 'components/inputs';
 import { clamp } from 'utils';
 import { config } from 'config';
+import type { FocusEvent } from 'react';
+import { Order } from 'types/order';
 const { DONATION_MAX } = config;
 
-export const PaymentFormDonation = ({ donationAmount }) => {
-  const { values, setFieldValue, handleBlur } = useFormikContext();
+export const PaymentFormDonation = ({ donationAmount }: { donationAmount: number }) => {
+  const { values, setFieldValue, handleBlur } = useFormikContext<Order>();
   const [donate, setDonate] = useState(donationAmount > 0);
 
-  function updateDonationValue(event) {
+  function updateDonationValue(event: FocusEvent<HTMLInputElement>) {
     const { name, value } = event.target;
-    setFieldValue(name, clampDonation(value));
+    setFieldValue(name, clampDonation(Number(value)));
     handleBlur(event); // bubble up to formik
     // setDonationTotal(parseInt(values['donation'] || 0));
   }
@@ -26,7 +28,7 @@ export const PaymentFormDonation = ({ donationAmount }) => {
           alignRight
           type='button'
           label='Would you like to make an additional contribution?'
-          name='donate'
+          // name='donate'
           buttonText='Yes'
           onClick={() => setDonate(true)}
         />
@@ -44,7 +46,7 @@ export const PaymentFormDonation = ({ donationAmount }) => {
           onBlur={updateDonationValue}
           InputProps={{
             startAdornment: <InputAdornment position='start'>$</InputAdornment>,
-            onFocus: (e) => e.target.select()
+            onFocus: (e: FocusEvent<HTMLInputElement>) => e.target.select()
           }}
           autoFocus={values['donation'] === 0 || !values['donation']}
           // value={values['donation'] === 0 ? '' : values['donation']}
@@ -54,4 +56,4 @@ export const PaymentFormDonation = ({ donationAmount }) => {
   )
 };
 
-const clampDonation = (value) => clamp(value || 0, [0, DONATION_MAX]);
+const clampDonation = (value: number) => clamp(value || 0, [0, DONATION_MAX]);

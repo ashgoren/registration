@@ -14,12 +14,14 @@ import { PaymentFormFees } from './PaymentFormFees';
 import { PaymentFormTotal } from './PaymentFormTotal';
 import { PaymentFormFullPayment } from './PaymentFormFullPayment';
 import { config } from 'config';
+import type { Order } from 'types/order';
+
 const { DEPOSIT_OPTION, COVER_FEES_OPTION, DEPOSIT_COST, ADMISSION_COST_RANGE, DONATION_OPTION, PAYMENT_DUE_DATE, SHOW_PAYMENT_SUMMARY, ADMISSIONS_MODE } = config;
 
-export const PaymentForm = ({ handleClickBackButton }) => {
+export const PaymentForm = ({ handleClickBackButton }: { handleClickBackButton: () => void }) => {
   const { order, updateOrder } = useOrderData();
-  const { values, setFieldValue } = useFormikContext();
-  const [coverFees, setCoverFees] = useState(order.fees > 0);
+  const { values, setFieldValue } = useFormikContext<Order>();
+  const [coverFees, setCoverFees] = useState(Number(order.fees) > 0);
   const [paymentTab, setPaymentTab] = useState(order.deposit > 0 ? 'deposit' : 'fullpayment');
 
   useScrollToTop();
@@ -64,7 +66,7 @@ export const PaymentForm = ({ handleClickBackButton }) => {
     });
   }, [total, fees, coverFees, updateOrder]);
 
-  const handlePaymentTab = (_, newTab) => {
+  const handlePaymentTab = (_: React.SyntheticEvent, newTab: string) => {
     setFieldValue('deposit', newTab === 'deposit' ? order.people.length * DEPOSIT_COST : 0);
     setPaymentTab(newTab);
     if (newTab === 'deposit') setFieldValue('donation', 0);
@@ -137,4 +139,4 @@ export const PaymentForm = ({ handleClickBackButton }) => {
   );
 };
 
-const clampAdmission = (value) => clamp(value || ADMISSION_COST_RANGE[0], ADMISSION_COST_RANGE);
+const clampAdmission = (value: number) => clamp(value || ADMISSION_COST_RANGE[0], ADMISSION_COST_RANGE);
