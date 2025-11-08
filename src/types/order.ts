@@ -1,8 +1,12 @@
 export type Person = {
   email: string;
+  first: string;
+  last: string;
   state?: string;
   country?: string;
   share?: string[];
+  admission: number;
+  apartment?: string;
   [key: string]: unknown;
 };
 

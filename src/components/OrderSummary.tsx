@@ -7,18 +7,20 @@
 import { Box, Typography } from '@mui/material';
 import { formatCurrency } from 'utils';
 import { config } from 'config';
+import type { Order, Person } from 'types/order';
+
 const { ORDER_SUMMARY_OPTIONS, ADMISSION_COST_RANGE, PAYMENT_DUE_DATE, INCLUDE_PRONOUNS_ON_NAMETAG, WAITLIST_MODE } = config;
 
-export const OrderSummary = ({ order }) => {
+export const OrderSummary = ({ order }: { order: Order }) => {
   const admissions = order.people.map(person => person.admission);
   const admissionsTotal = admissions.reduce((total, admission) => total + admission, 0);
   const isDeposit = order.deposit > 0;
   const isFullPayment = !isDeposit;
-  const fees = parseFloat(order.fees);
+  const fees = Number(order.fees);
 
   return (
     <>
-      <Typography variant="body" gutterBottom>
+      <Typography variant='body1' gutterBottom>
         <strong>{order.people.length > 1 ? 'Registration' : 'Your info'}</strong>
       </Typography>
 
@@ -30,7 +32,7 @@ export const OrderSummary = ({ order }) => {
 
       {!WAITLIST_MODE &&
         <Box style={{ marginTop: '2em' }}>
-          <Typography variant="body" gutterBottom>
+          <Typography variant='body1' gutterBottom>
             <strong>Payment Info</strong>
           </Typography>
 
@@ -61,7 +63,7 @@ export const OrderSummary = ({ order }) => {
             }
 
             {isDeposit &&
-              <><strong><font color='orange'>The balance of your registration fee is due by {PAYMENT_DUE_DATE}.</font></strong><br /></>
+              <><strong style={{ color: 'orange' }}>The balance of your registration fee is due by {PAYMENT_DUE_DATE}.</strong><br /></>
             }
           </Typography>
         </Box>
@@ -70,11 +72,11 @@ export const OrderSummary = ({ order }) => {
   );
 };
 
-export const PersonSummary = ({ person, skipCost=false, skipFirstLastHeading=false }) => {
+export const PersonSummary = ({ person, skipCost=false, skipFirstLastHeading=false }: { person: Person, skipCost?: boolean, skipFirstLastHeading?: boolean }) => {
   return (
     <>
       {!skipFirstLastHeading &&
-        <Typography variant='body' sx={{ fontWeight: 'bold' }}>{person.first} {person.last}</Typography>
+        <Typography variant='body1' sx={{ fontWeight: 'bold' }}>{person.first} {person.last}</Typography>
       }
       {ORDER_SUMMARY_OPTIONS
         .map((option) => {
@@ -93,11 +95,17 @@ export const PersonSummary = ({ person, skipCost=false, skipFirstLastHeading=fal
 
 // data formatting helpers
 
-function renderConditionalData ({ person, property, label, mapping, defaultValue }) {
-  let data = person[property];
+function renderConditionalData ({ person, property, label, mapping, defaultValue }:{
+  person: Person;
+  property: string;
+  label?: string;
+  mapping?: { label: string; value: string }[];
+  defaultValue?: string;
+}) {
+  const data = person[property];
   let content;
   if (property === 'admission') {
-    content = formatCost(data);
+    content = formatCost(data as number);
   } else if (property === 'nametag') {
     content = formatNametag(person);
   } else if (property === 'address') {
@@ -114,17 +122,17 @@ function renderConditionalData ({ person, property, label, mapping, defaultValue
   return content ? <>{label && <strong>{label}: </strong>}{content}<br /></> : null;
 }
 
-function formatCost(cost) {
-  return cost < ADMISSION_COST_RANGE[0] ? <>${cost}<br /><strong><font color='orange'>The balance of this payment will be due by {PAYMENT_DUE_DATE}.</font></strong></> : <>${cost}</>;
+function formatCost(cost: number) {
+  return cost < ADMISSION_COST_RANGE[0] ? <>${cost}<br /><strong style={{ color: 'orange' }}>The balance of this payment will be due by {PAYMENT_DUE_DATE}.</strong></> : <>${cost}</>;
 }
 
-function formatNametag(person) {
+function formatNametag(person: Person) {
   const { nametag, pronouns } = person;
   const formattedPronouns = pronouns ? `(${pronouns})` : '';
   return INCLUDE_PRONOUNS_ON_NAMETAG ? `${nametag} ${formattedPronouns}` : nametag;
 }
 
-function formatAddress(person) {
+function formatAddress(person: Person) {
   const { address, apartment, city, state, zip, country } = person;
   if (!address && !city && !state && !zip) return null;
   const parts = [];
@@ -148,7 +156,7 @@ function formatAddress(person) {
   return <>{parts.join(', ')}</>;
 }
 
-function formatArray(data, defaultValue, mapping) {
+function formatArray(data: string[], defaultValue?: string, mapping?: { label: string; value: string }[]) {
   if (!data.length) return defaultValue;
   if (mapping) {
     const checkboxTitles = data
@@ -164,7 +172,7 @@ function formatArray(data, defaultValue, mapping) {
   }
 }
 
-function formatSimpleDataTypes(data, defaultValue) {
+function formatSimpleDataTypes(data: unknown, defaultValue?: unknown) {
   const formattedData = String(data).trim();
   return formattedData || defaultValue;
 }
