@@ -71,7 +71,7 @@ export const Checkout = () => {
   if (!amountToCharge || isInitializing) {
     return (
       <>
-        <StyledPaper sx={{ textAlign: 'center' }}>
+        <StyledPaper extraStyles={{ textAlign: 'center' }}>
           {error && <Box sx={{ mb: 4 }}><Error /></Box>}
           <Loading text={`Retrieving total from ${paymentMethod}...`} />
         </StyledPaper>
@@ -82,7 +82,7 @@ export const Checkout = () => {
 
   return (
     <section>
-      <StyledPaper sx={{ textAlign: 'center' }}>
+      <StyledPaper extraStyles={{ textAlign: 'center' }}>
 
         {processing && <Loading processing={true} text={processingMessage} />}
         {error && <Box sx={{ mb: 4 }}><Error /></Box>}
