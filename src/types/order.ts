@@ -1,3 +1,5 @@
+import type { AgeGroup } from 'config/configTieredPricing';
+
 export type Person = {
   email: string;
   first: string;
@@ -7,6 +9,7 @@ export type Person = {
   share?: string[];
   admission: number;
   apartment?: string;
+  age?: AgeGroup;
   [key: string]: unknown;
 };
 

@@ -3,24 +3,28 @@ import { Paper, Typography, Table, TableContainer, TableBody, TableRow, TableCel
 import { Paragraph } from 'components/layouts/SharedStyles';
 import { SelectInput } from 'components/inputs';
 import { getCategoryLabel, getOptions } from 'config/configTieredPricing';
+import type { SelectChangeEvent } from '@mui/material';
+import type { Person } from 'types/order';
 
-export const PaymentFormOptions = ({ people }) => {
+export const PaymentFormOptions = ({ people }: { people: Person[] }) => {
   const { setFieldValue, handleChange } = useFormikContext();
-
-  function updateAdmissionValue(event) {
+  
+  function updateAdmissionValue(event: SelectChangeEvent<unknown>) {
     const { name, value } = event.target;
     setFieldValue(name, value);
     handleChange(event); // bubble up to formik
   }
 
+  const validPeople = people as Array<Person & { age: string }>;
+
   return (
     <>
-      <Paragraph>Please read the tiered plan explanation above and select {people.length > 1 ? 'options' : 'an option'} below:</Paragraph>
+      <Paragraph>Please read the tiered plan explanation above and select {validPeople.length > 1 ? 'options' : 'an option'} below:</Paragraph>
 
       <TableContainer component={Paper} sx={{ mb: 2 }}>
         <Table>
           <TableBody>
-            {people.map((person, index) => (
+            {validPeople.map((person, index) => (
               <TableRow key={index}>
 
                 <TableCell>

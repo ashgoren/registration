@@ -1,9 +1,9 @@
 import { config } from 'config';
 const { EARLYBIRD_CUTOFF } = config;
 
-type AgeGroup = '0-2' | '3-5' | '6-12' | '13-17' | 'adult';
+export type AgeGroup = '0-2' | '3-5' | '6-12' | '13-17' | 'adult';
 
-type PricingOption = {
+export type PricingOption = {
   early: number;
   later: number;
   category?: string;
@@ -67,7 +67,7 @@ export const getCategoryLabel = (person: { age: AgeGroup }) => TIERED_PRICING_MA
 export const getOptions = (person: { age: AgeGroup }) => {
   const tier = getTier();
   return TIERED_PRICING_MAP[person.age].options.map(option => ({
-    value: option[tier],
-    label: option.category ? `${option.category} - $${option[tier]}` : `$${option[tier]}`
+    label: option.category ? `${option.category} - $${option[tier]}` : `$${option[tier]}`,
+    value: String(option[tier])
   }));
 };

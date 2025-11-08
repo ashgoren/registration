@@ -1,7 +1,9 @@
 import { Checkbox, FormControlLabel } from '@mui/material';
 import { StyledPaper } from 'components/layouts/SharedStyles';
 
-export const PaymentFormFees = ({ fees, coverFees, setCoverFees }) => {
+export const PaymentFormFees = ({ fees, coverFees, setCoverFees }:
+  { fees: number; coverFees: boolean; setCoverFees: (value: boolean) => void }
+) => {
   return (
     <StyledPaper>
       <FormControlLabel

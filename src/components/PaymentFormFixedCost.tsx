@@ -2,7 +2,7 @@ import { Title, Paragraph } from 'components/layouts/SharedStyles';
 import { config } from 'config';
 const { ADMISSION_COST_FIXED } = config;
 
-export const PaymentFormFixedCost = ({ numPeople }) => {
+export const PaymentFormFixedCost = ({ numPeople }: { numPeople: number }) => {
 
   return (
     <>
