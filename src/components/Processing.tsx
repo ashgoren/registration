@@ -8,7 +8,7 @@ import { useOrderFinalization } from 'hooks/useOrderFinalization';
 import { config } from 'config';
 const { TECH_CONTACT } = config;
 
-export const Processing = ({ isPaymentComplete }) => {
+export const Processing = ({ isPaymentComplete }: { isPaymentComplete: boolean }) => {
   const { paymentMethod } = useOrderPayment();
   const { setCurrentPage, error, setError } = useOrderFlow();
   const { finalizeOrder } = useOrderFinalization();
@@ -20,7 +20,7 @@ export const Processing = ({ isPaymentComplete }) => {
       try {
         await finalizeOrder();
         setCurrentPage('confirmation');
-      } catch (error) {
+      } catch {
         setError(`Your payment was processed successfully. However, we encountered an error updating your registration. Please contact ${TECH_CONTACT}.`);
       }
     };
@@ -29,7 +29,7 @@ export const Processing = ({ isPaymentComplete }) => {
   }, [isPaymentComplete, finalizeOrder, setCurrentPage, setError]);
 
   return (
-    <StyledPaper align='center'>
+    <StyledPaper sx={{ textAlign: 'center' }}>
       {error && <Box sx={{ mb: 4 }}><Error /></Box>}
       {!isPaymentComplete &&
         <Loading processing={true} text='Saving payment details...' />
@@ -44,4 +44,4 @@ export const Processing = ({ isPaymentComplete }) => {
   );
 };
 
-const isElectronicPayment = (paymentMethod) => ['stripe', 'paypal'].includes(paymentMethod);
+const isElectronicPayment = (paymentMethod: string) => ['stripe', 'paypal'].includes(paymentMethod);

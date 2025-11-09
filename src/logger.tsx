@@ -4,9 +4,9 @@ const { ENV } = config;
 
 // log to firebase logger
 
-export const logInfo = (message: string, metadata: Record<string, unknown>) => logger('info', message, metadata);
-export const logWarn = (message: string, metadata: Record<string, unknown>) => logger('warn', message, metadata);
-export const logError = (message: string, metadata: Record<string, unknown>) => logger('error', message, metadata);
+export const logInfo = (message: string, metadata: Record<string, unknown> = {}) => logger('info', message, metadata);
+export const logWarn = (message: string, metadata: Record<string, unknown> = {}) => logger('warn', message, metadata);
+export const logError = (message: string, metadata: Record<string, unknown> = {}) => logger('error', message, metadata);
 
 const logger = (level: 'info' | 'warn' | 'error', message: string, metadata: Record<string, unknown> = {}) => {
   // log locally

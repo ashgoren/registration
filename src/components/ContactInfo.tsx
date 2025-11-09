@@ -11,7 +11,7 @@ import type { FormikProps } from 'formik';
 const { PERSON_INPUT_LABELS, PERSON_CONTACT_FIELDS } = config;
 
 export const ContactInfo = memo(({ index, formikRef }:
-  { index: number; formikRef: RefObject<FormikProps<Order>> }
+  { index: number; formikRef: RefObject<FormikProps<Order> | null> }
 ) => {
   logDebug('ContactInfo rendered');
 

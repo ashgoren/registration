@@ -12,7 +12,9 @@ import { logDebug, logErrorDebug } from 'src/logger';
 import { config } from 'config';
 const { ENV, TECH_CONTACT } = config;
 
-export const Waitlist = ({ handleClickBackButton }) => {
+export const Waitlist = ({ handleClickBackButton }: {
+  handleClickBackButton: () => void
+}) => {
   const { order, updateOrder } = useOrderData();
   const { error, setError, processing, setProcessing, processingMessage, setProcessingMessage } = useOrderFlow();
   const { savePendingOrder, isSaving } = useOrderSaving();
@@ -37,7 +39,7 @@ export const Waitlist = ({ handleClickBackButton }) => {
         await finalizeOrder();
         setProcessing(false);
         setSubmitted(true);
-      } catch (error) {
+      } catch {
         setError(`Error adding to waitlist. Please try again or contact ${TECH_CONTACT}.`);
         setProcessing(false);
       }
@@ -53,13 +55,13 @@ export const Waitlist = ({ handleClickBackButton }) => {
     try {
       await savePendingOrder();
       updateOrder({ paymentId: 'waitlist', charged: 0 });
-    } catch (error) { // instance of HttpsError from backend or other error
+    } catch (error: unknown) { // instance of HttpsError from backend or other error
       logErrorDebug('Error saving pending order:', error);
       setError(
 				<>
 					We're sorry, but we experienced an issue saving your order.<br />
 					Please try again or contact {TECH_CONTACT} for assistance.<br />
-					Error: {error.message || error}
+					Error: {(error as Error).message || error}
 				</>
       );
       setProcessing(false);
@@ -74,7 +76,7 @@ export const Waitlist = ({ handleClickBackButton }) => {
           {submitted ? 'Success!' : 'Waitlist Sign-up'}
         </Typography>
 
-        <OrderSummary order={order} currentPage='waitlist' />
+        <OrderSummary order={order} />
 
         {!ready && <Loading text='Please wait...' />}
 
@@ -99,7 +101,7 @@ export const Waitlist = ({ handleClickBackButton }) => {
             }
 
             {confirmed &&
-              <Box align='center' my={4}>
+              <Box sx={{ textAlign: 'center', my: 4 }}>
                 <Button variant='contained' color='secondary' onClick={processWaitlist}>
                   {isSaving ? 'Saving...' : 'Sign up for waitlist'}
                 </Button>
@@ -109,7 +111,7 @@ export const Waitlist = ({ handleClickBackButton }) => {
         }
 
         {submitted &&
-          <Box align='center' my={4}>
+          <Box sx={{ textAlign: 'center', my: 4 }}>
             <Typography variant='h5' my={2} sx={{ fontWeight: 'bold' }}>You have been added to the waitlist.</Typography>
             <Typography variant='body1'>We will notify you if a spot becomes available.</Typography>
           </Box>

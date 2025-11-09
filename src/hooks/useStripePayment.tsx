@@ -7,11 +7,14 @@ interface UseStripePaymentParams {
   order: Order;
   stripe: ReturnType<typeof useStripe>;
   elements: ReturnType<typeof useElements>;
-  clientSecret: string;
+  clientSecret?: string | null;
 }
 
 export const useStripePayment = ({ order, stripe, elements, clientSecret }: UseStripePaymentParams) => {
   const { email } = order.people[0]; // for logging
+  if (!clientSecret) {
+    throw new Error('Missing client secret for Stripe payment processing');
+  }
 
   const processPayment = async () => {
     logInfo('Capturing Stripe payment', { email, order });

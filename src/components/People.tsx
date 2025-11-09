@@ -9,9 +9,13 @@ import { PersonForm } from './PersonForm';
 import { PersonSummary } from 'components/OrderSummary';
 import { logDebug } from 'src/logger';
 import { config } from 'config';
+import type { RefObject } from 'react';
+import type { Order, Person } from 'types/order';
+import type { FormikProps } from 'formik';
+
 const { ADMISSION_QUANTITY_MAX, PERSON_DEFAULTS } = config;
 
-export const People = ({ formikRef }) => {
+export const People = ({ formikRef }: { formikRef: RefObject<FormikProps<Order> | null> }) => {
   logDebug('People rendered');
 
   const { order, updateOrder } = useOrderData();
@@ -21,32 +25,32 @@ export const People = ({ formikRef }) => {
   useWarnBeforeUnload();
 
   const resetForm = () => {
-    formikRef.current.resetForm({ values: order });
+    formikRef.current!.resetForm({ values: order });
   };
 
   const handleAddNew = () => {
-    const { values, setFieldValue } = formikRef.current;
+    const { values, setFieldValue } = formikRef.current!
     const people = [...values.people, PERSON_DEFAULTS];
     setEditIndex(order.people.length);
     setFieldValue('people', people); // update formik field array
     setIsNewPerson(true);
   };
 
-  const handleEdit = (personIndex) => {
+  const handleEdit = (personIndex: number) => {
     setEditIndex(personIndex);
   };
 
-  const handleDelete = (personIndex) => {
+  const handleDelete = (personIndex: number) => {
     const person = order.people[personIndex];
     if (window.confirm(`Remove ${person.first} ${person.last} from registration?`)) {
-      let people = order.people.filter((_, index) => index !== personIndex);
+      const people = order.people.filter((_, index) => index !== personIndex);
       if (people.length === 0) {
         people.push(PERSON_DEFAULTS);
         setEditIndex(0);
         resetForm();
       }
       updateOrder({ people });
-      formikRef.current.setFieldValue('people', people); // update formik field array
+      formikRef.current!.setFieldValue('people', people); // update formik field array
     }
   };
 
@@ -64,7 +68,6 @@ export const People = ({ formikRef }) => {
                   person={person}
                   personIndex={index}
                   showButtons={editIndex === null}
-                  setEditIndex={setEditIndex} 
                   handleEdit={handleEdit} handleDelete={handleDelete}
                 />
               }
@@ -101,7 +104,13 @@ export const People = ({ formikRef }) => {
   );
 }
 
-function PersonContainerAccordion({ person, personIndex, showButtons, handleEdit, handleDelete }) {
+function PersonContainerAccordion({ person, personIndex, showButtons, handleEdit, handleDelete }: {
+  person: Person;
+  personIndex: number;
+  showButtons: boolean;
+  handleEdit: (personIndex: number) => void;
+  handleDelete: (personIndex: number) => void;
+}) {
   const [expanded, setExpanded] = useState(false);
   return (
     <Box sx={{ mt: 2 }}>

@@ -6,19 +6,31 @@ import { MiscInfo } from './MiscInfo';
 import { logInfo, logDebug } from 'src/logger';
 import { getDefaultAdmission } from 'config/configTieredPricing';
 import { config } from 'config';
+import type { RefObject } from 'react';
+import type { Order } from 'types/order';
+import type { FormikProps, FormikTouched } from 'formik';
+import type { AgeGroup } from 'config/configTieredPricing';
+
 const { ADMISSIONS_MODE } = config;
 
-export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerson, resetForm, formikRef }) => {
+export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerson, resetForm, formikRef }: {
+  editIndex: number;
+  setEditIndex: (index: number | null) => void;
+  isNewPerson: boolean;
+  setIsNewPerson: (isNew: boolean) => void;
+  resetForm: () => void;
+  formikRef: RefObject<FormikProps<Order> | null>;
+}) => {
   logDebug('PersonForm rendered');
 
   const { order, updateOrder } = useOrderData();
 
   async function validatePersonForm() {
-    const { validateForm, setTouched } = formikRef.current;
+    const { validateForm, setTouched } = formikRef.current!;
     const errors = await validateForm();
     if (Object.keys(errors).length > 0) {
       logDebug('validatePersonForm errors:', errors);
-      setTouched(errors, true); // show errors
+      setTouched(errors as FormikTouched<Order>, true); // show errors
       // scroll to first invalid field; refactor to use ref instead of directly accessing DOM
       const firstInvalidFieldName = getFirstInvalidFieldName(errors);
       if (firstInvalidFieldName) {
@@ -33,7 +45,7 @@ export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerso
   }
 
   function saveUpdatedOrder() {
-    const { values, setFieldValue } = formikRef.current;
+    const { values, setFieldValue } = formikRef.current!;
 
     // sanitize the order object
     const submittedOrder = Object.assign({}, values);
@@ -44,7 +56,7 @@ export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerso
 
     // determine country & admission for the person being edited
     const country = getCountry(person);
-    const admission = ADMISSIONS_MODE === 'tiered' ? getDefaultAdmission(person) : person.admission;
+    const admission = ADMISSIONS_MODE === 'tiered' ? getDefaultAdmission(person as { age: AgeGroup }) : person.admission;
 
     // update formik field value for country & admission
     setFieldValue(`people[${editIndex}].country`, country);
@@ -64,7 +76,7 @@ export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerso
     const isValid = await validatePersonForm();
     if (isValid) {
       if (editIndex === 0) {
-        const { values } = formikRef.current;
+        const { values } = formikRef.current!;
         logInfo(`Registration started: ${values.people[0].email}`); // warms up firebase function
       }
       saveUpdatedOrder();
@@ -74,7 +86,7 @@ export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerso
   }
 
   function handleCancelButton() {
-    const { values, setFieldValue } = formikRef.current;
+    const { values, setFieldValue } = formikRef.current!;
     setEditIndex(null);
     resetForm();
     if (isNewPerson) {

@@ -2,7 +2,7 @@ const { VITE_PAYPAL_CLIENT_ID } = import.meta.env;
 
 const config = {
   PAYPAL_OPTIONS: {
-    "client-id": VITE_PAYPAL_CLIENT_ID,
+    "clientId": VITE_PAYPAL_CLIENT_ID,
     "disable-funding": "paylater,credit",
     "enable-funding": "venmo",
     "currency": "USD",

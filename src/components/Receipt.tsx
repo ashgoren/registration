@@ -7,10 +7,17 @@ import { renderMarkdownTemplate, formatCurrency } from 'utils';
 import { useScrollToTop } from 'hooks/useScrollToTop';
 import { OrderSummary, PersonSummary } from 'components/OrderSummary';
 import { config } from 'config';
+import type { Order, Person } from 'types/order';
+
 const { SHOW_CHECK_ADDRESS, CHECK_TO, CHECK_ADDRESS, EVENT_TITLE, PAYMENT_DUE_DATE, DIRECT_PAYMENT_URL } = config;
 
 // relies on passing order as prop to ensure is updated
-export const Receipt = ({ order, paymentMethod, person, isPurchaser }) => {
+export const Receipt = ({ order, paymentMethod, person, isPurchaser }: {
+  order: Order;
+  paymentMethod: string;
+  person?: Person;
+  isPurchaser: boolean;
+}) => {
   useScrollToTop();
 
   const data = {
@@ -18,9 +25,9 @@ export const Receipt = ({ order, paymentMethod, person, isPurchaser }) => {
     IS_CHECK_PAYMENT: paymentMethod === 'check',
     IS_ELECTRONIC_PAYMENT: paymentMethod !== 'check',
     IS_DEPOSIT: order.deposit > 0,
-    AMOUNT_PAID: formatCurrency(order.charged),
+    AMOUNT_PAID: formatCurrency(order.charged!),
     DEPOSIT_TOTAL: order.deposit,
-    ORDER_TOTAL: formatCurrency(order.total),
+    ORDER_TOTAL: formatCurrency(order.total!),
     SHOW_CHECK_ADDRESS,
     CHECK_TO,
     CHECK_ADDRESS: CHECK_ADDRESS.join(', '),
@@ -39,8 +46,8 @@ export const Receipt = ({ order, paymentMethod, person, isPurchaser }) => {
       <Divider component='hr' />
       <br />
       {isPurchaser
-        ? <OrderSummary order={order} currentPage='confirmation' />
-        : <PersonSummary person={person} />
+        ? <OrderSummary order={order} />
+        : <PersonSummary person={person!} />
       }
     </>
   );

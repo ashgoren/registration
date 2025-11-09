@@ -112,7 +112,7 @@ export const PaymentForm = ({ handleClickBackButton }: { handleClickBackButton: 
 
         {COVER_FEES_OPTION &&
           <PaymentFormFees
-            fees={fees}
+            fees={Number(fees)}
             coverFees={coverFees}
             setCoverFees={setCoverFees}
           />

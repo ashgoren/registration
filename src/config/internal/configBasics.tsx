@@ -1,8 +1,10 @@
 import { fromZonedTime } from 'date-fns-tz';
 import userConfig from '../configEvent';
-const { prd, event, static_pages, registration, nametags, admissions, payments, contacts, external_links, calendar } = userConfig;
+import type { PaymentMethod } from 'types/payment';
 
 type AdmissionMode = 'sliding-scale' | 'fixed' | 'tiered';
+
+const { prd, event, static_pages, registration, nametags, admissions, payments, contacts, external_links, calendar } = userConfig;
 
 const costDefaultMapping: Record<AdmissionMode, number> = {
   'sliding-scale': admissions.sliding_scale.cost_default,
@@ -25,7 +27,7 @@ const baseConfig = {
   WAITLIST_MODE: registration.waitlist_mode,
   SHOW_PRE_REGISTRATION: registration.show_preregistration,
 
-  PAYMENT_METHODS: payments.checks.allowed ? [payments.processor, 'check'] : [payments.processor],
+  PAYMENT_METHODS: payments.checks.allowed ? [payments.processor as PaymentMethod, 'check' as PaymentMethod] : [payments.processor as PaymentMethod],
   SHOW_PAYMENT_SUMMARY: payments.show_payment_summary,
 
   ADMISSION_QUANTITY_MAX: registration.admission_quantity_max,

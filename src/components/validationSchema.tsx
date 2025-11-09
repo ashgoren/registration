@@ -1,8 +1,10 @@
 import * as Yup from 'yup';
 import { config } from 'config';
+
 const { FIELD_CONFIG, PERSON_FIELDS, DONATION_MAX } = config;
 
-export const validationSchema = ({ currentPage }) => {
+export const validationSchema = ({ currentPage }: { currentPage: number | string }) => {
+  if (typeof currentPage === 'string') return null;
 
   const personValidationObject = PERSON_FIELDS.reduce((obj, fieldName) => {
     const fieldConfig = FIELD_CONFIG[fieldName];
@@ -26,7 +28,7 @@ export const validationSchema = ({ currentPage }) => {
 
     obj[fieldName] = yupValidationChain;
     return obj;
-  }, {});
+  }, {} as Record<string, Yup.AnySchema>);
 
   const personValidationSchema = Yup.object(personValidationObject);
 
@@ -39,7 +41,7 @@ export const validationSchema = ({ currentPage }) => {
     donation: Yup.number().min(0).max(DONATION_MAX)
   });
 
-  const validationSchemas = {
+  const validationSchemas: Record<number, Yup.AnyObjectSchema> = {
     1: peopleSchema,
     2: paymentSchema
   };

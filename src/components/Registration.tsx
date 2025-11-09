@@ -15,7 +15,7 @@ import { OrderSummary } from 'components/OrderSummary';
 import { WaitlistNote } from 'components/WaitlistNote';
 import { PreRegistration } from 'components/Static/PreRegistration';
 import { config } from 'config';
-const { PAYMENT_METHODS, PAYPAL_OPTIONS, TITLE, CONFIRMATION_CHECK_TITLE, CONFIRMATION_ELECTRONIC_TITLE, PRD_LIVE, ENV, SHOW_PRE_REGISTRATION, WAITLIST_MODE } = config;
+const { PAYMENT_METHODS, PAYPAL_OPTIONS, EVENT_TITLE, CONFIRMATION_CHECK_TITLE, CONFIRMATION_ELECTRONIC_TITLE, PRD_LIVE, ENV, SHOW_PRE_REGISTRATION, WAITLIST_MODE } = config;
 
 export const Registration = () => {
   const [registering, setRegistering] = useState(false);
@@ -31,7 +31,9 @@ export const Registration = () => {
   }
 };
 
-const TestModeWarning = ({ setRegistering }) => {
+const TestModeWarning = ({ setRegistering }: {
+  setRegistering: (registering: boolean) => void;
+}) => {
   return(
     <StyledPaper>
       <Typography variant="h4" color='error' sx={{ fontWeight: "bold"}}>TEST MODE ONLY</Typography>
@@ -54,18 +56,18 @@ const RealRegistration = () => {
     <>
       {error && <Error />}
 
-      <Header titleText={currentPage === 'confirmation' ? CONFIRMATION_TITLE : TITLE}>
+      <Header titleText={currentPage === 'confirmation' ? CONFIRMATION_TITLE : EVENT_TITLE}>
         {currentPage === 1 && WAITLIST_MODE && <WaitlistNote />}
         {currentPage === 1 && <IntroHeader />}
-        {currentPage === 'checkout' && <OrderSummary order={order} currentPage={currentPage} />}
+        {currentPage === 'checkout' && <OrderSummary order={order} />}
       </Header>
 
-      {isFinite(currentPage) && <MainForm />}
+      {typeof currentPage === 'number' && <MainForm />}
 
       {currentPage === 'checkout' && order.total && <Checkout />}
       {currentPage === 'checkout' && !order.total && <Loading />}
 
-      {currentPage === 'processing' && <Processing isPaymentComplete={isFinite(order.charged)} />}
+      {currentPage === 'processing' && <Processing isPaymentComplete={typeof order.charged === 'number'} />}
 
       {currentPage === 'confirmation' && <Confirmation />}
     </>

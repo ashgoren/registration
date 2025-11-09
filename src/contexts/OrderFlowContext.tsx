@@ -5,8 +5,8 @@ import type { ReactNode } from 'react';
 type OrderFlowContextType = {
   currentPage: number | string;
   setCurrentPage: (page: number | string) => void;
-  processing: boolean | null;
-  setProcessing: (processing: boolean | null) => void;
+  processing: boolean;
+  setProcessing: (processing: boolean) => void;
   processingMessage: string | null;
   setProcessingMessage: (message: string | null) => void;
   error: string | ReactNode | null;
@@ -17,7 +17,7 @@ const OrderFlowContext = createContext<OrderFlowContextType | null>(null);
 
 export const OrderFlowProvider = ({ children }: { children: ReactNode }) => {
   const [currentPage, setCurrentPage] = useState<number | string>(cached('currentPage') || 1);
-  const [processing, setProcessing] = useState<boolean | null>(null);
+  const [processing, setProcessing] = useState(false);
   const [processingMessage, setProcessingMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | ReactNode | null>(null);
 
