@@ -12,8 +12,8 @@ export const MyStepper = () => {
       activeStep={STEPS.findIndex(step => step.key === currentPage)}
       sx={{
         my: 5,
-        '& .MuiStepLabel-root .Mui-active': {color: 'secondary.main'},
-        '& .MuiStepLabel-root .Mui-completed': {color: 'secondary.main'}
+        '& .MuiStepLabel-root .Mui-active': {color: 'secondary'},
+        '& .MuiStepLabel-root .Mui-completed': {color: 'secondary'}
       }}
     >
       {STEPS.map(({ label }) => (

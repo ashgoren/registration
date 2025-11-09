@@ -35,7 +35,9 @@
       "utils/*": ["./src/utils/*"],
       "themes/*": ["./src/themes/*"],
       "templates/*": ["./src/templates/*"],
-      "config": ["./src/config"]
+      "config": ["./src/config"],
+      "utils": ["./src/utils"],
+      "types/*": ["./src/types/*"]
     }
   },
   "include": ["src"],

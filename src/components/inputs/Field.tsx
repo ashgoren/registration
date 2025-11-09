@@ -3,32 +3,45 @@ import { Label } from 'components/layouts/SharedStyles';
 import { ButtonInput, CheckboxInput, RadioButtons, NumericInput, TextArea, AddressAutocompleteInput, TextInput, AutocompleteInput, SelectInput } from '.';
 import type { ComponentProps } from 'react';
 import type { FocusEventHandler } from 'react';
+import type { ReactNode } from 'react';
 
 type BaseFieldProps = {
   alignRight?: boolean;
+  label?: string | ReactNode;
+  name?: string;
+  onBlur?: FocusEventHandler<HTMLInputElement>;
+  fullWidth?: boolean;
+  variant?: 'filled' | 'outlined' | 'standard';
+  placeholder?: string;
+  autoComplete?: string;
+  required?: boolean;
+  hidden?: boolean;
+  disabled?: boolean;
+  sx?: object;
+  range?: [number, number];
+  InputProps?: object;
+  autoFocus?: boolean;
+  suggestions?: readonly { id: string; fullName: string; abbreviation: string; country: string }[];
+  options?: { label: string; value: string }[];
 };
 
 type NumericInputProps = {
-  variant?: 'filled' | 'outlined' | 'standard';
-  label: string;
-  name: string;
   pattern: string;
-  onBlur?: FocusEventHandler<HTMLInputElement>;
 };
 
-type FieldProps = BaseFieldProps & (
-  | ({ type?: 'text' | 'email' } & ComponentProps<typeof TextInput>)
-  | ({ type: 'pattern' } & NumericInputProps)
-  | ({ type: 'address' } & ComponentProps<typeof AddressAutocompleteInput>)
-  | ({ type: 'autocomplete' } & ComponentProps<typeof AutocompleteInput>)
-  | ({ type: 'textarea' } & ComponentProps<typeof TextArea>)
-  | ({ type: 'checkbox' } & ComponentProps<typeof CheckboxInput>)
-  | ({ type: 'radio' } & ComponentProps<typeof RadioButtons>)
-  | ({ type: 'select' } & ComponentProps<typeof SelectInput>)
-  | ({ type: 'button' } & ComponentProps<typeof ButtonInput>)
+export type CustomFieldProps = BaseFieldProps & (
+  | ({ type?: 'text' | 'email' } & Partial<ComponentProps<typeof TextInput>>)
+  | ({ type: 'pattern' } & Partial<NumericInputProps>)
+  | ({ type: 'address' } & Partial<ComponentProps<typeof AddressAutocompleteInput>>)
+  | ({ type: 'autocomplete' } & Partial<ComponentProps<typeof AutocompleteInput>>)
+  | ({ type: 'textarea' } & Partial<ComponentProps<typeof TextArea>>)
+  | ({ type: 'checkbox' } & Partial<Omit<ComponentProps<typeof CheckboxInput>, 'label'>>)
+  | ({ type: 'radio' } & Partial<ComponentProps<typeof RadioButtons>>)
+  | ({ type: 'select' } & Partial<ComponentProps<typeof SelectInput>>)
+  | ({ type: 'button' } & Partial<ComponentProps<typeof ButtonInput>>)
 );
 
-export const Field = ({ alignRight, type = 'text', ...props }: FieldProps) => {
+export const Field = ({ alignRight, type = 'text', ...props }: CustomFieldProps) => {
   const inputProps = alignRight ? { ...props, label: undefined } : props;
 
   const renderInput = () => {
@@ -56,6 +69,9 @@ export const Field = ({ alignRight, type = 'text', ...props }: FieldProps) => {
   };
 
   if (alignRight) {
+    if (type === 'checkbox' || type === 'radio' || type === 'textarea') {
+      throw new Error(`${type} fields do not support alignRight`);
+    }
     const { label, name } = props as { label: string; name: string };
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
