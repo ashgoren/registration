@@ -4,15 +4,18 @@ import { Paragraph } from 'components/layouts/SharedStyles';
 import { Field } from 'components/inputs';
 import { clamp } from 'utils';
 import { config } from 'config';
+import type { FocusEvent } from 'react';
+import type { Person } from 'types/order';
+
 const { ADMISSION_COST_RANGE } = config;
 
-export const PaymentFormSlidingScale = ({ people }) => {
+export const PaymentFormSlidingScale = ({ people }: { people: Person[] }) => {
   const { setFieldValue, handleBlur } = useFormikContext();
   const isMultiplePeople = people.length > 1;
 
-  function updateAdmissionValue(event) {
+  function updateAdmissionValue(event: FocusEvent<HTMLInputElement>) {
     const { name, value } = event.target;
-    setFieldValue(name, clampAdmission(value));
+    setFieldValue(name, clampAdmission(Number(value)));
     handleBlur(event); // bubble up to formik
   }
 
@@ -39,4 +42,4 @@ export const PaymentFormSlidingScale = ({ people }) => {
   );
 };
 
-const clampAdmission = (value) => clamp(value || ADMISSION_COST_RANGE[0], ADMISSION_COST_RANGE);
+const clampAdmission = (value: number) => clamp(value || ADMISSION_COST_RANGE[0], ADMISSION_COST_RANGE);

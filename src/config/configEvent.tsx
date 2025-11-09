@@ -73,7 +73,7 @@ const config = {
   },
 
   payments: {
-    processor: 'stripe', // stripe|paypal - also must set in backend config
+    processor: 'paypal', // stripe|paypal - also must set in backend config
     payment_due_date: 'Example Payment Due Date',
     direct_payment_url: 'example.com/directpayment', // electronic payment option to pay remaining balance after selecting deposit or check payment
     cover_fees_checkbox: true,

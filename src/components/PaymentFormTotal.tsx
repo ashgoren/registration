@@ -2,7 +2,14 @@ import { Box, Typography } from '@mui/material';
 import { StyledPaper } from 'components/layouts/SharedStyles';
 import { formatCurrency } from 'utils';
 
-export const PaymentFormTotal = ({ admissionTotal, depositTotal, isDeposit, donationTotal, feesTotal, totalWithFees }) => {
+export const PaymentFormTotal = ({ admissionTotal, depositTotal, isDeposit, donationTotal, feesTotal, totalWithFees }: {
+  admissionTotal: number;
+  depositTotal: number;
+  isDeposit: boolean;
+  donationTotal: number;
+  feesTotal: number;
+  totalWithFees: number;
+}) => {
   return (
     <StyledPaper>
       <Box p={2}>
