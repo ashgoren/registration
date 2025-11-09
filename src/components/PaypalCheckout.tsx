@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { Box } from '@mui/material';
 import { Loading } from 'components/layouts';
@@ -12,26 +11,15 @@ import { usePaypalPayment } from 'hooks/usePaypalPayment';
 import { config } from 'config';
 const { SANDBOX_MODE, TECH_CONTACT } = config;
 
-export const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, setPaying }) => {
+export const PaypalCheckout = ({ setPaying }: {
+	setPaying: (paying: boolean) => void;
+}) => {
 	const { order, updateOrder } = useOrderData();
 	const { electronicPaymentDetails: { id } } = useOrderPayment();
 	const { processing, setProcessing, setCurrentPage, setError } = useOrderFlow();
 	const { savePendingOrder } = useOrderSaving();
 	const { processPayment } = usePaypalPayment({ order, id });
-	const [, isResolved] = usePayPalScriptReducer();
-
-	// this feels hella hacky, but sometimes the buttons don't render despite isResolved
-	const awaitPayPalButtons = (callback) => {
-		const checkForElement = () => {
-			const element = document.querySelector('.paypal-buttons');
-			element ? callback() : setTimeout(checkForElement, 100);
-		};
-		checkForElement();
-	};
-
-	useEffect(() => {
-		awaitPayPalButtons(() => setPaypalButtonsLoaded(true));
-	}, [setPaypalButtonsLoaded]);
+	const [{ isResolved }] = usePayPalScriptReducer();
 
 	const onClick=() => {
 		setError(null);
@@ -42,7 +30,7 @@ export const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, se
 		setPaying(false);
 	};
 
-	const onError = (error) => {
+	const onError = (error: unknown) => {
 		logInfo('PayPal onError', { email: order.people[0].email, error });
 		setPaying(false);
 		setError(`PayPal encountered an error: ${error}. Please try again or contact ${TECH_CONTACT}.`);
@@ -56,13 +44,13 @@ export const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, se
 		// Step 1: save pending order
 		try {
 			await savePendingOrder();
-		} catch (error) { // instance of HttpsError from backend or other error from savePendingOrder
+		} catch (error: unknown) { // instance of HttpsError from backend or other error from savePendingOrder
 			setError(
 				<>
 					We're sorry, but we experienced an issue saving your order.<br />
 					You were not charged.<br />
 					Please try again or contact {TECH_CONTACT} for assistance.<br />
-					Error: {error.message || error}
+					Error: {(error as Error).message || error}
 				</>
 			);
 			setPaying(false);
@@ -75,12 +63,12 @@ export const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, se
 			const { paymentId, paymentEmail, amount } = await processPayment();
 			updateOrder({ paymentId, paymentEmail, charged: amount });
 			setCurrentPage('processing');
-		} catch (error) { // instance of HttpsError from backend or other error from processPayment
+		} catch (error: unknown) { // instance of HttpsError from backend or other error from processPayment
 			setError(
 				<>
 					We're sorry, but we experienced an issue processing your payment.<br />
 					Please try again or contact {TECH_CONTACT} for assistance.<br />
-					Error: {error.message || error}
+					Error: {(error as Error).message || error}
 				</>
 			);
 			setPaying(false);
@@ -90,16 +78,16 @@ export const PaypalCheckout = ({ paypalButtonsLoaded, setPaypalButtonsLoaded, se
 
 	return (
 		<section className='paypal-buttons-wrapper'>
-			{(!paypalButtonsLoaded) && 
-				<Box align='center'>
+			{!isResolved && 
+				<Box sx={{ textAlign: 'center', my: 4 }}>
 					<Loading isHeading={false} text='Loading payment options...' />
 					<p>(If this takes more than a few seconds, please refresh the page.)</p>
 				</Box>
 			}
 			{isResolved && id && (
 				<Box sx={ processing ? { display: 'none' } : {} }>
-					{SANDBOX_MODE && paypalButtonsLoaded && !processing &&
-						<TestCardBox number='4012000077777777' />
+					{SANDBOX_MODE && !processing &&
+						<TestCardBox number={4012000077777777} />
 					}
 					<PayPalButtons className={processing ? 'd-none' : ''}
 						style={{ height: 48, tagline: false, shape: "pill", label: 'paypal' }}

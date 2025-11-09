@@ -5,13 +5,16 @@ import type { Order } from 'types/order';
 
 export const usePaypalPayment = ({ order, id }: {
   order: Order;
-  id: string; // payment intent id
+  id: string | null; // payment intent id
 }) => {
 	const { email } = order.people[0];
 	const idempotencyKeyRef = useRef(crypto.randomUUID());
 
 	const processPayment = async () => {
 		logInfo('Capturing PayPal payment', { email, order });
+		if (!id) {
+			throw new Error('Missing PayPal order ID for payment capture');
+		}
 		try {
 			const response = await api.capturePaypalOrder({
 				id,

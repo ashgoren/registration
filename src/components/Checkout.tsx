@@ -26,8 +26,7 @@ export const Checkout = () => {
   const { paymentMethod, amountToCharge } = useOrderPayment();
   const { setCurrentPage, processing, processingMessage, error, setError } = useOrderFlow();
   const { initializePayment, isInitializing } = usePaymentInitialization();
-  const [paying, setPaying] = useState(null);
-  const [paypalButtonsLoaded, setPaypalButtonsLoaded] = useState(false);
+  const [paying, setPaying] = useState(false);
 
   useScrollToTop();
   useWarnBeforeUnload();
@@ -100,17 +99,14 @@ export const Checkout = () => {
         }
 
         {paymentMethod === 'paypal' &&
-          <PaypalCheckout
-            paypalButtonsLoaded={paypalButtonsLoaded} setPaypalButtonsLoaded={setPaypalButtonsLoaded}
-            setPaying={setPaying}
-          />
+          <PaypalCheckout setPaying={setPaying} />
         }
 
         {paymentMethod === 'check' && 
           <Check />
         }
 
-        {!paying && !processing && (paymentMethod === 'check' || paymentMethod === 'stripe' || paypalButtonsLoaded) &&
+        {!paying && !processing &&
           <TogglePaymentMode />
         }
       </StyledPaper>
