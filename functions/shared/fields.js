@@ -10,7 +10,8 @@ const validFields = [
   'paymentMethod',
   'receipt',
   'apartment',
-  'photoComments'
+  'photoComments',
+  'miscComments'
 ];
 
 export { fieldOrder, validFields };

@@ -7,14 +7,15 @@ interface TextAreaProps {
   label?: string;
   name: string;
   rows?: number;
+  required?: boolean;
 }
 
-export const TextArea = memo(({ label, name, rows }: TextAreaProps) => {
+export const TextArea = memo(({ label, name, rows, required }: TextAreaProps) => {
   const [field, { touched, error }, { setError }] = useField(name);
 
   return (
     <>
-      <Label name={name} sx={{ mb: 2 }}>{label}</Label>
+      <Label name={name} required={required} sx={{ mb: 2 }}>{label}</Label>
       <TextField
         {...field}
         multiline
