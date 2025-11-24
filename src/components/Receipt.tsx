@@ -41,7 +41,7 @@ export const Receipt = ({ order, paymentMethod, person, isPurchaser }: {
       ORDER_TOTAL: formatCurrency(order.total!),
       SHOW_CHECK_ADDRESS,
       CHECK_TO,
-      CHECK_ADDRESS: CHECK_ADDRESS.join(', '),
+      CHECK_ADDRESS: CHECK_ADDRESS?.join(', '),
       PAYMENT_DUE_DATE,
       DIRECT_PAYMENT_URL
     };
