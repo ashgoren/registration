@@ -38,6 +38,8 @@
 - Email us to get the mailing address for your check.
 {{/if}}
 
+- If you'd prefer, you may still opt to pay electronically at: https://{{DIRECT_PAYMENT_URL}}
+
 {{/if}}
 {{! <!---- END CHECK PAYMENT SECTION ----> }}
 
