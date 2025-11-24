@@ -306,10 +306,10 @@ git checkout -b staging
 
 ## 12. Post-deployment
 
-### 1. Configure Custom Domain (optional)
+### Configure Custom Domain (optional)
 - Add custom domain in Firebase Console
 
-### 2. Go Live Checklist
+### Go Live Checklist
 - [ ] Confirm Stripe/PayPal production secrets are set in Doppler  
   - **prd_frontend:** `VITE_STRIPE_PUBLISHABLE_KEY` or `VITE_PAYPAL_CLIENT_ID`
   - **prd_backend:** `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET` *or* `PAYPAL_CLIENT_ID` + `PAYPAL_CLIENT_SECRET` + `PAYPAL_WEBHOOK_ID`
@@ -321,21 +321,21 @@ git checkout -b staging
 - [ ] Clear production Firestore data if needed
 - [ ] Redeploy after any updates to Doppler secrets or source code
 
-### 3. Waitlist Mode
+### Waitlist Mode
 - Toggle registration.waitlist_mode flag in _both_ `src/config/configEvent` and `functions/config/userConfig`.
 
-### 3. Hibernation (optional)
+### Hibernation (optional)
 For inactive projects:
 ```bash
 npm run disable-apis   # npm run enable-apis to wake up
 ```
 
-### 4. Shutdown (optional)
+### Shutdown (optional)
 > [!IMPORTANT]
 > This will run terraform destroy, delete firebase functions, and delete firestore database for both staging and production projects.  
 > It will not delete the Google Cloud or Doppler projects themselves.
 
-### 5. Sharing admin access
+### Sharing admin access
 
 - Necessary access for another developer to take over in a 'hit-by-the-bus' scenario: GitHub, Doppler, GCP, domain registration, spreadsheet
 

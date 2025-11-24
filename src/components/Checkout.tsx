@@ -44,11 +44,12 @@ export const Checkout = () => {
       } catch (err) {
         setError(
           <>
-            We're sorry, but we experienced an issue initializing your registration:<br />
-            Error initializing payment<br />
-            Please close this tab and start over.<br />
-            If this error persists, please contact {TECH_CONTACT}.<br />
-            Error: {getErrorMessage(err)}
+            We're sorry, but we experienced an issue initializing payment.<br />
+            Please hit the back button, refresh the page, and try again.<br />
+            If that fails, please close this tab and start over.<br />
+            If this error persists, please contact {TECH_CONTACT}.<br /><br />
+            Error message:<br />
+            {getErrorMessage(err)}
           </>
         );
 

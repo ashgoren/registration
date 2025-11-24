@@ -3,6 +3,7 @@ import { ApiError, CheckoutPaymentIntent, OrdersController, ShippingPreference, 
 import { formatCurrency } from '../shared/helpers.js';
 import { createError, ErrorType } from '../shared/errorHandler.js';
 import { getClient } from './auth.js';
+import { getConfig } from '../config/internal/config.js';
 
 let ordersController = null;
 const getOrdersController = () => ordersController ??= new OrdersController(getClient());
@@ -29,6 +30,11 @@ export const capturePaypalOrder = async ({ id, idempotencyKey }) => {
 
 export const createOrUpdatePaypalOrder = async ({ id, email, description, amount, idempotencyKey }) => {
   logger.info('createOrUpdatePaypalOrder', { email, idempotencyKey });
+
+  const { WAITLIST_MODE } = getConfig();
+  if (WAITLIST_MODE) {
+    throw createError(ErrorType.PERMISSION_DENIED, 'Client and server waitlist modes out of sync. Please hit the back button twice and then refresh the browser to continue.');
+  }
 
   let result;
   if (id && await orderExists(id)) {
