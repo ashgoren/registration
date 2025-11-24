@@ -120,7 +120,7 @@ const onMessagePublishedFunctions = [
 const exports = {};
 
 onCallFunctions.forEach(({ name, handler }) => {
-  exports[name] = onCall({ region, secrets }, handler);
+  exports[name] = onCall({ region, secrets, timeoutSeconds: 300 }, handler);
 });
 
 onRequestFunctions.forEach(({ name, handler }) => {

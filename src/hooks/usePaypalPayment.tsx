@@ -42,6 +42,9 @@ export const usePaypalPayment = ({ order, id }: {
 
 		} catch (error) {
 			logError('PayPal process payment error', { email, error });
+			if (error && typeof error === 'object' && 'code' in error && error.code === 'functions/deadline-exceeded') {
+				throw new Error('The payment process timed out but may have completed. Do not retry. Please email support.');
+			}
 			throw error; // rethrow from backend or above to be handled by PaypalCheckout component
 		} finally {
 			idempotencyKeyRef.current = crypto.randomUUID(); // reset after success, but also after failure since user may change order

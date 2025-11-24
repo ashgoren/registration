@@ -16,7 +16,10 @@ export const capturePaypalOrder = async ({ id, idempotencyKey }) => {
       paypalRequestId: idempotencyKey,
       prefer: 'return=minimal'
     });
-    if (statusCode < 200 || statusCode >= 300) throw new Error(`Failed to capture order: ${statusCode}`);
+    if (statusCode < 200 || statusCode >= 300) {
+      logger.error(`Failed to capture order ${id}`, { statusCode, result });
+      throw new Error(`Failed to capture order: ${statusCode}`);
+    }
     validateOrderResponse(result);
     return parseResult(result);
   } catch (error) {
