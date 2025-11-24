@@ -3,6 +3,9 @@ const backendConfig = {
     title: "Example Event Title",
     title_with_year: "Example Event Title 2025" // must match frontend config
   },
+  registration: {
+    waitlist_mode: false
+  },
   spreadsheet: {
     fieldOrder: ['key', 'first', 'last', 'nametag', 'pronouns', 'email', 'phone', 'address', 'city', 'state', 'zip', 'country', 'age', 'share', 'allergies', 'carpool', 'bedding', 'volunteer', 'housing', 'roommate', 'misc', 'comments', 'admission', 'donation', 'total', 'deposit', 'fees', 'paid', 'charged', 'status', 'purchaser', 'completedAt', 'paymentId', 'paymentEmail', 'environment']
   },

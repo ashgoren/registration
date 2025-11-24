@@ -321,6 +321,9 @@ git checkout -b staging
 - [ ] Clear production Firestore data if needed
 - [ ] Redeploy after any updates to Doppler secrets or source code
 
+### 3. Waitlist Mode
+- Toggle registration.waitlist_mode flag in _both_ `src/config/configEvent` and `functions/config/userConfig`.
+
 ### 3. Hibernation (optional)
 For inactive projects:
 ```bash
