@@ -40,6 +40,7 @@ const mapOrderToSpreadsheetLines = (order) => {
   for (const person of people) {
     let admission, total, deposit;
     const updatedPerson = person.share ? joinArrays(person) : { ...joinArrays(person), share: 'do not share' };
+    const stringifiedPerson = joinStrings(updatedPerson);
     if (order.deposit) {
       deposit = order.deposit / people.length;
     } else {
@@ -66,7 +67,7 @@ const mapOrderToSpreadsheetLines = (order) => {
     }
     const firstPersonPurchaserField = people.length > 1 ? `self (+${people.length - 1})` : 'self';
     const personFieldsBuilder = {
-      ...updatedPerson,
+      ...stringifiedPerson,
       key: isPurchaser ? order.key : '-',
       completedAt,
       address: updateAddress(person),
@@ -104,4 +105,13 @@ const updateMisc = (person) => {
   const { misc, miscComments } = person;
   if (!misc) return '';
   return misc.map(item => item === 'minor' ? `minor (${miscComments})` : item).join('; ');
+};
+
+const joinStrings = (person) => {
+  for (const key in person) {
+    if (typeof person[key] === 'string') {
+      person[key] = person[key].replace(/\n/g, '; ');
+    }
+  }
+  return person;
 };
