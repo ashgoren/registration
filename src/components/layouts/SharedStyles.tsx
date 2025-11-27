@@ -93,7 +93,7 @@ const Label = ({ children, name = '', required = false, sx }: LabelProps) => {
     <Box sx={sx}>
       <FormLabel component='legend' htmlFor={name}>
         <Typography component='span' color='text.primary'>{children}</Typography>
-        {required && <Typography component='span' color='error'> *</Typography>}
+        {required && <Typography component='span'> *</Typography>}
       </FormLabel>
     </Box>
   );

@@ -2,6 +2,7 @@
 
 import purchaserTemplate from 'templates/receipt-purchaser.md?raw';
 import additionalPersonTemplate from 'templates/receipt-additional-person.md?raw';
+import waitlistTemplate from 'templates/receipt-waitlist.md?raw';
 import { Divider, Typography } from '@mui/material';
 import { renderMarkdownTemplate, formatCurrency } from 'utils';
 import { useScrollToTop } from 'hooks/useScrollToTop';
@@ -20,23 +21,32 @@ export const Receipt = ({ order, paymentMethod, person, isPurchaser }: {
 }) => {
   useScrollToTop();
 
-  const data = {
-    FIRST_NAME: order.people[0].first,
-    IS_CHECK_PAYMENT: paymentMethod === 'check',
-    IS_ELECTRONIC_PAYMENT: paymentMethod !== 'check',
-    IS_DEPOSIT: order.deposit > 0,
-    AMOUNT_PAID: formatCurrency(order.charged!),
-    DEPOSIT_TOTAL: order.deposit,
-    ORDER_TOTAL: formatCurrency(order.total!),
-    SHOW_CHECK_ADDRESS,
-    CHECK_TO,
-    CHECK_ADDRESS: CHECK_ADDRESS.join(', '),
-    EVENT_TITLE,
-    PAYMENT_DUE_DATE,
-    DIRECT_PAYMENT_URL
-  };
+  let data, template;
+  if (paymentMethod === 'waitlist') {
+    template = waitlistTemplate;
+    data = {
+      FIRST_NAME: person!.first,
+      EVENT_TITLE,
+    };
+  } else {
+    template = isPurchaser ? purchaserTemplate : additionalPersonTemplate;
+    data = {
+      FIRST_NAME: order.people[0].first,
+      EVENT_TITLE,
+      IS_CHECK_PAYMENT: paymentMethod === 'check',
+      IS_ELECTRONIC_PAYMENT: paymentMethod !== 'check',
+      IS_DEPOSIT: order.deposit > 0,
+      AMOUNT_PAID: formatCurrency(order.charged!),
+      DEPOSIT_TOTAL: order.deposit,
+      ORDER_TOTAL: formatCurrency(order.total!),
+      SHOW_CHECK_ADDRESS,
+      CHECK_TO,
+      CHECK_ADDRESS: CHECK_ADDRESS?.join(', '),
+      PAYMENT_DUE_DATE,
+      DIRECT_PAYMENT_URL
+    };
+  }
 
-  const template = isPurchaser ? purchaserTemplate : additionalPersonTemplate;
   const content = renderMarkdownTemplate(template, data);
 
   return (

@@ -11,9 +11,10 @@ type Option = { label: string; value: string; };
 interface CheckboxOptionProps extends Omit<CheckboxProps, 'name' | 'value'> {
   name: string;
   option: Option;
+  required?: boolean;
 }
 
-const CheckboxOption = memo(({ name, option, onChange }: CheckboxOptionProps) => {
+const CheckboxOption = memo(({ name, option, required, onChange }: CheckboxOptionProps) => {
   const [field] = useField(name);
   return (
     <FormControlLabel sx={{ alignItems: 'flex-start' }}
@@ -29,6 +30,7 @@ const CheckboxOption = memo(({ name, option, onChange }: CheckboxOptionProps) =>
         />
       }
       label={option.label}
+      required={required}
     />
   );
 });

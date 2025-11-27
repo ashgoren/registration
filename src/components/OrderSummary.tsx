@@ -112,6 +112,8 @@ function renderConditionalData ({ person, property, label, mapping, defaultValue
     content = formatAddress(person);
   } else if (property === 'photo') {
     content = person.photo === 'Other' ? person.photoComments : person.photo;
+  } else if (property === 'misc' && Array.isArray(data) && data.includes('minor')) {
+    content = formatArray(data, defaultValue, mapping)?.replace('Minor', `I am a minor (${person.miscComments})`);
   } else if (Array.isArray(data)) {
     content = formatArray(data, defaultValue, mapping);
   } else if (data) {

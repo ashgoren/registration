@@ -350,10 +350,40 @@ export const fieldConfig: FieldConfig = {
     defaultValue: '',
     rows: 5,
   },
+  misc: {
+    type: 'checkbox',
+    title: "Do any of the following apply to you?",
+    options: [
+      { label: "I am under 18 years old", value: 'minor' },
+      { label: "I am new to contra and interested in a beginner's lesson", value: 'beginner' },
+      { label: "I do not want photos of me to be posted online (note that we already ask that no one tag photos)", value: 'no-photos' },
+    ],
+    validation: Yup.array(),
+    defaultValue: [],
+  },
+  miscComments: {
+    type: 'textarea',
+    label: "What is your age?",
+    defaultValue: '',
+    required: true,
+    rows: 1,
+    validation: Yup.string(),
+    conditionalValidation: {
+      message: 'Please provide your age if you are under 18.',
+      testFn: function (value) { // `value` is the value of 'miscComments'
+        const { misc } = this.parent;
+        if (misc.includes('minor')) {
+          return !!value && value.trim() !== ''; // Required and must not be only whitespace
+        }
+        return true; // Not required
+      }
+    }
+  },
   agreement: {
     type: 'checkbox',
     title: 'Values and Expectations',
     label: <>Do you agree that everyone you are registering will follow {EVENT_TITLE}'s <StyledLink to={websiteLink(SAFETY_POLICY_URL)}>values and expectations</StyledLink>?</>,
+    required: true,
     options: [
       { label: 'Yes', value: 'yes' }
     ],

@@ -54,7 +54,7 @@ const config = {
     admission_quantity_max: 4,
     fields: { // Order of form fields
       contact: ['first', 'last', 'nametag', 'pronouns', 'email', 'emailConfirmation', 'phone', 'address', 'apartment', 'city', 'state', 'zip', 'country'],
-      misc: ['age', 'share', 'allergies', 'carpool', 'bedding', 'volunteer', 'housing', 'roommate', 'comments']
+      misc: ['age', 'share', 'allergies', 'carpool', 'bedding', 'volunteer', 'housing', 'roommate', 'misc', 'miscComments', 'agreement', 'comments']
     }
   },
 

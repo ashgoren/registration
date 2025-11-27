@@ -71,6 +71,7 @@ const mapOrderToSpreadsheetLines = (order) => {
       completedAt,
       address: updateAddress(person),
       photo: updatePhoto(person),
+      misc: updateMisc(person),
       admission,
       total,
       deposit,
@@ -97,4 +98,10 @@ const updateAddress = (person) => {
 const updatePhoto = (person) => {
   const { photo, photoComments } = person;
   return photo === 'Other' ? photoComments : photo;
+};
+
+const updateMisc = (person) => {
+  const { misc, miscComments } = person;
+  if (!misc) return '';
+  return misc.map(item => item === 'minor' ? `minor (${miscComments})` : item).join('; ');
 };

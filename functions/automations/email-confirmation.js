@@ -4,7 +4,7 @@ import { getConfig } from '../config/internal/config.js';
 
 // onDocumentUpdated
 export const sendEmailConfirmationsHandler = async (event) => {
-  const { EMAIL_FROM, EMAIL_SUBJECT, EMAIL_REPLY_TO, IS_EMULATOR } = getConfig();
+  const { EMAIL_FROM, EMAIL_REPLY_TO, EVENT_TITLE, IS_EMULATOR, WAITLIST_MODE } = getConfig();
   const testDomains = ['test.com', 'testing.com', 'example.com', 'example.org', 'example.net'];
 
   const { before, after } = event.data;
@@ -22,7 +22,7 @@ export const sendEmailConfirmationsHandler = async (event) => {
         await sendMail({
           from: EMAIL_FROM,
           to: email,
-          subject: EMAIL_SUBJECT,
+          subject: `${EVENT_TITLE} ${WAITLIST_MODE ? 'Waitlist' : 'Registration'}`,
           html: receipt,
           replyTo: EMAIL_REPLY_TO
         });

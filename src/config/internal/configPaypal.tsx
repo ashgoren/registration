@@ -4,7 +4,7 @@ const config = {
   PAYPAL_OPTIONS: {
     "clientId": VITE_PAYPAL_CLIENT_ID,
     "disable-funding": "paylater,credit",
-    "enable-funding": "venmo",
+    // "enable-funding": "venmo",
     "currency": "USD",
     "locale": "en_US"
   }

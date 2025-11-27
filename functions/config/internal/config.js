@@ -14,13 +14,13 @@ const baseOptions = {
   PAYMENT_PROCESSOR: userConfig.payment.processor,
   EVENT_TITLE: userConfig.event.title,
   EVENT_TITLE_WITH_YEAR: userConfig.event.title_with_year,
-  EMAIL_SUBJECT: `${userConfig.event.title} Registration`,
   STRIPE_STATEMENT_DESCRIPTOR_SUFFIX: userConfig.payment.statementDescriptorSuffix,
   FIELD_ORDER: userConfig.spreadsheet.fieldOrder,
   SHEETS_EMAIL_COLUMN: userConfig.spreadsheet.fieldOrder.indexOf('email'),
   SHEETS_KEY_COLUMN: 0,
   SHEETS_SHEET_RANGE: 'A:AZ',
-  SHEETS_ORDERS_TAB_NAME: 'Orders'
+  SHEETS_ORDERS_TAB_NAME: 'Orders',
+  WAITLIST_MODE: userConfig.registration.waitlist_mode
 };
 
 const envVariables = [
@@ -51,7 +51,7 @@ export const getConfig = () => {
     console.log('DEBUG: parsing backend');
     try {
       parsedSecrets = JSON.parse(process.env.backend);
-    } catch (error) {
+    } catch {
       throw new Error('Malformed backend environment variable');
     }
   } else {

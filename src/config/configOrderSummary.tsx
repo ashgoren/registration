@@ -1,5 +1,11 @@
 import { fieldConfig } from './configFields';
 
+const miscMapping = [
+  { label: "Minor", value: 'minor' },
+  { label: "No photos", value: 'no-photos' },
+  { label: "I am interested in a beginner's lesson", value: 'beginner' },
+];
+
 const ORDER_SUMMARY_OPTIONS = [
   {
     property: 'nametag',
@@ -65,8 +71,9 @@ const ORDER_SUMMARY_OPTIONS = [
     label: 'Roommate'
   },
   {
-    property: 'photo',
-    label: 'Photo Consent'
+    property: 'misc',
+    label: 'Do any of these apply?',
+    mapping: miscMapping
   },
   {
     property: 'comments',

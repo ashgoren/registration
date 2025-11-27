@@ -16,6 +16,8 @@ export const MiscInfo = ({ index, formikRef }: { index: number; formikRef: RefOb
   logDebug('MiscInfo rendered');
   
   const [showPhotoCommentsField, setShowPhotoCommentsField] = useState(formikRef?.current?.values?.people?.[index]?.photo === 'Other');
+  const [showMiscCommentsField, setShowMiscCommentsField] = useState((formikRef?.current?.values?.people?.[index]?.misc as string[])?.includes('minor'));
+
   const fields = index === 0 ? PERSON_MISC_FIELDS : PERSON_MISC_FIELDS.filter(f => f !== 'agreement');
   
   useScrollToTop();
@@ -29,6 +31,28 @@ export const MiscInfo = ({ index, formikRef }: { index: number; formikRef: RefOb
     } else {
       setShowPhotoCommentsField(false);
       setFieldValue(`people[${index}].photoComments`, '');
+    }
+    handleChange(e); // update formik values
+    setFieldError(name, '');
+  }, [formikRef, index]);
+
+  const updateMiscCommentsField = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    if (!formikRef.current) return;
+    const { name, value, checked } = e.target;
+    console.log('updateMiscCommentsField', name, value, checked);
+    const { setFieldValue, setFieldError, handleChange, values } = formikRef.current;
+    const currentMisc = values.people[index].misc as string[];
+    let newMisc;
+    if (checked) {
+      newMisc = [...currentMisc, value];
+    } else {
+      newMisc = currentMisc.filter(option => option !== value);
+    }
+    if (newMisc.includes('minor')) {
+      setShowMiscCommentsField(true);
+    } else {
+      setShowMiscCommentsField(false);
+      setFieldValue(`people[${index}].miscComments`, '');
     }
     handleChange(e); // update formik values
     setFieldError(name, '');
@@ -66,6 +90,7 @@ export const MiscInfo = ({ index, formikRef }: { index: number; formikRef: RefOb
   const getOnChangeHandler = (field: string) => {
     if (field === 'share') return updateShareCheckboxOptions;
     if (field === 'photo') return updatePhotoCommentsField;
+    if (field === 'misc') return updateMiscCommentsField;
     if (field === 'agreement') return updateAgreementField;
     return undefined; // use default onChange handler for that input field
   };
@@ -80,6 +105,7 @@ export const MiscInfo = ({ index, formikRef }: { index: number; formikRef: RefOb
         .map((input) => {
           const { field, type, title, label, options, ...props } = input;
           if (field === 'photoComments' && !showPhotoCommentsField) return null;
+          if (field === 'miscComments' && !showMiscCommentsField) return null;
           const fieldProps = {
             type,
             label,
