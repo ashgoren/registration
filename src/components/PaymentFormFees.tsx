@@ -8,7 +8,7 @@ export const PaymentFormFees = ({ fees, coverFees, setCoverFees }:
     <StyledPaper>
       <FormControlLabel
         control={<Checkbox checked={coverFees} onChange={(e) => setCoverFees(e.target.checked)} />}
-        label={`I would like to add ${fees} to cover the transaction fees.`}
+        label={`I would like to add $${fees} to cover the transaction fees.`}
       />
     </StyledPaper>
   )

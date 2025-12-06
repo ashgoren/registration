@@ -59,7 +59,7 @@ export const OrderSummary = ({ order }: { order: Order }) => {
             }
 
             {fees > 0 &&
-              <>PayPal fees: ${formatCurrency(fees)}<br /></>
+              <>Transaction fees: ${formatCurrency(fees)}<br /></>
             }
 
             {isDeposit &&
