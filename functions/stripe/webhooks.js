@@ -26,8 +26,9 @@ export const stripeWebhookHandler = async (req, res) => {
     return res.status(200).json({ received: true });
   }
   if (!event.data?.object?.description) {
-    logger.error('No description found in Stripe webhook event data', { event });
-    return res.status(500).send('No description in webhook');
+    // No description means it might be a direct payment
+    logger.warn(`No description found in Stripe webhook event data. Direct payment? ${event.data?.object?.id}`, { event });
+    return res.status(200).json({ received: true });
   }
   if (event.data?.object?.description !== PAYMENT_DESCRIPTION) {
     logger.info(`Webhook ignored: description (${event.data?.object?.description}) != ${PAYMENT_DESCRIPTION}`);
