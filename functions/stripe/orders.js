@@ -4,7 +4,7 @@ import { createError, ErrorType } from '../shared/errorHandler.js';
 import { getConfig } from '../config/internal/config.js';
 
 export const getStripePaymentIntent = async ({ email, name, amount, description, idempotencyKey, id }) => {
-  logger.info('getStripePaymentIntent', { email, idempotencyKey });
+  logger.info(`getStripePaymentIntent: ${email}`, { email, idempotencyKey });
 
   const { STRIPE_STATEMENT_DESCRIPTOR_SUFFIX: statement_descriptor_suffix } = getConfig();
   const stripe = getStripe();
@@ -15,10 +15,10 @@ export const getStripePaymentIntent = async ({ email, name, amount, description,
     if (id) {
       paymentIntent = await stripe.paymentIntents.retrieve(id);
       if (paymentIntent.amount !== amountInCents) {
-        logger.info('Amount mismatch, updating paymentIntent');
+        logger.info(`Amount mismatch, updating paymentIntent for ${email}`, { existingAmount: paymentIntent.amount, newAmount: amountInCents, email });
         paymentIntent = await stripe.paymentIntents.update(id, { amount: amountInCents }, { idempotencyKey });
       }
-      logger.info(`Retrieved paymentIntent ${id}`, { paymentIntent });
+      logger.info(`Retrieved paymentIntent ${id} for ${email}`, { paymentIntent, email });
     } else {
       paymentIntent = await stripe.paymentIntents.create(
         {
@@ -30,7 +30,7 @@ export const getStripePaymentIntent = async ({ email, name, amount, description,
         },
         { idempotencyKey }
       );
-      logger.info(`Created paymentIntent ${paymentIntent.id}`, { paymentIntent });
+      logger.info(`Created paymentIntent ${paymentIntent.id} for ${email}`, { paymentIntent, email });
     }
   } catch (error) {
     throw createError(ErrorType.STRIPE_API, 'Error creating or updating paymentIntent', { email, name, amount, idempotencyKey, id, error });

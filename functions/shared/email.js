@@ -26,7 +26,7 @@ const sendMail = async ({ from, to, subject, html=null, text=null, replyTo=null 
     return;
   }
   
-  logger.info('Sending email', { from, to, subject });
+  logger.info(`Sending email to ${to}`, { from, to, subject });
   try {
     await getMailTransport().sendMail({
       from,
@@ -37,7 +37,7 @@ const sendMail = async ({ from, to, subject, html=null, text=null, replyTo=null 
       ...(replyTo && { replyTo })
     });
   } catch (error) {
-    logger.error('Error sending email', error);
+    logger.error(`Error sending email to ${to}`, error);
     throw error;
   }
 }
