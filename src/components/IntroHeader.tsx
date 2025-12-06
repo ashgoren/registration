@@ -1,3 +1,4 @@
+import { Alert, Typography } from '@mui/material';
 import { StyledLink, Paragraph } from 'components/layouts/SharedStyles';
 import { mailtoLink } from 'utils';
 import { config } from 'config';
@@ -14,7 +15,9 @@ export const IntroHeader = () => {
         Registration system questions? Email <StyledLink to={mailtoLink(TECH_CONTACT)}>{TECH_CONTACT}</StyledLink>.<br />
         Any other questions? Email <StyledLink to={mailtoLink(EMAIL_CONTACT)}>{EMAIL_CONTACT}</StyledLink>.
       </Paragraph>
-      <Paragraph><em>Note: You'll be able to add additional attendees after clicking the save button.</em></Paragraph>
+      <Alert severity='info' sx={{ my: 3 }}>
+        <Typography variant='body1'>After hitting save, there will be an opportunity to add additional attendees.</Typography>
+      </Alert>
     </>
   );
 };
