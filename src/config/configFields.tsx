@@ -77,7 +77,9 @@ export const fieldConfig: FieldConfig = {
   emailConfirmation: {
     label: 'Re-enter email',
     type: 'email',
-    validation: EMAIL_VALIDATION.required('Please re-enter your email address.').equals([Yup.ref('email')], 'Email addresses must match.'),
+    validation: EMAIL_VALIDATION.required('Please re-enter your email address.').test('email-match', 'Email addresses must match.', function (value) {
+      return value?.toLowerCase() === this.parent.email?.toLowerCase();
+    }),
     defaultValue: '',
     width: 6,
     required: true,
