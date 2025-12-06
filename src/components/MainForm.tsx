@@ -6,6 +6,7 @@ import { useOrderData } from 'contexts/OrderDataContext';
 import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { FormContents } from './FormContents';
 import { config } from 'config';
+import { logDebug } from 'src/logger';
 import type { FormikProps } from 'formik';
 import type { Order } from 'types/order';
 
@@ -21,6 +22,7 @@ export const MainForm = () => {
   // note: it doesn't get here until all validations are passing (?)
   function submitForm(values: Order) {
     const submittedOrder = Object.assign({}, values);
+    logDebug('MainForm submitForm values:', values);
     const sanitizedOrder = sanitizeObject(submittedOrder);
     updateOrder({
       ...sanitizedOrder,
