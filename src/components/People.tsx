@@ -44,7 +44,9 @@ export const People = ({ formikRef }: { formikRef: RefObject<FormikProps<Order> 
     const person = order.people[personIndex];
     if (window.confirm(`Remove ${person.first} ${person.last} from registration?`)) {
       const people = order.people.filter((_, index) => index !== personIndex);
-      if (people.length === 0) {
+      if (personIndex === 0 && people.length > 0) {
+        people[0].agreement = ['yes'];
+      } else if (people.length === 0) {
         people.push(PERSON_DEFAULTS);
         setEditIndex(0);
         resetForm();
