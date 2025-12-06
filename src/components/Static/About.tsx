@@ -2,7 +2,7 @@ import { Box, List, ListItem } from '@mui/material';
 import { StyledLink, StyledPaper, PageTitle, Paragraph, Header } from 'components/layouts/SharedStyles';
 import { mailtoLink } from 'utils';
 import { config } from 'config';
-const { EMAIL_CONTACT } = config;
+const { EMAIL_CONTACT, HOUSING_CONTACT } = config;
 
 export const About = () => {
   return (
@@ -70,7 +70,7 @@ export const About = () => {
       </Header>
       <Paragraph>This dance weekend is in Seattle. We will do our best to find housing for out-of-town guests. Please remember that we are all volunteers, so adjust expectations accordingly. If you have attended other dance weekends in Seattle, you are strongly encouraged to make your own arrangements with friends you have stayed with before.</Paragraph>
       <Paragraph>Do you need housing or can you offer housing to visiting dancers? Please be sure to include this as a part of your some_event registration.</Paragraph>
-      <Paragraph>If you have any other questions about housing or hosting guests, please email Kristin at housing@some_eventcontra.com</Paragraph>
+      <Paragraph>If you have any other questions about housing or hosting guests, please email Kristin at <StyledLink to={mailtoLink(HOUSING_CONTACT)}>{HOUSING_CONTACT}</StyledLink>.</Paragraph>
     </StyledPaper>
   );
 };

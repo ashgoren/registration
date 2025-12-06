@@ -35,6 +35,9 @@ export const ContactInfoInputs = memo(({ fields, index, formikRef }:
 
   return (
     <>
+      {/* <Typography variant='body1' gutterBottom sx={{ my: 2 }}>
+        If using browser autofill, don't forget the optional pronouns field.
+      </Typography> */}
       <Grid container spacing={2}>
         {mainFields.map((field) => {
           const fieldConfig = FIELD_CONFIG[field];

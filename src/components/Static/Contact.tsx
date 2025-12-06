@@ -1,7 +1,7 @@
 import { StyledPaper, Paragraph, PageTitle, StyledLink } from 'components/layouts/SharedStyles';
 import { mailtoLink } from 'utils';
 import { config } from 'config';
-const { EMAIL_CONTACT } = config;
+const { EMAIL_CONTACT, TECH_CONTACT } = config;
 
 export const Contact = () => {
   return (
@@ -12,6 +12,10 @@ export const Contact = () => {
 
       <Paragraph>
         Send us an email at <StyledLink to={mailtoLink(EMAIL_CONTACT)}>{EMAIL_CONTACT}</StyledLink>!
+      </Paragraph>
+
+      <Paragraph>
+        Registration issues? <StyledLink to={mailtoLink(TECH_CONTACT)}>{TECH_CONTACT}</StyledLink>
       </Paragraph>
 
       <Paragraph>
