@@ -13,6 +13,7 @@ resource "google_monitoring_notification_channel" "email" {
 # Alert for any firebase function v2 errors
 resource "google_monitoring_alert_policy" "firebase_function_errors" {
   display_name = "Firebase Functions Errors"
+  severity = "ERROR"
   combiner     = "OR"
   
   conditions {
@@ -39,4 +40,27 @@ resource "google_logging_project_exclusion" "exclude_disableprojectapis_cold_sta
   filter      = "resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"disableprojectapis\" AND textPayload=~\"no available instance\""
 
   depends_on = [google_project_service.apis]
+}
+
+# Notification for unmatched payment webhooks
+resource "google_monitoring_alert_policy" "unmatched_payment_webhooks" {
+  display_name = "Unmatched Payment Webhooks"
+  severity = "WARNING"
+  combiner     = "OR"
+
+  conditions {
+    display_name = "Unmatched Payment Webhook"
+    condition_matched_log {
+      filter = "resource.type=\"cloud_run_revision\" AND severity=\"WARNING\" AND textPayload:\"Direct payment\""
+    }
+  }
+
+  notification_channels = [google_monitoring_notification_channel.email.name]
+
+  alert_strategy {
+    notification_prompts = ["OPENED"]
+    notification_rate_limit {
+      period = "300s"
+    }
+  }
 }
