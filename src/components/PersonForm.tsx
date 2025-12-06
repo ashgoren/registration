@@ -28,6 +28,7 @@ export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerso
   async function validatePersonForm() {
     const { validateForm, setTouched } = formikRef.current!;
     const errors = await validateForm();
+    logDebug('PersonForm validation failed', errors);
     if (Object.keys(errors).length > 0) {
       logDebug('validatePersonForm errors:', errors);
       setTouched(errors as FormikTouched<Order>, true); // show errors
@@ -74,6 +75,7 @@ export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerso
   // saves updated order, which includes the new or edited person
   async function handleSaveButton() {
     const isValid = await validatePersonForm();
+    logDebug('PersonForm handleSaveButton isValid:', isValid);
     if (isValid) {
       if (editIndex === 0) {
         const { values } = formikRef.current!;
