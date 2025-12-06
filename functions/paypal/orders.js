@@ -8,8 +8,8 @@ import { getConfig } from '../config/internal/config.js';
 let ordersController = null;
 const getOrdersController = () => ordersController ??= new OrdersController(getClient());
 
-export const capturePaypalOrder = async ({ id, idempotencyKey }) => {
-  logger.info('capturePaypalOrder', { id });
+export const capturePaypalOrder = async ({ id, idempotencyKey, email }) => {
+  logger.info(`capturePaypalOrder: ${email}`, { id, email });
   if (!id) throw createError(ErrorType.INVALID_ARGUMENT, 'No payment intent ID provided');
   try {
     const { result, statusCode } = await getOrdersController().ordersCapture({
@@ -18,7 +18,7 @@ export const capturePaypalOrder = async ({ id, idempotencyKey }) => {
       prefer: 'return=minimal'
     });
     if (statusCode < 200 || statusCode >= 300) {
-      logger.error(`Failed to capture order ${id}`, { statusCode, result });
+      logger.error(`Failed to capture order ${id} for ${email}`, { statusCode, result, email });
       throw new Error(`Failed to capture order: ${statusCode}`);
     }
     validateOrderResponse(result);
@@ -29,7 +29,7 @@ export const capturePaypalOrder = async ({ id, idempotencyKey }) => {
 };
 
 export const createOrUpdatePaypalOrder = async ({ id, email, description, amount, idempotencyKey }) => {
-  logger.info('createOrUpdatePaypalOrder', { email, idempotencyKey });
+  logger.info(`createOrUpdatePaypalOrder: ${email}`, { email, idempotencyKey });
 
   const { WAITLIST_MODE } = getConfig();
   if (WAITLIST_MODE) {
@@ -38,15 +38,15 @@ export const createOrUpdatePaypalOrder = async ({ id, email, description, amount
 
   let result;
   if (id && await orderExists(id)) {
-    logger.info(`Order ${id} exists, updating order`);
+    logger.info(`Order ${id} exists, updating order for ${email}`);
     result = await updateOrder({ id, amount, idempotencyKey });
     validateOrderResponse(result, id, amount);
   } else if (id) {
-    logger.info(`Order ID ${id} provided but does not exist, creating new order`);
+    logger.info(`Order ID ${id} provided but does not exist, creating new order for ${email}`);
     result = await createOrder({ description, amount, idempotencyKey });
     validateOrderResponse(result, null, amount);
   } else {
-    logger.info(`No Order ID provided, creating new order`);
+    logger.info(`No Order ID provided, creating new order for ${email}`);
     result = await createOrder({ description, amount, idempotencyKey });
     validateOrderResponse(result, null, amount);
   }

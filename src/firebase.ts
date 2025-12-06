@@ -115,11 +115,10 @@ export const capturePaypalOrder = async (params: {
   idempotencyKey: string,
   email: string
 }) => {
-  const { email, ...data } = params;
   return await firebaseFunctionDispatcher({
     action: 'capturePaypalOrder',
-    data,
-    email
+    data: params,
+    email: params.email
   });
 };
 
