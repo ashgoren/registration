@@ -68,6 +68,6 @@ export const getOptions = (person: { age: AgeGroup }) => {
   const tier = getTier();
   return TIERED_PRICING_MAP[person.age].options.map(option => ({
     label: option.category ? `${option.category} - $${option[tier]}` : `$${option[tier]}`,
-    value: String(option[tier])
+    value: option[tier]
   }));
 };
