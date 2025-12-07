@@ -2,7 +2,7 @@ import { logger } from 'firebase-functions/v2';
 import { FieldValue } from 'firebase-admin/firestore';
 import { validFields } from '../shared/fields.js';
 import { createError, ErrorType } from '../shared/errorHandler.js';
-import { ordersCollection } from '../shared/orders.js';
+import { ordersCollection, peopleCounterDoc } from '../shared/orders.js';
 
 export const savePendingOrder = async ({ orderId, order }) => {
   const { email } = order.people[0];
@@ -47,6 +47,11 @@ export const saveFinalOrder = async ({ orderId, order }) => {
   try {
     await ordersCollection.doc(orderId).set(preppedOrder, { merge: true });
     logger.info(`FINAL ORDER SAVED: ${email}`);
+
+    await peopleCounterDoc.set({
+      count: FieldValue.increment(order.people.length)
+    }, { merge: true });
+    logger.info(`PEOPLE COUNTER UPDATED: +${order.people.length}`);
   } catch (err) {
     throw createError(ErrorType.DATABASE_SAVE, 'Error saving final order', { order, error: err });
   }

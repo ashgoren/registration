@@ -26,11 +26,12 @@ export const MyStepper = () => {
   );
 };
 
-export const MyMobileStepper = ({ backText, nextText, onBackClick, onNextClick }: {
+export const MyMobileStepper = ({ backText, nextText, onBackClick, onNextClick, disableNext }: {
   backText?: string;
   nextText?: string;
   onBackClick?: () => void;
   onNextClick?: () => void;
+  disableNext?: boolean;
 }) => {
   const { currentPage } = useOrderFlow();
 
@@ -64,6 +65,7 @@ export const MyMobileStepper = ({ backText, nextText, onBackClick, onNextClick }
             type='button'
             size='medium'
             sx={!onNextClick ? { visibility: 'hidden' } : {}}
+            disabled={disableNext}
           >
             {nextText}<KeyboardArrowRight />
           </Button>

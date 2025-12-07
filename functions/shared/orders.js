@@ -2,6 +2,7 @@ import { getFirestore } from 'firebase-admin/firestore';
 import { createError, ErrorType } from './errorHandler.js';
 
 export const ordersCollection = getFirestore().collection('orders');
+export const peopleCounterDoc = getFirestore().collection('metadata').doc('peopleCount');
 
 export const getOrders = async ({ pending = false } = {}) => {
   const query = ordersCollection.where('status', '==', pending ? 'pending' : 'final').orderBy('createdAt', 'asc');

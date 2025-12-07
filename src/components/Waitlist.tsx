@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Typography, Button, Checkbox, FormControlLabel } from '@mui/material';
+import { Box, Typography, Button, Checkbox, FormControlLabel, Alert } from '@mui/material';
 import { NavButtons, Loading, Error } from 'components/layouts';
 import { StyledPaper, Paragraph } from 'components/layouts/SharedStyles';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
@@ -10,7 +10,7 @@ import { useOrderFinalization } from 'hooks/useOrderFinalization';
 import { OrderSummary } from 'components/OrderSummary';
 import { logDebug, logErrorDebug } from 'src/logger';
 import { config } from 'config';
-const { ENV, TECH_CONTACT } = config;
+const { ENV, TECH_CONTACT, WAITLIST_MODE } = config;
 
 export const Waitlist = ({ handleClickBackButton }: {
   handleClickBackButton: () => void
@@ -75,6 +75,12 @@ export const Waitlist = ({ handleClickBackButton }: {
         <Typography variant='h4' align='center' mt={1} mb={3}>
           {submitted ? 'Success!' : 'Waitlist Sign-up'}
         </Typography>
+
+        {!WAITLIST_MODE &&
+          <Alert severity='warning' sx={{ mb: 4 }}>
+            We apologize but we have just hit our registration capacity. You can sign up for the waitlist below and we will notify you if a spot becomes available.
+          </Alert>
+        }
 
         <OrderSummary order={order} />
 
