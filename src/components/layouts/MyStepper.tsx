@@ -3,6 +3,7 @@ import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import { StyledPaper } from 'components/layouts/SharedStyles';
 import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { config } from 'config';
+import type { NavButtonsProps } from 'components/layouts/NavButtons';
 const { STEPS } = config;
 
 export const MyStepper = () => {
@@ -26,13 +27,7 @@ export const MyStepper = () => {
   );
 };
 
-export const MyMobileStepper = ({ backText, nextText, onBackClick, onNextClick, disableNext }: {
-  backText?: string;
-  nextText?: string;
-  onBackClick?: () => void;
-  onNextClick?: () => void;
-  disableNext?: boolean;
-}) => {
+export const MyMobileStepper = ({ back, next }: NavButtonsProps) => {
   const { currentPage } = useOrderFlow();
 
   return (
@@ -46,28 +41,29 @@ export const MyMobileStepper = ({ backText, nextText, onBackClick, onNextClick, 
         steps={STEPS.length}
         position='static'
         activeStep={STEPS.findIndex(step => step.key === currentPage)}
-        backButton={backText ?
+        backButton={back ?
           <Button
             color='secondary'
-            onClick={onBackClick}
+            onClick={back.onClick}
             type='button'
             size='medium'
-            sx={!onBackClick ? { visibility: 'hidden' } : {}}
+            disabled={back.disable}
+            sx={!back ? { visibility: 'hidden' } : {}}
           >
-            <KeyboardArrowLeft />{backText}
+            <KeyboardArrowLeft />{back.text}
           </Button>
           : <div />
         }
-        nextButton={nextText ?
+        nextButton={next ?
           <Button
             color='secondary'
-            onClick={onNextClick}
+            onClick={next.onClick}
             type='button'
             size='medium'
-            sx={!onNextClick ? { visibility: 'hidden' } : {}}
-            disabled={disableNext}
+            disabled={next.disable}
+            sx={!next ? { visibility: 'hidden' } : {}}
           >
-            {nextText}<KeyboardArrowRight />
+            {next.text}<KeyboardArrowRight />
           </Button>
         : <div />
         }

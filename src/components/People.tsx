@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Button, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { NavButtons } from 'components/layouts';
 import { StyledPaper, Paragraph } from 'components/layouts/SharedStyles';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
 import { useOrderData } from 'contexts/OrderDataContext';
+import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { PersonForm } from './PersonForm';
 import { PersonSummary } from 'components/OrderSummary';
 import { logDebug } from 'src/logger';
@@ -15,16 +15,19 @@ import type { FormikProps } from 'formik';
 
 const { ADMISSION_QUANTITY_MAX, PERSON_DEFAULTS } = config;
 
-export const People = ({ formikRef, isCheckingThreshold }: {
-  formikRef: RefObject<FormikProps<Order> | null>, isCheckingThreshold: boolean }
-) => {
+export const People = ({ formikRef }: { formikRef: RefObject<FormikProps<Order> | null> }) => {
   logDebug('People rendered');
 
   const { order, updateOrder } = useOrderData();
+  const { setShowNavButtons } = useOrderFlow();
   const [editIndex, setEditIndex] = useState(order.people[0].email === '' ? 0 : null);
   const [isNewPerson, setIsNewPerson] = useState(false);
 
   useWarnBeforeUnload();
+
+  useEffect(() => {
+    setShowNavButtons(editIndex === null);
+  }, [editIndex]);
 
   const resetForm = () => {
     formikRef.current!.resetForm({ values: order });
@@ -99,14 +102,6 @@ export const People = ({ formikRef, isCheckingThreshold }: {
             />
           </StyledPaper>
         </>
-      }
-
-      {editIndex === null &&
-        <NavButtons
-          nextText = {isCheckingThreshold ? 'Thinking...' : 'Next'}
-          onNextClick={() => formikRef.current?.submitForm()}
-          disableNext={isCheckingThreshold}
-        />
       }
     </>
   );
