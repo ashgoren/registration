@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import { StyledPaper, StyledLink, Paragraph, SectionDivider } from 'components/layouts/SharedStyles';
-import { mailtoLink, websiteLink } from 'utils';
+import { mailtoLink, websiteLink } from 'utils/misc';
 import { useOrderData } from 'contexts/OrderDataContext';
 import { config } from 'config';
 const { EMAIL_CONTACT, EVENT_TITLE, MORE_INFO_URL } = config;

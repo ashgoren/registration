@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import { StyledPaper } from 'components/layouts/SharedStyles';
-import { formatCurrency } from 'utils';
+import { formatCurrency } from 'utils/misc';
 
 export const PaymentFormTotal = ({ admissionTotal, depositTotal, isDeposit, donationTotal, feesTotal, totalWithFees }: {
   admissionTotal: number;

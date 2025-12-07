@@ -1,5 +1,5 @@
 import { PageTitle, Paragraph, StyledPaper, StyledLink } from 'components/layouts/SharedStyles';
-import { websiteLink, mailtoLink } from 'utils';
+import { websiteLink, mailtoLink } from 'utils/misc';
 import { config } from 'config';
 const { DIRECT_PAYMENT_URL, EMAIL_CONTACT } = config;
 

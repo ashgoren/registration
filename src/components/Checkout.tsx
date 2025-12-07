@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Box, Typography } from '@mui/material';
 import { Loading, Error, NavButtons } from 'components/layouts';
 import { StyledPaper, Title } from 'components/layouts/SharedStyles';
-import { formatCurrency } from 'utils';
+import { formatCurrency } from 'utils/misc';
 import { useScrollToTop } from 'hooks/useScrollToTop';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
 import { useOrderData } from 'contexts/OrderDataContext';
@@ -17,7 +17,7 @@ import { logDebug } from 'src/logger';
 import { config } from 'config';
 import type { Order } from 'types/order';
 
-const { NUM_PAGES, TECH_CONTACT } = config;
+const { TECH_CONTACT } = config;
 
 export const Checkout = () => {
   logDebug('RENDER Checkout');
@@ -61,7 +61,7 @@ export const Checkout = () => {
 
   const handleClickBackButton = () => {
     setError(null);
-    setCurrentPage(NUM_PAGES);
+    setCurrentPage('payment');
   };
 
   if (!isValidTotal(order)) {

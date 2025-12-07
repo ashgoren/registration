@@ -5,7 +5,7 @@ import { useOrderData } from 'contexts/OrderDataContext';
 import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { useOrderSaving } from 'hooks/useOrderSaving';
 import { StyledLink } from 'components/layouts/SharedStyles';
-import { mailtoLink } from 'utils';
+import { mailtoLink } from 'utils/misc';
 import { logErrorDebug } from 'src/logger';
 import { config } from 'config';
 const { SHOW_CHECK_ADDRESS, CHECK_ADDRESS, CHECK_TO, ENV, TECH_CONTACT, EMAIL_CONTACT } = config;

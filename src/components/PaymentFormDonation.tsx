@@ -3,7 +3,7 @@ import { useFormikContext } from 'formik';
 import { InputAdornment } from '@mui/material';
 import { StyledPaper, Title } from 'components/layouts/SharedStyles';
 import { Field } from 'components/inputs';
-import { clamp } from 'utils';
+import { clamp } from 'utils/misc';
 import { config } from 'config';
 import type { FocusEvent } from 'react';
 import { Order } from 'types/order';

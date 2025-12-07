@@ -1,5 +1,5 @@
 import { Box, Button } from '@mui/material';
-import { getFirstInvalidFieldName, sanitizeObject, getCountry } from 'utils';
+import { getFirstInvalidFieldName, sanitizeObject, getCountry } from 'utils/misc';
 import { useOrderData } from 'contexts/OrderDataContext';
 import { ContactInfo } from './ContactInfo';
 import { MiscInfo } from './MiscInfo';

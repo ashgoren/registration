@@ -14,6 +14,7 @@ import { IntroHeader } from 'components/IntroHeader';
 import { OrderSummary } from 'components/OrderSummary';
 import { WaitlistNote } from 'components/WaitlistNote';
 import { PreRegistration } from 'components/Static/PreRegistration';
+import { VALIDATION_PAGES } from 'utils/pageFlow';
 import { config } from 'config';
 const { PAYMENT_METHODS, PAYPAL_OPTIONS, EVENT_TITLE, CONFIRMATION_CHECK_TITLE, CONFIRMATION_ELECTRONIC_TITLE, PRD_LIVE, ENV, SHOW_PRE_REGISTRATION, WAITLIST_MODE } = config;
 
@@ -57,12 +58,12 @@ const RealRegistration = () => {
       {error && <Error />}
 
       <Header titleText={currentPage === 'confirmation' ? CONFIRMATION_TITLE : EVENT_TITLE}>
-        {currentPage === 1 && WAITLIST_MODE && <WaitlistNote />}
-        {currentPage === 1 && <IntroHeader />}
+        {currentPage === 'people' && WAITLIST_MODE && <WaitlistNote />}
+        {currentPage === 'people' && <IntroHeader />}
         {currentPage === 'checkout' && <OrderSummary order={order} />}
       </Header>
 
-      {typeof currentPage === 'number' && <MainForm />}
+      {VALIDATION_PAGES.some(page => page.key === currentPage) && <MainForm />}
 
       {currentPage === 'checkout' && order.total && <Checkout />}
       {currentPage === 'checkout' && !order.total && <Loading />}

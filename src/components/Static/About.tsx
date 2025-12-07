@@ -1,6 +1,6 @@
 import { Box, List, ListItem } from '@mui/material';
 import { StyledLink, StyledPaper, PageTitle, Paragraph, Header } from 'components/layouts/SharedStyles';
-import { mailtoLink } from 'utils';
+import { mailtoLink } from 'utils/misc';
 import { config } from 'config';
 const { EMAIL_CONTACT, HOUSING_CONTACT } = config;
 

@@ -2,7 +2,7 @@ import { useFormikContext } from 'formik';
 import { InputAdornment } from '@mui/material';
 import { Paragraph } from 'components/layouts/SharedStyles';
 import { Field } from 'components/inputs';
-import { clamp } from 'utils';
+import { clamp } from 'utils/misc';
 import { config } from 'config';
 import type { FocusEvent } from 'react';
 import type { Person } from 'types/order';

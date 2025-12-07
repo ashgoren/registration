@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import { StyledLink } from 'components/layouts/SharedStyles';
-import { websiteLink } from 'utils';
+import { websiteLink } from 'utils/misc';
 import { STATE_OPTIONS } from './internal/constants';
 import { NAME_VALIDATION, PRONOUNS_VALIDATION, EMAIL_VALIDATION, PHONE_VALIDATION } from './internal/configValidations';
 import configBasics from './internal/configBasics';

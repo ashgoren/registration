@@ -1,10 +1,11 @@
 import * as Yup from 'yup';
+import { VALIDATION_PAGES } from 'utils/pageFlow';
 import { config } from 'config';
 
 const { FIELD_CONFIG, PERSON_FIELDS, DONATION_MAX } = config;
 
-export const validationSchema = ({ currentPage }: { currentPage: number | string }) => {
-  if (typeof currentPage === 'string') return null;
+export const validationSchema = ({ currentPage }: { currentPage: string }) => {
+  if (!VALIDATION_PAGES.find(page => page.key === currentPage)) return null;
 
   const personValidationObject = PERSON_FIELDS.reduce((obj, fieldName) => {
     const fieldConfig = FIELD_CONFIG[fieldName];
@@ -41,9 +42,9 @@ export const validationSchema = ({ currentPage }: { currentPage: number | string
     donation: Yup.number().min(0).max(DONATION_MAX)
   });
 
-  const validationSchemas: Record<number, Yup.AnyObjectSchema> = {
-    1: peopleSchema,
-    2: paymentSchema
+  const validationSchemas: Record<string, Yup.AnyObjectSchema> = {
+    'people': peopleSchema,
+    'payment': paymentSchema
   };
 
   return validationSchemas[currentPage];

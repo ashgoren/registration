@@ -2,23 +2,22 @@ import { Stepper, Step, StepLabel, MobileStepper, Button } from '@mui/material';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import { StyledPaper } from 'components/layouts/SharedStyles';
 import { useOrderFlow } from 'contexts/OrderFlowContext';
-import { config } from 'config';
+import { STEPPER_PAGES } from 'utils/pageFlow';
 import type { NavButtonsProps } from 'components/layouts/NavButtons';
-const { STEPS } = config;
 
 export const MyStepper = () => {
   const { currentPage } = useOrderFlow();
 
   return (
     <Stepper
-      activeStep={STEPS.findIndex(step => step.key === currentPage)}
+      activeStep={STEPPER_PAGES.findIndex(step => step.key === currentPage)}
       sx={{
         my: 5,
         '& .MuiStepLabel-root .Mui-active': { color: 'secondary.main' },
         '& .MuiStepLabel-root .Mui-completed': { color: 'secondary.main' }
       }}
     >
-      {STEPS.map(({ label }) => (
+      {STEPPER_PAGES.map(({ label }) => (
         <Step key={label}>
           <StepLabel>{label}</StepLabel>
         </Step>
@@ -38,9 +37,9 @@ export const MyMobileStepper = ({ back, next }: NavButtonsProps) => {
           '& .MuiMobileStepper-dotActive': { bgcolor: 'secondary.main' }
         }}
         variant='dots'
-        steps={STEPS.length}
+        steps={STEPPER_PAGES.length}
         position='static'
-        activeStep={STEPS.findIndex(step => step.key === currentPage)}
+        activeStep={STEPPER_PAGES.findIndex(step => step.key === currentPage)}
         backButton={back ?
           <Button
             color='secondary'
