@@ -1,11 +1,17 @@
 import { logger } from 'firebase-functions/v2';
 import { createError, ErrorType } from '../shared/errorHandler.js';
 import { peopleCounterDoc } from '../shared/orders.js';
-
-const WAITLIST_CUTOFF = 240;
+import { getConfig } from '../config/internal/config.js';
 
 export const checkPeopleThreshold = async () => {
   logger.info('checkPeopleThreshold called');
+
+  const { WAITLIST_CUTOFF } = getConfig();
+
+  if (!WAITLIST_CUTOFF) {
+    return { thresholdReached: false, totalPeople: 0 };
+  }
+
   try {
     const peopleCounterSnapshot = await peopleCounterDoc.get();
     const peopleCounterData = peopleCounterSnapshot.data() || {};
