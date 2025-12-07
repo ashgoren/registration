@@ -15,7 +15,9 @@ import type { FormikProps } from 'formik';
 
 const { ADMISSION_QUANTITY_MAX, PERSON_DEFAULTS } = config;
 
-export const People = ({ formikRef }: { formikRef: RefObject<FormikProps<Order> | null> }) => {
+export const People = ({ formikRef, isCheckingThreshold }: {
+  formikRef: RefObject<FormikProps<Order> | null>, isCheckingThreshold: boolean }
+) => {
   logDebug('People rendered');
 
   const { order, updateOrder } = useOrderData();
@@ -100,7 +102,11 @@ export const People = ({ formikRef }: { formikRef: RefObject<FormikProps<Order> 
       }
 
       {editIndex === null &&
-        <NavButtons nextText='Next' onNextClick={() => formikRef.current?.submitForm()} />
+        <NavButtons
+          nextText = {isCheckingThreshold ? 'Thinking...' : 'Next'}
+          onNextClick={() => formikRef.current?.submitForm()}
+          disableNext={isCheckingThreshold}
+        />
       }
     </>
   );

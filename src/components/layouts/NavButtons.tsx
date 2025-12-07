@@ -7,9 +7,10 @@ interface NavButtonsProps {
   nextText?: string;
   onBackClick?: () => void;
   onNextClick?: () => void;
+  disableNext?: boolean;
 }
 
-export const NavButtons = ({ backText, nextText, onBackClick, onNextClick }: NavButtonsProps) => {
+export const NavButtons = ({ backText, nextText, onBackClick, onNextClick, disableNext }: NavButtonsProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -20,6 +21,7 @@ export const NavButtons = ({ backText, nextText, onBackClick, onNextClick }: Nav
         nextText={nextText}
         onBackClick={onBackClick}
         onNextClick={onNextClick}
+        disableNext={disableNext}
       />
     );
   }
@@ -38,7 +40,7 @@ export const NavButtons = ({ backText, nextText, onBackClick, onNextClick }: Nav
 
         <Box sx={{ marginLeft: 'auto' }}>
           {nextText && (
-            <Button color='secondary' variant='contained' onClick={onNextClick}>
+            <Button color='secondary' variant='contained' onClick={onNextClick} disabled={disableNext}>
               {nextText}
             </Button>
           )}

@@ -1,5 +1,6 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Formik } from 'formik';
+import { checkPeopleThreshold } from 'src/firebase';
 import { sanitizeObject } from 'utils';
 import { validationSchema } from './validationSchema';
 import { useOrderData } from 'contexts/OrderDataContext';
@@ -15,14 +16,33 @@ const { NUM_PAGES, DEPOSIT_COST } = config;
 export const MainForm = () => {
   const formikRef = useRef<FormikProps<Order>>(null);
   const { order, updateOrder } = useOrderData();
-  const { currentPage, setCurrentPage } = useOrderFlow();
+  const { currentPage, setCurrentPage, setWaitlistThresholdReached } = useOrderFlow();
+  const [isCheckingThreshold, setIsCheckingThreshold] = useState(false);
 
-  // this is triggered after People submitted and after PaymentForm submitted
-  // for now it's really just validating the PaymentForm page fields (?)
-  // note: it doesn't get here until all validations are passing (?)
+  async function handlePeopleSubmit(values: Order) {
+    // Check threshold before advancing to PaymentForm
+    setIsCheckingThreshold(true);
+    try {
+      const response = await checkPeopleThreshold();
+      const { thresholdReached, totalPeople } = response;
+      logDebug(`thresholdReached: ${thresholdReached}, totalPeople: ${totalPeople}`);
+      setWaitlistThresholdReached(thresholdReached);
+    } catch (error) {
+      logDebug('Error checking people threshold', { error });
+    } finally {
+      // fail open on error: assume threshold not reached
+      setIsCheckingThreshold(false);
+    }
+
+    // Then normal submit (advance to next page)
+    submitForm(values);
+  }
+
+  // Submit handler triggered after People submitted & after PaymentForm submitted,
+  // but only after validation passes.
   function submitForm(values: Order) {
     const submittedOrder = Object.assign({}, values);
-    logDebug('MainForm submitForm values:', values);
+    logDebug('People or PaymentForm submitted:', values);
     const sanitizedOrder = sanitizeObject(submittedOrder);
     updateOrder({
       ...sanitizedOrder,
@@ -39,10 +59,10 @@ export const MainForm = () => {
       validationSchema={validationSchema({ currentPage })}
       validateOnBlur={true}
       validateOnChange={false}
-      onSubmit={values => submitForm(values)}
+      onSubmit={currentPage === 1 ? handlePeopleSubmit : submitForm}
       innerRef={formikRef}
     >
-      <FormContents formikRef={formikRef} />
+      <FormContents formikRef={formikRef} isCheckingThreshold={isCheckingThreshold} />
     </Formik>
   );
 };

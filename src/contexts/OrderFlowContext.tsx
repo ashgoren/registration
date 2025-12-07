@@ -11,6 +11,8 @@ type OrderFlowContextType = {
   setProcessingMessage: (message: string | null) => void;
   error: string | ReactNode | null;
   setError: (error: string | ReactNode | null) => void;
+  waitlistThresholdReached: boolean;
+  setWaitlistThresholdReached: (reached: boolean) => void;
 };
 
 const OrderFlowContext = createContext<OrderFlowContextType | null>(null);
@@ -20,6 +22,7 @@ export const OrderFlowProvider = ({ children }: { children: ReactNode }) => {
   const [processing, setProcessing] = useState(false);
   const [processingMessage, setProcessingMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | ReactNode | null>(null);
+  const [waitlistThresholdReached, setWaitlistThresholdReached] = useState(false);
 
   useEffect(() => { cache('currentPage', currentPage) }, [currentPage]);
 
@@ -28,7 +31,8 @@ export const OrderFlowProvider = ({ children }: { children: ReactNode }) => {
       currentPage, setCurrentPage,
       processing, setProcessing,
       processingMessage, setProcessingMessage,
-      error, setError
+      error, setError,
+      waitlistThresholdReached, setWaitlistThresholdReached,
     }}>
       {children}
     </OrderFlowContext.Provider>

@@ -40,6 +40,7 @@ type FirebaseFunctionData = {
     timestamp: string;
     metadata: Record<string, unknown>;
   };
+  checkPeopleThreshold: Record<string, never>;
 }
 
 export type FirebaseFunctionReturn = {
@@ -48,11 +49,12 @@ export type FirebaseFunctionReturn = {
   capturePaypalOrder: {id: string; amount: string; email: string };
   initializePayment: { id: string; amount: number; clientSecret?: string };
   logEvent: void;
+  checkPeopleThreshold: { thresholdReached: boolean; totalPeople: number };
 }
 
 type FirebaseCallableParams<T extends keyof FirebaseFunctionData> = {
   action: T;
-  data: FirebaseFunctionData[T];
+  data?: FirebaseFunctionData[T];
   email?: string;
 };
 
@@ -131,5 +133,11 @@ export const logEvent = (params: {
   return firebaseFunctionDispatcher({
     action: 'logEvent',
     data: params
+  });
+};
+
+export const checkPeopleThreshold = async () => {
+  return await firebaseFunctionDispatcher({
+    action: 'checkPeopleThreshold'
   });
 };
