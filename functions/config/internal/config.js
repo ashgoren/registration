@@ -20,7 +20,8 @@ const baseOptions = {
   SHEETS_KEY_COLUMN: 0,
   SHEETS_SHEET_RANGE: 'A:AZ',
   SHEETS_ORDERS_TAB_NAME: 'Orders',
-  WAITLIST_MODE: userConfig.registration.waitlist_mode
+  WAITLIST_MODE: userConfig.registration.waitlist_mode,
+  WAITLIST_CUTOFF: userConfig.registration.waitlist_cutoff
 };
 
 const envVariables = [
