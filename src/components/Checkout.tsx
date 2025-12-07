@@ -75,7 +75,7 @@ export const Checkout = () => {
           {error && <Box sx={{ mb: 4 }}><Error /></Box>}
           <Loading text={`Retrieving total from ${paymentMethod}...`} />
         </StyledPaper>
-        <NavButtons backText='Back' onBackClick={handleClickBackButton} />
+        <NavButtons back={{ text: 'Back', onClick: handleClickBackButton }} />
       </>
     );
   }
@@ -113,7 +113,7 @@ export const Checkout = () => {
       </StyledPaper>
 
       {!paying && !processing &&
-        <NavButtons backText='Back' onBackClick={handleClickBackButton} />
+        <NavButtons back={{ text: 'Back', onClick: handleClickBackButton }} />
       }
     </section>
   );

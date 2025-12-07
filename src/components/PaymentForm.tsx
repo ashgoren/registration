@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo } from 'react';
 import { useFormikContext } from 'formik';
 import { Box, Tab, Tabs } from '@mui/material';
 import { TabPanel, TabContext } from '@mui/lab';
-import { NavButtons } from 'components/layouts';
 import { StyledPaper, Title, Paragraph } from 'components/layouts/SharedStyles';
 import { clamp } from 'utils';
 import { useScrollToTop } from 'hooks/useScrollToTop';
@@ -18,9 +17,9 @@ import type { Order } from 'types/order';
 
 const { DEPOSIT_OPTION, COVER_FEES_OPTION, DEPOSIT_COST, ADMISSION_COST_RANGE, DONATION_OPTION, PAYMENT_DUE_DATE, SHOW_PAYMENT_SUMMARY, ADMISSIONS_MODE } = config;
 
-export const PaymentForm = ({ handleClickBackButton }: { handleClickBackButton: () => void }) => {
+export const PaymentForm = () => {
   const { order, updateOrder } = useOrderData();
-  const { values, setFieldValue, submitForm } = useFormikContext<Order>();
+  const { values, setFieldValue } = useFormikContext<Order>();
   const [coverFees, setCoverFees] = useState(Number(order.fees) > 0);
   const [paymentTab, setPaymentTab] = useState(order.deposit > 0 ? 'deposit' : 'fullpayment');
 
@@ -129,12 +128,6 @@ export const PaymentForm = ({ handleClickBackButton }: { handleClickBackButton: 
           />
         }
       </div>
-
-      <NavButtons
-        backText={'Back'} onBackClick={handleClickBackButton}
-        nextText={'Checkout'} onNextClick={() => submitForm()}
-      />
-
     </section>
   );
 };

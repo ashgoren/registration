@@ -13,6 +13,8 @@ type OrderFlowContextType = {
   setError: (error: string | ReactNode | null) => void;
   waitlistThresholdReached: boolean;
   setWaitlistThresholdReached: (reached: boolean) => void;
+  showNavButtons: boolean;
+  setShowNavButtons: (show: boolean) => void;
 };
 
 const OrderFlowContext = createContext<OrderFlowContextType | null>(null);
@@ -23,6 +25,7 @@ export const OrderFlowProvider = ({ children }: { children: ReactNode }) => {
   const [processingMessage, setProcessingMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | ReactNode | null>(null);
   const [waitlistThresholdReached, setWaitlistThresholdReached] = useState(false);
+  const [showNavButtons, setShowNavButtons] = useState(true);
 
   useEffect(() => { cache('currentPage', currentPage) }, [currentPage]);
 
@@ -33,6 +36,7 @@ export const OrderFlowProvider = ({ children }: { children: ReactNode }) => {
       processingMessage, setProcessingMessage,
       error, setError,
       waitlistThresholdReached, setWaitlistThresholdReached,
+      showNavButtons, setShowNavButtons,
     }}>
       {children}
     </OrderFlowContext.Provider>

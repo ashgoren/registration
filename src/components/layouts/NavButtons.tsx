@@ -2,28 +2,25 @@ import { Box, Button, useMediaQuery, useTheme } from '@mui/material';
 import { MyMobileStepper } from 'components/layouts';
 import { StyledPaper } from 'components/layouts/SharedStyles';
 
-interface NavButtonsProps {
-  backText?: string;
-  nextText?: string;
-  onBackClick?: () => void;
-  onNextClick?: () => void;
-  disableNext?: boolean;
+export interface NavButtonsProps {
+  next?: {
+    text: string;
+    onClick: () => void;
+    disable?: boolean;
+  };
+  back?: {
+    text: string;
+    onClick: () => void;
+    disable?: boolean;
+  };
 }
 
-export const NavButtons = ({ backText, nextText, onBackClick, onNextClick, disableNext }: NavButtonsProps) => {
+export const NavButtons = ({ back, next }: NavButtonsProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   if (isMobile) {
-    return (
-      <MyMobileStepper
-        backText={backText}
-        nextText={nextText}
-        onBackClick={onBackClick}
-        onNextClick={onNextClick}
-        disableNext={disableNext}
-      />
-    );
+    return <MyMobileStepper back={back} next={next} />;
   }
 
   return (
@@ -31,17 +28,17 @@ export const NavButtons = ({ backText, nextText, onBackClick, onNextClick, disab
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
 
         <Box>
-          {backText && (
-            <Button color='inherit' variant='outlined' type='button' onClick={onBackClick}>
-              {backText}
+          {back && (
+            <Button color='inherit' variant='outlined' type='button' onClick={back.onClick} disabled={back.disable}>
+              {back.text}
             </Button>
           )}
         </Box>
 
         <Box sx={{ marginLeft: 'auto' }}>
-          {nextText && (
-            <Button color='secondary' variant='contained' onClick={onNextClick} disabled={disableNext}>
-              {nextText}
+          {next && (
+            <Button color='secondary' variant='contained' onClick={next.onClick} disabled={next.disable}>
+              {next.text}
             </Button>
           )}
         </Box>

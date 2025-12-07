@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Box, Typography, Button, Checkbox, FormControlLabel, Alert } from '@mui/material';
-import { NavButtons, Loading, Error } from 'components/layouts';
+import { Loading, Error } from 'components/layouts';
 import { StyledPaper, Paragraph } from 'components/layouts/SharedStyles';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
 import { useOrderData } from 'contexts/OrderDataContext';
@@ -12,11 +12,9 @@ import { logDebug, logErrorDebug } from 'src/logger';
 import { config } from 'config';
 const { ENV, TECH_CONTACT, WAITLIST_MODE } = config;
 
-export const Waitlist = ({ handleClickBackButton }: {
-  handleClickBackButton: () => void
-}) => {
+export const Waitlist = () => {
   const { order, updateOrder } = useOrderData();
-  const { error, setError, processing, setProcessing, processingMessage, setProcessingMessage } = useOrderFlow();
+  const { error, setError, processing, setProcessing, processingMessage, setProcessingMessage, setShowNavButtons } = useOrderFlow();
   const { savePendingOrder, isSaving } = useOrderSaving();
   const { finalizeOrder } = useOrderFinalization();
   const [ready, setReady] = useState(ENV === 'dev');
@@ -24,6 +22,10 @@ export const Waitlist = ({ handleClickBackButton }: {
   const [submitted, setSubmitted] = useState(false);
 
   useWarnBeforeUnload(!submitted);
+
+  useEffect(() => {
+    setShowNavButtons(!submitted && !processing);
+  }, [submitted, processing]);
 
   setTimeout(() => {
     setReady(true);
@@ -124,10 +126,6 @@ export const Waitlist = ({ handleClickBackButton }: {
         }
 
       </StyledPaper>
-
-      {!submitted && !processing &&
-        <NavButtons backText='Back' onBackClick={handleClickBackButton} />
-      }
     </>
   );
 };
