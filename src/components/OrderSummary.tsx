@@ -5,7 +5,7 @@
 *********************************************************************************************************** */
 
 import { Box, Typography } from '@mui/material';
-import { formatCurrency } from 'utils';
+import { formatCurrency } from 'utils/misc';
 import { config } from 'config';
 import type { Order, Person } from 'types/order';
 
@@ -17,6 +17,9 @@ export const OrderSummary = ({ order }: { order: Order }) => {
   const isDeposit = order.deposit > 0;
   const isFullPayment = !isDeposit;
   const fees = Number(order.fees);
+
+  console.log('admissions', admissions);
+  console.log('admissions total', admissionsTotal);
 
   return (
     <>

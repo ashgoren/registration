@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useReducer, useEffect, useCallback } from 'react';
-import { cache, cached } from 'utils';
+import { cache, cached } from 'utils/misc';
 import { config } from 'config';
 import type { ReactNode } from 'react';
 import type { Order } from 'types/order';

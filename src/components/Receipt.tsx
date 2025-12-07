@@ -4,7 +4,7 @@ import purchaserTemplate from 'templates/receipt-purchaser.md?raw';
 import additionalPersonTemplate from 'templates/receipt-additional-person.md?raw';
 import waitlistTemplate from 'templates/receipt-waitlist.md?raw';
 import { Divider, Typography } from '@mui/material';
-import { renderMarkdownTemplate, formatCurrency } from 'utils';
+import { renderMarkdownTemplate, formatCurrency } from 'utils/misc';
 import { useScrollToTop } from 'hooks/useScrollToTop';
 import { OrderSummary, PersonSummary } from 'components/OrderSummary';
 import { config } from 'config';

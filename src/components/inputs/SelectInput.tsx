@@ -3,7 +3,7 @@ import { Select, MenuItem, Typography } from '@mui/material';
 import type { FieldProps } from 'formik';
 import type { SelectProps } from '@mui/material/Select';
 
-type Option = { label: string; value: string; };
+type Option = { label: string; value: string | number };
 
 interface SelectInputProps extends Omit<SelectProps, 'name' | 'children'> {
   name: string;

@@ -3,7 +3,7 @@ import { useFormikContext } from 'formik';
 import { Box, Tab, Tabs } from '@mui/material';
 import { TabPanel, TabContext } from '@mui/lab';
 import { StyledPaper, Title, Paragraph } from 'components/layouts/SharedStyles';
-import { clamp } from 'utils';
+import { clamp } from 'utils/misc';
 import { useScrollToTop } from 'hooks/useScrollToTop';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
 import { useOrderData } from 'contexts/OrderDataContext';

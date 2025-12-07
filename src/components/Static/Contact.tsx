@@ -1,5 +1,5 @@
 import { StyledPaper, Paragraph, PageTitle, StyledLink } from 'components/layouts/SharedStyles';
-import { mailtoLink } from 'utils';
+import { mailtoLink } from 'utils/misc';
 import { config } from 'config';
 const { EMAIL_CONTACT, TECH_CONTACT } = config;
 

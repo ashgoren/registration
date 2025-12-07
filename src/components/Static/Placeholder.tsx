@@ -1,7 +1,7 @@
 import { MaterialLayout } from 'components/layouts';
 import { Typography } from '@mui/material';
 import { StyledPaper, StyledLink, Paragraph } from 'components/layouts/SharedStyles';
-import { websiteLink } from 'utils';
+import { websiteLink } from 'utils/misc';
 import { config } from 'config';
 const { EVENT_TITLE, EVENT_LOCATION, EVENT_DATE, MORE_INFO_URL } = config;
 

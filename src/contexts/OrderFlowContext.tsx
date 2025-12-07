@@ -1,10 +1,10 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { cache, cached } from 'utils';
+import { cache, cached } from 'utils/misc';
 import type { ReactNode } from 'react';
 
 type OrderFlowContextType = {
-  currentPage: number | string;
-  setCurrentPage: (page: number | string) => void;
+  currentPage: string;
+  setCurrentPage: (page: string) => void;
   processing: boolean;
   setProcessing: (processing: boolean) => void;
   processingMessage: string | null;
@@ -20,7 +20,7 @@ type OrderFlowContextType = {
 const OrderFlowContext = createContext<OrderFlowContextType | null>(null);
 
 export const OrderFlowProvider = ({ children }: { children: ReactNode }) => {
-  const [currentPage, setCurrentPage] = useState<number | string>(cached('currentPage') || 1);
+  const [currentPage, setCurrentPage] = useState<string>(cached('currentPage') || 'people');
   const [processing, setProcessing] = useState(false);
   const [processingMessage, setProcessingMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | ReactNode | null>(null);

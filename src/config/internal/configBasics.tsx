@@ -26,6 +26,7 @@ const baseConfig = {
   REGISTRATION_ONLY: static_pages.enabled === false,
   WAITLIST_MODE: registration.waitlist_mode,
   SHOW_PRE_REGISTRATION: registration.show_preregistration,
+  SHOW_WAIVER: registration.show_waiver,
 
   PAYMENT_METHODS: payments.checks.allowed ? [payments.processor as PaymentMethod, 'check' as PaymentMethod] : [payments.processor as PaymentMethod],
   SHOW_PAYMENT_SUMMARY: payments.show_payment_summary,

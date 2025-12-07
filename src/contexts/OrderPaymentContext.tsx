@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { cache, cached } from 'utils';
+import { cache, cached } from 'utils/misc';
 import { config } from 'config';
 import type { ReactNode } from 'react';
 import type { PaymentMethod, ElectronicPaymentDetails } from 'types/payment';

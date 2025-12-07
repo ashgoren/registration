@@ -1,6 +1,6 @@
 import { Alert, Typography } from '@mui/material';
 import { StyledLink, Paragraph } from 'components/layouts/SharedStyles';
-import { mailtoLink } from 'utils';
+import { mailtoLink } from 'utils/misc';
 import { config } from 'config';
 const { EMAIL_CONTACT, TECH_CONTACT, EVENT_TITLE, EVENT_LOCATION, EVENT_DATE } = config;
 
