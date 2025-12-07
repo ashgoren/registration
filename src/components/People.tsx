@@ -100,7 +100,7 @@ export const People = ({ formikRef }: { formikRef: RefObject<FormikProps<Order> 
       }
 
       {editIndex === null &&
-        <NavButtons nextButtonProps = {{ text: 'Next' }} />
+        <NavButtons nextText='Next' onNextClick={() => formikRef.current?.submitForm()} />
       }
     </>
   );

@@ -120,7 +120,7 @@ export const Waitlist = ({ handleClickBackButton }: {
       </StyledPaper>
 
       {!submitted && !processing &&
-        <NavButtons backButtonProps = {{ text: 'Back', onClick: handleClickBackButton }} />
+        <NavButtons backText='Back' onBackClick={handleClickBackButton} />
       }
     </>
   );
