@@ -25,37 +25,39 @@ export const MyStepper = () => {
   );
 };
 
-export const MyMobileStepper = ({ backButtonProps, nextButtonProps }: {
-  backButtonProps?: { text: string; onClick: () => void };
-  nextButtonProps?: { text: string };
+export const MyMobileStepper = ({ backText, nextText, onBackClick, onNextClick }: {
+  backText?: string;
+  nextText?: string;
+  onBackClick?: () => void;
+  onNextClick?: () => void;
 }) => {
   const { currentPage } = useOrderFlow();
 
   return (
     <MobileStepper
-      variant="dots"
+      variant='dots'
       steps={STEPS.length}
-      position="static"
+      position='static'
       activeStep={STEPS.findIndex(step => step.key === currentPage)}
-      backButton={backButtonProps ?
+      backButton={backText ?
         <Button
-          {...backButtonProps}
-          type="button"
-          size="small"
-          sx={!backButtonProps.onClick ? { visibility: 'hidden' } : {}}
+          onClick={onBackClick}
+          type='button'
+          size='small'
+          sx={!onBackClick ? { visibility: 'hidden' } : {}}
         >
-          <KeyboardArrowLeft />{backButtonProps.text}
+          <KeyboardArrowLeft />{backText}
         </Button>
         : <div />
       }
-      nextButton={nextButtonProps ?
+      nextButton={nextText ?
         <Button
-          {...nextButtonProps}
-          type='submit'
+          onClick={onNextClick}
+          type='button'
           size='small'
-          sx={!nextButtonProps ? { visibility: 'hidden' } : {}}
+          sx={!onNextClick ? { visibility: 'hidden' } : {}}
         >
-          {nextButtonProps.text}<KeyboardArrowRight />
+          {nextText}<KeyboardArrowRight />
         </Button>
       : <div />
       }

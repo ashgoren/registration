@@ -3,19 +3,23 @@ import { MyMobileStepper } from 'components/layouts';
 import { StyledPaper } from 'components/layouts/SharedStyles';
 
 interface NavButtonsProps {
-  backButtonProps?: { text: string; onClick: () => void };
-  nextButtonProps?: { text: string; };
+  backText?: string;
+  nextText?: string;
+  onBackClick?: () => void;
+  onNextClick?: () => void;
 }
 
-export const NavButtons = ({ backButtonProps, nextButtonProps }: NavButtonsProps) => {
+export const NavButtons = ({ backText, nextText, onBackClick, onNextClick }: NavButtonsProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   if (isMobile) {
     return (
       <MyMobileStepper
-        backButtonProps={backButtonProps}
-        nextButtonProps={nextButtonProps}
+        backText={backText}
+        nextText={nextText}
+        onBackClick={onBackClick}
+        onNextClick={onNextClick}
       />
     );
   }
@@ -25,17 +29,17 @@ export const NavButtons = ({ backButtonProps, nextButtonProps }: NavButtonsProps
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
 
         <Box>
-          {backButtonProps && (
-            <Button color='inherit' variant='outlined' type='button' onClick={backButtonProps.onClick}>
-              {backButtonProps.text}
+          {backText && (
+            <Button color='inherit' variant='outlined' type='button' onClick={onBackClick}>
+              {backText}
             </Button>
           )}
         </Box>
 
         <Box sx={{ marginLeft: 'auto' }}>
-          {nextButtonProps && (
-            <Button color='secondary' variant='contained' type='submit'>
-              {nextButtonProps.text}
+          {nextText && (
+            <Button color='secondary' variant='contained' onClick={onNextClick}>
+              {nextText}
             </Button>
           )}
         </Box>

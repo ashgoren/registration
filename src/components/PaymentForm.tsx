@@ -20,7 +20,7 @@ const { DEPOSIT_OPTION, COVER_FEES_OPTION, DEPOSIT_COST, ADMISSION_COST_RANGE, D
 
 export const PaymentForm = ({ handleClickBackButton }: { handleClickBackButton: () => void }) => {
   const { order, updateOrder } = useOrderData();
-  const { values, setFieldValue } = useFormikContext<Order>();
+  const { values, setFieldValue, submitForm } = useFormikContext<Order>();
   const [coverFees, setCoverFees] = useState(Number(order.fees) > 0);
   const [paymentTab, setPaymentTab] = useState(order.deposit > 0 ? 'deposit' : 'fullpayment');
 
@@ -131,8 +131,8 @@ export const PaymentForm = ({ handleClickBackButton }: { handleClickBackButton: 
       </div>
 
       <NavButtons
-        backButtonProps = {{ text: 'Back', onClick: handleClickBackButton }}
-        nextButtonProps = {{ text: 'Checkout' }}
+        backText={'Back'} onBackClick={handleClickBackButton}
+        nextText={'Checkout'} onNextClick={() => submitForm()}
       />
 
     </section>
