@@ -11,7 +11,8 @@ export const ErrorType = {
   PAYPAL_API: 'PAYPAL_API',
   STRIPE_API: 'STRIPE_API',
   DATABASE_SAVE: 'DATABASE_SAVE',
-  DATABASE_READ: 'DATABASE_READ'
+  DATABASE_READ: 'DATABASE_READ',
+  EXTERNAL_API: 'EXTERNAL_API'
 };
 
 // Firebase Function error codes for use with HttpsError
@@ -48,7 +49,8 @@ const errorMapping = {
   [ErrorType.PAYPAL_API]: { code: ErrorCode.UNAVAILABLE },
   [ErrorType.STRIPE_API]: { code: ErrorCode.UNAVAILABLE },
   [ErrorType.DATABASE_SAVE]: { code: ErrorCode.INTERNAL, message: 'Error saving order' },
-  [ErrorType.DATABASE_READ]: { code: ErrorCode.INTERNAL, message: 'Error reading order(s)' }
+  [ErrorType.DATABASE_READ]: { code: ErrorCode.INTERNAL, message: 'Error reading order(s)' },
+  [ErrorType.EXTERNAL_API]: { code: ErrorCode.UNAVAILABLE, message: 'Error communicating with DocuSeal API' }
 };
 
 export const createError = (type, message, details = {}) => {

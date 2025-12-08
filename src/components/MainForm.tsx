@@ -8,6 +8,7 @@ import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { People } from './People';
 import { PaymentForm } from './PaymentForm';
 import { Waitlist } from './Waitlist';
+import { WaiverWrapper } from './Waiver';
 import { NavButtons } from 'components/layouts';
 import { getPreviousPage, getNextPage } from 'utils/pageFlow';
 import { config } from 'config';
@@ -15,13 +16,14 @@ import { logDebug } from 'src/logger';
 import type { FormikProps } from 'formik';
 import type { Order } from 'types/order';
 
-const { DEPOSIT_COST, WAITLIST_MODE } = config;
+const { DEPOSIT_COST, WAITLIST_MODE, SHOW_WAIVER } = config;
 
 export const MainForm = () => {
   const formikRef = useRef<FormikProps<Order>>(null);
   const { order, updateOrder } = useOrderData();
   const { currentPage, setCurrentPage, waitlistThresholdReached, setWaitlistThresholdReached, showNavButtons } = useOrderFlow();
   const [isCheckingThreshold, setIsCheckingThreshold] = useState(false);
+  const [disableNext, setDisableNext] = useState(false);
 
   function handleClickBackButton() {
     if (!formikRef?.current) return;
@@ -31,7 +33,7 @@ export const MainForm = () => {
     setCurrentPage(getPreviousPage(currentPage));
   }
 
-  async function handlePeopleSubmit(values: Order) {
+  async function checkThreshold(values: Order) {
     // Check threshold before advancing to PaymentForm
     setIsCheckingThreshold(true);
     try {
@@ -67,34 +69,49 @@ export const MainForm = () => {
 
   const waitlistMode = WAITLIST_MODE || waitlistThresholdReached;
 
+  const backProps = {
+    text: 'Back',
+    onClick: handleClickBackButton
+  };
+
+  const nextProps = {
+    text: currentPage === 'payment' ? 'Checkout' : 'Next',
+    onClick: () => formikRef.current?.submitForm(),
+    disableNext: disableNext
+  };
+
+  const checkThresholdNextProps = {
+    text: isCheckingThreshold ? 'Thinking...' : 'Next',
+    disable: isCheckingThreshold || disableNext,
+    onClick: () => formikRef.current?.submitForm()
+  }
+
   const getNavButtonProps = () => {
     if (currentPage === 'people') { // People
       return {
-        next: {
-          text: isCheckingThreshold ? 'Thinking...' : 'Next',
-          disable: isCheckingThreshold,
-          onClick: () => formikRef.current?.submitForm()
-        }
+        next: SHOW_WAIVER ? nextProps : checkThresholdNextProps
+      };
+    } else if (currentPage === 'waiver') { // Waiver
+      return {
+        back: backProps,
+        next: SHOW_WAIVER ? checkThresholdNextProps : nextProps
       };
     } else if (currentPage === 'payment' && waitlistMode) { // Waitlist
       return {
-        back: {
-          text: 'Back',
-          onClick: handleClickBackButton
-        }
+        back: backProps,
       };
     } else if (currentPage === 'payment' && !waitlistMode) { // PaymentForm
       return {
-        back: {
-          text: 'Back',
-          onClick: handleClickBackButton
-        },
-        next: {
-          text: 'Checkout',
-          onClick: () => formikRef.current?.submitForm()
-        }
+        back: backProps,
+        next: nextProps
       }
     }
+  };
+
+  const submitHandlerMap = {
+    people: SHOW_WAIVER ? submitForm : checkThreshold,
+    waiver: SHOW_WAIVER ? checkThreshold : submitForm,
+    payment: submitForm
   };
 
   return (
@@ -103,12 +120,13 @@ export const MainForm = () => {
       validationSchema={validationSchema({ currentPage })}
       validateOnBlur={true}
       validateOnChange={false}
-      onSubmit={currentPage === 'people' ? handlePeopleSubmit : submitForm}
+      onSubmit={submitHandlerMap[currentPage as keyof typeof submitHandlerMap]}
       innerRef={formikRef}
     >
       <>
         <Form spellCheck='false'>
           {currentPage === 'people' && <People formikRef={formikRef} />}
+          {currentPage === 'waiver' && <WaiverWrapper setDisableNext={setDisableNext} />}
           {currentPage === 'payment' && waitlistMode && <Waitlist />}
           {currentPage === 'payment' && !waitlistMode && <PaymentForm />}
         </Form>

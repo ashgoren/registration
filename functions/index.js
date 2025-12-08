@@ -13,6 +13,7 @@ import { savePendingOrder, saveFinalOrder } from './api/database.js';
 import { createOrUpdatePaypalOrder, capturePaypalOrder } from './paypal/index.js';
 import { getStripePaymentIntent } from './stripe/index.js';
 import { checkPeopleThreshold } from './api/checkPeopleThreshold.js';
+import { createWaiverSubmission } from './api/waiver.js';
 
 // Firebase functions, wrapped in onCall/onRequest/onSchedule/onDocumentUpdated/onMessagePublished
 import { stripeWebhookHandler } from './stripe/index.js';
@@ -35,6 +36,7 @@ const firebaseFunctionDispatcherHandler = async (request) => {
 
   try {
     switch(action) {
+      case 'createWaiverSubmission': return await createWaiverSubmission(data);
       case 'checkPeopleThreshold': return await checkPeopleThreshold();
       case 'initializePayment': return await initializePayment(
         data,

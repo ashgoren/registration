@@ -1,5 +1,10 @@
+import { config } from 'config';
+
+const { SHOW_WAIVER } = config;
+
 const PAGES = [
   { key: 'people', label: 'Info', skip: false, showInStepper: true, validate: true },
+  { key: 'waiver', label: 'Waiver', skip: !SHOW_WAIVER, showInStepper: SHOW_WAIVER, validate: SHOW_WAIVER },
   { key: 'payment', label: 'Payment', skip: false, showInStepper: true, validate: true },
   { key: 'checkout', label: 'Checkout', skip: false, showInStepper: true, validate: false },
   { key: 'processing', label: 'Processing', skip: false, showInStepper: false, validate: false },

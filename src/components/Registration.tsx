@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { Typography, Button } from '@mui/material';
 import { Error, Header, Loading } from 'components/layouts';
@@ -50,8 +50,12 @@ const TestModeWarning = ({ setRegistering }: {
 const RealRegistration = () => {
   const { order } = useOrderData();
   const { paymentMethod } = useOrderPayment();
-  const { currentPage, error } = useOrderFlow();
+  const { currentPage, error, setError } = useOrderFlow();
   const CONFIRMATION_TITLE = paymentMethod === 'check' ? CONFIRMATION_CHECK_TITLE : CONFIRMATION_ELECTRONIC_TITLE;
+
+  useEffect(() => {
+    setError(null);
+  }, [currentPage]);
 
   const content = (
     <>
@@ -60,6 +64,7 @@ const RealRegistration = () => {
       <Header titleText={currentPage === 'confirmation' ? CONFIRMATION_TITLE : EVENT_TITLE}>
         {currentPage === 'people' && WAITLIST_MODE && <WaitlistNote />}
         {currentPage === 'people' && <IntroHeader />}
+        {currentPage === 'waiver' && <Typography variant='h6' align='center'>Waiver</Typography>}
         {currentPage === 'checkout' && <OrderSummary order={order} />}
       </Header>
 

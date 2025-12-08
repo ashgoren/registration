@@ -51,7 +51,7 @@ const config = {
   registration: {
     waitlist_mode: false,
     show_preregistration: false,
-    show_waiver: false,
+    show_waiver: true,
     admission_quantity_max: 4,
     fields: { // Order of form fields
       contact: ['first', 'last', 'nametag', 'pronouns', 'email', 'emailConfirmation', 'phone', 'address', 'apartment', 'city', 'state', 'zip', 'country'],

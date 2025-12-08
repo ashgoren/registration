@@ -2,7 +2,7 @@ import { Box, List, ListItem } from '@mui/material';
 import { StyledLink, StyledPaper, PageTitle, Paragraph, Header } from 'components/layouts/SharedStyles';
 import { mailtoLink } from 'utils/misc';
 import { config } from 'config';
-const { EMAIL_CONTACT, HOUSING_CONTACT } = config;
+const { EMAIL_CONTACT, HOUSING_CONTACT, SHOW_WAIVER } = config;
 
 export const About = () => {
   return (
@@ -43,12 +43,16 @@ export const About = () => {
         Full refunds will be given minus any transaction fees incurred. 
       </Paragraph>
 
-      <Header id='waiver'>
-        Waiver
-      </Header>
-      <Paragraph>
-        You will need to sign a <StyledLink to={'/some_event/some_event-waiver.pdf'}>waiver</StyledLink> and email it to <StyledLink to={mailtoLink(EMAIL_CONTACT)}>{EMAIL_CONTACT}</StyledLink>.<br />
-      </Paragraph>
+      {SHOW_WAIVER && (
+        <>
+          <Header id='waiver'>
+            Waiver
+          </Header>
+          <Paragraph>
+            You will need to sign a <StyledLink to={'/supersonic/supersonic-waiver.pdf'}>waiver</StyledLink> electronically <em>as part of the registration process</em>.
+          </Paragraph>
+        </>
+      )}
 
       <Header id='refund'>
         Refund Policy

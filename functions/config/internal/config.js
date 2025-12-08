@@ -40,7 +40,9 @@ const envVariables = [
   'EMAIL_FROM',
   'EMAIL_REPLY_TO',
   'EMAIL_IGNORE_TEST_DOMAINS',
-  'EMAIL_NOTIFY_TO'
+  'EMAIL_NOTIFY_TO',
+  'DOCUSEAL_KEY',
+  'DOCUSEAL_TEMPLATE_ID'
 ];
 
 let config = null;

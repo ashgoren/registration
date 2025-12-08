@@ -39,7 +39,7 @@ export const MiscInfo = ({ index, formikRef }: { index: number; formikRef: RefOb
   const updateMiscCommentsField = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     if (!formikRef.current) return;
     const { name, value, checked } = e.target;
-    console.log('updateMiscCommentsField', name, value, checked);
+    logDebug('updateMiscCommentsField', name, value, checked);
     const { setFieldValue, setFieldError, handleChange, values } = formikRef.current;
     const currentMisc = values.people[index].misc as string[];
     let newMisc;
@@ -66,7 +66,7 @@ export const MiscInfo = ({ index, formikRef }: { index: number; formikRef: RefOb
     if (!Array.isArray(share)) {
       throw new Error(`Expected share to be an array, got: ${share}`);
     }
-    console.log('Updating share field:', field, value, checked, share);
+    logDebug('Updating share field:', field, value, checked, share);
     if (value === 'name') {
       // if 'name' gets unchecked, uncheck all options
       setFieldValue(field, checked ? ['name'] : []);

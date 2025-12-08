@@ -403,6 +403,10 @@ export const fieldConfig: FieldConfig = {
     },
     defaultValue: [],
   },
+  waiver: {
+    validation: Yup.string(),
+    defaultValue: '',
+  },
   admission: {
     validation: Yup.number().min(ADMISSION_COST_RANGE[0]).max(ADMISSION_COST_RANGE[1]).required(),
     defaultValue: ADMISSION_COST_DEFAULT,

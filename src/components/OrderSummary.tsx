@@ -18,9 +18,6 @@ export const OrderSummary = ({ order }: { order: Order }) => {
   const isFullPayment = !isDeposit;
   const fees = Number(order.fees);
 
-  console.log('admissions', admissions);
-  console.log('admissions total', admissionsTotal);
-
   return (
     <>
       <Typography variant='body1' gutterBottom>
