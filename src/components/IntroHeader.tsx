@@ -2,7 +2,7 @@ import { Alert, Typography } from '@mui/material';
 import { StyledLink, Paragraph } from 'components/layouts/SharedStyles';
 import { mailtoLink } from 'utils/misc';
 import { config } from 'config';
-const { EMAIL_CONTACT, TECH_CONTACT, EVENT_TITLE, EVENT_LOCATION, EVENT_DATE } = config;
+const { EMAIL_CONTACT, TECH_CONTACT, EVENT_TITLE, EVENT_LOCATION, EVENT_DATE, SHOW_WAIVER } = config;
 
 export const IntroHeader = () => {
   return (
@@ -18,6 +18,17 @@ export const IntroHeader = () => {
       <Alert severity='info' sx={{ my: 3 }}>
         <Typography variant='body1'>After hitting save, there will be an opportunity to add additional attendees.</Typography>
       </Alert>
+      {SHOW_WAIVER && (
+        <Alert severity='warning' sx={{ my: 2 }}>
+          <Typography variant='body1' sx={{ fontWeight: 'bold' }}>
+            Important note regarding waivers:
+          </Typography>
+          <Typography variant='body1'>
+            Each individual attending must complete their own waiver.
+            If you are registering multiple people, please ensure each person is present to complete their waiver.
+          </Typography>
+        </Alert>
+      )}
     </>
   );
 };

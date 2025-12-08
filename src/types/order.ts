@@ -2,6 +2,7 @@ import type { AgeGroup } from 'config/configTieredPricing';
 
 export type Person = {
   email: string;
+  phone: string;
   first: string;
   last: string;
   state?: string;

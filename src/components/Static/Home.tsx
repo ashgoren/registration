@@ -1,10 +1,9 @@
 import { useTheme } from '@mui/system';
 import { Typography, Box } from '@mui/material';
 import { StyledLink, StyledPaper, PageTitle, SectionDivider, Paragraph } from 'components/layouts/SharedStyles';
-import { mailtoLink} from 'utils/misc';
 import { CalendarLinks } from 'components/CalendarLinks';
 import { config } from 'config';
-const { EMAIL_CONTACT, EVENT_TITLE, EVENT_LOCATION, EVENT_DATE, WAITLIST_MODE } = config;
+const { EVENT_TITLE, EVENT_LOCATION, EVENT_DATE, WAITLIST_MODE, SHOW_WAIVER } = config;
 
 export const Home = () => {
   const theme = useTheme();
@@ -55,9 +54,11 @@ export const Home = () => {
         See <StyledLink internal={true} to='/about#covid'>here</StyledLink> for the full Covid policy.<br />
       </Paragraph>
 
-      <Paragraph>
-        You will need to sign a <StyledLink to={'/some_event/waiver.pdf'}>waiver</StyledLink> and email it to <StyledLink to={mailtoLink(EMAIL_CONTACT)}>{EMAIL_CONTACT}</StyledLink>.<br />
-      </Paragraph>
+      {SHOW_WAIVER &&
+        <Paragraph>
+          You will need to sign a <StyledLink to={'/supersonic/supersonic-waiver.pdf'}>waiver</StyledLink> electronically <em>as part of the registration process</em>.
+        </Paragraph>
+      }
 
       <Paragraph>
         some_event is a fragrance-free event. Please use only fragrance-free products.

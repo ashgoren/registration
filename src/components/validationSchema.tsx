@@ -37,6 +37,14 @@ export const validationSchema = ({ currentPage }: { currentPage: string }) => {
     people: Yup.array().of(personValidationSchema)
   });
 
+  const waiverSchema=Yup.object({
+    people: Yup.array().of(
+      personValidationSchema.shape({
+        waiver: Yup.string().required()
+      })
+    )
+  });
+
   const paymentSchema=Yup.object({
     people: Yup.array().of(personValidationSchema),
     donation: Yup.number().min(0).max(DONATION_MAX)
@@ -44,6 +52,7 @@ export const validationSchema = ({ currentPage }: { currentPage: string }) => {
 
   const validationSchemas: Record<string, Yup.AnyObjectSchema> = {
     'people': peopleSchema,
+    'waiver': waiverSchema,
     'payment': paymentSchema
   };
 

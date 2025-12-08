@@ -41,6 +41,7 @@ type FirebaseFunctionData = {
     metadata: Record<string, unknown>;
   };
   checkPeopleThreshold: Record<string, never>;
+  createWaiverSubmission: { name: string; phone: string; email: string; };
 }
 
 export type FirebaseFunctionReturn = {
@@ -50,6 +51,7 @@ export type FirebaseFunctionReturn = {
   initializePayment: { id: string; amount: number; clientSecret?: string };
   logEvent: void;
   checkPeopleThreshold: { thresholdReached: boolean; totalPeople: number };
+  createWaiverSubmission: { slug: string };
 }
 
 type FirebaseCallableParams<T extends keyof FirebaseFunctionData> = {
@@ -139,5 +141,17 @@ export const logEvent = (params: {
 export const checkPeopleThreshold = async () => {
   return await firebaseFunctionDispatcher({
     action: 'checkPeopleThreshold'
+  });
+};
+
+export const createWaiverSubmission = async (params: {
+  name: string;
+  phone: string;
+  email: string;
+}) => {
+  return await firebaseFunctionDispatcher({
+    action: 'createWaiverSubmission',
+    data: params,
+    email: params.email
   });
 };
