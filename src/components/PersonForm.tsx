@@ -1,3 +1,4 @@
+import { useFormikContext } from 'formik';
 import { Box, Button } from '@mui/material';
 import { getFirstInvalidFieldName, sanitizeObject, getCountry } from 'utils/misc';
 import { useOrderData } from 'contexts/OrderDataContext';
@@ -6,27 +7,24 @@ import { MiscInfo } from './MiscInfo';
 import { logInfo, logDebug } from 'src/logger';
 import { getDefaultAdmission } from 'config/configTieredPricing';
 import { config } from 'config';
-import type { RefObject } from 'react';
 import type { Order } from 'types/order';
-import type { FormikProps, FormikTouched } from 'formik';
+import type { FormikTouched } from 'formik';
 import type { AgeGroup } from 'config/configTieredPricing';
 
 const { ADMISSIONS_MODE } = config;
 
-export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerson, resetForm, formikRef }: {
+export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerson }: {
   editIndex: number;
   setEditIndex: (index: number | null) => void;
   isNewPerson: boolean;
   setIsNewPerson: (isNew: boolean) => void;
-  resetForm: () => void;
-  formikRef: RefObject<FormikProps<Order> | null>;
 }) => {
-  logDebug('PersonForm rendered');
+  // logDebug('PersonForm rendered');
 
   const { order, updateOrder } = useOrderData();
+  const { values, validateForm, setTouched, setFieldValue, resetForm } = useFormikContext<Order>();
 
   async function validatePersonForm() {
-    const { validateForm, setTouched } = formikRef.current!;
     const errors = await validateForm();
     logDebug('PersonForm validation failed', errors);
     if (Object.keys(errors).length > 0) {
@@ -46,8 +44,6 @@ export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerso
   }
 
   function saveUpdatedOrder() {
-    const { values, setFieldValue } = formikRef.current!;
-
     // sanitize the order object
     const submittedOrder = Object.assign({}, values);
     const sanitizedOrder = sanitizeObject(submittedOrder);
@@ -78,7 +74,6 @@ export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerso
     logDebug('PersonForm handleSaveButton isValid:', isValid);
     if (isValid) {
       if (editIndex === 0) {
-        const { values } = formikRef.current!;
         logInfo(`Registration started: ${values.people[0].email}`); // warms up firebase function
       }
       saveUpdatedOrder();
@@ -88,9 +83,8 @@ export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerso
   }
 
   function handleCancelButton() {
-    const { values, setFieldValue } = formikRef.current!;
     setEditIndex(null);
-    resetForm();
+    resetForm({ values: order });
     if (isNewPerson) {
       const people = values.people.slice(0, -1);
       setFieldValue('people', people);
@@ -100,8 +94,8 @@ export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerso
 
   return (
     <>
-      <ContactInfo index={editIndex} formikRef={formikRef} />
-      <MiscInfo index={editIndex} formikRef={formikRef} />
+      <ContactInfo index={editIndex} />
+      <MiscInfo index={editIndex} />
       <Box sx={{ mt: 5, mb: 2 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           { order.people[0].email !== '' ?

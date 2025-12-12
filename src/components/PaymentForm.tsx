@@ -1,9 +1,14 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useFormikContext } from 'formik';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { Formik, Form } from 'formik';
+import { validationSchema } from './validationSchema';
+import { useBlocker } from 'react-router-dom';
+import { Header, NavButtons } from 'components/layouts';
+import { usePageNavigation } from 'hooks/usePageNavigation';
 import { Box, Tab, Tabs } from '@mui/material';
 import { TabPanel, TabContext } from '@mui/lab';
 import { StyledPaper, Title, Paragraph } from 'components/layouts/SharedStyles';
-import { clamp } from 'utils/misc';
+import { clamp, sanitizeObject } from 'utils/misc';
+import { logDebug } from 'src/logger';
 import { useScrollToTop } from 'hooks/useScrollToTop';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
 import { useOrderData } from 'contexts/OrderDataContext';
@@ -14,121 +19,184 @@ import { PaymentFormTotal } from './PaymentFormTotal';
 import { PaymentFormFullPayment } from './PaymentFormFullPayment';
 import { config } from 'config';
 import type { Order } from 'types/order';
+import type { FormikProps } from 'formik';
 
-const { DEPOSIT_OPTION, COVER_FEES_OPTION, DEPOSIT_COST, ADMISSION_COST_RANGE, DONATION_OPTION, PAYMENT_DUE_DATE, SHOW_PAYMENT_SUMMARY, ADMISSIONS_MODE } = config;
+const { DEPOSIT_OPTION, COVER_FEES_OPTION, DEPOSIT_COST, ADMISSION_COST_RANGE, DONATION_OPTION, PAYMENT_DUE_DATE, SHOW_PAYMENT_SUMMARY, ADMISSIONS_MODE, EVENT_TITLE } = config;
 
 export const PaymentForm = () => {
   const { order, updateOrder } = useOrderData();
-  const { values, setFieldValue } = useFormikContext<Order>();
+  const { goBack, goNext } = usePageNavigation();
   const [coverFees, setCoverFees] = useState(Number(order.fees) > 0);
   const [paymentTab, setPaymentTab] = useState(order.deposit > 0 ? 'deposit' : 'fullpayment');
+  const shouldProceedRef = useRef(false);
 
   useScrollToTop();
   useWarnBeforeUnload();
 
-  const donationTotal = useMemo(() => {
-    return Number(values.donation) || 0;
-  }, [values.donation]);
+  const handleSubmit = (values: Order) => {
+    saveForm(values);
+    goNext();
+  }
 
-  const payingMax = useMemo(() => {
-    return Number(values.people[0].admission) === ADMISSION_COST_RANGE[1];
-  }, [values.people]);
-
-  const admissionTotal = useMemo(() => {
-    return values.people.reduce((total, person) => total + clampAdmission(person.admission), 0);
-  }, [values.people]);
-
-  const depositTotal = useMemo(() => {
-    return DEPOSIT_COST * order.people.length;
-  }, [order.people.length]);
-
-  const total = useMemo(() => {
-    return paymentTab === 'deposit' ? depositTotal : admissionTotal + donationTotal;
-  }, [paymentTab, depositTotal, admissionTotal, donationTotal]);
-
-  const fees = useMemo(() => {
-    return (0.0245 * total + 0.5).toFixed(2);
-  }, [total]);
-
-  const feesTotal = useMemo(() => {
-    return coverFees ? Number(fees) : 0;
-  }, [fees, coverFees]);
-
-  const totalWithFees = useMemo(() => {
-    return total + feesTotal;
-  }, [total, feesTotal]);
-
-  useEffect(() => {
-    updateOrder({
-      total,
-      fees: coverFees ? parseFloat(fees) : 0
-    });
-  }, [total, fees, coverFees, updateOrder]);
-
-  const handlePaymentTab = (_: React.SyntheticEvent, newTab: string) => {
-    setFieldValue('deposit', newTab === 'deposit' ? order.people.length * DEPOSIT_COST : 0);
-    setPaymentTab(newTab);
-    if (newTab === 'deposit') setFieldValue('donation', 0);
+  // Triggered only after validation passes
+  const saveForm = (values: Order) => {
+    const submittedOrder = Object.assign({}, values);
+    logDebug('Payment form submitted:', values);
+    updateOrder(sanitizeObject({
+      ...submittedOrder,
+      deposit: submittedOrder.deposit ? submittedOrder.people.length * DEPOSIT_COST : 0,
+      total: order.total,
+      fees: order.fees
+    }));
+    shouldProceedRef.current = true;
   };
 
   return (
-    <section className='PaymentForm'>
+    <Formik
+      initialValues={order}
+      validationSchema={validationSchema({ currentPage: 'payment' })}
+      validateOnBlur={true}
+      validateOnChange={false}
+      onSubmit={handleSubmit}
+    >
+      {({ values, setFieldValue, dirty }: FormikProps<Order>) => {
 
-      <PaymentExplanation />
+        const blocker = useBlocker(dirty && !shouldProceedRef.current)
 
-      <div className='admissions-section'>
-        <StyledPaper className='admissions-cost'>
-
-          <Title>{ADMISSIONS_MODE === 'sliding-scale' ? 'Sliding scale' : 'Payment'}</Title>
-
-          {!DEPOSIT_OPTION && <PaymentFormFullPayment order={order} />}
-
-          {DEPOSIT_OPTION &&
-            <TabContext value={paymentTab}>
-              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <Tabs value={paymentTab} onChange={handlePaymentTab} aria-label="payment options tabs">
-                  <Tab label="Full Payment" value="fullpayment" sx={{ '&:hover': { bgcolor: 'primary.light', color: 'primary.contrastText' } }} />
-                  <Tab label="Deposit" value="deposit" sx={{ '&:hover': { bgcolor: 'primary.light', color: 'primary.contrastText' } }} />
-                </Tabs>
-              </Box>
-              <TabPanel value="fullpayment" sx={{ pl: 1, pr: 0 }}>
-                <PaymentFormFullPayment order={order} />
-              </TabPanel>
-              <TabPanel value="deposit" sx={{ pl: 1, pr: 0 }}>
-                <Paragraph>A deposit of ${DEPOSIT_COST} per person is required to reserve your spot.</Paragraph>
-                <Paragraph color='warning.main' sx={{ my: 2, fontWeight: 'bold' }}>The balance of the payment will be due by {PAYMENT_DUE_DATE}.</Paragraph>
-              </TabPanel>
-            </TabContext>
+        useEffect(() => {
+          if (blocker.state === 'blocked') {
+            if (shouldProceedRef.current) {
+              blocker.proceed();
+            } else {
+              blocker.reset();
+            }
           }
+        }, [blocker.state]);
 
-        </StyledPaper>
-
-        {DONATION_OPTION && paymentTab === 'fullpayment' && (payingMax || values['donation'] > 0) &&
-          <PaymentFormDonation
-            donationAmount={order.donation}
-          />
+        const handleBack = () => {
+          // Note that validation is not run when going back, but there's nothing really to validate on this page.
+          saveForm(values);
+          goBack();
         }
 
-        {COVER_FEES_OPTION &&
-          <PaymentFormFees
-            fees={Number(fees)}
-            coverFees={coverFees}
-            setCoverFees={setCoverFees}
-          />
-        }
+        const donationTotal = useMemo(() => {
+          return Number(values.donation) || 0;
+        }, [values.donation]);
 
-        {SHOW_PAYMENT_SUMMARY &&
-          <PaymentFormTotal
-            admissionTotal={admissionTotal}
-            depositTotal={depositTotal}
-            isDeposit={paymentTab === 'deposit'}
-            donationTotal={donationTotal}
-            feesTotal={feesTotal}
-            totalWithFees={totalWithFees}
-          />
-        }
-      </div>
-    </section>
+        const payingMax = useMemo(() => {
+          return Number(values.people[0].admission) === ADMISSION_COST_RANGE[1];
+        }, [values.people]);
+
+        const admissionTotal = useMemo(() => {
+          return values.people.reduce((total, person) => total + clampAdmission(person.admission), 0);
+        }, [values.people]);
+
+        const depositTotal = useMemo(() => {
+          return DEPOSIT_COST * order.people.length;
+        }, [order.people.length]);
+
+        const total = useMemo(() => {
+          return paymentTab === 'deposit' ? depositTotal : admissionTotal + donationTotal;
+        }, [paymentTab, depositTotal, admissionTotal, donationTotal]);
+
+        const fees = useMemo(() => {
+          return (0.0245 * total + 0.5).toFixed(2);
+        }, [total]);
+
+        const feesTotal = useMemo(() => {
+          return coverFees ? Number(fees) : 0;
+        }, [fees, coverFees]);
+
+        const totalWithFees = useMemo(() => {
+          return total + feesTotal;
+        }, [total, feesTotal]);
+
+        useEffect(() => {
+          updateOrder({
+            total,
+            fees: coverFees ? parseFloat(fees) : 0
+          });
+        }, [total, fees, coverFees, updateOrder]);
+
+        const handlePaymentTab = (_: React.SyntheticEvent, newTab: string) => {
+          setFieldValue('deposit', newTab === 'deposit' ? order.people.length * DEPOSIT_COST : 0);
+          setPaymentTab(newTab);
+          if (newTab === 'deposit') setFieldValue('donation', 0);
+        };
+        
+        return (
+          <>
+            <Header titleText={EVENT_TITLE} /> 
+
+            <Form spellCheck='false'>
+              <section className='PaymentForm'>
+
+                <PaymentExplanation />
+
+                <div className='admissions-section'>
+                  <StyledPaper className='admissions-cost'>
+
+                    <Title>{ADMISSIONS_MODE === 'sliding-scale' ? 'Sliding scale' : 'Payment'}</Title>
+
+                    {!DEPOSIT_OPTION && <PaymentFormFullPayment order={order} />}
+
+                    {DEPOSIT_OPTION &&
+                      <TabContext value={paymentTab}>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                          <Tabs value={paymentTab} onChange={handlePaymentTab} aria-label="payment options tabs">
+                            <Tab label="Full Payment" value="fullpayment" sx={{ '&:hover': { bgcolor: 'primary.light', color: 'primary.contrastText' } }} />
+                            <Tab label="Deposit" value="deposit" sx={{ '&:hover': { bgcolor: 'primary.light', color: 'primary.contrastText' } }} />
+                          </Tabs>
+                        </Box>
+                        <TabPanel value="fullpayment" sx={{ pl: 1, pr: 0 }}>
+                          <PaymentFormFullPayment order={order} />
+                        </TabPanel>
+                        <TabPanel value="deposit" sx={{ pl: 1, pr: 0 }}>
+                          <Paragraph>A deposit of ${DEPOSIT_COST} per person is required to reserve your spot.</Paragraph>
+                          <Paragraph color='warning.main' sx={{ my: 2, fontWeight: 'bold' }}>The balance of the payment will be due by {PAYMENT_DUE_DATE}.</Paragraph>
+                        </TabPanel>
+                      </TabContext>
+                    }
+
+                  </StyledPaper>
+
+                  {DONATION_OPTION && paymentTab === 'fullpayment' && (payingMax || values['donation'] > 0) &&
+                    <PaymentFormDonation
+                      donationAmount={order.donation}
+                    />
+                  }
+
+                  {COVER_FEES_OPTION &&
+                    <PaymentFormFees
+                      fees={Number(fees)}
+                      coverFees={coverFees}
+                      setCoverFees={setCoverFees}
+                    />
+                  }
+
+                  {SHOW_PAYMENT_SUMMARY &&
+                    <PaymentFormTotal
+                      admissionTotal={admissionTotal}
+                      depositTotal={depositTotal}
+                      isDeposit={paymentTab === 'deposit'}
+                      donationTotal={donationTotal}
+                      feesTotal={feesTotal}
+                      totalWithFees={totalWithFees}
+                    />
+                  }
+                </div>
+              </section>
+
+              <NavButtons 
+                back={{ text: 'Back', onClick: handleBack }}
+                next={{ text: 'Next' }}
+              />
+
+            </Form>
+          </>
+        );
+      }}
+    </Formik>
   );
 };
 

@@ -8,10 +8,12 @@ import { Receipt } from 'components/Receipt';
 import type { Order } from 'types/order';
 
 export const useOrderFinalization = () => {
-  const { orderId, order, setReceipt } = useOrderData();
+  const { order, setReceipt } = useOrderData();
   const { paymentMethod } = useOrderPayment();
 
-  const finalizeOrder = useCallback(async () => {
+  const finalizeOrder = useCallback(async ({ orderId, paymentId, paymentEmail, charged }:
+    { orderId: string; paymentId: string; paymentEmail?: string; charged: number }
+  ) => {
     const appendReceiptsToOrder = (order: Order) => {
       const peopleWithReceipts = order.people.map((person, i) => {
         const isPurchaser = i === 0;
@@ -38,9 +40,10 @@ export const useOrderFinalization = () => {
       }
     };
 
-    const finalOrder = appendReceiptsToOrder(order);
+    const updatedOrder = { ...order, orderId, charged, paymentId, ...(paymentEmail && { paymentEmail }) };
+    const finalOrder = appendReceiptsToOrder(updatedOrder);
     await saveFinalOrderToFirebase(finalOrder);
-  }, [orderId, order, paymentMethod, setReceipt]);
+  }, [order, paymentMethod, setReceipt]);
 
   return { finalizeOrder };
 };

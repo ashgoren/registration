@@ -10,6 +10,7 @@ import configBasics from './configBasics';
 import configFields from './configFields';
 import configTheme from '../configTheme';
 import configOrderSummary from '../configOrderSummary';
+import configNavigation from './configNavigation';
 
 export const config = {
   ...configEnv,
@@ -18,5 +19,6 @@ export const config = {
   ...configBasics,
   ...configFields,
   ...configTheme,
-  ...configOrderSummary
+  ...configOrderSummary,
+  ...configNavigation
 } as const;

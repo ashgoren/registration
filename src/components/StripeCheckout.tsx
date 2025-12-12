@@ -7,6 +7,9 @@ import { useOrderPayment } from 'contexts/OrderPaymentContext';
 import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { useOrderSaving } from 'hooks/useOrderSaving';
 import { useStripePayment } from 'hooks/useStripePayment';
+import { useOrderFinalization } from 'hooks/useOrderFinalization';
+import { usePageNavigation } from 'hooks/usePageNavigation';
+import { logDebug } from 'src/logger';
 import { config } from 'config';
 import type { FormEvent } from 'react';
 import type { StripeElementsOptions } from '@stripe/stripe-js';
@@ -34,9 +37,11 @@ function StripeCheckoutForm() {
   const elements = useElements();
   const { order, updateOrder } = useOrderData();
   const { electronicPaymentDetails: { clientSecret} } = useOrderPayment();
-  const { setCurrentPage, processing, setProcessing, setError } = useOrderFlow();
+  const { processing, setProcessing, setError } = useOrderFlow();
   const { savePendingOrder } = useOrderSaving();
   const { processPayment } = useStripePayment({ order, stripe, elements, clientSecret });
+  const { finalizeOrder } = useOrderFinalization();
+  const { goNext } = usePageNavigation();
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -55,34 +60,61 @@ function StripeCheckoutForm() {
     }
 
 		// Step 1: save pending order
+    let orderId: string;
 		try {
-			await savePendingOrder();
+			orderId = await savePendingOrder();
+      if (!orderId) {
+        throw new Error('Failed to obtain orderId after saving pending order.');
+      }
+      logDebug('Pending order saved successfully');
 		} catch (error: unknown) { // instance of HttpsError from backend or other error from savePendingOrder
+      const { code, message } = error as { code?: string; message?: string };
 			setError(
 				<>
 					We're sorry, but we experienced an issue saving your order.<br />
 					You were not charged.<br />
 					Please try again or contact {TECH_CONTACT} for assistance.<br />
-					Error: {(error as Error).message || error}
+          Error: {code} {message || error}
 				</>
 			);
 			setProcessing(false);
-			return ; // exit early if pending order save fails
+			return; // exit early if pending order save fails
 		}
 
     // Step 2: process payment (only reaches here if pending order saved successfully)
+    let paymentId: string;
+    let charged: number;
     try {
-      const { paymentId, amount } = await processPayment();
-      updateOrder({ paymentId, charged: amount });
-      setCurrentPage('processing');
+      ({ paymentId, amount: charged } = await processPayment());
+      updateOrder({ paymentId, charged });
+      logDebug('Payment processed successfully');
 		} catch (error: unknown) { // instance of HttpsError from backend or other error from processPayment
+      const { code, message } = error as { code?: string; message?: string };
 			setError(
 				<>
 					We're sorry, but we experienced an issue processing your payment.<br />
 					Please try again or contact {TECH_CONTACT} for assistance.<br />
-					Error: {(error as Error).message || error}
+					Error: {code} {message || error}
 				</>
 			);
+      setProcessing(false);
+      return; // exit early if payment processing fails
+    }
+
+    // Step 3: Save final order
+    try {
+      await finalizeOrder({ orderId, paymentId, charged });
+      logDebug('Final order saved successfully');
+      goNext();
+    } catch (error: unknown) { // instance of HttpsError from backend or other error from finalizeOrder
+      const { code, message } = error as { code?: string; message?: string };
+      setError(
+        <>
+          Your payment was processed successfully. However, we encountered an error updating your registration. Please contact {TECH_CONTACT}.
+          <br />
+          Error: {code} {message || error}
+        </>
+      );
       setProcessing(false);
     }
   };

@@ -3,17 +3,12 @@ import { useScrollToTop } from 'hooks/useScrollToTop';
 import { Title } from 'components/layouts/SharedStyles';
 import { ContactInfoInputs } from './ContactInfoInputs';
 import { config } from 'config';
-import { logDebug } from 'src/logger';
-import type { RefObject } from 'react';
-import type { Order } from 'types/order';
-import type { FormikProps } from 'formik';
+// import { logDebug } from 'src/logger';
 
 const { PERSON_INPUT_LABELS, PERSON_CONTACT_FIELDS } = config;
 
-export const ContactInfo = memo(({ index, formikRef }:
-  { index: number; formikRef: RefObject<FormikProps<Order> | null> }
-) => {
-  logDebug('ContactInfo rendered');
+export const ContactInfo = memo(({ index }:{ index: number }) => {
+  // logDebug('ContactInfo rendered');
 
   useScrollToTop();
 
@@ -23,7 +18,6 @@ export const ContactInfo = memo(({ index, formikRef }:
       <ContactInfoInputs
         index={index}
         fields={PERSON_CONTACT_FIELDS}
-        formikRef={formikRef}
       />
     </section>
   );

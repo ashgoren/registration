@@ -1,31 +1,31 @@
 import { useState, useCallback } from 'react';
+import { useFormikContext } from 'formik';
 import { Box } from '@mui/material';
 import { Title } from 'components/layouts/SharedStyles';
 import { useScrollToTop } from 'hooks/useScrollToTop';
 import { Field } from 'components/inputs';
 import { logDebug } from 'src/logger';
 import { config } from 'config';
-import type { RefObject, ChangeEvent, } from 'react';
-import type { FormikProps } from 'formik';
+import type { ChangeEvent, } from 'react';
 import type { Order } from 'types/order';
 import type { CustomFieldProps } from 'components/inputs/Field';
 
 const { FIELD_CONFIG, PERSON_MISC_FIELDS } = config;
 
-export const MiscInfo = ({ index, formikRef }: { index: number; formikRef: RefObject<FormikProps<Order> | null> }) => {
-  logDebug('MiscInfo rendered');
+export const MiscInfo = ({ index }: { index: number }) => {
+  // logDebug('MiscInfo rendered');
   
-  const [showPhotoCommentsField, setShowPhotoCommentsField] = useState(formikRef?.current?.values?.people?.[index]?.photo === 'Other');
-  const [showMiscCommentsField, setShowMiscCommentsField] = useState((formikRef?.current?.values?.people?.[index]?.misc as string[])?.includes('minor'));
+  const { values, setFieldValue, setFieldError, setFieldTouched, handleChange } = useFormikContext<Order>();
 
-  const fields = index === 0 ? PERSON_MISC_FIELDS : PERSON_MISC_FIELDS.filter(f => f !== 'agreement');
+  const [showPhotoCommentsField, setShowPhotoCommentsField] = useState(values.people?.[index]?.photo === 'Other');
+  const [showMiscCommentsField, setShowMiscCommentsField] = useState((values.people?.[index]?.misc as string[])?.includes('minor'));
+
+  const fields: string[] = index === 0 ? PERSON_MISC_FIELDS : PERSON_MISC_FIELDS.filter((field: string) => field !== 'agreement');
   
   useScrollToTop();
 
   const updatePhotoCommentsField = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    if (!formikRef.current) return;
     const { name, value } = e.target;
-    const { setFieldValue, setFieldError, handleChange } = formikRef.current;
     if (value === 'Other') {
       setShowPhotoCommentsField(true);
     } else {
@@ -34,13 +34,11 @@ export const MiscInfo = ({ index, formikRef }: { index: number; formikRef: RefOb
     }
     handleChange(e); // update formik values
     setFieldError(name, '');
-  }, [formikRef, index]);
+  }, [index]);
 
   const updateMiscCommentsField = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    if (!formikRef.current) return;
     const { name, value, checked } = e.target;
     logDebug('updateMiscCommentsField', name, value, checked);
-    const { setFieldValue, setFieldError, handleChange, values } = formikRef.current;
     const currentMisc = values.people[index].misc as string[];
     let newMisc;
     if (checked) {
@@ -56,13 +54,11 @@ export const MiscInfo = ({ index, formikRef }: { index: number; formikRef: RefOb
     }
     handleChange(e); // update formik values
     setFieldError(name, '');
-  }, [formikRef, index]);
+  }, [index]);
 
   const updateShareCheckboxOptions = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    if (!formikRef.current) return;
     const { name: field, value, checked } = e.target;
-    const { setFieldValue } = formikRef.current;
-    const { share } = formikRef.current.values.people[index];
+    const { share } = values.people[index];
     if (!Array.isArray(share)) {
       throw new Error(`Expected share to be an array, got: ${share}`);
     }
@@ -77,15 +73,13 @@ export const MiscInfo = ({ index, formikRef }: { index: number; formikRef: RefOb
         share.filter(option => option !== value)
       );
     }
-  }, [formikRef, index]);
+  }, [index]);
 
   const updateAgreementField = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
-    if (!formikRef.current) return;
     const { name, checked } = e.target;
-    const { setFieldValue, setFieldTouched } = formikRef.current;
     await setFieldValue(name, checked ? ['yes'] : []);
     setFieldTouched(name, true);
-  }, [formikRef]);
+  }, [setFieldValue, setFieldTouched]);
 
   const getOnChangeHandler = (field: string) => {
     if (field === 'share') return updateShareCheckboxOptions;

@@ -1,13 +1,13 @@
-import { Typography, Box } from '@mui/material';
-import { useOrderFlow } from 'contexts/OrderFlowContext';
+import { Typography } from '@mui/material';
+import { usePageNavigation } from 'hooks/usePageNavigation';
 import { MyStepper } from 'components/layouts';
 import { StyledPaper } from 'components/layouts/SharedStyles';
 import { config } from 'config';
 import type { ReactNode } from 'react';
-const { REGISTRATION_ONLY, WAITLIST_MODE } = config;
+const { REGISTRATION_ONLY } = config;
 
-export const Header = ({ titleText, children }: { titleText: string; children: ReactNode }) => {
-  const { currentPage } = useOrderFlow();
+export const Header = ({ titleText, children }: { titleText: string; children?: ReactNode }) => {
+  const { currentPage } = usePageNavigation();
 
   return (
     <StyledPaper>
@@ -17,10 +17,8 @@ export const Header = ({ titleText, children }: { titleText: string; children: R
         </Typography>
       }
 
-      {currentPage !== 'confirmation' && !WAITLIST_MODE &&
-        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-          <MyStepper />
-        </Box>
+      {currentPage !== 'confirmation' &&
+        <MyStepper />
       }
 
       {children}

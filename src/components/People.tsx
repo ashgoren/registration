@@ -1,109 +1,129 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useBlocker } from 'react-router-dom';
+import { Formik, Form } from 'formik';
+import { validationSchema } from './validationSchema';
 import { Box, Button, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { StyledPaper, Paragraph } from 'components/layouts/SharedStyles';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
 import { useOrderData } from 'contexts/OrderDataContext';
-import { useOrderFlow } from 'contexts/OrderFlowContext';
+import { usePageNavigation } from 'hooks/usePageNavigation';
 import { PersonForm } from './PersonForm';
 import { PersonSummary } from 'components/OrderSummary';
-import { logDebug } from 'src/logger';
+import { WaitlistNote } from 'components/WaitlistNote';
+import { Header, NavButtons } from 'components/layouts';
+import { IntroHeader } from 'components/IntroHeader';
 import { config } from 'config';
-import type { RefObject } from 'react';
 import type { Order, Person } from 'types/order';
 import type { FormikProps } from 'formik';
 
-const { ADMISSION_QUANTITY_MAX, PERSON_DEFAULTS } = config;
+const { ADMISSION_QUANTITY_MAX, PERSON_DEFAULTS, EVENT_TITLE, WAITLIST_MODE } = config;
 
-export const People = ({ formikRef }: { formikRef: RefObject<FormikProps<Order> | null> }) => {
-  logDebug('People rendered');
+export const People = () => {
+  // logDebug('People rendered');
 
   const { order, updateOrder } = useOrderData();
-  const { setShowNavButtons } = useOrderFlow();
+  const { goNext } = usePageNavigation();
   const [editIndex, setEditIndex] = useState(order.people[0].email === '' ? 0 : null);
   const [isNewPerson, setIsNewPerson] = useState(false);
 
   useWarnBeforeUnload();
-
-  useEffect(() => {
-    setShowNavButtons(editIndex === null);
-  }, [editIndex]);
-
-  const resetForm = () => {
-    formikRef.current!.resetForm({ values: order });
-  };
-
-  const handleAddNew = () => {
-    const { values, setFieldValue } = formikRef.current!
-    const people = [...values.people, PERSON_DEFAULTS];
-    setEditIndex(order.people.length);
-    setFieldValue('people', people); // update formik field array
-    setIsNewPerson(true);
-  };
-
-  const handleEdit = (personIndex: number) => {
-    setEditIndex(personIndex);
-  };
-
-  const handleDelete = (personIndex: number) => {
-    const person = order.people[personIndex];
-    if (window.confirm(`Remove ${person.first} ${person.last} from registration?`)) {
-      const people = order.people.filter((_, index) => index !== personIndex);
-      if (personIndex === 0 && people.length > 0) {
-        people[0].agreement = ['yes'];
-      } else if (people.length === 0) {
-        people.push(PERSON_DEFAULTS);
-        setEditIndex(0);
-        resetForm();
-      }
-      updateOrder({ people });
-      formikRef.current!.setFieldValue('people', people); // update formik field array
-    }
-  };
-
+  
   return (
-    <>
-      {(order.people.length > 1 || order.people[0].email || editIndex === null) &&
-        <StyledPaper>
-          <Paragraph sx={{ mb: 4 }}>
-            Please review your information. {order.people.length < ADMISSION_QUANTITY_MAX && 'You may also register an additional person below.'}
-          </Paragraph>
-          {order.people.map((person, index) => (
-            <Box key={index}>
-              {index !== editIndex && person.email && 
-                <PersonContainerAccordion
-                  person={person}
-                  personIndex={index}
-                  showButtons={editIndex === null}
-                  handleEdit={handleEdit} handleDelete={handleDelete}
-                />
-              }
-            </Box>
-          ))}
+    <Formik
+      initialValues={order}
+      validationSchema={validationSchema({ currentPage: 'people' })}
+      validateOnBlur={true}
+      validateOnChange={false}
+      onSubmit={goNext}
+    >
+      {({ values, setFieldValue, resetForm, dirty }: FormikProps<Order>) => {
 
-          { editIndex === null && order.people.length < ADMISSION_QUANTITY_MAX &&
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
-              <div />
-              <Button onClick={handleAddNew} variant='text' color='warning'>Add another person</Button>
-              <div />
-            </Box>
+        useBlocker(editIndex !== null && dirty);
+
+        const handleAddNew = () => {
+          const people = [...values.people, PERSON_DEFAULTS];
+          setEditIndex(order.people.length);
+          setFieldValue('people', people); // update formik field array
+          setIsNewPerson(true);
+        };
+
+        const handleEdit = (personIndex: number) => {
+          setEditIndex(personIndex);
+        };
+
+        const handleDelete = (personIndex: number) => {
+          const person = order.people[personIndex];
+          if (window.confirm(`Remove ${person.first} ${person.last} from registration?`)) {
+            const people = order.people.filter((_, index) => index !== personIndex);
+            if (personIndex === 0 && people.length > 0) {
+              people[0].agreement = ['yes'];
+            } else if (people.length === 0) {
+              people.push(PERSON_DEFAULTS);
+              setEditIndex(0);
+              resetForm({ values: order });
+            }
+            updateOrder({ people });
+            setFieldValue('people', people); // update formik field array
           }
-        </StyledPaper>
-      }
+        };
 
-      {editIndex !== null &&
-        <>
-          <StyledPaper>
-            <PersonForm
-              editIndex={editIndex} setEditIndex={setEditIndex}
-              isNewPerson={isNewPerson} setIsNewPerson={setIsNewPerson}
-              resetForm={resetForm}
-              formikRef={formikRef}
-            />
-          </StyledPaper>
-        </>
-      }
-    </>
+        return (
+          <>
+            <Header titleText={EVENT_TITLE}>
+              {WAITLIST_MODE && <WaitlistNote />}
+              <IntroHeader />
+            </Header>
+
+            <Form spellCheck='false'>
+              {(order.people.length > 1 || order.people[0].email || editIndex === null) &&
+                <StyledPaper>
+                  <Paragraph sx={{ mb: 4 }}>
+                    Please review your information. {order.people.length < ADMISSION_QUANTITY_MAX && 'You may also register an additional person below.'}
+                  </Paragraph>
+                  {order.people.map((person, index) => (
+                    <Box key={index}>
+                      {index !== editIndex && person.email && 
+                        <PersonContainerAccordion
+                          person={person}
+                          personIndex={index}
+                          showButtons={editIndex === null}
+                          handleEdit={handleEdit} handleDelete={handleDelete}
+                        />
+                      }
+                    </Box>
+                  ))}
+
+                  { editIndex === null && order.people.length < ADMISSION_QUANTITY_MAX &&
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+                      <div />
+                      <Button onClick={handleAddNew} variant='text' color='warning'>Add another person</Button>
+                      <div />
+                    </Box>
+                  }
+                </StyledPaper>
+              }
+
+              {editIndex !== null &&
+                <>
+                  <StyledPaper>
+                    <PersonForm
+                      editIndex={editIndex} setEditIndex={setEditIndex}
+                      isNewPerson={isNewPerson} setIsNewPerson={setIsNewPerson}
+                    />
+                  </StyledPaper>
+                </>
+              }
+
+              {editIndex === null &&
+                <NavButtons next={{ text: 'Next' }} />
+              }
+
+            </Form>
+          </>
+        );
+      }}
+    </Formik>
   );
 }
 

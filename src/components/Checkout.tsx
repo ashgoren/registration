@@ -1,8 +1,9 @@
 import { useEffect, useState, useRef } from 'react';
 import { Box, Typography } from '@mui/material';
-import { Loading, Error, NavButtons } from 'components/layouts';
+import { Header, Loading, Error, NavButtons } from 'components/layouts';
 import { StyledPaper, Title } from 'components/layouts/SharedStyles';
 import { formatCurrency } from 'utils/misc';
+import { usePageNavigation } from 'hooks/usePageNavigation';
 import { useScrollToTop } from 'hooks/useScrollToTop';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
 import { useOrderData } from 'contexts/OrderDataContext';
@@ -12,19 +13,20 @@ import { usePaymentInitialization } from 'hooks/usePaymentInitialization';
 import { TogglePaymentMode } from 'components/TogglePaymentMode';
 import { StripeCheckout } from 'components/StripeCheckout';
 import { PaypalCheckout } from 'components/PaypalCheckout';
+import { OrderSummary } from 'components/OrderSummary';
 import { Check } from 'components/Check';
-import { logDebug } from 'src/logger';
 import { config } from 'config';
 import type { Order } from 'types/order';
 
-const { TECH_CONTACT } = config;
+const { TECH_CONTACT, EVENT_TITLE } = config;
 
 export const Checkout = () => {
-  logDebug('RENDER Checkout');
+  // logDebug('RENDER Checkout');
 
   const { order } = useOrderData();
   const { paymentMethod, amountToCharge } = useOrderPayment();
-  const { setCurrentPage, processing, processingMessage, error, setError } = useOrderFlow();
+  const { processing, processingMessage, error, setError } = useOrderFlow();
+  const { goBack } = usePageNavigation();
   const { initializePayment, isInitializing } = usePaymentInitialization();
   const [paying, setPaying] = useState(false);
 
@@ -61,55 +63,53 @@ export const Checkout = () => {
 
   const handleClickBackButton = () => {
     setError(null);
-    setCurrentPage('payment');
+    goBack();
   };
 
   if (!isValidTotal(order)) {
     setError('Possible payment amount discrepancy. Please verify total is correct!');
   }
 
-  if (!amountToCharge || isInitializing) {
-    return (
-      <>
-        <StyledPaper extraStyles={{ textAlign: 'center' }}>
-          {error && <Box sx={{ mb: 4 }}><Error /></Box>}
-          <Loading text={`Retrieving total from ${paymentMethod}...`} />
-        </StyledPaper>
-        <NavButtons back={{ text: 'Back', onClick: handleClickBackButton }} />
-      </>
-    );
-  }
-
   return (
     <section>
+      <Header titleText={EVENT_TITLE}>
+        <OrderSummary order={order} />
+      </Header>
+
       <StyledPaper extraStyles={{ textAlign: 'center' }}>
 
-        {processing && <Loading processing={true} text={processingMessage} />}
-        {error && <Box sx={{ mb: 4 }}><Error /></Box>}
+        {isInitializing || !amountToCharge || !order.total
+        ? <Loading text={`Retrieving total from ${paymentMethod}...`} />
+        : <>
+            {processing && <Loading processing={true} text={processingMessage} />}
+            {error && <Box sx={{ mb: 4 }}><Error /></Box>}
 
-        {!processing &&
-          <>
-            <Typography variant='h6' gutterBottom><em>Please confirm the amount shown is correct!</em></Typography>
-            <Title>Amount due: ${formatCurrency(amountToCharge)}</Title>
+            {!processing &&
+              <>
+                <Typography variant='h6' gutterBottom><em>Please confirm the amount shown is correct!</em></Typography>
+                <Title>Amount due: ${formatCurrency(amountToCharge)}</Title>
+              </>
+
+            }
+
+            {paymentMethod === 'stripe' &&
+              <StripeCheckout total={amountToCharge} />
+            }
+
+            {paymentMethod === 'paypal' &&
+              <PaypalCheckout setPaying={setPaying} />
+            }
+
+            {paymentMethod === 'check' && 
+              <Check />
+            }
+
+            {!paying && !processing &&
+              <TogglePaymentMode />
+            }
           </>
-
         }
 
-        {paymentMethod === 'stripe' &&
-          <StripeCheckout total={amountToCharge} />
-        }
-
-        {paymentMethod === 'paypal' &&
-          <PaypalCheckout setPaying={setPaying} />
-        }
-
-        {paymentMethod === 'check' && 
-          <Check />
-        }
-
-        {!paying && !processing &&
-          <TogglePaymentMode />
-        }
       </StyledPaper>
 
       {!paying && !processing &&

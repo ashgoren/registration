@@ -3,40 +3,36 @@ import { cache, cached } from 'utils/misc';
 import type { ReactNode } from 'react';
 
 type OrderFlowContextType = {
-  currentPage: string;
-  setCurrentPage: (page: string) => void;
+  furthestPageReached: string;
+  setFurthestPageReached: (page: string) => void;
   processing: boolean;
   setProcessing: (processing: boolean) => void;
   processingMessage: string | null;
   setProcessingMessage: (message: string | null) => void;
   error: string | ReactNode | null;
   setError: (error: string | ReactNode | null) => void;
-  waitlistThresholdReached: boolean;
-  setWaitlistThresholdReached: (reached: boolean) => void;
-  showNavButtons: boolean;
-  setShowNavButtons: (show: boolean) => void;
+  isNavigating: boolean;
+  setIsNavigating: (navigating: boolean) => void;
 };
 
 const OrderFlowContext = createContext<OrderFlowContextType | null>(null);
 
 export const OrderFlowProvider = ({ children }: { children: ReactNode }) => {
-  const [currentPage, setCurrentPage] = useState<string>(cached('currentPage') || 'people');
+  const [furthestPageReached, setFurthestPageReached] = useState<string>(cached('furthestPageReached') || 'people');
   const [processing, setProcessing] = useState(false);
   const [processingMessage, setProcessingMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | ReactNode | null>(null);
-  const [waitlistThresholdReached, setWaitlistThresholdReached] = useState(false);
-  const [showNavButtons, setShowNavButtons] = useState(true);
+  const [isNavigating, setIsNavigating] = useState(false);
 
-  useEffect(() => { cache('currentPage', currentPage) }, [currentPage]);
+  useEffect(() => { cache('furthestPageReached', furthestPageReached) }, [furthestPageReached]);
 
   return (
     <OrderFlowContext.Provider value={{
-      currentPage, setCurrentPage,
+      furthestPageReached, setFurthestPageReached,
       processing, setProcessing,
       processingMessage, setProcessingMessage,
       error, setError,
-      waitlistThresholdReached, setWaitlistThresholdReached,
-      showNavButtons, setShowNavButtons,
+      isNavigating, setIsNavigating
     }}>
       {children}
     </OrderFlowContext.Provider>
