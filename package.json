@@ -48,7 +48,7 @@
   "scripts": {
     "start": "doppler run -- vite",
     "dev": "doppler run -- vite",
-    "build": "doppler run -- vite build",
+    "build": "vite build",
     "tsc": "tsc -b",
     "lint": "eslint src --config eslint.config.ts --max-warnings 0",
     "preview": "vite preview",
