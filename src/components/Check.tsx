@@ -4,16 +4,20 @@ import { Loading } from 'components/layouts';
 import { useOrderData } from 'contexts/OrderDataContext';
 import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { useOrderSaving } from 'hooks/useOrderSaving';
+import { useOrderFinalization } from 'hooks/useOrderFinalization';
+import { usePageNavigation } from 'hooks/usePageNavigation';
 import { StyledLink } from 'components/layouts/SharedStyles';
 import { mailtoLink } from 'utils/misc';
-import { logErrorDebug } from 'src/logger';
+import { logDebug, logErrorDebug } from 'src/logger';
 import { config } from 'config';
 const { SHOW_CHECK_ADDRESS, CHECK_ADDRESS, CHECK_TO, ENV, TECH_CONTACT, EMAIL_CONTACT } = config;
 
 export const Check = () => {
   const { updateOrder } = useOrderData();
-  const { processing, setCurrentPage, error, setError } = useOrderFlow();
+  const { processing, error, setError } = useOrderFlow();
   const { savePendingOrder, isSaving } = useOrderSaving();
+  const { finalizeOrder } = useOrderFinalization();
+  const { goNext } = usePageNavigation();
   const [ready, setReady] = useState(ENV === 'dev');
 
   setTimeout(() => {
@@ -22,16 +26,22 @@ export const Check = () => {
 
   const handleRegister = async () => {
     try {
-      await savePendingOrder();
-      updateOrder({ paymentId: 'check', charged: 0 });
-      setCurrentPage('processing');
+      const orderId = await savePendingOrder();
+      logDebug('Pending order saved successfully');
+      const paymentId = 'check';
+      const charged = 0;
+      updateOrder({ paymentId, charged });
+      await finalizeOrder({ orderId, paymentId, charged });
+      logDebug('Final order saved successfully');
+      goNext();
     } catch (error) { // instance of HttpsError from backend or other error
-      logErrorDebug('Error saving pending order:', error);
+      logErrorDebug('Error saving order:', error);
+      const { code, message } = error as { code?: string; message?: string };
       setError(
 				<>
 					We're sorry, but we experienced an issue saving your order.<br />
 					Please try again or contact {TECH_CONTACT} for assistance.<br />
-					Error: {error instanceof Error ? error.message : String(error)}
+					Error: {code} {message || error}
 				</>
       );
       return;

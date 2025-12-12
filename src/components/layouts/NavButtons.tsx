@@ -1,3 +1,4 @@
+import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { Box, Button, useMediaQuery, useTheme } from '@mui/material';
 import { MyMobileStepper } from 'components/layouts';
 import { StyledPaper } from 'components/layouts/SharedStyles';
@@ -5,7 +6,7 @@ import { StyledPaper } from 'components/layouts/SharedStyles';
 export interface NavButtonsProps {
   next?: {
     text: string;
-    onClick: () => void;
+    onClick?: () => void;
     disable?: boolean;
   };
   back?: {
@@ -17,6 +18,7 @@ export interface NavButtonsProps {
 
 export const NavButtons = ({ back, next }: NavButtonsProps) => {
   const theme = useTheme();
+  const { isNavigating } = useOrderFlow();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   if (isMobile) {
@@ -29,7 +31,13 @@ export const NavButtons = ({ back, next }: NavButtonsProps) => {
 
         <Box>
           {back && (
-            <Button color='inherit' variant='outlined' type='button' onClick={back.onClick} disabled={back.disable}>
+            <Button
+              type='button'
+              onClick={back.onClick}
+              disabled={back.disable}
+              color='inherit'
+              variant='outlined'
+            >
               {back.text}
             </Button>
           )}
@@ -37,8 +45,14 @@ export const NavButtons = ({ back, next }: NavButtonsProps) => {
 
         <Box sx={{ marginLeft: 'auto' }}>
           {next && (
-            <Button color='secondary' variant='contained' onClick={next.onClick} disabled={next.disable}>
-              {next.text}
+            <Button
+              type={next.onClick ? 'button' : 'submit'}
+              onClick={next.onClick}
+              disabled={next.disable || isNavigating}
+              color='secondary'
+              variant='contained'
+            >
+              {isNavigating ? 'Thinking...' : next.text}
             </Button>
           )}
         </Box>

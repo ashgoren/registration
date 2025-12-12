@@ -2,11 +2,14 @@ import { Stepper, Step, StepLabel, MobileStepper, Button } from '@mui/material';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import { StyledPaper } from 'components/layouts/SharedStyles';
 import { useOrderFlow } from 'contexts/OrderFlowContext';
-import { STEPPER_PAGES } from 'utils/pageFlow';
+import { usePageNavigation } from 'hooks/usePageNavigation';
+import { config } from 'config';
 import type { NavButtonsProps } from 'components/layouts/NavButtons';
 
+const { STEPPER_PAGES } = config;
+
 export const MyStepper = () => {
-  const { currentPage } = useOrderFlow();
+  const { currentPage } = usePageNavigation();
 
   return (
     <Stepper
@@ -27,7 +30,8 @@ export const MyStepper = () => {
 };
 
 export const MyMobileStepper = ({ back, next }: NavButtonsProps) => {
-  const { currentPage } = useOrderFlow();
+  const { currentPage } = usePageNavigation();
+  const { isNavigating } = useOrderFlow();
 
   return (
     <StyledPaper>
@@ -42,11 +46,11 @@ export const MyMobileStepper = ({ back, next }: NavButtonsProps) => {
         activeStep={STEPPER_PAGES.findIndex(step => step.key === currentPage)}
         backButton={back ?
           <Button
-            color='secondary'
-            onClick={back.onClick}
             type='button'
-            size='medium'
+            onClick={back.onClick}
             disabled={back.disable}
+            color='secondary'
+            size='medium'
             sx={!back ? { visibility: 'hidden' } : {}}
           >
             <KeyboardArrowLeft />{back.text}
@@ -55,14 +59,14 @@ export const MyMobileStepper = ({ back, next }: NavButtonsProps) => {
         }
         nextButton={next ?
           <Button
-            color='secondary'
+            type={next.onClick ? 'button' : 'submit'}
             onClick={next.onClick}
-            type='button'
+            disabled={next.disable || isNavigating}
+            color='secondary'
             size='medium'
-            disabled={next.disable}
             sx={!next ? { visibility: 'hidden' } : {}}
           >
-            {next.text}<KeyboardArrowRight />
+            {isNavigating ? 'Thinking...' : next.text}<KeyboardArrowRight />
           </Button>
         : <div />
         }
