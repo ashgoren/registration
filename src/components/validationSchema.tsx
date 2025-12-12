@@ -1,13 +1,12 @@
 import * as Yup from 'yup';
-import { VALIDATION_PAGES } from 'utils/pageFlow';
 import { config } from 'config';
 
-const { FIELD_CONFIG, PERSON_FIELDS, DONATION_MAX } = config;
+const { FIELD_CONFIG, PERSON_FIELDS, DONATION_MAX, VALIDATION_PAGES } = config;
 
 export const validationSchema = ({ currentPage }: { currentPage: string }) => {
-  if (!VALIDATION_PAGES.find(page => page.key === currentPage)) return null;
+  if (!VALIDATION_PAGES.find((page: { key: string }) => page.key === currentPage)) return null;
 
-  const personValidationObject = PERSON_FIELDS.reduce((obj, fieldName) => {
+  const personValidationObject = PERSON_FIELDS.reduce((obj: Record<string, Yup.AnySchema>, fieldName: string) => {
     const fieldConfig = FIELD_CONFIG[fieldName];
 
     // Validate fieldConfig
@@ -37,14 +36,6 @@ export const validationSchema = ({ currentPage }: { currentPage: string }) => {
     people: Yup.array().of(personValidationSchema)
   });
 
-  const waiverSchema=Yup.object({
-    people: Yup.array().of(
-      personValidationSchema.shape({
-        waiver: Yup.string().required()
-      })
-    )
-  });
-
   const paymentSchema=Yup.object({
     people: Yup.array().of(personValidationSchema),
     donation: Yup.number().min(0).max(DONATION_MAX)
@@ -52,8 +43,8 @@ export const validationSchema = ({ currentPage }: { currentPage: string }) => {
 
   const validationSchemas: Record<string, Yup.AnyObjectSchema> = {
     'people': peopleSchema,
-    'waiver': waiverSchema,
-    'payment': paymentSchema
+    'payment': paymentSchema,
+    'waitlist': paymentSchema
   };
 
   return validationSchemas[currentPage];

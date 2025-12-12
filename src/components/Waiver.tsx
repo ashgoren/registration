@@ -1,35 +1,33 @@
-import { useEffect, useState } from 'react';
-import { useFormikContext } from 'formik';
+import { useState } from 'react';
+import { useBlocker } from 'react-router-dom';
 import { Button, Typography, Box } from '@mui/material';
 import { DocusealForm } from '@docuseal/react'
 import { createWaiverSubmission } from 'src/firebase';
-import { Loading } from 'components/layouts';
+import { Loading, Header, NavButtons, Error } from 'components/layouts';
 import { StyledPaper, StyledLink } from 'components/layouts/SharedStyles';
 import { useOrderData } from 'contexts/OrderDataContext';
 import { useOrderFlow } from 'contexts/OrderFlowContext';
+import { usePageNavigation } from 'hooks/usePageNavigation';
 import { config } from 'config';
 import { logDebug } from 'src/logger';
-// import { NavButtons } from 'components/layouts';
-import type { Order, Person } from 'types/order';
+import type { Person } from 'types/order';
 
-const { TECH_CONTACT } = config;
+const { TECH_CONTACT, EVENT_TITLE } = config;
 
-export const WaiverWrapper = ({ setDisableNext }: { setDisableNext: (disable: boolean) => void }) => {
-  const { updateOrder } = useOrderData();
-  const { setError } = useOrderFlow();
+export const WaiverWrapper = () => {
+  const { order, updateOrder } = useOrderData();
+  const { error, setError } = useOrderFlow();
+  const { goNext, goBack } = usePageNavigation();
 
-  const { values, setFieldValue } = useFormikContext<Order>();
   const [selectedPersonIndex, setSelectedPersonIndex] = useState<number | undefined>(undefined);
   const [isCreatingWaiver, setIsCreatingWaiver] = useState(false);
   const [waiverSlug, setWaiverSlug] = useState<string | null>(null);
   
-  const people = values?.people || [];
+  const people = order.people || [];
   const isShowingWaiver = selectedPersonIndex !== undefined;
   const allWaiversComplete = people.every(person => person.waiver);
 
-  useEffect(() => {
-    setDisableNext(!allWaiversComplete);
-  }, [allWaiversComplete, setDisableNext]);
+  useBlocker(isShowingWaiver);
 
   const handleCreateWaiver = async (idx: number) => {
     const person = people[idx];
@@ -57,28 +55,24 @@ export const WaiverWrapper = ({ setDisableNext }: { setDisableNext: (disable: bo
 
   const handleWaiverComplete = (data: { submission: { url: string } }) => {
     logDebug('Waiver completed:', data);
-    const updatedPeople = values.people.map((person, idx) => 
+    const updatedPeople = people.map((person, idx) => 
       idx === selectedPersonIndex
         ? { ...person, waiver: data.submission.url }
         : person
     );
-    setFieldValue('people', updatedPeople);
     updateOrder({ people: updatedPeople });
     setSelectedPersonIndex(undefined);
     setWaiverSlug(null);
   };
 
-  // const handleBack = () => {
-  //   setError(null);
-  //   if (isShowingWaiver) {
-  //     setSelectedPersonIndex(undefined);
-  //   } else {
-  //     setCurrentPage(currentPage - 1);
-  //   }
-  // };
-
   return (
     <>
+      <Header titleText={EVENT_TITLE}>
+        <Typography variant='h6' align='center'>Waiver</Typography>
+      </Header>
+
+      {error && <Box sx={{ mb: 4 }}><Error /></Box>}
+
       {isShowingWaiver ? (
         <>
           <Waiver
@@ -87,13 +81,19 @@ export const WaiverWrapper = ({ setDisableNext }: { setDisableNext: (disable: bo
             onComplete={handleWaiverComplete}
             isCreatingWaiver={isCreatingWaiver}
           />
-          {/* <NavButtons back={{ text: 'Cancel', onClick: () => setSelectedPersonIndex(undefined) }} /> */}
+          <NavButtons back={{ text: 'Cancel', onClick: () => setSelectedPersonIndex(undefined) }} />
         </>
       ) : (
-        <PersonList
-          people={people}
-          onSelect={handleCreateWaiver}
-        />
+        <>
+          <PersonList
+            people={people}
+            onSelect={handleCreateWaiver}
+          />
+          <NavButtons
+            back={{ text: 'Back', onClick: () => goBack() }}
+            next={{ text: 'Next', onClick: () => goNext(), disable: !allWaiversComplete }}
+          />
+        </>
       )}
     </>
   );

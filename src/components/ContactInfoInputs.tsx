@@ -1,28 +1,27 @@
 import { memo, useState } from 'react';
+import { useFormikContext } from 'formik';
 import { Grid, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
 import { Field } from 'components/inputs';
 import { config } from 'config';
-import { logDebug } from 'src/logger';
-import type { FormikProps } from 'formik';
+// import { logDebug } from 'src/logger';
 import type { Order, Person } from 'types/order';
-import type { RefObject, FocusEvent } from 'react';
+import type { FocusEvent } from 'react';
 
 const { FIELD_CONFIG, INCLUDE_LAST_ON_NAMETAG } = config;
 
-export const ContactInfoInputs = memo(({ fields, index, formikRef }:
-  { fields: string[]; index: number; formikRef: RefObject<FormikProps<Order> | null> }
-) => {
-  logDebug('ContactInfoInputs rendered');
+export const ContactInfoInputs = memo(({ fields, index }:{ fields: string[]; index: number; }) => {
+  // logDebug('ContactInfoInputs rendered');
+
+  const { values, setFieldValue, handleBlur } = useFormikContext<Order>();
 
   const addressFields = fields.filter((field) => ['address', 'apartment', 'city', 'state', 'zip', 'country'].includes(field));
   const otherFields = fields.filter((field) => !addressFields.includes(field));
   const mainFields = fields.includes('address') ? otherFields : fields;
-  const firstPersonValues = index > 0 ? formikRef.current!.values.people[0] as Person : null;
+  const firstPersonValues = index > 0 ? values.people[0] as Person : null;
   const [isChecked, setIsChecked] = useState(false);
 
   const triggerSetNametagField = `people[${index}].${INCLUDE_LAST_ON_NAMETAG ? 'last' : 'first'}`;
   const setNametag = (e: FocusEvent<HTMLInputElement>) => {
-    const { values, setFieldValue, handleBlur } = formikRef.current!;
     handleBlur(e);  // bubble up to default Formik onBlur handler
     const { first, last, nametag } = values.people[index];
     if (nametag) return;
@@ -81,7 +80,7 @@ export const ContactInfoInputs = memo(({ fields, index, formikRef }:
                       if (checked) {
                         addressFields.forEach((field) => {
                           const fieldName = `people[${index}].${field}`;
-                          formikRef.current!.setFieldValue(fieldName, (firstPersonValues as Person)[field]);
+                          setFieldValue(fieldName, (firstPersonValues as Person)[field]);
                         });
                       }
                     }}

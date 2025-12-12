@@ -44,14 +44,14 @@ const config = {
   },
 
   static_pages: {
-    enabled: true,
+    enabled: false,
     components: ['Home', 'About', 'Staff', 'Seattle', 'Contact', 'Schedule', 'PaymentExplanation'], // These must exist in src/components/Static
   },
 
   registration: {
     waitlist_mode: false,
     show_preregistration: false,
-    show_waiver: true,
+    show_waiver: false,
     admission_quantity_max: 4,
     fields: { // Order of form fields
       contact: ['first', 'last', 'nametag', 'pronouns', 'email', 'emailConfirmation', 'phone', 'address', 'apartment', 'city', 'state', 'zip', 'country'],

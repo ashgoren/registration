@@ -29,6 +29,7 @@ const baseConfig = {
   SHOW_WAIVER: registration.show_waiver,
 
   PAYMENT_METHODS: payments.checks.allowed ? [payments.processor as PaymentMethod, 'check' as PaymentMethod] : [payments.processor as PaymentMethod],
+  PAYMENT_PROCESSOR: payments.processor as PaymentMethod,
   SHOW_PAYMENT_SUMMARY: payments.show_payment_summary,
 
   ADMISSION_QUANTITY_MAX: registration.admission_quantity_max,
