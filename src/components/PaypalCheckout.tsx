@@ -66,7 +66,7 @@ export const PaypalCheckout = ({ setPaying }: {
 			);
 			setPaying(false);
 			setProcessing(false);
-			return ; // exit early if pending order save fails
+			return; // exit early if pending order save fails
 		}
 
 		// Step 2: process payment (only reaches here if pending order saved successfully)
