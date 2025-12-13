@@ -160,7 +160,7 @@ export const fieldConfig: FieldConfig = {
     ],
     required: true,
     validation: Yup.string().required('Please select age range.'),
-    defaultValue: '',
+    defaultValue: 'adult',
   },
   share: {
     title: "Roster",

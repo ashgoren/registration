@@ -26,7 +26,9 @@ export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerso
 
   async function validatePersonForm() {
     const errors = await validateForm();
-    logDebug('PersonForm validation failed', errors);
+    if (Object.keys(errors).length > 0) {
+      logDebug('PersonForm validation failed', errors);
+    }
     if (Object.keys(errors).length > 0) {
       logDebug('validatePersonForm errors:', errors);
       setTouched(errors as FormikTouched<Order>, true); // show errors

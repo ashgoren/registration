@@ -14,13 +14,17 @@ const { FIELD_CONFIG, PERSON_MISC_FIELDS } = config;
 
 export const MiscInfo = ({ index }: { index: number }) => {
   // logDebug('MiscInfo rendered');
-  
+
   const { values, setFieldValue, setFieldError, setFieldTouched, handleChange } = useFormikContext<Order>();
 
   const [showPhotoCommentsField, setShowPhotoCommentsField] = useState(values.people?.[index]?.photo === 'Other');
   const [showMiscCommentsField, setShowMiscCommentsField] = useState((values.people?.[index]?.misc as string[])?.includes('minor'));
 
   const fields: string[] = index === 0 ? PERSON_MISC_FIELDS : PERSON_MISC_FIELDS.filter((field: string) => field !== 'agreement');
+
+  const firstPersonAgeOptions = fields.includes('age')
+    ? FIELD_CONFIG.age.options?.filter(option => option.value === 'adult' || option.value === '13-17')
+    : null;
   
   useScrollToTop();
 
@@ -100,11 +104,12 @@ export const MiscInfo = ({ index }: { index: number }) => {
           const { field, type, title, label, options, ...props } = input;
           if (field === 'photoComments' && !showPhotoCommentsField) return null;
           if (field === 'miscComments' && !showMiscCommentsField) return null;
+          const updatedOptions = (field === 'age' && index === 0) ? firstPersonAgeOptions : options;
           const fieldProps = {
             type,
             label,
             name: `people[${index}].${field}`,
-            options: type === 'checkbox' || type === 'radio' ? options : undefined,
+            options: type === 'checkbox' || type === 'radio' ? updatedOptions : undefined,
             onChange: getOnChangeHandler(field),
           ...props
           } as CustomFieldProps;
