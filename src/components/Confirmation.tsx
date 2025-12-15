@@ -5,7 +5,6 @@ import { mailtoLink, websiteLink } from 'utils/misc';
 import { useOrderData } from 'contexts/OrderDataContext';
 import { useOrderPayment } from 'contexts/OrderPaymentContext';
 import { config } from 'config';
-const { EMAIL_CONTACT, EVENT_TITLE, MORE_INFO_URL, REGISTRATION_ONLY, CONFIRMATION_ELECTRONIC_TITLE, CONFIRMATION_CHECK_TITLE } = config;
 
 export const Confirmation = () => {
   const { receipt } = useOrderData();
@@ -15,18 +14,21 @@ export const Confirmation = () => {
 
   return (
     <>
-      {!REGISTRATION_ONLY &&
+      {!config.registrationOnly &&
         <Header
-          titleText={paymentMethod === 'check' ? CONFIRMATION_CHECK_TITLE : CONFIRMATION_ELECTRONIC_TITLE}
+          titleText = { paymentMethod === 'check'
+            ? `${config.event.title} Registration`
+            : `${config.event.title} Confirmation`
+          }
         />
       }
 
       <StyledPaper>
         <Paragraph>
-          Thank you for registering to join us at {EVENT_TITLE}!
+          Thank you for registering to join us at {config.event.title}!
           You will be emailed your registration information for your records.
-          You can find information about camp at <StyledLink to={websiteLink(MORE_INFO_URL)}>{MORE_INFO_URL}</StyledLink> and we will email you in the weeks before camp.
-          If you have any questions, please contact us at <StyledLink to={mailtoLink(EMAIL_CONTACT)}>{EMAIL_CONTACT}</StyledLink>.
+          You can find information about camp at <StyledLink to={websiteLink(config.links.info)}>{config.links.info}</StyledLink> and we will email you in the weeks before camp.
+          If you have any questions, please contact us at <StyledLink to={mailtoLink(config.contacts.info)}>{config.contacts.info}</StyledLink>.
         </Paragraph>
 
         <SectionDivider />

@@ -7,8 +7,6 @@ import { config } from 'config';
 import type { PaymentMethod, ElectronicPaymentMethod } from 'types/payment';
 import type { FirebaseFunctionReturn } from 'src/firebase';
 
-const { EVENT_TITLE_WITH_YEAR, ENV } = config;
-
 export const usePaymentInitialization = () => {
   const { order } = useOrderData();
   const { paymentMethod, electronicPaymentDetails, setElectronicPaymentDetails, setAmountToCharge } = useOrderPayment();
@@ -35,7 +33,7 @@ export const usePaymentInitialization = () => {
         paymentId: electronicPaymentDetails?.id, // pass existing payment intent id; null for new orders
         paymentMethod: paymentMethod as ElectronicPaymentMethod,
         idempotencyKey,
-        description: ENV === 'prd' ? EVENT_TITLE_WITH_YEAR : `${EVENT_TITLE_WITH_YEAR} - ${ENV}`,
+        description: config.env === 'prd' ? config.event.titleWithYear : `${config.event.titleWithYear} - ${config.env}`,
         email
       });
 

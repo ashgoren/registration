@@ -11,7 +11,6 @@ import { usePageNavigation } from 'hooks/usePageNavigation';
 import { OrderSummary } from 'components/OrderSummary';
 import { logDebug, logErrorDebug } from 'src/logger';
 import { config } from 'config';
-const { ENV, TECH_CONTACT, WAITLIST_MODE } = config;
 
 export const Waitlist = () => {
   const { order, updateOrder } = useOrderData();
@@ -19,7 +18,7 @@ export const Waitlist = () => {
   const { savePendingOrder, isSaving } = useOrderSaving();
   const { finalizeOrder } = useOrderFinalization();
   const { goBack } = usePageNavigation();
-  const [ready, setReady] = useState(ENV === 'dev');
+  const [ready, setReady] = useState(config.env === 'dev');
   const [confirmed, setConfirmed] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -49,7 +48,7 @@ export const Waitlist = () => {
       setError(
 				<>
 					We're sorry, but we experienced an issue saving your order.<br />
-					Please try again or contact {TECH_CONTACT} for assistance.<br />
+					Please try again or contact {config.contacts.tech} for assistance.<br />
 					Error: {code} {message || error}
 				</>
       );
@@ -64,7 +63,7 @@ export const Waitlist = () => {
           {submitted ? 'Success!' : 'Waitlist Sign-up'}
         </Typography>
 
-        {!WAITLIST_MODE &&
+        {!config.registration.waitlistMode &&
           <Alert severity='warning' sx={{ mb: 4 }}>
             We apologize but we have just hit our registration capacity. You can sign up for the waitlist below and we will notify you if a spot becomes available.
           </Alert>

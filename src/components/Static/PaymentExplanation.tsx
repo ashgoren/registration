@@ -2,7 +2,6 @@ import { Typography } from '@mui/material';
 import { StyledLink, StyledPaper, Title, Paragraph } from 'components/layouts/SharedStyles';
 import { websiteLink } from 'utils/misc';
 import { config } from 'config';
-const { DIRECT_PAYMENT_URL, PAYMENT_DUE_DATE } = config;
 
 export const PaymentExplanation = () => {
   return (
@@ -43,7 +42,7 @@ export const PaymentExplanation = () => {
 
       <Title sx={{mt: 4}}>Deposit</Title>
       <Paragraph>
-        If paying the full price at time of registration is stressful, you can pay $50 to hold your spot and send the remainder via PayPal to <StyledLink to={websiteLink(DIRECT_PAYMENT_URL)}>here</StyledLink> as soon as possible, and no later than {PAYMENT_DUE_DATE}.
+        If paying the full price at time of registration is stressful, you can pay $50 to hold your spot and send the remainder via PayPal to <StyledLink to={websiteLink(config.payments.directPaymentUrl)}>here</StyledLink> as soon as possible, and no later than {config.payments.paymentDueDate}.
       </Paragraph>
 
       <Title sx={{mt: 4}}>Cancellations</Title>

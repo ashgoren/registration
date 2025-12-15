@@ -14,17 +14,16 @@ import { config } from 'config';
 import type { FormEvent } from 'react';
 import type { StripeElementsOptions } from '@stripe/stripe-js';
 
-const { SANDBOX_MODE, PAYMENT_METHODS, TECH_CONTACT } = config;
 const { VITE_STRIPE_PUBLISHABLE_KEY } = import.meta.env;
 
-const stripePromise = PAYMENT_METHODS.includes('stripe') ? loadStripe(VITE_STRIPE_PUBLISHABLE_KEY) : null;
+const stripePromise = config.payments.processor === 'stripe' ? loadStripe(VITE_STRIPE_PUBLISHABLE_KEY) : null;
 
 // this wrapper is required to use the Stripe Elements component
 export const StripeCheckout = ({ total }: { total: number }) => {
   const options: StripeElementsOptions = { mode: 'payment', currency: 'usd', amount: Math.round(total * 100) };
   return (
     <>
-      {SANDBOX_MODE && <TestCardBox number={4242424242424242} />}
+      {config.sandboxMode && <TestCardBox number={4242424242424242} />}
       <Elements stripe={stripePromise} options={options}>
         <StripeCheckoutForm />
       </Elements>
@@ -73,7 +72,7 @@ function StripeCheckoutForm() {
 				<>
 					We're sorry, but we experienced an issue saving your order.<br />
 					You were not charged.<br />
-					Please try again or contact {TECH_CONTACT} for assistance.<br />
+					Please try again or contact {config.contacts.tech} for assistance.<br />
           Error: {code} {message || error}
 				</>
 			);
@@ -93,7 +92,7 @@ function StripeCheckoutForm() {
 			setError(
 				<>
 					We're sorry, but we experienced an issue processing your payment.<br />
-					Please try again or contact {TECH_CONTACT} for assistance.<br />
+					Please try again or contact {config.contacts.tech} for assistance.<br />
 					Error: {code} {message || error}
 				</>
 			);
@@ -110,7 +109,7 @@ function StripeCheckoutForm() {
       const { code, message } = error as { code?: string; message?: string };
       setError(
         <>
-          Your payment was processed successfully. However, we encountered an error updating your registration. Please contact {TECH_CONTACT}.
+          Your payment was processed successfully. However, we encountered an error updating your registration. Please contact {config.contacts.tech}.
           <br />
           Error: {code} {message || error}
         </>

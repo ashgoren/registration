@@ -5,13 +5,10 @@ import { useOrderData } from 'contexts/OrderDataContext';
 import { ContactInfo } from './ContactInfo';
 import { MiscInfo } from './MiscInfo';
 import { logInfo, logDebug } from 'src/logger';
-import { getDefaultAdmission } from 'config/configTieredPricing';
 import { config } from 'config';
 import type { Order } from 'types/order';
 import type { FormikTouched } from 'formik';
-import type { AgeGroup } from 'config/configTieredPricing';
-
-const { ADMISSIONS_MODE } = config;
+import type { AgeGroup } from 'types/tieredPricing';
 
 export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerson }: {
   editIndex: number;
@@ -55,7 +52,9 @@ export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerso
 
     // determine country & admission for the person being edited
     const country = getCountry(person);
-    const admission = ADMISSIONS_MODE === 'tiered' ? getDefaultAdmission(person as { age: AgeGroup }) : person.admission;
+    const admission = config.admissions.mode === 'tiered'
+      ? config.tieredPricing.getDefaultAdmission(person as { age: AgeGroup })
+      : person.admission;
 
     // update formik field value for country & admission
     setFieldValue(`people[${editIndex}].country`, country);

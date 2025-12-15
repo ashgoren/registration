@@ -1,6 +1,6 @@
 import * as api from 'src/firebase';
 import { config } from 'config';
-const { ENV } = config;
+const { env } = config;
 
 // log to firebase logger
 
@@ -25,9 +25,9 @@ const logger = (level: 'info' | 'warn' | 'error', message: string, metadata: Rec
 
 
 // local debug logger
-export const logInfoDebug = ENV !== 'prd' ? (...args: unknown[]) => console.log(...args) : () => {};
-export const logWarnDebug = ENV !== 'prd' ? (...args: unknown[]) => console.warn(...args) : () => {};
-export const logErrorDebug = ENV !== 'prd' ? (...args: unknown[]) => console.error(...args) : () => {};
+export const logInfoDebug = env !== 'prd' ? (...args: unknown[]) => console.log(...args) : () => {};
+export const logWarnDebug = env !== 'prd' ? (...args: unknown[]) => console.warn(...args) : () => {};
+export const logErrorDebug = env !== 'prd' ? (...args: unknown[]) => console.error(...args) : () => {};
 export const logDebug = logInfoDebug;
 
 // devtools console logger util
@@ -37,5 +37,5 @@ export const logEnvironment = () => {
     stg: 'color: black; background: gold; padding: 2px 6px; border-radius: 4px; font-weight: bold',
     prd: 'color: white; background: crimson; padding: 2px 6px; border-radius: 4px; font-weight: bold'
   };
-  console.log(`%cEnvironment is ${ENV}`, styles[ENV] || ''); // keep the console.log here!
+  console.log(`%cEnvironment is ${env}`, styles[env] || ''); // keep the console.log here!
 };

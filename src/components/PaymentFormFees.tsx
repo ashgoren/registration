@@ -19,7 +19,7 @@ export const PaymentFormFees = ({ fees, coverFees, setCoverFees }:
   return (
     <StyledPaper>
       <FormControlLabel
-        control={<Checkbox checked={coverFees} onChange={updateFeesValue} />}
+        control={<Checkbox name='coverFees' checked={coverFees} onChange={updateFeesValue} />}
         label={`I would like to add ${formatCurrency(fees)} to cover the transaction fees.`}
       />
     </StyledPaper>

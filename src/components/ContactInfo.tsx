@@ -5,8 +5,6 @@ import { ContactInfoInputs } from './ContactInfoInputs';
 import { config } from 'config';
 // import { logDebug } from 'src/logger';
 
-const { PERSON_INPUT_LABELS, PERSON_CONTACT_FIELDS } = config;
-
 export const ContactInfo = memo(({ index }:{ index: number }) => {
   // logDebug('ContactInfo rendered');
 
@@ -14,10 +12,10 @@ export const ContactInfo = memo(({ index }:{ index: number }) => {
 
   return (
     <section className='contact-section'>
-      <Title>{PERSON_INPUT_LABELS[index]}</Title>
+      <Title>{config.fields.personInputLabels[index]}</Title>
       <ContactInfoInputs
         index={index}
-        fields={PERSON_CONTACT_FIELDS}
+        fields={config.fields.contactFields}
       />
     </section>
   );

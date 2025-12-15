@@ -10,7 +10,6 @@ import { StyledLink } from 'components/layouts/SharedStyles';
 import { mailtoLink } from 'utils/misc';
 import { logDebug, logErrorDebug } from 'src/logger';
 import { config } from 'config';
-const { SHOW_CHECK_ADDRESS, CHECK_ADDRESS, CHECK_TO, ENV, TECH_CONTACT, EMAIL_CONTACT } = config;
 
 export const Check = () => {
   const { updateOrder } = useOrderData();
@@ -18,7 +17,7 @@ export const Check = () => {
   const { savePendingOrder, isSaving } = useOrderSaving();
   const { finalizeOrder } = useOrderFinalization();
   const { goNext } = usePageNavigation();
-  const [ready, setReady] = useState(ENV === 'dev');
+  const [ready, setReady] = useState(config.env === 'dev');
 
   setTimeout(() => {
     setReady(true);
@@ -40,7 +39,7 @@ export const Check = () => {
       setError(
 				<>
 					We're sorry, but we experienced an issue saving your order.<br />
-					Please try again or contact {TECH_CONTACT} for assistance.<br />
+					Please try again or contact {config.contacts.tech} for assistance.<br />
 					Error: {code} {message || error}
 				</>
       );
@@ -53,25 +52,25 @@ export const Check = () => {
       {error && <Typography color='error' sx={{ mb: 4 }}>Error: {error}</Typography>}
       {!processing &&
         <>
-          {SHOW_CHECK_ADDRESS ?
+          {config.payments.checks.showPostalAddress ?
             <>
               <Typography sx={{ mt: 2 }}>
-                Make your check out to {CHECK_TO}<br />
+                Make your check out to {config.payments.checks.payee}<br />
                 Write your name in the memo area, and mail to:
               </Typography>
               <Typography sx={{ mt: 2 }}>
-                { CHECK_ADDRESS.map(line => (<span key={line}>{line}<br /></span>)) }
+                { config.payments.checks.address.map(line => (<span key={line}>{line}<br /></span>)) }
               </Typography>
             </>
           :
             <Typography sx={{ mt: 2 }}>
-              Email <StyledLink to={mailtoLink(EMAIL_CONTACT)}>{EMAIL_CONTACT}</StyledLink> for info on filling out and mailing your check.
+              Email <StyledLink to={mailtoLink(config.contacts.info)}>{config.contacts.info}</StyledLink> for info on filling out and mailing your check.
             </Typography>
           }
 
           <Typography sx={{ mt: 2 }}>
             Your registration will be processed once we receive your check.<br />
-            If you have any questions, please contact <StyledLink to={mailtoLink(EMAIL_CONTACT)}>{EMAIL_CONTACT}</StyledLink>.
+            If you have any questions, please contact <StyledLink to={mailtoLink(config.contacts.info)}>{config.contacts.info}</StyledLink>.
           </Typography>
 
           {!ready && <Loading />}

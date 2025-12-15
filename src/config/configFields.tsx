@@ -6,8 +6,6 @@ import { NAME_VALIDATION, PRONOUNS_VALIDATION, EMAIL_VALIDATION, PHONE_VALIDATIO
 import configBasics from './internal/configBasics';
 import type { JSX } from 'react';
 
-const { ADMISSION_COST_DEFAULT, ADMISSION_COST_RANGE, EVENT_TITLE, SAFETY_POLICY_URL } = configBasics;
-
 type FieldType = 'text' | 'email' | 'pattern' | 'address' | 'radio' | 'checkbox' | 'textarea' | 'autocomplete';
 
 export interface FormFieldConfig {
@@ -34,7 +32,7 @@ export interface FormFieldConfig {
 type FieldConfig = { [key: string]: FormFieldConfig };
 
 // config for all form fields (which may include fields not used in this instance)
-export const fieldConfig: FieldConfig = {
+export const fieldsConfig: FieldConfig = {
   first: {
     label: 'First name',
     validation: NAME_VALIDATION.required('Please enter first name.'),
@@ -384,7 +382,7 @@ export const fieldConfig: FieldConfig = {
   agreement: {
     type: 'checkbox',
     title: 'Values and Expectations',
-    label: <>Do you agree that everyone you are registering will follow {EVENT_TITLE}'s <StyledLink to={websiteLink(SAFETY_POLICY_URL)}>values and expectations</StyledLink>?</>,
+    label: <>Do you agree that everyone you are registering will follow {configBasics.event.title}'s <StyledLink to={websiteLink(configBasics.links.policies.safety)}>values and expectations</StyledLink>?</>,
     required: true,
     options: [
       { label: 'Yes', value: 'yes' }
@@ -404,8 +402,8 @@ export const fieldConfig: FieldConfig = {
     defaultValue: [],
   },
   admission: {
-    validation: Yup.number().min(ADMISSION_COST_RANGE[0]).max(ADMISSION_COST_RANGE[1]).required(),
-    defaultValue: ADMISSION_COST_DEFAULT,
+    validation: Yup.number().min(configBasics.admissions.costRange[0]).max(configBasics.admissions.costRange[1]).required(),
+    defaultValue: configBasics.admissions.costDefault,
   },
   deposit: {
     validation: Yup.number().min(0),

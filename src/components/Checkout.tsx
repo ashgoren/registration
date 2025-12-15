@@ -18,8 +18,6 @@ import { Check } from 'components/Check';
 import { config } from 'config';
 import type { Order } from 'types/order';
 
-const { TECH_CONTACT, EVENT_TITLE } = config;
-
 export const Checkout = () => {
   // logDebug('RENDER Checkout');
 
@@ -49,7 +47,7 @@ export const Checkout = () => {
             We're sorry, but we experienced an issue initializing payment.<br />
             Please hit the back button, refresh the page, and try again.<br />
             If that fails, please close this tab and start over.<br />
-            If this error persists, please contact {TECH_CONTACT}.<br /><br />
+            If this error persists, please contact {config.contacts.tech}.<br /><br />
             Error message:<br />
             {getErrorMessage(err)}
           </>
@@ -72,7 +70,7 @@ export const Checkout = () => {
 
   return (
     <section>
-      <Header titleText={EVENT_TITLE}>
+      <Header titleText={config.event.title}>
         <OrderSummary order={order} />
       </Header>
 

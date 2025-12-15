@@ -5,7 +5,7 @@ import { checkPeopleThreshold } from 'src/firebase';
 import { logDebug } from 'src/logger';
 import { config } from 'config';
 
-const { PAGES } = config;
+const { pages } = config.navigation;
 
 export const usePageNavigation = () => {
   const navigate = useNavigate();
@@ -17,13 +17,13 @@ export const usePageNavigation = () => {
     return pathFinal === 'registration' || pathFinal === '' ? 'people' : pathFinal;
   }, [location.pathname]);
 
-  const currentIndex = PAGES.findIndex((page: { key: string }) => page.key === currentPage);
+  const currentIndex = pages.findIndex((page: { key: string }) => page.key === currentPage);
 
   const goNext = async () => {
-    const nextPage = PAGES[currentIndex + 1];
+    const nextPage = pages[currentIndex + 1];
     if (!nextPage) return;
     
-    let nextPageKey = PAGES[currentIndex + 1].key;
+    let nextPageKey = pages[currentIndex + 1].key;
     setFurthestPageReached(nextPageKey);
     logDebug(`Navigating from ${currentPage} to ${nextPageKey}`);
     
@@ -48,7 +48,7 @@ export const usePageNavigation = () => {
   }
 
   const goBack = () => {
-    const prevPage = PAGES[currentIndex - 1];
+    const prevPage = pages[currentIndex - 1];
     if (!prevPage) return;
     logDebug(`Navigating back from ${currentPage} to ${prevPage.key}`);
     navigate(`/registration/${prevPage.key}`);

@@ -1,6 +1,5 @@
 import { Title, Paragraph } from 'components/layouts/SharedStyles';
 import { config } from 'config';
-const { ADMISSION_COST_FIXED } = config;
 
 export const PaymentFormFixedCost = ({ numPeople }: { numPeople: number }) => {
 
@@ -9,10 +8,10 @@ export const PaymentFormFixedCost = ({ numPeople }: { numPeople: number }) => {
       <Title>Admission cost</Title>
       <Paragraph>
         Number of admissions: {[numPeople]}<br />
-        Price per admission: ${ADMISSION_COST_FIXED}
+        Price per admission: ${config.admissions.fixedCost}
       </Paragraph>
       <Paragraph>
-        Admissions total: ${numPeople * ADMISSION_COST_FIXED}
+        Admissions total: ${numPeople * config.admissions.fixedCost}
       </Paragraph>
     </>
   );

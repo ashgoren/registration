@@ -6,7 +6,7 @@ import { ColorModeToggle } from 'components/layouts';
 import { config } from 'config';
 import type { MouseEvent } from 'react';
 
-const { NAVBAR_REGISTRATION_TITLE, REGISTRATION_ONLY, NAVBAR_COLOR, NAVBAR_COLOR_DARK, NAVBAR_BACKGROUND_OVERRIDE, PRD_LIVE, ENV } = config;
+const { navbarColor, navbarColorDark, navbarBackgroundOverride } = config.theme;
 
 type Page = { title: string; path: string };
 
@@ -20,7 +20,7 @@ const pages: Page[] = [
   { title: 'Payment info', path: '/paymentexplanation' },
 ];
 
-if (PRD_LIVE || ENV !== 'prd') {
+if (config.productionMode || config.env !== 'prd') {
   pages.push({ title: 'Registration', path: '/registration' });
 }
 
@@ -110,25 +110,25 @@ export const Navbar = ({ toggleColorMode }: { toggleColorMode: () => void }) => 
         <img src={'/logo.png'} alt="" style={{ margin: '10px 10px 10px 0px' }}/>
       </Box>
       <ListItem sx={{ display: {xs: 'none', sm: 'block' }, my: 2, color: 'inherit' }}>
-        <Typography variant="h4" textAlign="center">{NAVBAR_REGISTRATION_TITLE}</Typography>
+        <Typography variant="h4" textAlign="center">{`${config.event.title} Registration`}</Typography>
       </ListItem>
       <ListItem sx={{ display: {xs: 'block', sm: 'none' }, my: 2, color: 'inherit' }}>
-        <Typography variant="h5" textAlign="center">{NAVBAR_REGISTRATION_TITLE}</Typography>
+        <Typography variant="h5" textAlign="center">{`${config.event.title} Registration`}</Typography>
       </ListItem>
     </>
   );
 
   return (
-    // <AppBar position="relative" color={NAVBAR_COLOR} enableColorOnDark={NAVBAR_COLOR_DARK} sx={{ background: NAVBAR_BACKGROUND_OVERRIDE }}>
+    // <AppBar position="relative" color={navbarColor} enableColorOnDark={navbarColorDark} sx={{ background: navbarBackgroundOverride }}>
     <AppBar position='relative'
-      color={NAVBAR_BACKGROUND_OVERRIDE ? undefined : NAVBAR_COLOR}
-      enableColorOnDark={NAVBAR_BACKGROUND_OVERRIDE ? undefined : NAVBAR_COLOR_DARK}
-      sx={NAVBAR_BACKGROUND_OVERRIDE ? { background: NAVBAR_BACKGROUND_OVERRIDE } : undefined}
+      color={navbarBackgroundOverride ? undefined : navbarColor}
+      enableColorOnDark={navbarBackgroundOverride ? undefined : navbarColorDark}
+      sx={navbarBackgroundOverride ? { background: navbarBackgroundOverride } : undefined}
     >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
 
-          { REGISTRATION_ONLY ? contentRegistrationOnly : contentMultiline }
+          { config.registrationOnly ? contentRegistrationOnly : contentMultiline }
 
           {/* color mode toggle always goes to the right */}
           <ColorModeToggle toggleColorMode={toggleColorMode} />

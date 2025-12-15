@@ -7,8 +7,6 @@ import { config } from 'config';
 import type { Order, Person } from 'types/order';
 import type { FocusEvent } from 'react';
 
-const { FIELD_CONFIG, INCLUDE_LAST_ON_NAMETAG } = config;
-
 export const ContactInfoInputs = memo(({ fields, index }:{ fields: string[]; index: number; }) => {
   // logDebug('ContactInfoInputs rendered');
 
@@ -20,13 +18,13 @@ export const ContactInfoInputs = memo(({ fields, index }:{ fields: string[]; ind
   const firstPersonValues = index > 0 ? values.people[0] as Person : null;
   const [isChecked, setIsChecked] = useState(false);
 
-  const triggerSetNametagField = `people[${index}].${INCLUDE_LAST_ON_NAMETAG ? 'last' : 'first'}`;
+  const triggerSetNametagField = `people[${index}].${config.nametags.includeLastName ? 'last' : 'first'}`;
   const setNametag = (e: FocusEvent<HTMLInputElement>) => {
     handleBlur(e);  // bubble up to default Formik onBlur handler
     const { first, last, nametag } = values.people[index];
     if (nametag) return;
-    const fieldsFilled = INCLUDE_LAST_ON_NAMETAG ? first && last : first;
-    const newNametag = INCLUDE_LAST_ON_NAMETAG ? `${first} ${last}` : first;
+    const fieldsFilled = config.nametags.includeLastName ? first && last : first;
+    const newNametag = config.nametags.includeLastName ? `${first} ${last}` : first;
     if (fieldsFilled) {
       setFieldValue(`people[${index}].nametag`, newNametag);
     }
@@ -39,7 +37,7 @@ export const ContactInfoInputs = memo(({ fields, index }:{ fields: string[]; ind
       </Typography> */}
       <Grid container spacing={2}>
         {mainFields.map((field) => {
-          const fieldConfig = FIELD_CONFIG[field];
+          const fieldConfig = config.fields.fieldsConfig[field];
           const { label, type, pattern, placeholder, autoComplete, required, hidden, width } = fieldConfig;
           const fieldName = `people[${index}].${field}`;
 
@@ -93,7 +91,7 @@ export const ContactInfoInputs = memo(({ fields, index }:{ fields: string[]; ind
 
           <Grid container spacing={2}>
             {addressFields.map((field) => {
-              const fieldConfig = FIELD_CONFIG[field];
+              const fieldConfig = config.fields.fieldsConfig[field];
               const { label, type, pattern, placeholder, autoComplete, required, hidden, width, suggestions } = fieldConfig;
               const fieldName = `people[${index}].${field}`;
 

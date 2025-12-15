@@ -3,7 +3,6 @@
 // import { App } from './App';
 // import { Seattle } from './Static/Seattle';
 // import { config } from 'src/config'
-// const { EVENT_TITLE } = config;
 
 // // test('renders title', async () => {
 // //   // render('<h1>foo</h1>');
@@ -11,14 +10,14 @@
 // //   // window.indexedDB = indexedDB;
 // //   render(<App />);
 // //   screen.debug();
-// //   expect(screen.getByText(EVENT_TITLE)).not.toBeNull()
+// //   expect(screen.getByText(config.event.title)).not.toBeNull()
 // // });
 
 // // describe('App', () => {
 // //   it('renders App component', async () => {
 // //     render(<App />);
 // //     screen.debug();
-// //     expect(screen.getByText(EVENT_TITLE)).not.toBeNull()
+// //     expect(screen.getByText(config.event.title)).not.toBeNull()
 // //   });
 // // });
 
