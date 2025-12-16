@@ -9,8 +9,6 @@ import { formatCurrency } from 'utils/misc';
 import { config } from 'config';
 import type { Order, Person } from 'types/order';
 
-const { ORDER_SUMMARY_OPTIONS, ADMISSION_COST_RANGE, PAYMENT_DUE_DATE, INCLUDE_PRONOUNS_ON_NAMETAG, WAITLIST_MODE } = config;
-
 export const OrderSummary = ({ order }: { order: Order }) => {
   const admissions = order.people.map(person => person.admission);
   const admissionsTotal = admissions.reduce((total, admission) => total + admission, 0);
@@ -30,7 +28,7 @@ export const OrderSummary = ({ order }: { order: Order }) => {
         </Box>
       ))}
 
-      {!WAITLIST_MODE &&
+      {!config.registration.waitlistMode &&
         <Box style={{ marginTop: '2em' }}>
           <Typography variant='body1' gutterBottom>
             <strong>Payment Info</strong>
@@ -63,7 +61,7 @@ export const OrderSummary = ({ order }: { order: Order }) => {
             }
 
             {isDeposit &&
-              <><strong style={{ color: 'orange' }}>The balance of your registration fee is due by {PAYMENT_DUE_DATE}.</strong><br /></>
+              <><strong style={{ color: 'orange' }}>The balance of your registration fee is due by {config.payments.paymentDueDate}.</strong><br /></>
             }
           </Typography>
         </Box>
@@ -78,7 +76,7 @@ export const PersonSummary = ({ person, skipCost=false, skipFirstLastHeading=fal
       {!skipFirstLastHeading &&
         <Typography variant='body1' sx={{ fontWeight: 'bold' }}>{person.first} {person.last}</Typography>
       }
-      {ORDER_SUMMARY_OPTIONS
+      {config.order.orderSummaryOptions
         .map((option) => {
           const { property, label, mapping, defaultValue } = option;
           if (skipCost && property === 'admission') return null;
@@ -125,13 +123,13 @@ function renderConditionalData ({ person, property, label, mapping, defaultValue
 }
 
 function formatCost(cost: number) {
-  return cost < ADMISSION_COST_RANGE[0] ? <>${cost}<br /><strong style={{ color: 'orange' }}>The balance of this payment will be due by {PAYMENT_DUE_DATE}.</strong></> : <>${cost}</>;
+  return cost < config.admissions.costRange[0] ? <>${cost}<br /><strong style={{ color: 'orange' }}>The balance of this payment will be due by {config.payments.paymentDueDate}.</strong></> : <>${cost}</>;
 }
 
 function formatNametag(person: Person) {
   const { nametag, pronouns } = person;
   const formattedPronouns = pronouns ? `(${pronouns})` : '';
-  return INCLUDE_PRONOUNS_ON_NAMETAG ? `${nametag} ${formattedPronouns}` : nametag;
+  return config.nametags.includePronouns ? `${nametag} ${formattedPronouns}` : nametag;
 }
 
 function formatAddress(person: Person) {

@@ -7,8 +7,6 @@ import { config } from 'config';
 import type { FocusEvent } from 'react';
 import type { Person } from 'types/order';
 
-const { ADMISSION_COST_RANGE } = config;
-
 export const PaymentFormSlidingScale = ({ people }: { people: Person[] }) => {
   const { setFieldValue, handleBlur } = useFormikContext();
   const isMultiplePeople = people.length > 1;
@@ -33,7 +31,7 @@ export const PaymentFormSlidingScale = ({ people }: { people: Person[] }) => {
           name={`people[${index}].admission`}
           type='pattern'
           pattern='###'
-          range={ADMISSION_COST_RANGE}
+          range={config.admissions.costRange}
           onBlur={updateAdmissionValue}
           InputProps={{ startAdornment: <InputAdornment position='start'>$</InputAdornment> }}
         />
@@ -42,4 +40,4 @@ export const PaymentFormSlidingScale = ({ people }: { people: Person[] }) => {
   );
 };
 
-const clampAdmission = (value: number) => clamp(value || ADMISSION_COST_RANGE[0], ADMISSION_COST_RANGE);
+const clampAdmission = (value: number) => clamp(value || config.admissions.costRange[0], config.admissions.costRange);

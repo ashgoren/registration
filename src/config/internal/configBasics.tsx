@@ -1,81 +1,42 @@
 import { fromZonedTime } from 'date-fns-tz';
-import userConfig from '../configEvent';
-import type { PaymentMethod } from 'types/payment';
+import configEvent from '../configEvent';
+import type { PaymentMethod, AdmissionMode } from 'types/payment';
 
-type AdmissionMode = 'sliding-scale' | 'fixed' | 'tiered';
-
-const { prd, event, static_pages, registration, nametags, admissions, payments, contacts, external_links, calendar } = userConfig;
+const { productionMode, event, staticPages, registration, nametags, admissions, payments, contacts, links, calendar } = configEvent;
 
 const costDefaultMapping: Record<AdmissionMode, number> = {
-  'sliding-scale': admissions.sliding_scale.cost_default,
+  'sliding-scale': admissions.slidingScale.costDefault,
   'fixed': admissions.fixed.cost,
-  'tiered': admissions.sliding_scale.cost_default // default for tiered is ignored; actual default is set in PersonForm#saveUpdatedOrder
+  'tiered': admissions.slidingScale.costDefault // default for tiered is ignored; actual default is set in PersonForm#saveUpdatedOrder
 };
 
 const costRangeMapping: Record<AdmissionMode, [number, number]> = {
-  'sliding-scale': admissions.sliding_scale.cost_range as [number, number],
+  'sliding-scale': admissions.slidingScale.costRange as [number, number],
   'fixed': [admissions.fixed.cost, admissions.fixed.cost],
   'tiered': [0, 999]
-}
+};
 
 const baseConfig = {
-  PRD_LIVE: prd.live,
-
-  STATIC_PAGES: static_pages.components,
-
-  REGISTRATION_ONLY: static_pages.enabled === false,
-  WAITLIST_MODE: registration.waitlist_mode,
-  SHOW_PRE_REGISTRATION: registration.show_preregistration,
-  SHOW_WAIVER: registration.show_waiver,
-
-  PAYMENT_METHODS: payments.checks.allowed ? [payments.processor as PaymentMethod, 'check' as PaymentMethod] : [payments.processor as PaymentMethod],
-  PAYMENT_PROCESSOR: payments.processor as PaymentMethod,
-  SHOW_PAYMENT_SUMMARY: payments.show_payment_summary,
-
-  ADMISSION_QUANTITY_MAX: registration.admission_quantity_max,
-
-  ADMISSIONS_MODE: admissions.mode,
-
-  // Sliding scale settings
-  ADMISSION_COST_RANGE: costRangeMapping[admissions.mode as AdmissionMode],
-  ADMISSION_COST_DEFAULT: costDefaultMapping[admissions.mode as AdmissionMode],
-
-  // Fixed cost settings
-  ADMISSION_COST_FIXED: admissions.fixed.cost,
-
-  // Tiered cost settings
-  EARLYBIRD_CUTOFF: fromZonedTime(`${admissions.tiered.earlybird_cutoff}T23:59:59.999`, event.timezone),
-
-  DEPOSIT_OPTION: payments.deposit.enabled,
-  DEPOSIT_COST: payments.deposit.amount,
-  DONATION_OPTION: payments.donation.enabled,
-  DONATION_MAX: payments.donation.max || 0,
-  COVER_FEES_OPTION: payments.cover_fees_checkbox,
-  DIRECT_PAYMENT_URL: payments.direct_payment_url,
-  SHOW_CHECK_ADDRESS: payments.checks.show_postal_address,
-  CHECK_TO: payments.checks.payee,
-  CHECK_ADDRESS: payments.checks.address,
-  PAYMENT_DUE_DATE: payments.payment_due_date,
-
-  EVENT_TITLE: event.title,
-  EVENT_TITLE_WITH_YEAR: event.title_with_year,
-  NAVBAR_REGISTRATION_TITLE: `${event.title} Registration`,
-  CONFIRMATION_ELECTRONIC_TITLE: `${event.title} Confirmation`,
-  CONFIRMATION_CHECK_TITLE: `${event.title} Registration`,
-
-  EVENT_LOCATION: event.location,
-  EVENT_DATE: event.date,
-  EMAIL_CONTACT: contacts.info,
-  TECH_CONTACT: contacts.tech,
-  HOUSING_CONTACT: contacts.housing,
-  MORE_INFO_URL: external_links.more_info,
-  COVID_POLICY_URL: external_links.policies.covid,
-  SAFETY_POLICY_URL: external_links.policies.safety,
-
-  INCLUDE_PRONOUNS_ON_NAMETAG: nametags.include_pronouns,
-  INCLUDE_LAST_ON_NAMETAG: nametags.include_last_name,
-
-  CALENDAR: calendar
+  productionMode,
+  event,
+  contacts,
+  links,
+  calendar,
+  nametags,
+  staticPages,
+  registration,
+  registrationOnly: staticPages.enabled === false,
+  payments: {
+    ...payments,
+    methods: payments.checks.allowed ? [payments.processor as PaymentMethod, 'check' as PaymentMethod] : [payments.processor as PaymentMethod],
+  },
+  admissions: {
+    mode: admissions.mode,
+    costRange: costRangeMapping[admissions.mode as AdmissionMode],
+    costDefault: costDefaultMapping[admissions.mode as AdmissionMode],
+    fixedCost: admissions.fixed.cost,
+    earlybirdCutoff: fromZonedTime(`${admissions.tiered.earlybirdCutoff}T23:59:59.999`, event.timezone),
+  },
 } as const;
 
 export default baseConfig;

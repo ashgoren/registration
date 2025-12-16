@@ -10,8 +10,6 @@ import type { ChangeEvent, } from 'react';
 import type { Order } from 'types/order';
 import type { CustomFieldProps } from 'components/inputs/Field';
 
-const { FIELD_CONFIG, PERSON_MISC_FIELDS } = config;
-
 export const MiscInfo = ({ index }: { index: number }) => {
   // logDebug('MiscInfo rendered');
 
@@ -20,10 +18,12 @@ export const MiscInfo = ({ index }: { index: number }) => {
   const [showPhotoCommentsField, setShowPhotoCommentsField] = useState(values.people?.[index]?.photo === 'Other');
   const [showMiscCommentsField, setShowMiscCommentsField] = useState((values.people?.[index]?.misc as string[])?.includes('minor'));
 
-  const fields: string[] = index === 0 ? PERSON_MISC_FIELDS : PERSON_MISC_FIELDS.filter((field: string) => field !== 'agreement');
+  const fields: string[] = index === 0
+    ? config.fields.miscFields
+    : config.fields.miscFields.filter((field: string) => field !== 'agreement');
 
   const firstPersonAgeOptions = fields.includes('age')
-    ? FIELD_CONFIG.age.options?.filter(option => option.value === 'adult' || option.value === '13-17')
+    ? config.fields.fieldsConfig.age.options?.filter(option => option.value === 'adult' || option.value === '13-17')
     : null;
   
   useScrollToTop();
@@ -97,7 +97,7 @@ export const MiscInfo = ({ index }: { index: number }) => {
     <Box className='MiscInfo' sx={{ mt: 4 }}>
       {fields
         .map(field => {
-          const { validation: _, conditionalValidation: __, ...domProps } = FIELD_CONFIG[field];
+          const { validation: _, conditionalValidation: __, ...domProps } = config.fields.fieldsConfig[field];
           return { field, ...domProps };
         })
         .map((input) => {

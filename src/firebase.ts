@@ -1,12 +1,9 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFunctions, connectFunctionsEmulator, httpsCallable } from 'firebase/functions';
-import userConfig from 'config/configEvent.jsx';
 import type { Order } from 'types/order';
 import type { ElectronicPaymentMethod } from 'types/payment';
 
-const isDev = import.meta.env.DEV;
-
-const useFirebaseEmulator = isDev && userConfig.dev.use_firebase_emulator;
+const useFirebaseEmulator = import.meta.env.DEV;
 
 const { VITE_FIREBASE_CONFIG, VITE_FUNCTIONS_REGION } = import.meta.env;
 

@@ -2,7 +2,7 @@ import { useFormikContext } from 'formik';
 import { Paper, Typography, Table, TableContainer, TableBody, TableRow, TableCell } from '@mui/material';
 import { Paragraph } from 'components/layouts/SharedStyles';
 import { SelectInput } from 'components/inputs';
-import { getCategoryLabel, getOptions } from 'config/configTieredPricing';
+import { config } from 'config';
 import type { SelectChangeEvent } from '@mui/material';
 import type { Person } from 'types/order';
 
@@ -30,19 +30,19 @@ export const PaymentFormOptions = ({ people }: { people: Person[] }) => {
                 <TableCell>
                   <Typography variant='body1'>{person.first} {person.last}</Typography>
                   <Typography variant='body2' sx={{ fontStyle: 'italic' }}>
-                    {getCategoryLabel(person)}
+                    {config.tieredPricing.getCategoryLabel(person)}
                   </Typography>
                 </TableCell>
 
                 <TableCell align='right'>
-                  {getOptions(person).length === 1 ? (
+                  {config.tieredPricing.getOptions(person).length === 1 ? (
                     <Typography variant='body1' sx={{ fontStyle: 'italic' }}>
-                      {getOptions(person)[0].label}
+                      {config.tieredPricing.getOptions(person)[0].label}
                     </Typography>
                   ) : (
                     <SelectInput
                       name={`people[${index}].admission`}
-                      options={getOptions(person)}
+                      options={config.tieredPricing.getOptions(person)}
                       onChange={updateAdmissionValue}
                       sx={{ width: '12em' }}
                     />

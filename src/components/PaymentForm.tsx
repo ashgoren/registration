@@ -21,8 +21,6 @@ import { config } from 'config';
 import type { Order } from 'types/order';
 import type { FormikProps } from 'formik';
 
-const { DEPOSIT_OPTION, COVER_FEES_OPTION, DEPOSIT_COST, ADMISSION_COST_RANGE, DONATION_OPTION, PAYMENT_DUE_DATE, SHOW_PAYMENT_SUMMARY, ADMISSIONS_MODE, EVENT_TITLE } = config;
-
 export const PaymentForm = () => {
   const { order, updateOrder } = useOrderData();
   const { goBack, goNext } = usePageNavigation();
@@ -44,7 +42,7 @@ export const PaymentForm = () => {
     logDebug('Payment form submitted:', values);
     updateOrder(sanitizeObject({
       ...submittedOrder,
-      deposit: submittedOrder.deposit ? submittedOrder.people.length * DEPOSIT_COST : 0,
+      deposit: submittedOrder.deposit ? submittedOrder.people.length * config.payments.deposit.amount : 0,
       total: order.total,
       fees: order.fees
     }));
@@ -84,7 +82,7 @@ export const PaymentForm = () => {
         }, [values.donation]);
 
         const payingMax = useMemo(() => {
-          return Number(values.people[0].admission) === ADMISSION_COST_RANGE[1];
+          return Number(values.people[0].admission) === config.admissions.costRange[1];
         }, [values.people]);
 
         const admissionTotal = useMemo(() => {
@@ -92,7 +90,7 @@ export const PaymentForm = () => {
         }, [values.people]);
 
         const depositTotal = useMemo(() => {
-          return DEPOSIT_COST * order.people.length;
+          return config.payments.deposit.amount * order.people.length;
         }, [order.people.length]);
 
         const total = useMemo(() => {
@@ -119,14 +117,14 @@ export const PaymentForm = () => {
         }, [total, fees, coverFees, updateOrder]);
 
         const handlePaymentTab = (_: React.SyntheticEvent, newTab: string) => {
-          setFieldValue('deposit', newTab === 'deposit' ? order.people.length * DEPOSIT_COST : 0);
+          setFieldValue('deposit', newTab === 'deposit' ? order.people.length * config.payments.deposit.amount : 0);
           setPaymentTab(newTab);
           if (newTab === 'deposit') setFieldValue('donation', 0);
         };
         
         return (
           <>
-            <Header titleText={EVENT_TITLE} /> 
+            <Header titleText={config.event.title} /> 
 
             <Form spellCheck='false'>
               <section className='PaymentForm'>
@@ -136,11 +134,11 @@ export const PaymentForm = () => {
                 <div className='admissions-section'>
                   <StyledPaper className='admissions-cost'>
 
-                    <Title>{ADMISSIONS_MODE === 'sliding-scale' ? 'Sliding scale' : 'Payment'}</Title>
+                    <Title>{config.admissions.mode === 'sliding-scale' ? 'Sliding scale' : 'Payment'}</Title>
 
-                    {!DEPOSIT_OPTION && <PaymentFormFullPayment order={order} />}
+                    {!config.payments.deposit.enabled && <PaymentFormFullPayment order={order} />}
 
-                    {DEPOSIT_OPTION &&
+                    {config.payments.deposit.enabled &&
                       <TabContext value={paymentTab}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                           <Tabs value={paymentTab} onChange={handlePaymentTab} aria-label="payment options tabs">
@@ -152,21 +150,21 @@ export const PaymentForm = () => {
                           <PaymentFormFullPayment order={order} />
                         </TabPanel>
                         <TabPanel value="deposit" sx={{ pl: 1, pr: 0 }}>
-                          <Paragraph>A deposit of ${DEPOSIT_COST} per person is required to reserve your spot.</Paragraph>
-                          <Paragraph color='warning.main' sx={{ my: 2, fontWeight: 'bold' }}>The balance of the payment will be due by {PAYMENT_DUE_DATE}.</Paragraph>
+                          <Paragraph>A deposit of ${config.payments.deposit.amount} per person is required to reserve your spot.</Paragraph>
+                          <Paragraph color='warning.main' sx={{ my: 2, fontWeight: 'bold' }}>The balance of the payment will be due by {config.payments.paymentDueDate}.</Paragraph>
                         </TabPanel>
                       </TabContext>
                     }
 
                   </StyledPaper>
 
-                  {DONATION_OPTION && paymentTab === 'fullpayment' && (payingMax || values['donation'] > 0) &&
+                  {config.payments.donation.enabled && paymentTab === 'fullpayment' && (payingMax || values['donation'] > 0) &&
                     <PaymentFormDonation
                       donationAmount={order.donation}
                     />
                   }
 
-                  {COVER_FEES_OPTION &&
+                  {config.payments.coverFeesCheckbox &&
                     <PaymentFormFees
                       fees={Number(fees)}
                       coverFees={coverFees}
@@ -174,7 +172,7 @@ export const PaymentForm = () => {
                     />
                   }
 
-                  {SHOW_PAYMENT_SUMMARY &&
+                  {config.payments.showPaymentSummary &&
                     <PaymentFormTotal
                       admissionTotal={admissionTotal}
                       depositTotal={depositTotal}
@@ -200,4 +198,4 @@ export const PaymentForm = () => {
   );
 };
 
-const clampAdmission = (value: number) => clamp(value || ADMISSION_COST_RANGE[0], ADMISSION_COST_RANGE);
+const clampAdmission = (value: number) => clamp(value || config.admissions.costRange[0], config.admissions.costRange);

@@ -4,14 +4,12 @@ import { PaymentFormOptions } from './PaymentFormOptions';
 import { config } from 'config';
 import type { Order } from 'types/order';
 
-const { ADMISSIONS_MODE } = config;
-
 export const PaymentFormFullPayment = ({ order }: { order: Order }) => {
-  if (ADMISSIONS_MODE === 'fixed') {
+  if (config.admissions.mode === 'fixed') {
     return <PaymentFormFixedCost numPeople={order.people.length} />;
-  } else if (ADMISSIONS_MODE === 'sliding-scale') {
+  } else if (config.admissions.mode === 'sliding-scale') {
     return <PaymentFormSlidingScale people={order.people} />;
-  } else if (ADMISSIONS_MODE === 'tiered') {
+  } else if (config.admissions.mode === 'tiered') {
     return <PaymentFormOptions people={order.people} />;
   }
 };

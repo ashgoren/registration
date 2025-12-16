@@ -15,12 +15,11 @@ import { Checkout } from 'components/Checkout';
 import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { config } from 'config';
 import { logEnvironment, logDebug } from 'src/logger';
-const { PAGES, STATIC_PAGES, REGISTRATION_ONLY, PRD_LIVE, ENV, PAYMENT_PROCESSOR, PAYPAL_OPTIONS } = config;
 
 const ProtectedRoute = ({ pageKey, children }: { pageKey: string; children: React.ReactNode }) => {
   const { furthestPageReached } = useOrderFlow();
-  const pageKeyIndex = PAGES.findIndex((page: { key: string }) => page.key === pageKey);
-  const furthestPageIndex = PAGES.findIndex((page: { key: string }) => page.key === furthestPageReached);
+  const pageKeyIndex = config.navigation.pages.findIndex((page: { key: string }) => page.key === pageKey);
+  const furthestPageIndex = config.navigation.pages.findIndex((page: { key: string }) => page.key === furthestPageReached);
 
   if (pageKeyIndex > furthestPageIndex || (furthestPageReached === 'confirmation' && pageKey !== 'confirmation')) {
     logDebug(`Redirecting from ${pageKey} to ${furthestPageReached}`);
@@ -46,8 +45,8 @@ const RootLayout = () => (
 );
 
 const RegistrationLayout = () => (
-  PAYMENT_PROCESSOR === 'paypal'
-    ? <PayPalScriptProvider options={PAYPAL_OPTIONS}>
+  config.payments.processor === 'paypal'
+    ? <PayPalScriptProvider options={config.paypal.options}>
         <Outlet />
       </PayPalScriptProvider>
     : <Outlet />
@@ -56,11 +55,11 @@ const RegistrationLayout = () => (
 const routes = [
   {
     path: '/',
-    element: REGISTRATION_ONLY
+    element: config.registrationOnly
       ? <Navigate to='/registration' replace={true} />
       : <StaticComponents.Home />
   },
-  ...(PRD_LIVE || ENV !== 'prd') ? [{
+  ...(config.productionMode || config.env !== 'prd') ? [{
     path: '/registration',
     element: <RegistrationLayout />,
     children: [
@@ -73,7 +72,7 @@ const routes = [
       { path: 'confirmation', element: <ProtectedRoute pageKey='confirmation'><Confirmation /></ProtectedRoute> },
     ]
   }] : [],
-  ...STATIC_PAGES.map((page: string) => {
+  ...config.staticPages.components.map((page: string) => {
     const route = page.toLowerCase();
     const Component = StaticComponents[page as keyof typeof StaticComponents];
     return {
@@ -91,9 +90,9 @@ const router = createBrowserRouter([
 
 export const App = () => {
   logEnvironment();
-  // useEffect(() => document.title = EVENT_TITLE, []);
+  // useEffect(() => document.title = config.event.title, []);
 
-  if (REGISTRATION_ONLY && ENV === 'prd' && !PRD_LIVE) {
+  if (config.registrationOnly && config.env === 'prd' && !config.productionMode) {
     return <Placeholder />;
   }
 

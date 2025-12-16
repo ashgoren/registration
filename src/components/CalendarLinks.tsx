@@ -6,14 +6,12 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { config } from 'config';
 import type { MouseEvent } from 'react';
 
-const { CALENDAR } = config;
-
 const event = {
-  title: CALENDAR.title,
-  description: CALENDAR.description,
-  location: CALENDAR.location,
-  start: new Date(CALENDAR.start),
-  end: new Date(CALENDAR.end),
+  title: config.calendar.title,
+  description: config.calendar.description,
+  location: config.calendar.location,
+  start: new Date(config.calendar.start),
+  end: new Date(config.calendar.end),
 };
 
 export const CalendarLinks = () => {
