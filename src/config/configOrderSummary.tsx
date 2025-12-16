@@ -1,4 +1,4 @@
-import { fieldConfig } from './configFields';
+import { fieldsConfig } from './configFields';
 
 const miscMapping = [
   { label: "Minor", value: 'minor' },
@@ -6,7 +6,7 @@ const miscMapping = [
   { label: "I am interested in a beginner's lesson", value: 'beginner' },
 ];
 
-const ORDER_SUMMARY_OPTIONS = [
+const orderSummaryOptions = [
   {
     property: 'nametag',
     label: 'Name for roster'
@@ -26,7 +26,7 @@ const ORDER_SUMMARY_OPTIONS = [
   {
     property: 'age',
     label: 'Age',
-    mapping: fieldConfig['age'].options
+    mapping: fieldsConfig['age'].options
   },
   {
     property: 'share',
@@ -36,12 +36,12 @@ const ORDER_SUMMARY_OPTIONS = [
   {
     property: 'dietaryPreferences',
     label: 'Dietary Preferences',
-    mapping: fieldConfig['dietaryPreferences'].options
+    mapping: fieldsConfig['dietaryPreferences'].options
   },
   {
     property: 'dietaryRestrictions',
     label: 'Dietary Restrictions',
-    mapping: fieldConfig['dietaryRestrictions'].options
+    mapping: fieldsConfig['dietaryRestrictions'].options
   },
   {
     property: 'allergies',
@@ -50,17 +50,17 @@ const ORDER_SUMMARY_OPTIONS = [
   {
     property: 'carpool',
     label: 'Transportation',
-    mapping: fieldConfig['carpool'].options
+    mapping: fieldsConfig['carpool'].options
   },
   {
     property: 'bedding',
     label: 'Bedding',
-    mapping: fieldConfig['bedding'].options
+    mapping: fieldsConfig['bedding'].options
   },
   {
     property: 'volunteer',
     label: 'Volunteering',
-    mapping: fieldConfig['volunteer'].options
+    mapping: fieldsConfig['volunteer'].options
   },
   {
     property: 'housing',
@@ -81,5 +81,4 @@ const ORDER_SUMMARY_OPTIONS = [
   }
 ];
 
-const config = { ORDER_SUMMARY_OPTIONS };
-export default config;
+export default { orderSummaryOptions };

@@ -1,11 +1,11 @@
 import { createTheme } from '@mui/material';
 import { responsiveFontSizes } from '@mui/material/styles';
 import { cyan, green, yellow } from '@mui/material/colors';
-import config from 'config/configTheme';
+import configTheme from 'config/configTheme';
 import type { SxProps, Theme } from '@mui/material';
 import type { ThemePalette, Palettes } from 'types/theme';
 
-const { PALETTE }: { PALETTE: keyof Palettes } = config;
+const { palette }: { palette: keyof Palettes } = configTheme;
 
 const palettes: Palettes = {
   default: {
@@ -54,8 +54,8 @@ const createCustomTheme = ({ mode, palette }: CustomThemeOptions) => {
   return responsiveFontSizes(theme);
 };
 
-const lightTheme = createCustomTheme({ mode: 'light', palette: palettes[PALETTE] });
-const darkTheme = createCustomTheme({ mode: 'dark', palette: palettes[PALETTE] });
+const lightTheme = createCustomTheme({ mode: 'light', palette: palettes[palette] });
+const darkTheme = createCustomTheme({ mode: 'dark', palette: palettes[palette] });
 
 // const rootStyle = (theme: Theme) => ({
 //   width: 'auto',

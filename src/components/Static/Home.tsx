@@ -3,7 +3,6 @@ import { Typography, Box } from '@mui/material';
 import { StyledLink, StyledPaper, PageTitle, SectionDivider, Paragraph } from 'components/layouts/SharedStyles';
 import { CalendarLinks } from 'components/CalendarLinks';
 import { config } from 'config';
-const { EVENT_TITLE, EVENT_LOCATION, EVENT_DATE, WAITLIST_MODE, SHOW_WAIVER } = config;
 
 export const Home = () => {
   const theme = useTheme();
@@ -11,18 +10,18 @@ export const Home = () => {
   return (
     <StyledPaper extraStyles={{ maxWidth: 750, textAlign: 'center' }}>
       <PageTitle>
-        {EVENT_TITLE}<br />
-        {EVENT_LOCATION}<br />
-        {EVENT_DATE}
+        {config.event.title}<br />
+        {config.event.location}<br />
+        {config.event.date}
       </PageTitle>
 
       <Box mt={-5} mb={4}>
         <img src={'/some_event/dancer.jpg'} alt='' style={{ width: "100%", height: "auto" }} />
       </Box>
 
-      {WAITLIST_MODE &&
+      {config.registration.waitlistMode &&
         <Box sx={{ my: 4, p: 2, backgroundColor: theme.palette.background.sticky, display: 'flex', justifyContent: 'center', alignItems: 'center'  }}>
-          <strong>{EVENT_TITLE} is full. Sign up for the waitlist below.</strong>
+          <strong>{config.event.title} is full. Sign up for the waitlist below.</strong>
         </Box>
       }
 
@@ -54,7 +53,7 @@ export const Home = () => {
         See <StyledLink internal={true} to='/about#covid'>here</StyledLink> for the full Covid policy.<br />
       </Paragraph>
 
-      {SHOW_WAIVER &&
+      {config.registration.showWaiver &&
         <Paragraph>
           You will need to sign a <StyledLink to={'/supersonic/supersonic-waiver.pdf'}>waiver</StyledLink> electronically <em>as part of the registration process</em>.
         </Paragraph>

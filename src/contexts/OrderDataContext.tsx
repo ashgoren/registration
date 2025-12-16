@@ -4,8 +4,6 @@ import { config } from 'config';
 import type { ReactNode } from 'react';
 import type { Order } from 'types/order';
 
-const { getOrderDefaults } = config;
-
 type OrderAction = { type: 'UPDATE_ORDER'; payload: Partial<Order> } | { type: 'RESET_ORDER' };
 
 type OrderDataContextType = {
@@ -24,12 +22,12 @@ function orderReducer(state: Order, action: OrderAction) {
     case 'UPDATE_ORDER':
       return { ...state, ...action.payload };
     case 'RESET_ORDER':
-      return getOrderDefaults();
+      return config.fields.getOrderDefaults();
   }
 }
 
 export const OrderDataProvider = ({ children }: { children: ReactNode }) => {
-  const initialOrderState = cached('order') || getOrderDefaults();
+  const initialOrderState = cached('order') || config.fields.getOrderDefaults();
   const [order, dispatch] = useReducer(orderReducer, initialOrderState);
   const [orderId, setOrderId] = useState<string | null>(cached('orderId') || null);
   const [receipt, setReceipt] = useState<string | null>(cached('receipt') || null);

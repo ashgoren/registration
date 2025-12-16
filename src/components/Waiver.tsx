@@ -12,8 +12,6 @@ import { config } from 'config';
 import { logDebug } from 'src/logger';
 import type { Person } from 'types/order';
 
-const { TECH_CONTACT, EVENT_TITLE } = config;
-
 export const WaiverWrapper = () => {
   const { order, updateOrder } = useOrderData();
   const { error, setError } = useOrderFlow();
@@ -46,7 +44,7 @@ export const WaiverWrapper = () => {
       setWaiverSlug(response.slug);
     } catch (error) {
        console.error('Error creating waiver submission:', error);
-      setError(`There was an error preparing your waiver: ${(error as Error).message}. Please email ${TECH_CONTACT} for assistance.`);
+      setError(`There was an error preparing your waiver: ${(error as Error).message}. Please email ${config.contacts.tech} for assistance.`);
       setSelectedPersonIndex(undefined);
     } finally {
       setIsCreatingWaiver(false);
@@ -67,7 +65,7 @@ export const WaiverWrapper = () => {
 
   return (
     <>
-      <Header titleText={EVENT_TITLE}>
+      <Header titleText={config.event.title}>
         <Typography variant='h6' align='center'>Waiver</Typography>
       </Header>
 

@@ -4,8 +4,6 @@ import { config } from 'config';
 import type { ReactNode } from 'react';
 import type { PaymentMethod, ElectronicPaymentDetails } from 'types/payment';
 
-const { PAYMENT_METHODS, WAITLIST_MODE } = config;
-
 type OrderPaymentContextType = {
   paymentMethod: PaymentMethod;
   setPaymentMethod: (method: PaymentMethod) => void;
@@ -18,7 +16,7 @@ type OrderPaymentContextType = {
 const OrderPaymentContext = createContext<OrderPaymentContextType | null>(null);
 
 export const OrderPaymentProvider = ({ children }: { children: ReactNode }) => {
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(WAITLIST_MODE ? 'waitlist' : PAYMENT_METHODS[0] as PaymentMethod);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(config.registration.waitlistMode ? 'waitlist' : config.payments.methods[0] as PaymentMethod);
   const [amountToCharge, setAmountToCharge] = useState<number | null>(null);
   const [electronicPaymentDetails, setElectronicPaymentDetails] = useState<ElectronicPaymentDetails>(cached('electronicPaymentDetails') || { id: null, clientSecret: null });
 

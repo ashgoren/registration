@@ -10,8 +10,6 @@ import { OrderSummary, PersonSummary } from 'components/OrderSummary';
 import { config } from 'config';
 import type { Order, Person } from 'types/order';
 
-const { SHOW_CHECK_ADDRESS, CHECK_TO, CHECK_ADDRESS, EVENT_TITLE, PAYMENT_DUE_DATE, DIRECT_PAYMENT_URL } = config;
-
 // relies on passing order as prop to ensure is updated
 export const Receipt = ({ order, paymentMethod, person, isPurchaser }: {
   order: Order;
@@ -26,24 +24,24 @@ export const Receipt = ({ order, paymentMethod, person, isPurchaser }: {
     template = waitlistTemplate;
     data = {
       FIRST_NAME: person!.first,
-      EVENT_TITLE,
+      EVENT_TITLE: config.event.title
     };
   } else {
     template = isPurchaser ? purchaserTemplate : additionalPersonTemplate;
     data = {
       FIRST_NAME: order.people[0].first,
-      EVENT_TITLE,
+      EVENT_TITLE: config.event.title,
       IS_CHECK_PAYMENT: paymentMethod === 'check',
       IS_ELECTRONIC_PAYMENT: paymentMethod !== 'check',
       IS_DEPOSIT: order.deposit > 0,
       AMOUNT_PAID: formatCurrency(order.charged!),
       DEPOSIT_TOTAL: order.deposit,
       ORDER_TOTAL: formatCurrency(order.total!),
-      SHOW_CHECK_ADDRESS,
-      CHECK_TO,
-      CHECK_ADDRESS: CHECK_ADDRESS?.join(', '),
-      PAYMENT_DUE_DATE,
-      DIRECT_PAYMENT_URL
+      SHOW_CHECK_ADDRESS: config.payments.checks.showPostalAddress,
+      CHECK_TO: config.payments.checks.payee,
+      CHECK_ADDRESS: config.payments.checks.address?.join(', '),
+      PAYMENT_DUE_DATE: config.payments.paymentDueDate,
+      DIRECT_PAYMENT_URL: config.payments.directPaymentUrl
     };
   }
 

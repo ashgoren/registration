@@ -12,7 +12,6 @@ import { useOrderFinalization } from 'hooks/useOrderFinalization';
 import { usePageNavigation } from 'hooks/usePageNavigation';
 import { logDebug } from 'src/logger';
 import { config } from 'config';
-const { SANDBOX_MODE, TECH_CONTACT } = config;
 
 export const PaypalCheckout = ({ setPaying }: {
 	setPaying: (paying: boolean) => void;
@@ -38,7 +37,7 @@ export const PaypalCheckout = ({ setPaying }: {
 	const onError = (error: unknown) => {
 		logInfo('PayPal onError', { email: order.people[0].email, error });
 		setPaying(false);
-		setError(`PayPal encountered an error: ${error}. Please try again or contact ${TECH_CONTACT}.`);
+		setError(`PayPal encountered an error: ${error}. Please try again or contact ${config.contacts.tech}.`);
 	};
 
 	// when user submits payment details
@@ -60,7 +59,7 @@ export const PaypalCheckout = ({ setPaying }: {
 				<>
 					We're sorry, but we experienced an issue saving your order.<br />
 					You were not charged.<br />
-					Please try again or contact {TECH_CONTACT} for assistance.<br />
+					Please try again or contact {config.contacts.tech} for assistance.<br />
 					Error: {code} {message || error}
 				</>
 			);
@@ -82,7 +81,7 @@ export const PaypalCheckout = ({ setPaying }: {
 			setError(
 				<>
 					We're sorry, but we experienced an issue processing your payment.<br />
-					Please try again or contact {TECH_CONTACT} for assistance.<br />
+					Please try again or contact {config.contacts.tech} for assistance.<br />
 					Error: {code} {message || error}
 				</>
 			);
@@ -100,7 +99,7 @@ export const PaypalCheckout = ({ setPaying }: {
 			const { code, message } = error as { code?: string; message?: string };
 			setError(
 				<>
-					Your payment was processed successfully. However, we encountered an error updating your registration. Please contact {TECH_CONTACT}.
+					Your payment was processed successfully. However, we encountered an error updating your registration. Please contact {config.contacts.tech}.
 					<br />
 					Error: {code} {message || error}
 				</>
@@ -120,7 +119,7 @@ export const PaypalCheckout = ({ setPaying }: {
 			}
 			{isResolved && id && (
 				<Box sx={ processing ? { display: 'none' } : {} }>
-					{SANDBOX_MODE && !processing &&
+					{config.sandboxMode && !processing &&
 						<TestCardBox number={4012000077777777} />
 					}
 					<PayPalButtons className={processing ? 'd-none' : ''}

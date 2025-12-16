@@ -1,4 +1,4 @@
-import type { AgeGroup } from 'config/configTieredPricing';
+import type { AgeGroup } from './tieredPricing';
 
 export type Person = {
   email: string;

@@ -2,7 +2,6 @@ import { Box, List, ListItem } from '@mui/material';
 import { StyledLink, StyledPaper, PageTitle, Paragraph, Header } from 'components/layouts/SharedStyles';
 import { mailtoLink } from 'utils/misc';
 import { config } from 'config';
-const { EMAIL_CONTACT, HOUSING_CONTACT, SHOW_WAIVER } = config;
 
 export const About = () => {
   return (
@@ -43,7 +42,7 @@ export const About = () => {
         Full refunds will be given minus any transaction fees incurred. 
       </Paragraph>
 
-      {SHOW_WAIVER && (
+      {config.registration.showWaiver && (
         <>
           <Header id='waiver'>
             Waiver
@@ -59,7 +58,7 @@ export const About = () => {
       </Header>
       <Paragraph>
         Registration is not transferable. 
-        Please contact <StyledLink to={mailtoLink(EMAIL_CONTACT)}>{EMAIL_CONTACT}</StyledLink> if you need to cancel. 
+        Please contact <StyledLink to={mailtoLink(config.contacts.info)}>{config.contacts.info}</StyledLink> if you need to cancel. 
         Cancellations will be issued in full minus any bank/Stripe transaction fees incurred. Refunds may take up to 7 days to process.
       </Paragraph>
 
@@ -74,7 +73,7 @@ export const About = () => {
       </Header>
       <Paragraph>This dance weekend is in Seattle. We will do our best to find housing for out-of-town guests. Please remember that we are all volunteers, so adjust expectations accordingly. If you have attended other dance weekends in Seattle, you are strongly encouraged to make your own arrangements with friends you have stayed with before.</Paragraph>
       <Paragraph>Do you need housing or can you offer housing to visiting dancers? Please be sure to include this as a part of your some_event registration.</Paragraph>
-      <Paragraph>If you have any other questions about housing or hosting guests, please email Kristin at <StyledLink to={mailtoLink(HOUSING_CONTACT)}>{HOUSING_CONTACT}</StyledLink>.</Paragraph>
+      <Paragraph>If you have any other questions about housing or hosting guests, please email Kristin at <StyledLink to={mailtoLink(config.contacts.housing)}>{config.contacts.housing}</StyledLink>.</Paragraph>
     </StyledPaper>
   );
 };

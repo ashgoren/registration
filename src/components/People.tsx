@@ -17,8 +17,6 @@ import { config } from 'config';
 import type { Order, Person } from 'types/order';
 import type { FormikProps } from 'formik';
 
-const { ADMISSION_QUANTITY_MAX, PERSON_DEFAULTS, EVENT_TITLE, WAITLIST_MODE } = config;
-
 export const People = () => {
   // logDebug('People rendered');
 
@@ -42,7 +40,7 @@ export const People = () => {
         useBlocker(editIndex !== null && dirty);
 
         const handleAddNew = () => {
-          const people = [...values.people, PERSON_DEFAULTS];
+          const people = [...values.people, config.fields.personDefaults];
           setEditIndex(order.people.length);
           setFieldValue('people', people); // update formik field array
           setIsNewPerson(true);
@@ -59,7 +57,7 @@ export const People = () => {
             if (personIndex === 0 && people.length > 0) {
               people[0].agreement = ['yes'];
             } else if (people.length === 0) {
-              people.push(PERSON_DEFAULTS);
+              people.push(config.fields.personDefaults);
               setEditIndex(0);
               resetForm({ values: order });
             }
@@ -70,8 +68,8 @@ export const People = () => {
 
         return (
           <>
-            <Header titleText={EVENT_TITLE}>
-              {WAITLIST_MODE && <WaitlistNote />}
+            <Header titleText={config.event.title}>
+              {config.registration.waitlistMode && <WaitlistNote />}
               <IntroHeader />
             </Header>
 
@@ -79,7 +77,7 @@ export const People = () => {
               {(order.people.length > 1 || order.people[0].email || editIndex === null) &&
                 <StyledPaper>
                   <Paragraph sx={{ mb: 4 }}>
-                    Please review your information. {order.people.length < ADMISSION_QUANTITY_MAX && 'You may also register an additional person below.'}
+                    Please review your information. {order.people.length < config.registration.admissionQuantityMax && 'You may also register an additional person below.'}
                   </Paragraph>
                   {order.people.map((person, index) => (
                     <Box key={index}>
@@ -94,7 +92,7 @@ export const People = () => {
                     </Box>
                   ))}
 
-                  { editIndex === null && order.people.length < ADMISSION_QUANTITY_MAX &&
+                  { editIndex === null && order.people.length < config.registration.admissionQuantityMax &&
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
                       <div />
                       <Button onClick={handleAddNew} variant='text' color='warning'>Add another person</Button>

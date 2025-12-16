@@ -1,9 +1,7 @@
-import { config } from 'config';
-const { EARLYBIRD_CUTOFF } = config;
+import configBasics from 'config/internal/configBasics';
+import type { AgeGroup } from 'types/tieredPricing';
 
-export type AgeGroup = '0-2' | '3-5' | '6-12' | '13-17' | 'adult';
-
-export type PricingOption = {
+type PricingOption = {
   early: number;
   later: number;
   category?: string;
@@ -14,7 +12,7 @@ type TieredPricingEntry = {
   options: PricingOption[];
 };
 
-export const TIERED_PRICING_MAP: Record<AgeGroup, TieredPricingEntry> = {
+const tieredPricingMap: Record<AgeGroup, TieredPricingEntry> = {
   '0-2': {
     ageLabel: '0-2 yr old',
     options: [
@@ -50,24 +48,30 @@ export const TIERED_PRICING_MAP: Record<AgeGroup, TieredPricingEntry> = {
   },
 } as const;
 
-const getTier = () => new Date() <= EARLYBIRD_CUTOFF ? 'early' : 'later';
+const getTier = () => new Date() <= configBasics.admissions.earlybirdCutoff ? 'early' : 'later';
 
-export const getDefaultAdmission = (person: { age: AgeGroup }) => {
-  if (!person.age || !TIERED_PRICING_MAP[person.age]) {
+const getDefaultAdmission = (person: { age: AgeGroup }) => {
+  if (!person.age || !tieredPricingMap[person.age]) {
     throw new Error(`Invalid age group: ${person.age}`);
   }
   const tier = getTier();
-  const admissionOptions = TIERED_PRICING_MAP[person.age].options;
+  const admissionOptions = tieredPricingMap[person.age].options;
   const admissionOption = admissionOptions.find(option => option.category === 'Sustaining') || admissionOptions[0];
   return admissionOption[tier];
 };
 
-export const getCategoryLabel = (person: { age: AgeGroup }) => TIERED_PRICING_MAP[person.age].ageLabel;
+const getCategoryLabel = (person: { age: AgeGroup }) => tieredPricingMap[person.age].ageLabel;
 
-export const getOptions = (person: { age: AgeGroup }) => {
+const getOptions = (person: { age: AgeGroup }) => {
   const tier = getTier();
-  return TIERED_PRICING_MAP[person.age].options.map(option => ({
+  return tieredPricingMap[person.age].options.map(option => ({
     label: option.category ? `${option.category} - $${option[tier]}` : `$${option[tier]}`,
     value: option[tier]
   }));
+};
+
+export default {
+  getDefaultAdmission,
+  getCategoryLabel,
+  getOptions
 };

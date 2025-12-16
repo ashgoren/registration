@@ -2,24 +2,24 @@ import type { Palettes } from 'types/theme';
 // import { green } from '@mui/material/colors';
 
 // set MUI theme palette
-const PALETTE: keyof Palettes = 'default'; // options defined in LayoutStyles.js
+const palette: keyof Palettes = 'default'; // options defined in LayoutStyles.js
 
 // navbar color for light mode
-const NAVBAR_COLOR: 'default' | 'primary' | 'secondary' = 'default';
+const navbarColor: 'default' | 'primary' | 'secondary' = 'default';
 
-// apply a variant of NAVBAR_COLOR to dark mode navbar as well
-const NAVBAR_COLOR_DARK: true | false = false; // if false, dark mode navbar will be dark grey
+// apply a variant of navbarColor to dark mode navbar as well
+const navbarColorDark: true | false = false; // if false, dark mode navbar will be dark grey
 
 // force navbar background color for both light and dark mode
-// overrides NAVBAR_COLOR & NAVBAR_COLOR_DARK
-const NAVBAR_BACKGROUND_OVERRIDE = false; // MUI or CSS color - e.g. green[900] or '#333' (or false to disable)
+// overrides navbarColor & navbarColorDark
+const navbarBackgroundOverride: string | false = false; // MUI or CSS color - e.g. green[900] or '#333' (or false to disable)
 
 const config = {
-  PALETTE,
-  // ...NAVBAR_BACKGROUND_OVERRIDE ? { NAVBAR_BACKGROUND_OVERRIDE } : { NAVBAR_COLOR, NAVBAR_COLOR_DARK }
-  NAVBAR_COLOR: NAVBAR_BACKGROUND_OVERRIDE ? undefined : NAVBAR_COLOR,
-  NAVBAR_COLOR_DARK: NAVBAR_BACKGROUND_OVERRIDE ? undefined : NAVBAR_COLOR_DARK,
-  NAVBAR_BACKGROUND_OVERRIDE: NAVBAR_BACKGROUND_OVERRIDE || undefined,
+  palette,
+  // ...navbarBackgroundOverride ? { navbarBackgroundOverride } : { navbarColor, navbarColorDark }
+  navbarColor: navbarBackgroundOverride ? undefined : navbarColor,
+  navbarColorDark: navbarBackgroundOverride ? undefined : navbarColorDark,
+  navbarBackgroundOverride: navbarBackgroundOverride || undefined,
 };
 
 export default config;

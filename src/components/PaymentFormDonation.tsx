@@ -7,7 +7,6 @@ import { clamp } from 'utils/misc';
 import { config } from 'config';
 import type { FocusEvent } from 'react';
 import { Order } from 'types/order';
-const { DONATION_MAX } = config;
 
 export const PaymentFormDonation = ({ donationAmount }: { donationAmount: number }) => {
   const { values, setFieldValue, handleBlur } = useFormikContext<Order>();
@@ -42,7 +41,7 @@ export const PaymentFormDonation = ({ donationAmount }: { donationAmount: number
           name='donation'
           type='pattern'
           pattern='###'
-          range={[0, DONATION_MAX]}
+          range={[0, config.payments.donation.max || 0]}
           onBlur={updateDonationValue}
           InputProps={{
             startAdornment: <InputAdornment position='start'>$</InputAdornment>,
@@ -56,4 +55,4 @@ export const PaymentFormDonation = ({ donationAmount }: { donationAmount: number
   )
 };
 
-const clampDonation = (value: number) => clamp(value || 0, [0, DONATION_MAX]);
+const clampDonation = (value: number) => clamp(value || 0, [0, config.payments.donation.max || 0]);

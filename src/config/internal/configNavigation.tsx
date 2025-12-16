@@ -1,27 +1,28 @@
-import config from 'config/internal/configBasics';
+import configEvent from 'config/configEvent';
 
-const { WAITLIST_MODE, SHOW_WAIVER } = config;
+const { registration } = configEvent;
+const { showWaiver, waitlistMode } = registration;
 
-const PAYMENT_PAGES = [
+const paymentPages = [
   { key: 'people', label: 'Info', skip: false, showInStepper: true, validate: true },
-  { key: 'waiver', label: 'Waiver', skip: !SHOW_WAIVER, showInStepper: SHOW_WAIVER, validate: SHOW_WAIVER },
+  { key: 'waiver', label: 'Waiver', skip: !showWaiver, showInStepper: showWaiver, validate: showWaiver },
   { key: 'payment', label: 'Payment', skip: false, showInStepper: true, validate: true },
   { key: 'checkout', label: 'Checkout', skip: false, showInStepper: true, validate: false },
   { key: 'confirmation', label: 'Confirmation', skip: false, showInStepper: false, validate: false }
 ] as const;
 
-const WAITLIST_PAGES = [
+const waitlistPages = [
   { key: 'people', label: 'Info', skip: false, showInStepper: true, validate: true },
-  { key: 'waiver', label: 'Waiver', skip: !SHOW_WAIVER, showInStepper: SHOW_WAIVER, validate: SHOW_WAIVER },
+  { key: 'waiver', label: 'Waiver', skip: !showWaiver, showInStepper: showWaiver, validate: showWaiver },
   { key: 'waitlist', label: 'Waitlist', skip: false, showInStepper: true, validate: true }
 ] as const;
 
-const PAGES = (WAITLIST_MODE ? WAITLIST_PAGES : PAYMENT_PAGES).filter(page => !page.skip);
-const STEPPER_PAGES = PAGES.filter(page => page.showInStepper);
-const VALIDATION_PAGES = PAGES.filter(page => page.validate);
+const pages = (waitlistMode ? waitlistPages : paymentPages).filter(page => !page.skip);
+const stepperPages = pages.filter(page => page.showInStepper);
+const validationPages = pages.filter(page => page.validate);
 
 export default {
-  PAGES,
-  STEPPER_PAGES,
-  VALIDATION_PAGES
-}
+  pages,
+  stepperPages,
+  validationPages
+};

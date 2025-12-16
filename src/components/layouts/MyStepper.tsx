@@ -6,21 +6,21 @@ import { usePageNavigation } from 'hooks/usePageNavigation';
 import { config } from 'config';
 import type { NavButtonsProps } from 'components/layouts/NavButtons';
 
-const { STEPPER_PAGES } = config;
+const { stepperPages } = config.navigation;
 
 export const MyStepper = () => {
   const { currentPage } = usePageNavigation();
 
   return (
     <Stepper
-      activeStep={STEPPER_PAGES.findIndex(step => step.key === currentPage)}
+      activeStep={stepperPages.findIndex(step => step.key === currentPage)}
       sx={{
         my: 5,
         '& .MuiStepLabel-root .Mui-active': { color: 'secondary.main' },
         '& .MuiStepLabel-root .Mui-completed': { color: 'secondary.main' }
       }}
     >
-      {STEPPER_PAGES.map(({ label }) => (
+      {stepperPages.map(({ label }) => (
         <Step key={label}>
           <StepLabel>{label}</StepLabel>
         </Step>
@@ -41,9 +41,9 @@ export const MyMobileStepper = ({ back, next }: NavButtonsProps) => {
           '& .MuiMobileStepper-dotActive': { bgcolor: 'secondary.main' }
         }}
         variant='dots'
-        steps={STEPPER_PAGES.length}
+        steps={stepperPages.length}
         position='static'
-        activeStep={STEPPER_PAGES.findIndex(step => step.key === currentPage)}
+        activeStep={stepperPages.findIndex(step => step.key === currentPage)}
         backButton={back ?
           <Button
             type='button'
