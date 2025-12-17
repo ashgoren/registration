@@ -7,7 +7,12 @@
         "node_modules",
         ".git",
         "firebase-debug.log",
-        "firebase-debug.*.log"
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "npm --prefix \"$RESOURCE_DIR\" run build"
       ]
     }
   ],
@@ -27,17 +32,21 @@
     "headers": [
       {
         "source": "**",
-        "headers": [{
-          "key": "Cache-Control",
-          "value": "no-cache, no-store, must-revalidate"
-        }]
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          }
+        ]
       },
       {
         "source": "**/*.@(js|css)",
-        "headers": [{
-          "key": "Cache-Control",
-          "value": "public, max-age=3600"
-        }]
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=3600"
+          }
+        ]
       }
     ]
   },
