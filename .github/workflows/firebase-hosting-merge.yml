@@ -62,7 +62,7 @@ jobs:
 
       - name: Install Firebase Function Dependencies
         run: npm install
-        working-directory: ./functions
+        working-directory: ./packages/functions
 
       - name: Deploy Firebase Functions
         uses: w9jds/firebase-action@master
