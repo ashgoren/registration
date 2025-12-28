@@ -1,5 +1,5 @@
 import configBasics from 'config/internal/configBasics';
-import type { AgeGroup } from 'types/tieredPricing';
+import type { AgeGroup } from '@registration/types';
 
 type PricingOption = {
   early: number;

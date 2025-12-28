@@ -1,4 +1,4 @@
-import type { Palettes } from 'types/theme';
+import type { Palettes } from '@registration/types';
 // import { green } from '@mui/material/colors';
 
 // set MUI theme palette

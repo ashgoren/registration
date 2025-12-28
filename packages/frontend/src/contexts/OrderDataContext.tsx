@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useReducer, useEffect, useCallback
 import { cache, cached } from 'utils/misc';
 import { config } from 'config';
 import type { ReactNode } from 'react';
-import type { Order } from 'types/order';
+import type { Order } from '@registration/types';
 
 type OrderAction = { type: 'UPDATE_ORDER'; payload: Partial<Order> } | { type: 'RESET_ORDER' };
 

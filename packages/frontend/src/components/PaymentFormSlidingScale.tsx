@@ -5,7 +5,7 @@ import { Field } from 'components/inputs';
 import { clamp } from 'utils/misc';
 import { config } from 'config';
 import type { FocusEvent } from 'react';
-import type { Person } from 'types/order';
+import type { Person } from '@registration/types';
 
 export const PaymentFormSlidingScale = ({ people }: { people: Person[] }) => {
   const { setFieldValue, handleBlur } = useFormikContext();

@@ -14,6 +14,7 @@
     "lint": "npm run lint -w @registration/frontend",
     "test": "npm run test -w @registration/frontend",
     "test:coverage": "npm run test:coverage -w @registration/frontend",
+    "tsc": "npm run tsc -w @registration/frontend",
 
     "//2": "Functions",
     "emulator": "node ./scripts/start-emulator.js",

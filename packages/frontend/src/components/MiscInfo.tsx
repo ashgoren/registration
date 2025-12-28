@@ -7,7 +7,7 @@ import { Field } from 'components/inputs';
 import { logDebug } from 'src/logger';
 import { config } from 'config';
 import type { ChangeEvent, } from 'react';
-import type { Order } from 'types/order';
+import type { Order } from '@registration/types';
 import type { CustomFieldProps } from 'components/inputs/Field';
 
 export const MiscInfo = ({ index }: { index: number }) => {

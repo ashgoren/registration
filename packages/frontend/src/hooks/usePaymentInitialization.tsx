@@ -4,7 +4,7 @@ import * as api from 'src/firebase';
 import { useOrderData } from 'contexts/OrderDataContext';
 import { useOrderPayment } from 'contexts/OrderPaymentContext';
 import { config } from 'config';
-import type { PaymentMethod, ElectronicPaymentMethod } from 'types/payment';
+import type { PaymentMethod, ElectronicPaymentMethod } from '@registration/types';
 import type { FirebaseFunctionReturn } from 'src/firebase';
 
 export const usePaymentInitialization = () => {

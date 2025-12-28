@@ -1,7 +1,7 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFunctions, connectFunctionsEmulator, httpsCallable } from 'firebase/functions';
-import type { Order } from 'types/order';
-import type { ElectronicPaymentMethod } from 'types/payment';
+import type { Order } from '@registration/types';
+import type { ElectronicPaymentMethod } from '@registration/types';
 
 const useFirebaseEmulator = import.meta.env.DEV;
 

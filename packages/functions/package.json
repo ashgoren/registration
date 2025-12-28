@@ -1,4 +1,4 @@
-{
+  {
   "name": "@registration/functions",
   "description": "Cloud Functions for Firebase",
   "scripts": {
@@ -25,6 +25,7 @@
     "stripe": "^15.12.0"
   },
   "devDependencies": {
+    "@registration/types": "*",
     "@google-cloud/pubsub": "^5.1.0",
     "eslint": "^9.37.0",
     "typescript-eslint": "^8.50.0",

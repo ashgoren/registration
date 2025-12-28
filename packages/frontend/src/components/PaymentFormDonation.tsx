@@ -6,7 +6,7 @@ import { Field } from 'components/inputs';
 import { clamp } from 'utils/misc';
 import { config } from 'config';
 import type { FocusEvent } from 'react';
-import { Order } from 'types/order';
+import { Order } from '@registration/types';
 
 export const PaymentFormDonation = ({ donationAmount }: { donationAmount: number }) => {
   const { values, setFieldValue, handleBlur } = useFormikContext<Order>();

@@ -4,7 +4,7 @@ import { Paragraph } from 'components/layouts/SharedStyles';
 import { SelectInput } from 'components/inputs';
 import { config } from 'config';
 import type { SelectChangeEvent } from '@mui/material';
-import type { Person } from 'types/order';
+import type { Person } from '@registration/types';
 
 export const PaymentFormOptions = ({ people }: { people: Person[] }) => {
   const { setFieldValue, handleChange } = useFormikContext();

@@ -18,7 +18,7 @@ import { PaymentFormFees } from './PaymentFormFees';
 import { PaymentFormTotal } from './PaymentFormTotal';
 import { PaymentFormFullPayment } from './PaymentFormFullPayment';
 import { config } from 'config';
-import type { Order } from 'types/order';
+import type { Order } from '@registration/types';
 import type { FormikProps } from 'formik';
 
 export const PaymentForm = () => {

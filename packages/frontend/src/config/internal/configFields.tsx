@@ -1,7 +1,7 @@
 import { fieldsConfig } from '../configFields';
 import configEvent from '../configEvent.tsx';
 import configEnv from './configEnv';
-import type { Order, Person } from 'types/order';
+import type { Order, Person } from '@registration/types';
 
 const contactFields = configEvent.registration.fields.contact;
 const miscFields = configEvent.registration.fields.misc;

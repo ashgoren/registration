@@ -2,7 +2,7 @@ import { PaymentFormSlidingScale } from './PaymentFormSlidingScale';
 import { PaymentFormFixedCost } from './PaymentFormFixedCost';
 import { PaymentFormOptions } from './PaymentFormOptions';
 import { config } from 'config';
-import type { Order } from 'types/order';
+import type { Order } from '@registration/types';
 
 export const PaymentFormFullPayment = ({ order }: { order: Order }) => {
   if (config.admissions.mode === 'fixed') {

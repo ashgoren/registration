@@ -2,7 +2,7 @@ import { useFormikContext } from 'formik';
 import { Checkbox, FormControlLabel } from '@mui/material';
 import { StyledPaper } from 'components/layouts/SharedStyles';
 import { formatCurrency } from 'utils/misc';
-import type { Order } from 'types/order';
+import type { Order } from '@registration/types';
 
 export const PaymentFormFees = ({ fees, coverFees, setCoverFees }:
   { fees: number; coverFees: boolean; setCoverFees: (value: boolean) => void }

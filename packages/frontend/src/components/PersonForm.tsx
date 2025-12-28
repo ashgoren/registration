@@ -6,9 +6,9 @@ import { ContactInfo } from './ContactInfo';
 import { MiscInfo } from './MiscInfo';
 import { logInfo, logDebug } from 'src/logger';
 import { config } from 'config';
-import type { Order } from 'types/order';
+import type { Order } from '@registration/types';
 import type { FormikTouched } from 'formik';
-import type { AgeGroup } from 'types/tieredPricing';
+import type { AgeGroup } from '@registration/types';
 
 export const PersonForm = ({ editIndex, setEditIndex, isNewPerson, setIsNewPerson }: {
   editIndex: number;

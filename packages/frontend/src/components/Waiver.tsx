@@ -10,7 +10,7 @@ import { useOrderFlow } from 'contexts/OrderFlowContext';
 import { usePageNavigation } from 'hooks/usePageNavigation';
 import { config } from 'config';
 import { logDebug } from 'src/logger';
-import type { Person } from 'types/order';
+import type { Person } from '@registration/types';
 
 export const WaiverWrapper = () => {
   const { order, updateOrder } = useOrderData();

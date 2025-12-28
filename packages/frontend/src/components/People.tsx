@@ -14,7 +14,7 @@ import { WaitlistNote } from 'components/WaitlistNote';
 import { Header, NavButtons } from 'components/layouts';
 import { IntroHeader } from 'components/IntroHeader';
 import { config } from 'config';
-import type { Order, Person } from 'types/order';
+import type { Order, Person } from '@registration/types';
 import type { FormikProps } from 'formik';
 
 export const People = () => {

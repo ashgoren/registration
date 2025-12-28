@@ -1,5 +1,5 @@
 import { logInfo, logError } from 'src/logger';
-import type { Order } from 'types/order';
+import type { Order } from '@registration/types';
 import type { useElements, useStripe } from '@stripe/react-stripe-js';
 import type { PaymentIntent, StripeError } from '@stripe/stripe-js';
 

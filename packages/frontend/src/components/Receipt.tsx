@@ -8,7 +8,7 @@ import { renderMarkdownTemplate, formatCurrency } from 'utils/misc';
 import { useScrollToTop } from 'hooks/useScrollToTop';
 import { OrderSummary, PersonSummary } from 'components/OrderSummary';
 import { config } from 'config';
-import type { Order, Person } from 'types/order';
+import type { Order, Person } from '@registration/types';
 
 // relies on passing order as prop to ensure is updated
 export const Receipt = ({ order, paymentMethod, person, isPurchaser }: {

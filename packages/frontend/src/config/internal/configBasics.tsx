@@ -1,6 +1,6 @@
 import { fromZonedTime } from 'date-fns-tz';
 import configEvent from '../configEvent';
-import type { PaymentMethod, AdmissionMode } from 'types/payment';
+import type { PaymentMethod, AdmissionMode } from '@registration/types';
 
 const { productionMode, event, staticPages, registration, nametags, admissions, payments, contacts, links, calendar } = configEvent;
 

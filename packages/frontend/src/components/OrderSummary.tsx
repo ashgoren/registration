@@ -7,7 +7,7 @@
 import { Box, Typography } from '@mui/material';
 import { formatCurrency } from 'utils/misc';
 import { config } from 'config';
-import type { Order, Person } from 'types/order';
+import type { Order, Person } from '@registration/types';
 
 export const OrderSummary = ({ order }: { order: Order }) => {
   const admissions = order.people.map(person => person.admission);

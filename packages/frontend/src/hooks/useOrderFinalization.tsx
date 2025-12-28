@@ -5,7 +5,7 @@ import * as api from 'src/firebase';
 import { useOrderData } from 'contexts/OrderDataContext';
 import { useOrderPayment } from 'contexts/OrderPaymentContext';
 import { Receipt } from 'components/Receipt';
-import type { Order } from 'types/order';
+import type { Order } from '@registration/types';
 
 export const useOrderFinalization = () => {
   const { order, setReceipt } = useOrderData();

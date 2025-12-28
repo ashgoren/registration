@@ -3,7 +3,7 @@ import { responsiveFontSizes } from '@mui/material/styles';
 import { cyan, green, yellow } from '@mui/material/colors';
 import configTheme from 'config/configTheme';
 import type { SxProps, Theme } from '@mui/material';
-import type { ThemePalette, Palettes } from 'types/theme';
+import type { ThemePalette, Palettes } from '@registration/types';
 
 const { palette }: { palette: keyof Palettes } = configTheme;
 

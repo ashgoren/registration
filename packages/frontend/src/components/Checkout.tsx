@@ -16,7 +16,7 @@ import { PaypalCheckout } from 'components/PaypalCheckout';
 import { OrderSummary } from 'components/OrderSummary';
 import { Check } from 'components/Check';
 import { config } from 'config';
-import type { Order } from 'types/order';
+import type { Order } from '@registration/types';
 
 export const Checkout = () => {
   // logDebug('RENDER Checkout');

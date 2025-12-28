@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { logInfo, logError } from 'src/logger';
 import * as api from 'src/firebase';
-import type { Order } from 'types/order';
+import type { Order } from '@registration/types';
 
 export const usePaypalPayment = ({ order, id }: {
   order: Order;

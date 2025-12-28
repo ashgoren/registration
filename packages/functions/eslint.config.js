@@ -15,7 +15,6 @@ export default [
       '@typescript-eslint': tseslint,
     },
     rules: {
-      'quotes': ['error', 'double'],
       'indent': ['error', 2],
       ...tseslint.configs.recommended.rules,
     },

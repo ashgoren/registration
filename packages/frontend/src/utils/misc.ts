@@ -3,8 +3,8 @@ import MarkdownIt from 'markdown-it';
 import Handlebars from 'handlebars';
 import { STATE_OPTIONS } from 'config/internal/constants.js';
 import type { FormikErrors } from 'formik';
-import type { Order, Person } from 'types/order';
-import type { ElectronicPaymentDetails } from 'types/payment';
+import type { Order, Person } from '@registration/types';
+import type { ElectronicPaymentDetails } from '@registration/types';
 
 export const clamp = (value: string | number, range: [number, number]) =>
   Math.min(Math.max(Number(value), range[0]), range[1]);

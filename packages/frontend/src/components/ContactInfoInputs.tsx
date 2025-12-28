@@ -4,7 +4,7 @@ import { Grid, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
 import { Field } from 'components/inputs';
 import { config } from 'config';
 // import { logDebug } from 'src/logger';
-import type { Order, Person } from 'types/order';
+import type { Order, Person } from '@registration/types';
 import type { FocusEvent } from 'react';
 
 export const ContactInfoInputs = memo(({ fields, index }:{ fields: string[]; index: number; }) => {
