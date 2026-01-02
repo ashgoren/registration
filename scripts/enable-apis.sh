@@ -5,4 +5,5 @@ if [ -z "$PROJECT_ID" ]; then
   exit 1
 fi
 
-gcloud services enable run.googleapis.com firestore.googleapis.com cloudbuild.googleapis.com eventarc.googleapis.com places.googleapis.com mapsjs.googleapis.com --project $PROJECT_ID
+gcloud services enable run.googleapis.com firestore.googleapis.com cloudbuild.googleapis.com eventarc.googleapis.com places.googleapis.com cloudscheduler.googleapis.com cloudfunctions.googleapis.com--project $PROJECT_ID
+gcloud services enable run.googleapis.com firestore.googleapis.com cloudbuild.googleapis.com eventarc.googleapis.com places.googleapis.com cloudscheduler.googleapis.com cloudfunctions.googleapis.com--project $PROJECT_ID-stg
