@@ -2,7 +2,7 @@
 
 import { spawn } from 'child_process';
 
-process.chdir('./packages/functions');
+process.chdir('./functions');
 
 const child = spawn('doppler', ['run', '--', 'firebase', 'functions:shell', '-P', 'staging'], { stdio: 'inherit' });
 
@@ -11,6 +11,6 @@ process.on('SIGINT', () => {
 });
 
 child.on('exit', () => {
-  process.chdir('../..');
+  process.chdir('..');
   process.exit();
 });

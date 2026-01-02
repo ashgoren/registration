@@ -1,5 +1,0 @@
-{
-  "name": "@registration/types",
-  "description": "Shared Types for Registration Project",
-  "main": "index.ts"
-}

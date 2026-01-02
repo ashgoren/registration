@@ -29,7 +29,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: latest
-          # cache: 'npm'
+          cache: 'npm'
 
       - name: Install Dependencies
         run: npm install
@@ -59,6 +59,10 @@ jobs:
           doppler secrets download -c ${DOPPLER_STAGE}_backend --format=json --no-file > secrets.json
           gcloud secrets versions add backend --data-file=secrets.json
           rm secrets.json
+
+      - name: Install Firebase Function Dependencies
+        run: npm install
+        working-directory: ./functions
 
       - name: Deploy Firebase Functions
         uses: w9jds/firebase-action@master

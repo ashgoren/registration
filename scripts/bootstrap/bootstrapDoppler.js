@@ -55,7 +55,7 @@ function setupDopplerLocalEnvironments(projectId) {
   }
   log.success(`✅ Doppler local environment for ${projectId} dev_frontend set up successfully.`);
 
-  if (!runCommand(`cd packages/functions && doppler setup -p ${projectId} -c dev_backend && cd ..`, `Setting up Doppler local environment for ${projectId} dev_backend`)) {
+  if (!runCommand(`cd functions && doppler setup -p ${projectId} -c dev_backend && cd ..`, `Setting up Doppler local environment for ${projectId} dev_backend`)) {
     throw new Error(`❌ Failed to set up Doppler for ${projectId}-dev_backend`);
   }
   log.success(`✅ Doppler local environment for ${projectId} dev_backend set up successfully.`);

@@ -12,16 +12,15 @@ tmp.json
 # production
 /build
 /dist
-packages/*/build
-packages/*/dist
-packages/*/lib
 
 # misc
 .DS_Store
 
 # env and keys
 .env*
-packages/functions/.env*
+!*example
+functions/.env*
+!functions/*example
 *service-key*
 scripts/keys/
 extensions/

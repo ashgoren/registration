@@ -239,15 +239,15 @@ npm run set-payment-secrets <PROJECT_ID> paypal prd
 
 | File | About |
 |------|-------|
-| `packages/functions/config/userConfig.js` | Backend config |
-| `packages/frontend/src/config/` | Frontend config - event, fields, order-summary, theme |
-| `packages/frontend/src/templates/` | Email receipt templates |
-| `packages/frontend/src/components/Static/` | Static pages (e.g. Home, About, Contact) |
-| `packages/frontend/src/components/IntroHeader.jsx` | Registration form header |
-| `packages/frontend/src/components/layouts/Navbar.jsx` | Navbar |
-| `packages/frontend/index.html` | Site title, metadata description, [og:image](https://ogp.me/) |
-| `packages/frontend/public/logo.png` | Optional Navbar logo (≤80px height recommended) |
-| `packages/frontend/public/` | favicon files - use a generator, e.g. [favicon-generator](https://realfavicongenerator.net/) |
+| `functions/config/userConfig.js` | Backend config |
+| `src/config/` | Frontend config - event, fields, order-summary, theme |
+| `src/templates/` | Email receipt templates |
+| `src/components/Static/` | Static pages (e.g. Home, About, Contact) |
+| `src/components/IntroHeader.jsx` | Registration form header |
+| `src/components/layouts/Navbar.jsx` | Navbar |
+| `index.html` | Site title, metadata description, [og:image](https://ogp.me/) |
+| `public/logo.png` | Optional Navbar logo (≤80px height recommended) |
+| `public/` | favicon files - use a generator, e.g. [favicon-generator](https://realfavicongenerator.net/) |
 
 ---
 
@@ -256,7 +256,7 @@ npm run set-payment-secrets <PROJECT_ID> paypal prd
 ### First Time Setup
 
 ```bash
-npm install
+npm install && npm install --prefix functions
 git checkout -b staging
 ```
 
@@ -322,7 +322,7 @@ git checkout -b staging
 - [ ] Redeploy after any updates to Doppler secrets or source code
 
 ### Waitlist Mode
-- Toggle registration.waitlist_mode flag in _both_ `packages/frontend/src/config/configEvent` and `packages/functions/config/userConfig`.
+- Toggle registration.waitlist_mode flag in _both_ `src/config/configEvent` and `functions/config/userConfig`.
 
 ### Hibernation (optional)
 For inactive projects:

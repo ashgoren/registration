@@ -1,7 +1,7 @@
 {
   "functions": [
     {
-      "source": "packages/functions",
+      "source": "functions",
       "codebase": "default",
       "ignore": [
         "node_modules",
@@ -11,12 +11,13 @@
         "*.local"
       ],
       "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint",
         "npm --prefix \"$RESOURCE_DIR\" run build"
       ]
     }
   ],
   "hosting": {
-    "public": "packages/frontend/dist",
+    "public": "dist",
     "ignore": [
       "firebase.json",
       "**/.*",

@@ -1,0 +1,37 @@
+{
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log",
+    "lint": "eslint src --ext .js,.ts",
+    "build": "tsc"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "@docuseal/api": "^1.0.20",
+    "@google-cloud/secret-manager": "^6.1.0",
+    "@paypal/paypal-server-sdk": "^0.5.1",
+    "firebase-admin": "^12.1.1",
+    "firebase-functions": "^6.4.0",
+    "googleapis": "^140.0.0",
+    "nodemailer": "^6.9.14",
+    "stripe": "^15.12.0"
+  },
+  "devDependencies": {
+    "@google-cloud/pubsub": "^5.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.50.0",
+    "@typescript-eslint/parser": "^8.50.0",
+    "concurrently": "^9.2.1",
+    "firebase-functions-test": "^3.3.0",
+    "typescript": "^5.9.3"
+  },
+  "private": true,
+  "type": "module"
+}
