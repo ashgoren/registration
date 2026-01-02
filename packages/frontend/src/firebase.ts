@@ -2,6 +2,7 @@ import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFunctions, connectFunctionsEmulator, httpsCallable } from 'firebase/functions';
 import type { Order } from '@registration/types';
 import type { ElectronicPaymentMethod } from '@registration/types';
+import type { LoggerPayload } from '@registration/types';
 
 const useFirebaseEmulator = import.meta.env.DEV;
 
@@ -31,12 +32,7 @@ type FirebaseFunctionData = {
     idempotencyKey: string;
     description: string;
   }
-  logEvent: {
-    level: 'info' | 'warn' | 'error';
-    message: string;
-    timestamp: string;
-    metadata: Record<string, unknown>;
-  };
+  logEvent: LoggerPayload;
   checkPeopleThreshold: Record<string, never>;
   createWaiverSubmission: { name: string; phone: string; email: string; };
 }
@@ -123,12 +119,7 @@ export const capturePaypalOrder = async (params: {
   });
 };
 
-export const logEvent = (params: {
-  level: 'info' | 'warn' | 'error';
-  message: string;
-  timestamp: string;
-  metadata: Record<string, unknown>;
-}) => {
+export const logEvent = (params: LoggerPayload) => {
   return firebaseFunctionDispatcher({
     action: 'logEvent',
     data: params
