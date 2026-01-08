@@ -3,6 +3,53 @@
 
 import userConfig from '../userConfig.js';
 
+interface Config {
+  // Deploy options
+  REGION: string;
+  TIMEZONE: string;
+  DOPPLER_SECRETS: string[];
+  
+  // Base options
+  PAYMENT_PROCESSOR: string;
+  EVENT_TITLE: string;
+  EVENT_TITLE_WITH_YEAR: string;
+  STRIPE_STATEMENT_DESCRIPTOR_SUFFIX: string;
+  FIELD_ORDER: string[];
+  SHEETS_EMAIL_COLUMN: number;
+  SHEETS_KEY_COLUMN: number;
+  SHEETS_SHEET_RANGE: string;
+  SHEETS_ORDERS_TAB_NAME: string;
+  WAITLIST_MODE: boolean;
+  WAITLIST_CUTOFF: number;
+  
+  // Secrets
+  PAYPAL_CLIENT_ID?: string;
+  PAYPAL_CLIENT_SECRET?: string;
+  PAYPAL_WEBHOOK_ID?: string;
+  STRIPE_SECRET_KEY?: string;
+  STRIPE_WEBHOOK_SECRET?: string;
+  PAPERTRAIL_TOKEN?: string;
+  CLOUD_FUNCTIONS_TRIGGER_TOKEN?: string;
+  SHEETS_SHEET_ID?: string;
+  SHEETS_SERVICE_ACCOUNT_KEY?: string;
+  EMAIL_ENDPOINT?: string;
+  EMAIL_USER?: string;
+  EMAIL_PASSWORD?: string;
+  EMAIL_FROM?: string;
+  EMAIL_REPLY_TO?: string;
+  EMAIL_IGNORE_TEST_DOMAINS?: string;
+  EMAIL_NOTIFY_TO?: string;
+  DOCUSEAL_KEY?: string;
+  DOCUSEAL_TEMPLATE_ID?: string;
+  
+  // Computed
+  PROJECT_ID: string;
+  IS_SANDBOX: boolean;
+  IS_EMULATOR: boolean;
+  ENV: 'dev' | 'stg' | 'prd';
+  PAYMENT_DESCRIPTION: string;
+}
+
 // deployOptions are needed before doppler secrets can be parsed
 export const deployOptions = {
   REGION: userConfig.system.region,
@@ -45,7 +92,8 @@ const envVariables = [
   'DOCUSEAL_TEMPLATE_ID'
 ];
 
-let config = null;
+let config: Config | null = null;
+
 export const getConfig = () => {
   if (config) return config;
 
@@ -53,13 +101,13 @@ export const getConfig = () => {
   if (process.env.DOPPLER_ENVIRONMENT !== 'dev') {
     console.log('DEBUG: parsing backend');
     try {
-      parsedSecrets = JSON.parse(process.env.backend);
+      parsedSecrets = JSON.parse(process.env.backend!);
     } catch {
       throw new Error('Malformed backend environment variable');
     }
   } else {
     console.log('DEBUG: using env variables');
-    parsedSecrets = envVariables.reduce((acc, varName) => {
+    parsedSecrets = envVariables.reduce<Record<string, string | undefined>>((acc, varName) => {
       acc[varName] = process.env[varName];
       return acc;
     }, {});
@@ -67,7 +115,7 @@ export const getConfig = () => {
 
   const { FIRESTORE_EMULATOR_HOST, FUNCTIONS_EMULATOR, GCLOUD_PROJECT } = process.env;
 
-  const PROJECT_ID = GCLOUD_PROJECT;
+  const PROJECT_ID = GCLOUD_PROJECT as string;
   const IS_SANDBOX = PROJECT_ID.includes('-stg');
   const IS_EMULATOR = !!FIRESTORE_EMULATOR_HOST || !!FUNCTIONS_EMULATOR;
   const ENV = IS_EMULATOR ? 'dev' : IS_SANDBOX ? 'stg' : 'prd';
@@ -82,7 +130,7 @@ export const getConfig = () => {
     IS_EMULATOR,
     ENV,
     PAYMENT_DESCRIPTION
-  };
+  } as Config;
 
   return config;
 };
