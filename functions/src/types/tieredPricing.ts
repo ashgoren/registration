@@ -1,0 +1,1 @@
+export type AgeGroup = '0-2' | '3-5' | '6-12' | '13-17' | 'adult';
