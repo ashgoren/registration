@@ -4,15 +4,19 @@ import { fieldOrder } from '../shared/fields.js';
 import { joinArrays } from '../shared/helpers.js';
 import { appendAllLines } from '../shared/spreadsheet.js';
 
+import type { FirestoreEvent, Change, QueryDocumentSnapshot } from 'firebase-functions/v2/firestore';
+import type { Order, Person } from '../types/order';
+type OrderWithKey = Order & { key: string };
+
 if (!getApps().length) initializeApp();
 
 // onDocumentUpdated
-export const appendRecordToSpreadsheetHandler = async (event) => {
+export const appendRecordToSpreadsheetHandler = async (event: FirestoreEvent<Change<QueryDocumentSnapshot>>) => {
   const { before, after } = event.data;
   if (before?.data()?.status === 'pending' && after.data().status === 'final') {
     logger.info(`APPEND TO SPREADSHEET: ${after.id}`);
     try {
-      const order = { ...after.data(), key: after.id };
+      const order = { ...after.data(), key: after.id } as OrderWithKey;
       const orders = mapOrderToSpreadsheetLines(order);
       await appendAllLines(orders);
     } catch (err) {
@@ -21,10 +25,10 @@ export const appendRecordToSpreadsheetHandler = async (event) => {
   }
 };
 
-const mapOrderToSpreadsheetLines = (order) => {
+const mapOrderToSpreadsheetLines = (order: OrderWithKey) => {
   const orders = []
   // const completedAt = order.completedAt.toDate().toLocaleDateString(); // just date
-  const completedAt = order.completedAt.toDate().toLocaleString('sv-SE', {
+  const completedAt = order.completedAt!.toDate().toLocaleString('sv-SE', {
     timeZone: 'America/Los_Angeles',
     year: 'numeric',
     month: '2-digit',
@@ -62,7 +66,7 @@ const mapOrderToSpreadsheetLines = (order) => {
       paid = isPurchaser ? deposit + order.donation + fees : deposit;
       status = 'deposit';
     } else {
-      paid = isPurchaser ? total + fees : total;
+      paid = isPurchaser ? total! + fees : total;
       status = 'paid';
     }
     const firstPersonPurchaserField = people.length > 1 ? `self (+${people.length - 1})` : 'self';
@@ -90,24 +94,24 @@ const mapOrderToSpreadsheetLines = (order) => {
   return orders;
 };
 
-const updateAddress = (person) => {
+const updateAddress = (person: Person) => {
   const { address, apartment } = person;
   if (!apartment) return address;
   return address + ' ' + (/^\d/.test(apartment) ? `#${apartment}` : apartment);
 };
 
-const updatePhoto = (person) => {
+const updatePhoto = (person: Person) => {
   const { photo, photoComments } = person;
   return photo === 'Other' ? photoComments : photo;
 };
 
-const updateMisc = (person) => {
+const updateMisc = (person: Person) => {
   const { misc, miscComments } = person;
   if (!misc) return '';
   return misc.map(item => item === 'minor' ? `minor (${miscComments})` : item).join('; ');
 };
 
-const joinStrings = (person) => {
+const joinStrings = (person: Person) => {
   for (const key in person) {
     if (typeof person[key] === 'string') {
       person[key] = person[key].replace(/\n/g, '; ');

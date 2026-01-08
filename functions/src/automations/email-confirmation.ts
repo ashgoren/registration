@@ -2,8 +2,10 @@ import { logger } from 'firebase-functions/v2';
 import { sendMail } from '../shared/email.js';
 import { getConfig } from '../config/internal/config.js';
 
+import type { FirestoreEvent, Change, QueryDocumentSnapshot } from 'firebase-functions/v2/firestore';
+
 // onDocumentUpdated
-export const sendEmailConfirmationsHandler = async (event) => {
+export const sendEmailConfirmationsHandler = async (event: FirestoreEvent<Change<QueryDocumentSnapshot>>) => {
   const { EMAIL_FROM, EMAIL_REPLY_TO, EVENT_TITLE, IS_EMULATOR, WAITLIST_MODE } = getConfig();
   const testDomains = ['test.com', 'testing.com', 'example.com', 'example.org', 'example.net'];
 

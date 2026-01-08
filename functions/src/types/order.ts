@@ -1,3 +1,4 @@
+import type { Timestamp } from 'firebase-admin/firestore';
 import type { AgeGroup } from './tieredPricing';
 
 export type Person = {
@@ -11,6 +12,7 @@ export type Person = {
   admission: number;
   apartment?: string;
   age?: AgeGroup;
+  misc?: string[];
   [key: string]: unknown;
 };
 
@@ -23,5 +25,6 @@ export type Order = {
   charged: number | null;
   total: number | null;
   fees: number | null;
+  completedAt?: Timestamp | null;
   environment: 'dev' | 'stg' | 'prd';
 };
