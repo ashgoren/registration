@@ -21,7 +21,7 @@ async function readSheet() {
   });
 }
 
-async function appendAllLines(lines) {
+async function appendAllLines(lines: string[][]) {
   return googleSheetsOperation({
     operation: SHEET_OPERATIONS.APPEND,
     params: {
@@ -34,18 +34,25 @@ async function appendAllLines(lines) {
   });
 }
 
-async function googleSheetsOperation({ operation, params }, attempt = 0) {
+async function googleSheetsOperation({ operation, params }: { operation: string; params: Record<string, unknown> }, attempt = 0) {
   const { SHEETS_SHEET_ID, SHEETS_SHEET_RANGE, SHEETS_SERVICE_ACCOUNT_KEY } = getConfig();
   const SHEETS_AUTH_URL = 'https://www.googleapis.com/auth/spreadsheets';
   const serviceAccountKey = JSON.parse(SHEETS_SERVICE_ACCOUNT_KEY);
-  const client = google.auth.fromJSON(serviceAccountKey);
-  client.scopes = [SHEETS_AUTH_URL];
+  const client = new google.auth.JWT({
+    email: serviceAccountKey.client_email,
+    key: serviceAccountKey.private_key,
+    scopes: [SHEETS_AUTH_URL],
+  });
 
   try {
-    const operationParams = {
+    const operationParams: {
+      spreadsheetId: string;
+      range: string;
+      [key: string]: unknown;
+    } = {
       ...params,
       spreadsheetId: SHEETS_SHEET_ID,
-      range: params.range || SHEETS_SHEET_RANGE
+      range: params.range as string || SHEETS_SHEET_RANGE
     };
     
     await client.authorize();
@@ -53,11 +60,11 @@ async function googleSheetsOperation({ operation, params }, attempt = 0) {
 
     switch (operation) {
       case SHEET_OPERATIONS.READ:
-        return await sheets.spreadsheets.values.get(operationParams);
+        return sheets.spreadsheets.values.get(operationParams);
       case SHEET_OPERATIONS.APPEND:
-        return await sheets.spreadsheets.values.append(operationParams);
+        return sheets.spreadsheets.values.append(operationParams);
       case SHEET_OPERATIONS.UPDATE:
-        return await sheets.spreadsheets.values.update(operationParams);
+        return sheets.spreadsheets.values.update(operationParams);
       default:
         throw new Error('Invalid operation');
     }

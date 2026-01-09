@@ -5,6 +5,7 @@ export const ErrorType = {
   INVALID_AMOUNT: 'INVALID_AMOUNT',
   INVALID_ARGUMENT: 'INVALID_ARGUMENT',
   VALIDATION_MISSING_ID: 'VALIDATION_MISSING_ID',
+  VALIDATION_MISSING_EMAIL: 'VALIDATION_MISSING_EMAIL',
   VALIDATION_MISSING_AMOUNT: 'VALIDATION_MISSING_AMOUNT',
   VALIDATION_ID_MISMATCH: 'VALIDATION_ID_MISMATCH',
   VALIDATION_AMOUNT_MISMATCH: 'VALIDATION_AMOUNT_MISMATCH',
@@ -12,8 +13,10 @@ export const ErrorType = {
   STRIPE_API: 'STRIPE_API',
   DATABASE_SAVE: 'DATABASE_SAVE',
   DATABASE_READ: 'DATABASE_READ',
-  EXTERNAL_API: 'EXTERNAL_API'
-};
+  EXTERNAL_API: 'EXTERNAL_API',
+  PERMISSION_DENIED: 'PERMISSION_DENIED'
+} as const;
+type ErrorTypeKey = keyof typeof ErrorType;
 
 // Firebase Function error codes for use with HttpsError
 // https://firebase.google.com/docs/reference/node/firebase.functions#functionserrorcode
@@ -35,10 +38,11 @@ const ErrorCode = {
   UNAVAILABLE: 'unavailable',
   DATA_LOSS: 'data-loss',
   UNAUTHENTICATED: 'unauthenticated'
-};
+} as const;
+type ErrorCodeValue = typeof ErrorCode[keyof typeof ErrorCode];
 
 // set valid error code and optional message override for each error type
-const errorMapping = {
+const errorMapping: Record<ErrorTypeKey, { code: ErrorCodeValue; message?: string }> = {
   [ErrorType.INVALID_AMOUNT]: { code: ErrorCode.OUT_OF_RANGE },
   [ErrorType.INVALID_ARGUMENT]: { code: ErrorCode.INVALID_ARGUMENT },
   [ErrorType.VALIDATION_MISSING_ID]: { code: ErrorCode.INVALID_ARGUMENT },
@@ -50,17 +54,23 @@ const errorMapping = {
   [ErrorType.STRIPE_API]: { code: ErrorCode.UNAVAILABLE },
   [ErrorType.DATABASE_SAVE]: { code: ErrorCode.INTERNAL, message: 'Error saving order' },
   [ErrorType.DATABASE_READ]: { code: ErrorCode.INTERNAL, message: 'Error reading order(s)' },
-  [ErrorType.EXTERNAL_API]: { code: ErrorCode.UNAVAILABLE, message: 'Error communicating with DocuSeal API' }
+  [ErrorType.EXTERNAL_API]: { code: ErrorCode.UNAVAILABLE, message: 'Error communicating with DocuSeal API' },
+  [ErrorType.PERMISSION_DENIED]: { code: ErrorCode.PERMISSION_DENIED }
 };
 
-export const createError = (type, message, details = {}) => {
-  const error = new Error(message);
+export interface CustomError extends Error {
+  type: ErrorTypeKey;
+  details: Record<string, unknown>;
+}
+
+export const createError = (type: ErrorTypeKey, message: string, details: Record<string, unknown> = {}): CustomError => {
+  const error = new Error(message) as CustomError;
   error.type = type;
   error.details = details;
   return error;
 };
 
-export const handleFunctionError = (err, action, data) => {
+export const handleFunctionError = (err: CustomError, action: string, data: unknown) => {
   logger.error(err, { action, data, errorType: err.type, ...err.details });
 
   const mapping = errorMapping[err.type];

@@ -4,7 +4,7 @@ import { getConfig } from '../config/internal/config.js';
 import type { Transporter } from 'nodemailer';
 
 interface EmailOptions {
-  from: string;
+  from?: string;
   to: string;
   subject: string;
   html?: string;
