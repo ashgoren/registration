@@ -3,6 +3,7 @@
     "module": "ESNext",
     "esModuleInterop": true,
     "moduleResolution": "bundler",
+    "skipLibCheck": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "outDir": "lib",

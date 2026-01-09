@@ -28,17 +28,16 @@ interface Config {
   PAYPAL_WEBHOOK_ID?: string;
   STRIPE_SECRET_KEY?: string;
   STRIPE_WEBHOOK_SECRET?: string;
-  PAPERTRAIL_TOKEN?: string;
   CLOUD_FUNCTIONS_TRIGGER_TOKEN?: string;
-  SHEETS_SHEET_ID?: string;
-  SHEETS_SERVICE_ACCOUNT_KEY?: string;
-  EMAIL_ENDPOINT?: string;
-  EMAIL_USER?: string;
-  EMAIL_PASSWORD?: string;
-  EMAIL_FROM?: string;
+  SHEETS_SHEET_ID: string;
+  SHEETS_SERVICE_ACCOUNT_KEY: string;
+  EMAIL_ENDPOINT: string;
+  EMAIL_USER: string;
+  EMAIL_PASSWORD: string;
+  EMAIL_FROM: string;
   EMAIL_REPLY_TO?: string;
   EMAIL_IGNORE_TEST_DOMAINS?: string;
-  EMAIL_NOTIFY_TO?: string;
+  EMAIL_NOTIFY_TO: string;
   DOCUSEAL_KEY?: string;
   DOCUSEAL_TEMPLATE_ID?: string;
   
@@ -77,7 +76,6 @@ const envVariables = [
   'PAYPAL_WEBHOOK_ID',
   'STRIPE_SECRET_KEY',
   'STRIPE_WEBHOOK_SECRET',
-  'PAPERTRAIL_TOKEN',
   'CLOUD_FUNCTIONS_TRIGGER_TOKEN',
   'SHEETS_SHEET_ID',
   'SHEETS_SERVICE_ACCOUNT_KEY',

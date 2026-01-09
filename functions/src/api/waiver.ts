@@ -32,12 +32,12 @@ export const createWaiverSubmission = async (data: { name: string; email: string
   const { DOCUSEAL_KEY, DOCUSEAL_TEMPLATE_ID } = getConfig();
 
   const ds = docuseal as unknown as DocuSealAPI;
-  ds.key = DOCUSEAL_KEY;
+  ds.key = DOCUSEAL_KEY!;
 
   logger.info(`Creating submission for ${email} from template ${DOCUSEAL_TEMPLATE_ID}`);
   try {
     const submission = await ds.createSubmission({
-      template_id: DOCUSEAL_TEMPLATE_ID,
+      template_id: DOCUSEAL_TEMPLATE_ID!,
       send_email: false,
       send_sms: false,
       submitters: [

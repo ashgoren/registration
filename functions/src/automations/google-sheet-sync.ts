@@ -1,11 +1,10 @@
 import { logger } from 'firebase-functions/v2';
 import { initializeApp, getApps } from 'firebase-admin/app';
 import { fieldOrder } from '../shared/fields.js';
-import { joinArrays } from '../shared/helpers.js';
 import { appendAllLines } from '../shared/spreadsheet.js';
-
 import type { FirestoreEvent, Change, QueryDocumentSnapshot } from 'firebase-functions/v2/firestore';
 import type { Order, Person } from '../types/order';
+
 type OrderWithKey = Order & { key: string };
 
 if (!getApps().length) initializeApp();
@@ -40,16 +39,17 @@ const mapOrderToSpreadsheetLines = (order: OrderWithKey) => {
 
   const updatedOrder = joinArrays(order);
   const { people, ...orderFields } = updatedOrder
+  const peopleArray = people as Person[];
   let isPurchaser = true;
-  for (const person of people) {
+  for (const person of peopleArray) {
     let admission, total, deposit;
     const updatedPerson = person.share ? joinArrays(person) : { ...joinArrays(person), share: 'do not share' };
-    const stringifiedPerson = joinStrings(updatedPerson);
+    const stringifiedPerson = joinStrings(updatedPerson as StringifiedPerson);
     if (order.deposit) {
-      deposit = order.deposit / people.length;
+      deposit = order.deposit / peopleArray.length;
     } else {
       deposit = 0;
-      admission = parseInt(person.admission);
+      admission = Number(person.admission);
       total = isPurchaser ? admission + (order.donation || 0) : admission;
     }
     const fees = order.fees || 0;
@@ -69,8 +69,8 @@ const mapOrderToSpreadsheetLines = (order: OrderWithKey) => {
       paid = isPurchaser ? total! + fees : total;
       status = 'paid';
     }
-    const firstPersonPurchaserField = people.length > 1 ? `self (+${people.length - 1})` : 'self';
-    const personFieldsBuilder = {
+    const firstPersonPurchaserField = peopleArray.length > 1 ? `self (+${peopleArray.length - 1})` : 'self';
+    const personFieldsBuilder: Record<string, unknown> = {
       ...stringifiedPerson,
       key: isPurchaser ? order.key : '-',
       completedAt,
@@ -83,11 +83,11 @@ const mapOrderToSpreadsheetLines = (order: OrderWithKey) => {
       paid,
       charged: isPurchaser ? order.charged : '-',
       status,
-      purchaser: isPurchaser ? firstPersonPurchaserField : `${people[0].first} ${people[0].last}`,
+      purchaser: isPurchaser ? firstPersonPurchaserField : `${peopleArray[0].first} ${peopleArray[0].last}`,
       environment: order.environment === 'prd' ? '' : order.environment
     };
     const personFields = isPurchaser ? { ...orderFields, ...personFieldsBuilder } : personFieldsBuilder;
-    const line = fieldOrder.map(field => personFields[field] || '');
+    const line = fieldOrder.map(field => String((personFields as Record<string, unknown>)[field] ?? ''));
     orders.push(line);
     isPurchaser = false;
   }
@@ -111,7 +111,22 @@ const updateMisc = (person: Person) => {
   return misc.map(item => item === 'minor' ? `minor (${miscComments})` : item).join('; ');
 };
 
-const joinStrings = (person: Person) => {
+type Stringify<T> = {
+  [K in keyof T]: T[K] extends unknown[] ? string : T[K];
+};
+type StringifiedPerson = Stringify<Person>;
+
+const joinArrays = (obj: Record<string, unknown>) => {
+  const newObj = { ...obj };
+  for (const key in obj) {
+    if (key !== 'people' && Array.isArray(obj[key])) {
+      newObj[key] = obj[key].join(', ');
+    }
+  }
+  return newObj as Stringify<Person>;
+};
+
+const joinStrings = (person: StringifiedPerson) => {
   for (const key in person) {
     if (typeof person[key] === 'string') {
       person[key] = person[key].replace(/\n/g, '; ');
