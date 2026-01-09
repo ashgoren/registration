@@ -9,18 +9,18 @@ type PaymentParams = {
   id?: string;
 };
 
-type GetStripePaymentIntentFunction = (params: PaymentParams) => Promise<{
+export type GetStripePaymentIntentFunction = (params: PaymentParams) => Promise<{
   amount: number;
   id: string;
   clientSecret: string;
 }>;
 
-type CreateOrUpdatePaypalOrderFunction = (params: PaymentParams) => Promise<{
+export type CreateOrUpdatePaypalOrderFunction = (params: PaymentParams) => Promise<{
   amount: number;
   id: string;
 }>;
 
-type PaymentData = {
+export type PaymentData = {
   order: Order;
   paymentId?: string;
   paymentMethod: 'stripe' | 'paypal';

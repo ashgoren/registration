@@ -2,9 +2,11 @@ import { getStripe } from './auth.js';
 import { logger } from 'firebase-functions/v2';
 import { handlePaymentVerification } from '../shared/webhooks.js';
 import { getConfig } from '../config/internal/config.js';
+import { Request } from 'firebase-functions/v2/https';
+import { Response } from 'express';
 
 // onRequest function to handle Stripe webhooks
-export const stripeWebhookHandler = async (req, res) => {
+export const stripeWebhookHandler = async (req: Request, res: Response) => {
   logger.debug('Received Stripe webhook', { headers: req.headers, body: req.body });
   
   const { STRIPE_WEBHOOK_SECRET, ENV, PAYMENT_DESCRIPTION } = getConfig();
@@ -17,7 +19,7 @@ export const stripeWebhookHandler = async (req, res) => {
     event = getStripe().webhooks.constructEvent(req.rawBody, sig, STRIPE_WEBHOOK_SECRET);
   } catch (err) {
     logger.error('Error validating Stripe webhook signature', { error: err });
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    return res.status(400).send(`Webhook Error: ${(err as Error).message}`);
   }
 
   // Only process payment_intent.succeeded events with matching description
@@ -43,9 +45,9 @@ export const stripeWebhookHandler = async (req, res) => {
   // Check if the payment is in the DB
   try {
     await handlePaymentVerification(paymentId);
-    res.json({ received: true });
+    return res.json({ received: true });
   } catch (error) { // database errors
     logger.error('Error processing Stripe webhook', { paymentId, error });
-    res.status(500).send('Internal Server Error');
+    return res.status(500).send('Internal Server Error');
   }
 };
