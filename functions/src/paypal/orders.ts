@@ -5,10 +5,16 @@ import { createError, ErrorType } from '../shared/errorHandler.js';
 import { getClient } from './auth.js';
 import { getConfig } from '../config/internal/config.js';
 
+import type { CustomError } from '../shared/errorHandler.js';
+
 let ordersController = null;
 const getOrdersController = () => ordersController ??= new OrdersController(getClient());
 
-export const capturePaypalOrder = async ({ id, idempotencyKey, email }) => {
+export const capturePaypalOrder = async ({ id, idempotencyKey, email }: {
+  id: string;
+  idempotencyKey: string;
+  email: string;
+}) => {
   logger.info(`capturePaypalOrder: ${email}`, { id, email });
   if (!id) throw createError(ErrorType.INVALID_ARGUMENT, 'No payment intent ID provided');
   try {
@@ -22,13 +28,20 @@ export const capturePaypalOrder = async ({ id, idempotencyKey, email }) => {
       throw new Error(`Failed to capture order: ${statusCode}`);
     }
     validateOrderResponse(result);
-    return parseResult(result);
+    return parseResult(result) as { id: string; email: string; amount: number };
   } catch (error) {
-    handlePaypalError(error, 'capturePaypalOrder');
+    handlePaypalError(error as CustomError, 'capturePaypalOrder');
+    return; // satisfy TS
   }
 };
 
-export const createOrUpdatePaypalOrder = async ({ id, email, description, amount, idempotencyKey }) => {
+export const createOrUpdatePaypalOrder = async ({ id, email, description, amount, idempotencyKey }: {
+  id?: string;
+  email: string;
+  description: string;
+  amount: number;
+  idempotencyKey: string;
+}) => {
   logger.info(`createOrUpdatePaypalOrder: ${email}`, { email, idempotencyKey });
 
   const { WAITLIST_MODE } = getConfig();
@@ -44,17 +57,21 @@ export const createOrUpdatePaypalOrder = async ({ id, email, description, amount
   } else if (id) {
     logger.info(`Order ID ${id} provided but does not exist, creating new order for ${email}`);
     result = await createOrder({ description, amount, idempotencyKey });
-    validateOrderResponse(result, null, amount);
+    validateOrderResponse(result, undefined, amount);
   } else {
     logger.info(`No Order ID provided, creating new order for ${email}`);
     result = await createOrder({ description, amount, idempotencyKey });
-    validateOrderResponse(result, null, amount);
+    validateOrderResponse(result, undefined, amount);
   }
 
-  return parseResult(result);
+  return parseResult(result) as { id: string; amount: number };
 };
 
-const createOrder = async ({ description, amount, idempotencyKey }) => {
+const createOrder = async ({ description, amount, idempotencyKey }: {
+  description: string;
+  amount: number;
+  idempotencyKey: string;
+}) => {
   logger.info('Creating order');
 
   const requestBody = {
@@ -88,11 +105,15 @@ const createOrder = async ({ description, amount, idempotencyKey }) => {
     logger.info('Initialized Paypal order', { id: result.id });
     return result;
   } catch (error) {
-    handlePaypalError(error, 'createOrder');
+    handlePaypalError(error as CustomError, 'createOrder');
   }
-}
+};
 
-const updateOrder = async ({ id, amount, idempotencyKey }) => {
+const updateOrder = async ({ id, amount, idempotencyKey }: {
+  id: string;
+  amount: number;
+  idempotencyKey: string;
+}) => {
   logger.info('Updating order', { id });
 
   const requestBody = [{
@@ -116,11 +137,11 @@ const updateOrder = async ({ id, amount, idempotencyKey }) => {
     logger.info('Updated Paypal order', { id });
     return getOrder(id);
   } catch (error) {
-    handlePaypalError(error, 'updateOrder');
+    handlePaypalError(error as CustomError, 'updateOrder');
   }
 }
 
-const getOrder = async (id) => {
+const getOrder = async (id: string) => {
   logger.info('Retrieving order', { id });
 
   try {
@@ -129,11 +150,11 @@ const getOrder = async (id) => {
     if (!result) throw new Error('No order found');
     return result;
   } catch (error) {
-    handlePaypalError(error, 'getOrder');
+    handlePaypalError(error as CustomError, 'getOrder');
   }
 }
 
-const orderExists = async (id) => {
+const orderExists = async (id: string) => {
   try {
     await getOrdersController().ordersGet({ id }); // throws error if not found
     return true;
@@ -142,23 +163,44 @@ const orderExists = async (id) => {
   }
 };
 
-const parseResult = (result) => {
+interface PaypalResult {
+  id?: string;
+  status?: string;
+  payer?: {
+    emailAddress?: string;
+  };
+  purchaseUnits: Array<{
+    amount?: {
+      value?: string;
+    };
+    payments?: {
+      captures?: Array<{
+        id?: string;
+        amount?: {
+          value?: string;
+        };
+      }>;
+    };
+  }>;
+}
+
+const parseResult = (result: PaypalResult) => {
   let id, email, amount;
   if (result?.status === 'COMPLETED') {
     email = result.payer?.emailAddress;
     id = result.purchaseUnits[0]?.payments?.captures?.[0]?.id;
-    amount = result.purchaseUnits[0]?.payments?.captures[0]?.amount?.value;
+    amount = result.purchaseUnits[0]?.payments?.captures?.[0]?.amount?.value;
   } else {
     id = result?.id;
     amount = result?.purchaseUnits[0]?.amount?.value;
   }
-  return { id, email, amount };
+  return { id, email, amount: amount ? Number(amount) : undefined };
 };
 
 
 // helpers for validations and error handling
 
-const validateOrderResponse = (result, expectedId = null, expectedAmount = null) => {
+const validateOrderResponse = (result: PaypalResult, expectedId?: string, expectedAmount?: number) => {
   const { id, amount } = parseResult(result);
 
   if (!id) throw createError(
@@ -173,24 +215,20 @@ const validateOrderResponse = (result, expectedId = null, expectedAmount = null)
     { result }
   );
 
-  if (expectedId && expectedId !== id) throw createError(
-    logger.info('expected id vs actual', { expectedId, id }),
-    ErrorType.VALIDATION_ID_MISMATCH,
-    'Order ID mismatch',
-    { expected: expectedId, received: id }
-  );
+  if (expectedId && expectedId !== id) {
+    logger.info('expected id vs actual', { expectedId, id });
+    throw createError(ErrorType.VALIDATION_ID_MISMATCH, 'Order ID mismatch', { expected: expectedId, received: id });
+  }
 
-  if (expectedAmount && formatCurrency(expectedAmount) !== formatCurrency(amount)) throw createError(
-    logger.info('expected amount vs actual', { expectedAmount, amount }),
-    ErrorType.VALIDATION_AMOUNT_MISMATCH,
-    'Amount mismatch',
-    { expected: expectedAmount, received: amount }
-  );
+  if (expectedAmount && formatCurrency(expectedAmount) !== formatCurrency(amount)) {
+    logger.info('expected amount vs actual', { expectedAmount, amount });
+    throw createError(ErrorType.VALIDATION_AMOUNT_MISMATCH, 'Amount mismatch', { expected: expectedAmount, received: amount });
+  }
   
   return true;
 };
 
-const handlePaypalError = (error, operation) => {
+const handlePaypalError = (error: CustomError, operation: string): never => {
   error.details = { ...error.details, operation };
   console.log('handlePaypalError', error);
   if (error instanceof ApiError) {

@@ -1,8 +1,10 @@
 import { getStripe } from './auth.js';
 import { logger } from 'firebase-functions/v2';
 import { createError, ErrorType } from '../shared/errorHandler.js';
+import type { Stripe } from 'stripe';
+import type { NormalizedPaymentTransaction } from '../scheduled/matchPayments.js';
 
-export const listStripeTransactions = async (description) => {
+export const listStripeTransactions = async (description: string) => {
   logger.info('listStripeTransactions', { description });
 
   try {
@@ -26,25 +28,25 @@ export const listStripeTransactions = async (description) => {
       amount: txn.amount / 100,
       currency: txn.currency,
       date: new Date(txn.created * 1000),
-      email: customerMap.get(txn.customer)
-    }));
+      email: customerMap.get(txn.customer as string)!,
+    })) as NormalizedPaymentTransaction[];
 
     // logger.debug('Normalized Stripe transactions from API:', normalizedTransactions); // debug log
     return normalizedTransactions;
   } catch (error) {
-    throw createError(ErrorType.STRIPE_API, `Error listing Stripe transactions: ${error.message}`);
+    throw createError(ErrorType.STRIPE_API, `Error listing Stripe transactions: ${(error as Error).message}`);
   }
 };
 
 const fetchAllTransactions = async () => {
   const stripe = getStripe();
 
-  const allTransactions = [];
+  const allTransactions: Stripe.PaymentIntent[] = [];
   let hasMore = true;
-  let startingAfter = null;
+  let startingAfter: string | null = null;
 
   while (hasMore) {
-    const { data, has_more } = await stripe.paymentIntents.list({
+    const response: Stripe.Response<Stripe.ApiList<Stripe.PaymentIntent>> = await stripe.paymentIntents.list({
       limit: 100,
       created: {
         gte: Math.floor(Date.now() / 1000) - 300 * 24 * 60 * 60 // last 300 days
@@ -52,6 +54,7 @@ const fetchAllTransactions = async () => {
       ...(startingAfter && { starting_after: startingAfter })
     });
 
+    const { data, has_more } = response;
     allTransactions.push(...data);
     hasMore = has_more;
     startingAfter = data.length ? data[data.length - 1].id : null;
@@ -63,16 +66,17 @@ const fetchAllTransactions = async () => {
 const fetchAllCustomers = async () => {
   const stripe = getStripe();
 
-  const allCustomers = [];
+  const allCustomers: Stripe.Customer[] = [];
   let hasMore = true;
-  let startingAfter = null;
+  let startingAfter: string | null = null;
 
   while (hasMore) {
-    const { data, has_more } = await stripe.customers.list({
+    const response: Stripe.Response<Stripe.ApiList<Stripe.Customer>> = await stripe.customers.list({
       limit: 100,
       ...(startingAfter && { starting_after: startingAfter })
     });
 
+    const { data, has_more } = response;
     allCustomers.push(...data);
     hasMore = has_more;
     startingAfter = data.length ? data[data.length - 1].id : null;

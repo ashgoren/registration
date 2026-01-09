@@ -2,8 +2,8 @@ import { Client, Environment, LogLevel } from '@paypal/paypal-server-sdk';
 import { createError, ErrorType } from '../shared/errorHandler.js';
 import { getConfig } from '../config/internal/config.js';
 
-let paypalApiUrl = null;
-let client = null;
+let paypalApiUrl: string | null = null;
+let client: Client | null = null;
 
 export const getPaypalApiUrl = () => {
   if (paypalApiUrl) return paypalApiUrl;
@@ -23,8 +23,8 @@ export const getClient = () => {
 
   client = new Client({
     clientCredentialsAuthCredentials: {
-      oAuthClientId: PAYPAL_CLIENT_ID,
-      oAuthClientSecret: PAYPAL_CLIENT_SECRET
+      oAuthClientId: PAYPAL_CLIENT_ID!,
+      oAuthClientSecret: PAYPAL_CLIENT_SECRET!
     },
     timeout: 0,
     environment: useSandbox ? Environment.Sandbox : Environment.Production,

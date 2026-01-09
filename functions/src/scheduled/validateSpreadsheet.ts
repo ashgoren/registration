@@ -11,15 +11,17 @@ import { readSheet } from '../shared/spreadsheet.js';
 import { sendMail } from '../shared/email.js';
 import { getOrderEmail, getOrderDomain } from '../shared/helpers.js';
 import { getConfig } from '../config/internal/config.js';
+import type { ScheduledEvent } from 'firebase-functions/v2/scheduler';
 
 // Scheduled function to check for missing orders in the spreadsheet
-export const missingFromSpreadsheetHandler = async () => {
+export const missingFromSpreadsheetHandler = async (_event: ScheduledEvent) => {
   const { EMAIL_IGNORE_TEST_DOMAINS, SHEETS_KEY_COLUMN, EMAIL_NOTIFY_TO, PROJECT_ID } = getConfig();
   const testDomains = EMAIL_IGNORE_TEST_DOMAINS ? EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
 
   try {
     const response = await readSheet();
-    const rows = response.data.values.slice(2);
+    // console.log('Spreadsheet read response:', response);
+    const rows = response.values?.slice(2) ?? [];
     const keys = rows.map((row) => row[SHEETS_KEY_COLUMN]).filter((key) => key !== '-');
 
     const orders = await getOrders({ pending: false });
@@ -44,13 +46,13 @@ export const missingFromSpreadsheetHandler = async () => {
 };
 
 // Scheduled function to check for duplicate emails in the spreadsheet
-export const duplicateEmailsInSpreadsheetHandler = async () => {
+export const duplicateEmailsInSpreadsheetHandler = async (_event: ScheduledEvent) => {
   const { EMAIL_IGNORE_TEST_DOMAINS, SHEETS_KEY_COLUMN, SHEETS_EMAIL_COLUMN, EMAIL_NOTIFY_TO, PROJECT_ID } = getConfig();
   const testDomains = EMAIL_IGNORE_TEST_DOMAINS ? EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
 
   try {
     const response = await readSheet();
-    const rows = response.data.values.slice(2);
+    const rows = response.values?.slice(2) ?? [];
     const rowsWithIdCol = rows.filter(row => row[SHEETS_KEY_COLUMN] !== '-');
     const emails = rowsWithIdCol.map((row) => row[SHEETS_EMAIL_COLUMN]?.toLowerCase()).filter((email) => email);
 

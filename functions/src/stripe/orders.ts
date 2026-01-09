@@ -3,7 +3,14 @@ import { logger } from 'firebase-functions/v2';
 import { createError, ErrorType } from '../shared/errorHandler.js';
 import { getConfig } from '../config/internal/config.js';
 
-export const getStripePaymentIntent = async ({ email, name, amount, description, idempotencyKey, id }) => {
+export const getStripePaymentIntent = async ({ email, name, amount, description, idempotencyKey, id }: {
+  email: string;
+  name: string;
+  amount: number;
+  description: string;
+  idempotencyKey: string;
+  id?: string;
+}) => {
   logger.info(`getStripePaymentIntent: ${email}`, { email, idempotencyKey });
 
   const { STRIPE_STATEMENT_DESCRIPTOR_SUFFIX: statement_descriptor_suffix } = getConfig();
@@ -42,7 +49,7 @@ export const getStripePaymentIntent = async ({ email, name, amount, description,
   };
 };
 
-async function findOrCreateCustomer(email, name) {
+async function findOrCreateCustomer(email: string, name: string) {
   const stripe = getStripe();
   let customer;
   const existingCustomers = await stripe.customers.list({ email, limit: 1 });

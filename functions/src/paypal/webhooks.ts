@@ -2,9 +2,11 @@ import { logger } from 'firebase-functions/v2';
 import { handlePaymentVerification } from '../shared/webhooks.js';
 import { getPayPalAccessToken, getPaypalApiUrl } from './auth.js'
 import { getConfig } from '../config/internal/config.js';
+import type { Request } from 'firebase-functions/v2/https';
+import type { Response } from 'express';
 
 // onRequest handler for PayPal webhooks
-export const paypalWebhookHandler = async (req, res) => {
+export const paypalWebhookHandler = async (req: Request, res: Response) => {
   logger.debug('Received PayPal webhook', { headers: req.headers, body: req.body });
 
   const { ENV, PAYMENT_DESCRIPTION } = getConfig();
@@ -17,11 +19,13 @@ export const paypalWebhookHandler = async (req, res) => {
     const isValid = await validateWebhookSignature(req, accessToken, paypalApiUrl);
     if (!isValid) {
       logger.warn('Invalid PayPal webhook signature', { headers: req.headers });
-      return res.status(400).send('Invalid signature');
+      res.status(400).send('Invalid signature');
+      return;
     }
   } catch (error) {
     logger.error('Error validating PayPal webhook signature', { error });
-    return res.status(500).send('Internal Server Error');
+    res.status(500).send('Internal Server Error');
+    return;
   }
 
   // Parse webhook payload
@@ -31,26 +35,31 @@ export const paypalWebhookHandler = async (req, res) => {
   // Only process completed payment captures with matching description
   if (event_type !== 'PAYMENT.CAPTURE.COMPLETED' || status !== 'COMPLETED') {
     logger.info('Ignoring irrelevant webhook', { eventType: event_type });
-    return res.status(200).json({ received: true });
+    res.status(200).json({ received: true });
+    return;
   }
   const orderId = supplementary_data?.related_ids?.order_id;
   if (!orderId) {
     logger.error('No order ID found in PayPal webhook resource', { resource, ENV });
-    return res.status(500).send('No order ID in webhook');
+    res.status(500).send('No order ID in webhook');
+    return;
   }
   const order = await getOrder(orderId, accessToken, paypalApiUrl);
   const description = order?.purchase_units?.[0]?.description;
   if (!order) {
     logger.error('Failed to retrieve PayPal order', { orderId });
-    return res.status(500).send('Failed to retrieve order');
+    res.status(500).send('Failed to retrieve order');
+    return;
   }
   if (!description) {
     logger.error('No description found in PayPal order', { order, orderId });
-    return res.status(500).send('No description in order');
+    res.status(500).send('No description in order');
+    return;
   }
   if (description !== PAYMENT_DESCRIPTION) {
     logger.info(`Webhook ignored: description (${description}) != ${PAYMENT_DESCRIPTION}`);
-    return res.status(200).json({ received: true });
+    res.status(200).json({ received: true });
+    return;
   }
 
   // Process the webhook event
@@ -60,13 +69,15 @@ export const paypalWebhookHandler = async (req, res) => {
   try {
     await handlePaymentVerification(paymentId);
     res.status(200).send('Webhook received');
+    return;
   } catch (error) {
     logger.error('Error processing PayPal webhook', { paymentId, error });
     res.status(500).send('Internal Server Error');
+    return;
   }
 };
 
-const validateWebhookSignature = async (req, accessToken, paypalApiUrl) => {
+const validateWebhookSignature = async (req: Request, accessToken: string, paypalApiUrl: string) => {
   const response = await fetch(`${paypalApiUrl}/v1/notifications/verify-webhook-signature`, {
     method: 'POST',
     headers: {
@@ -93,7 +104,7 @@ const validateWebhookSignature = async (req, accessToken, paypalApiUrl) => {
   return data.verification_status === 'SUCCESS';
 };
 
-const getOrder = async (orderId, accessToken, paypalApiUrl) => {
+const getOrder = async (orderId: string, accessToken: string, paypalApiUrl: string) => {
   const response = await fetch(`${paypalApiUrl}/v2/checkout/orders/${orderId}`, {
     method: 'GET',
     headers: {

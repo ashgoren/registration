@@ -1,9 +1,19 @@
-import { logger } from 'firebase-functions/v2';
 import nodemailer from 'nodemailer';
+import { logger } from 'firebase-functions/v2';
 import { getConfig } from '../config/internal/config.js';
+import type { Transporter } from 'nodemailer';
+
+interface EmailOptions {
+  from?: string;
+  to: string;
+  subject: string;
+  html?: string;
+  text?: string;
+  replyTo?: string;
+}
 
 // Configure the email transport with SMTP
-let mailTransport = null;
+let mailTransport: Transporter | null = null;
 const getMailTransport = () => {
   if (mailTransport) return mailTransport;
   const { EMAIL_ENDPOINT, EMAIL_USER, EMAIL_PASSWORD } = getConfig();
@@ -18,7 +28,7 @@ const getMailTransport = () => {
   return mailTransport;
 };
 
-const sendMail = async ({ from, to, subject, html=null, text=null, replyTo=null }) => {
+const sendMail = async ({ from, to, subject, html, text, replyTo }: EmailOptions) => {
   from ||= getConfig().EMAIL_FROM;
 
   if (getConfig().IS_EMULATOR) {

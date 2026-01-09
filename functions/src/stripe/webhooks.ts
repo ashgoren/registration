@@ -2,9 +2,11 @@ import { getStripe } from './auth.js';
 import { logger } from 'firebase-functions/v2';
 import { handlePaymentVerification } from '../shared/webhooks.js';
 import { getConfig } from '../config/internal/config.js';
+import { Request } from 'firebase-functions/v2/https';
+import { Response } from 'express';
 
 // onRequest function to handle Stripe webhooks
-export const stripeWebhookHandler = async (req, res) => {
+export const stripeWebhookHandler = async (req: Request, res: Response) => {
   logger.debug('Received Stripe webhook', { headers: req.headers, body: req.body });
   
   const { STRIPE_WEBHOOK_SECRET, ENV, PAYMENT_DESCRIPTION } = getConfig();
@@ -17,22 +19,26 @@ export const stripeWebhookHandler = async (req, res) => {
     event = getStripe().webhooks.constructEvent(req.rawBody, sig, STRIPE_WEBHOOK_SECRET);
   } catch (err) {
     logger.error('Error validating Stripe webhook signature', { error: err });
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    res.status(400).send(`Webhook Error: ${(err as Error).message}`);
+    return;
   }
 
   // Only process payment_intent.succeeded events with matching description
   if (event.type !== 'payment_intent.succeeded') {
     logger.info(`Webhook ignored: type != payment_intent.succeeded: ${event.type}`);
-    return res.status(200).json({ received: true });
+    res.status(200).json({ received: true });
+    return;
   }
   if (!event.data?.object?.description) {
     // No description means it might be a direct payment
     logger.warn(`No description found in Stripe webhook event data. Direct payment? ${event.data?.object?.id}`, { event });
-    return res.status(200).json({ received: true });
+    res.status(200).json({ received: true });
+    return;
   }
   if (event.data?.object?.description !== PAYMENT_DESCRIPTION) {
     logger.info(`Webhook ignored: description (${event.data?.object?.description}) != ${PAYMENT_DESCRIPTION}`);
-    return res.status(200).json({ received: true });
+    res.status(200).json({ received: true });
+    return;
   }
 
   // Process the webhook event
@@ -44,8 +50,10 @@ export const stripeWebhookHandler = async (req, res) => {
   try {
     await handlePaymentVerification(paymentId);
     res.json({ received: true });
+    return;
   } catch (error) { // database errors
     logger.error('Error processing Stripe webhook', { paymentId, error });
     res.status(500).send('Internal Server Error');
+    return;
   }
 };

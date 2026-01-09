@@ -4,23 +4,26 @@ import { sendMail } from './email.js';
 import { createError, ErrorType } from './errorHandler.js';
 import { getConfig } from '../config/internal/config.js';
 
+import type { Order } from '../types/order.js';
+type OrderWithKey = Order & { key: string };
+
 const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 5000; // 5 seconds
 
-const getOrderByPaymentId = async (paymentId) => {
+const getOrderByPaymentId = async (paymentId: string): Promise<OrderWithKey | null> => {
   try {
     const snapshot = await ordersCollection.where('paymentId', '==', paymentId).get();
     if (snapshot.empty) {
       return null;
     }
-    const order = snapshot.docs[0].data();
+    const order = snapshot.docs[0].data() as Order;
     return { key: snapshot.docs[0].id, ...order };
   } catch (err) {
-    throw createError(ErrorType.DATABASE_READ, `Error reading order with paymentId ${paymentId}: ${err.message}`);
+    throw createError(ErrorType.DATABASE_READ, `Error reading order with paymentId ${paymentId}: ${(err as Error).message}`);
   }
 };
 
-const findPaymentInDatabase = async (paymentId) => {
+const findPaymentInDatabase = async (paymentId: string) => {
   let attempt = 0;
   const order = await getOrderByPaymentId(paymentId);
   if (order) return order;
@@ -35,11 +38,11 @@ const findPaymentInDatabase = async (paymentId) => {
   return null; // payment still not found after retries
 };
 
-export const handlePaymentVerification = async (paymentId) => {
+export const handlePaymentVerification = async (paymentId: string) => {
   const { EMAIL_NOTIFY_TO, PROJECT_ID } = getConfig();
   const order = await findPaymentInDatabase(paymentId);
   if (order) {
-    logger.info('Found matching order in database', { paymentId, email: order.email });
+    logger.info('Found matching order in database', { paymentId, email: order.people[0].email });
   } else {
     logger.warn('Received payment webhook for unrecognized payment ID', { paymentId });
     sendMail({

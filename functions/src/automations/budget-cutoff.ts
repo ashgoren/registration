@@ -15,6 +15,11 @@ import { sendMail } from '../shared/email.js';
 import { getConfig } from '../config/internal/config.js';
 // import 'dotenv/config'; // for local emulation, but breaks production deployment
 
+import type { CloudEvent } from 'firebase-functions/v2';
+import type { MessagePublishedData } from 'firebase-functions/v2/pubsub';
+
+type GoogleApiError = { code: number };
+
 const APIS_TO_DISABLE = [
   'run.googleapis.com', // 2nd Gen Firebase Functions
   'firestore.googleapis.com', // Firestore
@@ -23,7 +28,7 @@ const APIS_TO_DISABLE = [
 ];
 
 // onMessagePublished to budget_alerts topic
-export const disableProjectAPIsHandler = async (event) => {
+export const disableProjectAPIsHandler = async (event: CloudEvent<MessagePublishedData>) => {
   const { PROJECT_ID } = getConfig();
 
   if (!PROJECT_ID) {
@@ -40,7 +45,7 @@ export const disableProjectAPIsHandler = async (event) => {
     }
     console.log(`Cost ($${costAmount}) exceeds budget ($${budgetAmount}), proceeding to disable APIs...`);
   } catch (error) {
-    console.error('Error parsing Pub/Sub message:', error.message);
+    console.error('Error parsing Pub/Sub message:', (error as Error).message);
     return; // Early exit if invalid Pub/Sub message
   }
   
@@ -60,7 +65,7 @@ export const disableProjectAPIsHandler = async (event) => {
       console.log(`Successfully disabled ${api.name}.`);
       api.success = true;
     } catch (error) {
-      if (error.code === 403) console.error(`Permission denied trying to disable ${api.name}.`);
+      if ((error as GoogleApiError).code === 403) console.error(`Permission denied trying to disable ${api.name}.`);
       console.error(`Failed to disable ${api.name}:`, error);
     }
   }
@@ -68,7 +73,7 @@ export const disableProjectAPIsHandler = async (event) => {
   await logAndEmail(apis);
 };
 
-const parseBudgetMessage = (event) => {
+const parseBudgetMessage = (event: CloudEvent<MessagePublishedData>) => {
   const msg = Buffer.from(event.data.message.data, 'base64').toString('utf-8');
   console.log('Received Pub/Sub message:', msg);
   try {
@@ -82,7 +87,7 @@ const parseBudgetMessage = (event) => {
     console.log('Budget amount:', budgetAmount);
     return { budgetAmount, costAmount };
   } catch (error) {
-    console.error('Error parsing Pub/Sub message:', error.message);
+    console.error('Error parsing Pub/Sub message:', (error as Error).message);
     throw error;
   }
 };
@@ -94,7 +99,7 @@ const initializeGoogleServiceUsageClient = async () => {
   return google.serviceusage({ version: 'v1', auth });
 };
 
-const logAndEmail = async (apis) => {
+const logAndEmail = async (apis: { name: string; success: boolean }[]) => {
   const { EMAIL_FROM, EMAIL_NOTIFY_TO, PROJECT_ID } = getConfig();
 
   if (!PROJECT_ID || !EMAIL_FROM || !EMAIL_NOTIFY_TO) {
@@ -120,6 +125,6 @@ const logAndEmail = async (apis) => {
     });
     console.log('Alert email sent successfully.');
   } catch (err) {
-    console.error('Failed to send alert email:', err.message);
+    console.error('Failed to send alert email:', (err as Error).message);
   }
 };

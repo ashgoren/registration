@@ -88,6 +88,7 @@
     "@google-cloud/artifact-registry": "^4.1.0",
     "@types/google.maps": "^3.58.1",
     "@types/markdown-it": "^14.1.2",
+    "@types/nodemailer": "^7.0.4",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.1",
     "@vitest/coverage-v8": "^3.1.3",
