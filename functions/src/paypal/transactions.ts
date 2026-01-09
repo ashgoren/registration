@@ -4,6 +4,7 @@ import { logger } from 'firebase-functions/v2';
 import { getDateChunks } from '../shared/helpers.js';
 import { createError, ErrorType } from '../shared/errorHandler.js';
 import { getPayPalAccessToken, getPaypalApiUrl } from './auth.js';
+import type { NormalizedPaymentTransaction } from '../scheduled/matchPayments.js';
 
 /* * * * * * * * * * PayPal Transactions List * * * * * * * * * * * * * * * * * * * * * * * *
  * PayPal SDK does not support listing transactions directly.                               *
@@ -14,7 +15,7 @@ import { getPayPalAccessToken, getPaypalApiUrl } from './auth.js';
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // List transactions from PayPal API (only available in REST API, not SDK)
-export const listPaypalTransactions = async (description: string) => {
+export const listPaypalTransactions = async (description: string): Promise<NormalizedPaymentTransaction[]> => {
   logger.info('listPaypalTransactions', { description });
 
   const accessToken = await getPayPalAccessToken();
@@ -98,7 +99,7 @@ const createDateChunks = () => {
   return getDateChunks(startDate, endDate, 30);
 };
 
-interface PaypalTransaction {
+export interface PaypalTransaction {
   transaction_info: {
     transaction_id: string;
     transaction_amount: {
@@ -113,7 +114,13 @@ interface PaypalTransaction {
   };
 }
 
-const normalizeTransaction = (txn: PaypalTransaction) => {
+const normalizeTransaction = (txn: PaypalTransaction): {
+  id: string;
+  amount: number;
+  currency: string;
+  date: Date;
+  email: string;
+} => {
   const { transaction_info, payer_info } = txn;
   const { transaction_id, transaction_amount, transaction_initiation_date } = transaction_info;
   const { email_address } = payer_info;

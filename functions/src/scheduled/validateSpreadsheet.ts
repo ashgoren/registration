@@ -19,7 +19,8 @@ export const missingFromSpreadsheetHandler = async () => {
 
   try {
     const response = await readSheet();
-    const rows = response.data.values.slice(2);
+    // console.log('Spreadsheet read response:', response);
+    const rows = response.values?.slice(2) ?? [];
     const keys = rows.map((row) => row[SHEETS_KEY_COLUMN]).filter((key) => key !== '-');
 
     const orders = await getOrders({ pending: false });
@@ -50,7 +51,7 @@ export const duplicateEmailsInSpreadsheetHandler = async () => {
 
   try {
     const response = await readSheet();
-    const rows = response.data.values.slice(2);
+    const rows = response.values?.slice(2) ?? [];
     const rowsWithIdCol = rows.filter(row => row[SHEETS_KEY_COLUMN] !== '-');
     const emails = rowsWithIdCol.map((row) => row[SHEETS_EMAIL_COLUMN]?.toLowerCase()).filter((email) => email);
 

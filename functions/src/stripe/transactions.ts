@@ -2,6 +2,7 @@ import { getStripe } from './auth.js';
 import { logger } from 'firebase-functions/v2';
 import { createError, ErrorType } from '../shared/errorHandler.js';
 import type { Stripe } from 'stripe';
+import type { NormalizedPaymentTransaction } from '../scheduled/matchPayments.js';
 
 export const listStripeTransactions = async (description: string) => {
   logger.info('listStripeTransactions', { description });
@@ -27,8 +28,8 @@ export const listStripeTransactions = async (description: string) => {
       amount: txn.amount / 100,
       currency: txn.currency,
       date: new Date(txn.created * 1000),
-      email: customerMap.get(txn.customer as string),
-    }));
+      email: customerMap.get(txn.customer as string)!,
+    })) as NormalizedPaymentTransaction[];
 
     // logger.debug('Normalized Stripe transactions from API:', normalizedTransactions); // debug log
     return normalizedTransactions;

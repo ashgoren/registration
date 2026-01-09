@@ -1,6 +1,7 @@
 import { logger } from 'firebase-functions/v2';
 import { google } from 'googleapis';
 import { getConfig } from '../config/internal/config.js';
+import type { sheets_v4 } from 'googleapis';
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 500;
@@ -11,14 +12,15 @@ const SHEET_OPERATIONS = {
   UPDATE: 'update',
 };
 
-async function readSheet() {
+async function readSheet(): Promise<sheets_v4.Schema$ValueRange> {
   const { SHEETS_ORDERS_TAB_NAME } = getConfig();
-  return googleSheetsOperation({
+  const response = await googleSheetsOperation({
     operation: SHEET_OPERATIONS.READ,
     params: {
       range: SHEETS_ORDERS_TAB_NAME || 'Orders'
     }
   });
+  return response.data as sheets_v4.Schema$ValueRange;
 }
 
 async function appendAllLines(lines: string[][]) {

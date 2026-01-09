@@ -13,24 +13,35 @@ import { listStripeTransactions } from '../stripe/index.js';
 import { getOrders } from '../shared/orders.js';
 import { sendMail } from '../shared/email.js';
 import { getConfig } from '../config/internal/config.js';
+import type { Request } from 'firebase-functions/v2/https';
+import type { Response } from 'express';
+import type { Order } from '../types/order'
+
+export type NormalizedPaymentTransaction = {
+  id: string;
+  amount: number;
+  currency: string;
+  date: Date;
+  email: string;
+};
 
 // On-demand (onRequest) wrapper for matching payments
-export const matchPaymentsOnDemandHandler = async (req, res) => {
+export const matchPaymentsOnDemandHandler = async (req: Request, res: Response) => {
   if (req.get('Authorization') !== getConfig().CLOUD_FUNCTIONS_TRIGGER_TOKEN) {
     logger.warn('Unauthorized access attempt to matchPayments function');
-    res.status(401).json({ error: 'Unauthorized' });
+    return res.status(401).json({ error: 'Unauthorized' });
     return;
   }
   try {
     const result = await matchPaymentsHandler({ skipEmail: true });
-    res.status(200).json({ success: true, data: result });
+    return res.status(200).json({ success: true, data: result });
   } catch (error) {
-    res.status(500).json({ error: 'Function failed', details: error.message });
+    return res.status(500).json({ error: 'Function failed', details: (error as Error).message });
   }
 };
 
 // Scheduled function to match payments with orders
-export const matchPaymentsHandler = async ({ skipEmail } = {}) => {
+export const matchPaymentsHandler = async ({ skipEmail }: { skipEmail?: boolean } = {}) => {
   const { PAYMENT_DESCRIPTION, PAYMENT_PROCESSOR } = getConfig();
 
   logger.info(`matchPayments triggered for event: ${PAYMENT_DESCRIPTION}`);
@@ -65,7 +76,7 @@ export const matchPaymentsHandler = async ({ skipEmail } = {}) => {
   };
 };
 
-const categorizeTransactions = ({ orders, transactions }) => {
+const categorizeTransactions = ({ orders, transactions }: { orders: Order[], transactions: NormalizedPaymentTransaction[] }) => {
   const transactionIds = new Set(transactions.map(txn => txn.id));
   const orderPaymentIds = new Set(orders.map(order => order.paymentId));
 
@@ -73,13 +84,17 @@ const categorizeTransactions = ({ orders, transactions }) => {
   // logger.debug('orderPaymentIds', { orderPaymentIds: Array.from(orderPaymentIds) });
 
   return {
-    matchingOrders: orders.filter(order => transactionIds.has(order.paymentId)),
-    extraDatabaseOrders: orders.filter(order => !transactionIds.has(order.paymentId)),
+    matchingOrders: orders.filter(order => transactionIds.has(order.paymentId!)),
+    extraDatabaseOrders: orders.filter(order => !transactionIds.has(order.paymentId!)),
     extraTransactions: transactions.filter(txn => !orderPaymentIds.has(txn.id))
   };
 };
 
-const logResults = ({ matchingOrders, extraDatabaseOrders, extraTransactions }) => {
+const logResults = ({ matchingOrders, extraDatabaseOrders, extraTransactions }: {
+  matchingOrders: Order[];
+  extraDatabaseOrders: Order[];
+  extraTransactions: NormalizedPaymentTransaction[];
+}) => {
   logger.debug(`Found ${matchingOrders.length} matching orders and transactions`, {
     matchingOrders: matchingOrders.map(mapOrder)
   });
@@ -103,7 +118,7 @@ const logResults = ({ matchingOrders, extraDatabaseOrders, extraTransactions }) 
   }
 };
 
-const sendEmailNotification = async (extraTransactions) => {
+const sendEmailNotification = async (extraTransactions: NormalizedPaymentTransaction[]) => {
   const { PAYMENT_DESCRIPTION, EMAIL_NOTIFY_TO } = getConfig();
   await sendMail({
     to: EMAIL_NOTIFY_TO,
@@ -112,5 +127,5 @@ const sendEmailNotification = async (extraTransactions) => {
   });
 };
 
-const mapOrder = ({ id, paymentId, paymentEmail }) => ({ id, paymentId, paymentEmail });
-const mapTransaction = ({ id, email }) => ({ paymentId: id, paymentEmail: email });
+const mapOrder = (order: Order) => ({ id: order.id, paymentId: order.paymentId, paymentEmail: order.paymentEmail });
+const mapTransaction = (txn: NormalizedPaymentTransaction) => ({ paymentId: txn.id, paymentEmail: txn.email });
