@@ -2,9 +2,11 @@ import { logger } from 'firebase-functions/v2';
 import { handlePaymentVerification } from '../shared/webhooks.js';
 import { getPayPalAccessToken, getPaypalApiUrl } from './auth.js'
 import { getConfig } from '../config/internal/config.js';
+import type { Request } from 'firebase-functions/v2/https';
+import type { Response } from 'express';
 
 // onRequest handler for PayPal webhooks
-export const paypalWebhookHandler = async (req, res) => {
+export const paypalWebhookHandler = async (req: Request, res: Response) => {
   logger.debug('Received PayPal webhook', { headers: req.headers, body: req.body });
 
   const { ENV, PAYMENT_DESCRIPTION } = getConfig();
@@ -59,14 +61,14 @@ export const paypalWebhookHandler = async (req, res) => {
   // Check if the payment is in the DB
   try {
     await handlePaymentVerification(paymentId);
-    res.status(200).send('Webhook received');
+    return res.status(200).send('Webhook received');
   } catch (error) {
     logger.error('Error processing PayPal webhook', { paymentId, error });
-    res.status(500).send('Internal Server Error');
+    return res.status(500).send('Internal Server Error');
   }
 };
 
-const validateWebhookSignature = async (req, accessToken, paypalApiUrl) => {
+const validateWebhookSignature = async (req: Request, accessToken: string, paypalApiUrl: string) => {
   const response = await fetch(`${paypalApiUrl}/v1/notifications/verify-webhook-signature`, {
     method: 'POST',
     headers: {
@@ -93,7 +95,7 @@ const validateWebhookSignature = async (req, accessToken, paypalApiUrl) => {
   return data.verification_status === 'SUCCESS';
 };
 
-const getOrder = async (orderId, accessToken, paypalApiUrl) => {
+const getOrder = async (orderId: string, accessToken: string, paypalApiUrl: string) => {
   const response = await fetch(`${paypalApiUrl}/v2/checkout/orders/${orderId}`, {
     method: 'GET',
     headers: {

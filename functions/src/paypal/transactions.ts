@@ -14,7 +14,7 @@ import { getPayPalAccessToken, getPaypalApiUrl } from './auth.js';
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // List transactions from PayPal API (only available in REST API, not SDK)
-export const listPaypalTransactions = async (description) => {
+export const listPaypalTransactions = async (description: string) => {
   logger.info('listPaypalTransactions', { description });
 
   const accessToken = await getPayPalAccessToken();
@@ -35,7 +35,7 @@ export const listPaypalTransactions = async (description) => {
   return normalizedTransactions;
 };
 
-const fetchAllTransactions = async (accessToken) => {
+const fetchAllTransactions = async (accessToken: string) => {
   // Fetch in 30-day chunks due to PayPal API limitations
   const dateChunks = createDateChunks();
   const transactions = [];
@@ -52,7 +52,7 @@ const fetchAllTransactions = async (accessToken) => {
   return transactions;
 };
 
-const fetchTransactionChunk = async (accessToken, startDate, endDate) => {
+const fetchTransactionChunk = async (accessToken: string, startDate: Date, endDate: Date) => {
   const params = new URLSearchParams({
     'start_date': startDate.toISOString(),
     'end_date': endDate.toISOString(),
@@ -72,7 +72,7 @@ const fetchTransactionChunk = async (accessToken, startDate, endDate) => {
       }
     });
   } catch (err) {
-    throw createError(ErrorType.PAYPAL_API, `Error fetching PayPal transactions. Does the REST API app have "transaction search" enabled? Is the API URL correct? ${err.message}`);
+    throw createError(ErrorType.PAYPAL_API, `Error fetching PayPal transactions. Does the REST API app have "transaction search" enabled? Is the API URL correct? ${(err as Error).message}`);
   }
 
   if (!response.ok) {
@@ -98,7 +98,22 @@ const createDateChunks = () => {
   return getDateChunks(startDate, endDate, 30);
 };
 
-const normalizeTransaction = (txn) => {
+interface PaypalTransaction {
+  transaction_info: {
+    transaction_id: string;
+    transaction_amount: {
+      value: string;
+      currency_code: string;
+    };
+    transaction_initiation_date: string;
+    transaction_subject: string;
+  };
+  payer_info: {
+    email_address: string;
+  };
+}
+
+const normalizeTransaction = (txn: PaypalTransaction) => {
   const { transaction_info, payer_info } = txn;
   const { transaction_id, transaction_amount, transaction_initiation_date } = transaction_info;
   const { email_address } = payer_info;
@@ -113,7 +128,7 @@ const normalizeTransaction = (txn) => {
 };
 
 // // Helper for debug logging of retrieved transactions
-// const logTransactions = (transactions) => {
+// const logTransactions = (transactions: PaypalTransaction[]) => {
 //   for (const txn of transactions) {
 //     const { id, amount, currency, subject, date, email } = txn;
 //     logger.debug(`Transaction ID: ${id}, Amount: ${amount} ${currency}, Subject: ${subject}, Date: ${date.toISOString()}, Email: ${email}`);
