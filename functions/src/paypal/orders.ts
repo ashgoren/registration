@@ -28,7 +28,7 @@ export const capturePaypalOrder = async ({ id, idempotencyKey, email }: {
       throw new Error(`Failed to capture order: ${statusCode}`);
     }
     validateOrderResponse(result);
-    return parseResult(result);
+    return parseResult(result) as { id: string; email: string; amount: number };
   } catch (error) {
     handlePaypalError(error as CustomError, 'capturePaypalOrder');
     return; // satisfy TS
@@ -64,7 +64,7 @@ export const createOrUpdatePaypalOrder = async ({ id, email, description, amount
     validateOrderResponse(result, undefined, amount);
   }
 
-  return parseResult(result);
+  return parseResult(result) as { id: string; amount: number };
 };
 
 const createOrder = async ({ description, amount, idempotencyKey }: {
@@ -107,7 +107,7 @@ const createOrder = async ({ description, amount, idempotencyKey }: {
   } catch (error) {
     handlePaypalError(error as CustomError, 'createOrder');
   }
-}
+};
 
 const updateOrder = async ({ id, amount, idempotencyKey }: {
   id: string;
@@ -194,7 +194,7 @@ const parseResult = (result: PaypalResult) => {
     id = result?.id;
     amount = result?.purchaseUnits[0]?.amount?.value;
   }
-  return { id, email, amount };
+  return { id, email, amount: amount ? Number(amount) : undefined };
 };
 
 
@@ -220,7 +220,7 @@ const validateOrderResponse = (result: PaypalResult, expectedId?: string, expect
     throw createError(ErrorType.VALIDATION_ID_MISMATCH, 'Order ID mismatch', { expected: expectedId, received: id });
   }
 
-  if (expectedAmount && formatCurrency(expectedAmount) !== formatCurrency(Number(amount))) {
+  if (expectedAmount && formatCurrency(expectedAmount) !== formatCurrency(amount)) {
     logger.info('expected amount vs actual', { expectedAmount, amount });
     throw createError(ErrorType.VALIDATION_AMOUNT_MISMATCH, 'Amount mismatch', { expected: expectedAmount, received: amount });
   }

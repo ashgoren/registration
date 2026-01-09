@@ -10,8 +10,13 @@ type OrderWithKey = Order & { key: string };
 if (!getApps().length) initializeApp();
 
 // onDocumentUpdated
-export const appendRecordToSpreadsheetHandler = async (event: FirestoreEvent<Change<QueryDocumentSnapshot>>) => {
-  const { before, after } = event.data;
+export const appendRecordToSpreadsheetHandler = async (event: FirestoreEvent<Change<QueryDocumentSnapshot> | undefined>) => {
+  if (!event.data?.before || !event.data?.after) {
+    logger.error('Missing before or after data in event');
+    return;
+  }
+
+  const { before, after } = event.data!;
   if (before?.data()?.status === 'pending' && after.data().status === 'final') {
     logger.info(`APPEND TO SPREADSHEET: ${after.id}`);
     try {

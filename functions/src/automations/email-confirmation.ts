@@ -5,11 +5,16 @@ import { getConfig } from '../config/internal/config.js';
 import type { FirestoreEvent, Change, QueryDocumentSnapshot } from 'firebase-functions/v2/firestore';
 
 // onDocumentUpdated
-export const sendEmailConfirmationsHandler = async (event: FirestoreEvent<Change<QueryDocumentSnapshot>>) => {
+export const sendEmailConfirmationsHandler = async (event: FirestoreEvent<Change<QueryDocumentSnapshot> | undefined>) => {
   const { EMAIL_FROM, EMAIL_REPLY_TO, EVENT_TITLE, IS_EMULATOR, WAITLIST_MODE } = getConfig();
   const testDomains = ['test.com', 'testing.com', 'example.com', 'example.org', 'example.net'];
 
-  const { before, after } = event.data;
+  if (!event.data?.before || !event.data?.after) {
+    logger.error('Missing before or after data in event');
+    return;
+  }
+
+  const { before, after } = event.data!;
   if (before?.data()?.status === 'pending' && after.data().status === 'final') {
     const { people } = after.data();
     const firstPerson = people[0];

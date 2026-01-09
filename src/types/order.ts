@@ -17,7 +17,7 @@ export type Person = {
 };
 
 export type Order = {
-  id: string;
+  id?: string;
   people: Person[];
   donation: number;
   deposit: number;

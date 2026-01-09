@@ -11,9 +11,10 @@ import { readSheet } from '../shared/spreadsheet.js';
 import { sendMail } from '../shared/email.js';
 import { getOrderEmail, getOrderDomain } from '../shared/helpers.js';
 import { getConfig } from '../config/internal/config.js';
+import type { ScheduledEvent } from 'firebase-functions/v2/scheduler';
 
 // Scheduled function to check for missing orders in the spreadsheet
-export const missingFromSpreadsheetHandler = async () => {
+export const missingFromSpreadsheetHandler = async (_event: ScheduledEvent) => {
   const { EMAIL_IGNORE_TEST_DOMAINS, SHEETS_KEY_COLUMN, EMAIL_NOTIFY_TO, PROJECT_ID } = getConfig();
   const testDomains = EMAIL_IGNORE_TEST_DOMAINS ? EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
 
@@ -45,7 +46,7 @@ export const missingFromSpreadsheetHandler = async () => {
 };
 
 // Scheduled function to check for duplicate emails in the spreadsheet
-export const duplicateEmailsInSpreadsheetHandler = async () => {
+export const duplicateEmailsInSpreadsheetHandler = async (_event: ScheduledEvent) => {
   const { EMAIL_IGNORE_TEST_DOMAINS, SHEETS_KEY_COLUMN, SHEETS_EMAIL_COLUMN, EMAIL_NOTIFY_TO, PROJECT_ID } = getConfig();
   const testDomains = EMAIL_IGNORE_TEST_DOMAINS ? EMAIL_IGNORE_TEST_DOMAINS.split(',').map(domain => domain.trim()) : [];
 

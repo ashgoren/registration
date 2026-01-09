@@ -16,6 +16,7 @@ import { getConfig } from '../config/internal/config.js';
 import type { Request } from 'firebase-functions/v2/https';
 import type { Response } from 'express';
 import type { Order } from '../types/order'
+import type { ScheduledEvent } from 'firebase-functions/v2/scheduler';
 
 export type NormalizedPaymentTransaction = {
   id: string;
@@ -29,19 +30,30 @@ export type NormalizedPaymentTransaction = {
 export const matchPaymentsOnDemandHandler = async (req: Request, res: Response) => {
   if (req.get('Authorization') !== getConfig().CLOUD_FUNCTIONS_TRIGGER_TOKEN) {
     logger.warn('Unauthorized access attempt to matchPayments function');
-    return res.status(401).json({ error: 'Unauthorized' });
+    res.status(401).json({ error: 'Unauthorized' });
     return;
   }
   try {
-    const result = await matchPaymentsHandler({ skipEmail: true });
-    return res.status(200).json({ success: true, data: result });
+    const result = await matchPayments({ skipEmail: true });
+    res.status(200).json({ success: true, data: result });
+    return;
   } catch (error) {
-    return res.status(500).json({ error: 'Function failed', details: (error as Error).message });
+    res.status(500).json({ error: 'Function failed', details: (error as Error).message });
+    return;
   }
 };
 
 // Scheduled function to match payments with orders
-export const matchPaymentsHandler = async ({ skipEmail }: { skipEmail?: boolean } = {}) => {
+export const matchPaymentsHandler = async (_event: ScheduledEvent) => {
+  try {
+    await matchPayments({ skipEmail: true });
+  } catch (error) {
+    logger.error('matchPayments scheduled function failed', { error: (error as Error).message });
+  }
+};
+
+// shared by onSchedule and onRequest handlers
+const matchPayments = async ({ skipEmail }: { skipEmail?: boolean } = {}) => {
   const { PAYMENT_DESCRIPTION, PAYMENT_PROCESSOR } = getConfig();
 
   logger.info(`matchPayments triggered for event: ${PAYMENT_DESCRIPTION}`);

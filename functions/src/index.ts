@@ -25,13 +25,28 @@ import { emailIncompleteOrdersHandler } from './scheduled/incomplete.js';
 import { matchPaymentsHandler, matchPaymentsOnDemandHandler } from './scheduled/matchPayments.js';
 import { disableProjectAPIsHandler } from './automations/budget-cutoff.js';
 
+import type { CallableRequest } from 'firebase-functions/v2/https';
+import type { Order } from './types/order.js';
+import type { LoggerPayload } from './types/logger';
+import type { PaymentData } from './api/initializePayment'
+import type { CustomError } from './shared/errorHandler';
+
+type DispatcherData =
+  | { action: 'createWaiverSubmission'; data: { name: string; email: string; phone: string } }
+  | { action: 'checkPeopleThreshold'; data: undefined }
+  | { action: 'initializePayment'; data: PaymentData }
+  | { action: 'capturePaypalOrder'; data: { id: string; idempotencyKey: string; email: string } }
+  | { action: 'savePendingOrder'; data: { orderId: string; order: Order } }
+  | { action: 'saveFinalOrder'; data: { orderId: string; order: Order } }
+  | { action: 'logEvent'; data: LoggerPayload };
+
 // Deploy-time options
 const region = deployOptions.REGION;
 const timeZone = deployOptions.TIMEZONE;
 const secrets = deployOptions.DOPPLER_SECRETS;
 
 // Combined into one callable function to reduce slow cold start preflight checks
-const firebaseFunctionDispatcherHandler = async (request) => {
+const firebaseFunctionDispatcherHandler = async (request: CallableRequest<DispatcherData>) => {
   const { action, data } = request.data;
 
   try {
@@ -50,7 +65,7 @@ const firebaseFunctionDispatcherHandler = async (request) => {
       default: return { error: 'Invalid action' };
     }
   } catch (err) {
-    handleFunctionError(err, action, data);
+    handleFunctionError((err as CustomError), action, data);
   }
 };
 
@@ -121,7 +136,7 @@ const onMessagePublishedFunctions = [
   },
 ];
 
-const exports = {};
+const exports: Record<string, unknown> = {};
 
 onCallFunctions.forEach(({ name, handler }) => {
   exports[name] = onCall({ region, secrets, timeoutSeconds: 300 }, handler);
