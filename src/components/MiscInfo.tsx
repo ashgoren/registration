@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useFormikContext } from 'formik';
 import { Box } from '@mui/material';
 import { Title } from 'components/layouts/SharedStyles';
@@ -13,10 +13,15 @@ import type { CustomFieldProps } from 'components/inputs/Field';
 export const MiscInfo = ({ index }: { index: number }) => {
   // logDebug('MiscInfo rendered');
 
-  const { values, setFieldValue, setFieldError, setFieldTouched, handleChange } = useFormikContext<Order>();
+  const { values, setFieldValue, setFieldTouched } = useFormikContext<Order>();
 
   const [showPhotoCommentsField, setShowPhotoCommentsField] = useState(values.people?.[index]?.photo === 'Other');
   const [showMiscCommentsField, setShowMiscCommentsField] = useState((values.people?.[index]?.misc as string[])?.includes('minor'));
+
+  useEffect(() => {
+    setShowPhotoCommentsField(values.people?.[index]?.photo === 'Other');
+    setShowMiscCommentsField((values.people?.[index]?.misc as string[])?.includes('minor'));
+  }, [values.people, index]);
 
   const fields: string[] = index === 0
     ? config.fields.miscFields
@@ -27,38 +32,6 @@ export const MiscInfo = ({ index }: { index: number }) => {
     : null;
   
   useScrollToTop();
-
-  const updatePhotoCommentsField = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    if (value === 'Other') {
-      setShowPhotoCommentsField(true);
-    } else {
-      setShowPhotoCommentsField(false);
-      setFieldValue(`people[${index}].photoComments`, '');
-    }
-    handleChange(e); // update formik values
-    setFieldError(name, '');
-  }, [index]);
-
-  const updateMiscCommentsField = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value, checked } = e.target;
-    logDebug('updateMiscCommentsField', name, value, checked);
-    const currentMisc = values.people[index].misc as string[];
-    let newMisc;
-    if (checked) {
-      newMisc = [...currentMisc, value];
-    } else {
-      newMisc = currentMisc.filter(option => option !== value);
-    }
-    if (newMisc.includes('minor')) {
-      setShowMiscCommentsField(true);
-    } else {
-      setShowMiscCommentsField(false);
-      setFieldValue(`people[${index}].miscComments`, '');
-    }
-    handleChange(e); // update formik values
-    setFieldError(name, '');
-  }, [index]);
 
   const updateShareCheckboxOptions = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const { name: field, value, checked } = e.target;
@@ -87,8 +60,6 @@ export const MiscInfo = ({ index }: { index: number }) => {
 
   const getOnChangeHandler = (field: string) => {
     if (field === 'share') return updateShareCheckboxOptions;
-    if (field === 'photo') return updatePhotoCommentsField;
-    if (field === 'misc') return updateMiscCommentsField;
     if (field === 'agreement') return updateAgreementField;
     return undefined; // use default onChange handler for that input field
   };
