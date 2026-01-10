@@ -19,6 +19,6 @@ const backendConfig = {
     region: 'us-west1', // leave as 'us-west1' unless Firebase/GCP project was created in another region
     timezone: 'America/Los_Angeles'
   }
-};
+} as const;
 
 export default backendConfig;

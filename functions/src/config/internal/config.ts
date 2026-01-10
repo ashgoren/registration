@@ -94,24 +94,25 @@ const envVariables = [
 
 let config: Config | null = null;
 
+const loadSecrets = () => {
+  if (process.env.DOPPLER_ENVIRONMENT === 'dev') {
+    console.log('DEBUG: dev: using env variables');
+    return Object.fromEntries(
+      envVariables.map((varName) => [varName, process.env[varName]])
+    );
+  }
+  console.log('DEBUG: stg/prd: parsing backend');
+  try {
+    return JSON.parse(process.env.backend!);
+  } catch {
+    throw new Error('Malformed backend environment variable');
+  }
+};
+
 export const getConfig = () => {
   if (config) return config;
 
-  let parsedSecrets = {};
-  if (process.env.DOPPLER_ENVIRONMENT !== 'dev') {
-    console.log('DEBUG: parsing backend');
-    try {
-      parsedSecrets = JSON.parse(process.env.backend!);
-    } catch {
-      throw new Error('Malformed backend environment variable');
-    }
-  } else {
-    console.log('DEBUG: using env variables');
-    parsedSecrets = envVariables.reduce<Record<string, string | undefined>>((acc, varName) => {
-      acc[varName] = process.env[varName];
-      return acc;
-    }, {});
-  }
+  const parsedSecrets = loadSecrets();
 
   const { FIRESTORE_EMULATOR_HOST, FUNCTIONS_EMULATOR, GCLOUD_PROJECT } = process.env;
 
