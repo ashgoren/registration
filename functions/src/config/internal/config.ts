@@ -21,6 +21,7 @@ interface Config {
   SHEETS_ORDERS_TAB_NAME: string;
   WAITLIST_MODE: boolean;
   WAITLIST_CUTOFF: number;
+  TIMESTAMP_FORMAT: Intl.DateTimeFormatOptions;
   
   // Secrets
   PAYPAL_CLIENT_ID?: string;
@@ -67,7 +68,8 @@ const baseOptions = {
   SHEETS_SHEET_RANGE: 'A:AZ',
   SHEETS_ORDERS_TAB_NAME: 'Orders',
   WAITLIST_MODE: userConfig.registration.waitlist_mode,
-  WAITLIST_CUTOFF: userConfig.registration.waitlist_cutoff
+  WAITLIST_CUTOFF: userConfig.registration.waitlist_cutoff,
+  TIMESTAMP_FORMAT: userConfig.spreadsheet.timestampFormat
 };
 
 const envVariables = [
