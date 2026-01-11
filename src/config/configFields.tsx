@@ -73,7 +73,7 @@ export const fieldsConfig: FieldConfig = {
     autoComplete: 'email'
   },
   emailConfirmation: {
-    label: 'Re-enter email',
+    label: 'Confirm email',
     type: 'email',
     validation: EMAIL_VALIDATION.required('Please re-enter your email address.').test('email-match', 'Email addresses must match.', function (value) {
       return value?.toLowerCase() === this.parent.email?.toLowerCase();
