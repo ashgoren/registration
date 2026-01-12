@@ -50,7 +50,7 @@ export const MiscInfo = ({ index }: { index: number }) => {
         share.filter(option => option !== value)
       );
     }
-  }, [index]);
+  }, [index, values.people]);
 
   const updateAgreementField = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
