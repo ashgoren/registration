@@ -1,17 +1,11 @@
 import { test, expect } from '@playwright/test';
-import { fields } from './config';
+import { getFieldConfig, isTextField, isTextAreaField, isCheckboxOrRadioField } from './config';
 import { person1, person2, personWithAllFields } from './testData';
 import {
-  getFieldSelector,
-  getTextareaSelector,
-  getOptionSelector,
-  getErrorLocator,
-  fillField,
-  fillFields,
-  addPerson,
-  addSecondPerson,
-  saveButtonSelector,
-  addAnotherPersonButtonSelector
+  getFieldSelector, getTextareaSelector, getOptionSelector, getErrorLocator,
+  fillField, fillFields,
+  addPerson, addSecondPerson, addThirdPerson, addFourthPerson,
+  saveButtonSelector, addAnotherPersonButtonSelector
 } from './helpers';
 
 test.describe('form page 1', () => {
@@ -28,8 +22,8 @@ test.describe('form page 1', () => {
 
   test.describe('form fields visibility', () => {
     test('all text input fields are visible', async ({ page }) => {
-      for (const [field, config] of Object.entries(fields)) {
-        if (config.type === 'text') {
+      for (const field in personWithAllFields) {
+        if (isTextField(field)) {
           const selector = getFieldSelector(field);
           await expect(page.locator(selector)).toBeVisible();
         }
@@ -37,8 +31,8 @@ test.describe('form page 1', () => {
     });
 
     test('all textarea fields are visible', async ({ page }) => {
-      for (const [field, config] of Object.entries(fields)) {
-        if (config.type === 'textarea') {
+      for (const field in personWithAllFields) {
+        if (isTextAreaField(field)) {
           const selector = getTextareaSelector(field);
           await expect(page.locator(selector)).toBeVisible();
         }
@@ -46,10 +40,11 @@ test.describe('form page 1', () => {
     });
 
     test('all checkbox and radio options are visible', async ({ page }) => {
-      for (const [field, config] of Object.entries(fields)) {
-        if ((config.type === 'checkbox' || config.type === 'radio') && config.options) {
+      for (const field in personWithAllFields) {
+        const config = getFieldConfig(field);
+        if (isCheckboxOrRadioField(field) && 'options' in config) {
           for (const option of config.options) {
-            const selector = getOptionSelector(field, option);
+            const selector = getOptionSelector(field, option.value);
             await expect(page.locator(selector)).toBeVisible();
           }
         }
@@ -64,8 +59,8 @@ test.describe('form page 1', () => {
     });
 
     test('shows error on required text fields when they lose focus', async ({ page }) => {
-      for (const [field, config] of Object.entries(fields)) {
-        if (config.required && config.type === 'text') {
+      for (const field in person1) {
+        if (isTextField(field)) {
           const input = page.locator(getFieldSelector(field));
           
           // Focus the field, then blur without entering anything
@@ -79,8 +74,8 @@ test.describe('form page 1', () => {
     });
 
     test('hides error on required text fields after valid input', async ({ page }) => {
-      for (const [field, config] of Object.entries(fields)) {
-        if (config.required && config.type === 'text') {
+      for (const field in person1) {
+        if (isTextField(field)) {
           const input = page.locator(getFieldSelector(field));
 
           // Trigger error first
@@ -101,26 +96,35 @@ test.describe('form page 1', () => {
       await page.click(saveButtonSelector); // submit empty form to trigger errors
 
       // Check that all required fields show errors, including agreement
-      for (const [field, config] of Object.entries(fields)) {
-        if (config.required) {
-          if (config.type === 'text') {
-            await expect(getErrorLocator(page, field)).toBeVisible();
-          }
-          if (field === 'agreement') {
-            await expect(page.locator('text=You must agree to')).toBeVisible();
-          }
+      for (const field in person1) {
+        if (isTextField(field)) {
+          await expect(getErrorLocator(page, field)).toBeVisible();
+        }
+        if (field === 'agreement') {
+          await expect(page.locator('text=You must agree to')).toBeVisible();
         }
       }
+    });
+
+    test('scrolls to first invalid field on save', async ({ page }) => {
+      // Scroll to bottom so first name is out of view
+      await page.locator(getOptionSelector('agreement', 'yes')).scrollIntoViewIfNeeded();
+
+      const firstNameField = page.locator(getFieldSelector('first'));
+      await expect(firstNameField).not.toBeInViewport();
+
+      // Click save - should scroll to first invalid field (first name)
+      await page.click(saveButtonSelector);
+
+      await expect(firstNameField).toBeInViewport();
     });
 
     test('fixing errors allows successful submission', async ({ page }) => {
       await page.click(saveButtonSelector); // submit empty form to trigger errors
 
       // Now fill in all required fields
-      for (const [field, config] of Object.entries(fields)) {
-        if (config.required && person1[field]) {
-          await fillField(page, field, person1[field]);
-        }
+      for (const field in person1) {
+        await fillField(page, field, person1[field]);
       }
       
       await page.click(saveButtonSelector);
@@ -224,6 +228,22 @@ test.describe('form page 1', () => {
       await expect(nametagInput).toHaveValue(customNametag);
     });
 
+    test('nametag field is not auto-filled if user has already entered a custom value', async ({ page }) => {
+      const { first, last } = person1;
+
+      const nametagInput = page.locator(getFieldSelector('nametag'));
+
+      // // User enters a custom nametag first
+      await fillField(page, 'nametag', 'Custom Nametag');
+
+      // Now fill first and last name
+      await fillField(page, 'first', first);
+      await fillField(page, 'last', last);
+
+      // Nametag should remain as the custom value
+      await expect(nametagInput).toHaveValue('Custom Nametag');
+    });
+
     test('minor option in misc shows additional comments field when selected', async ({ page }) => {
       const minorOption = page.locator(getOptionSelector('misc', 'minor'));
       const miscComments = page.locator(getTextareaSelector('miscComments'));
@@ -264,16 +284,72 @@ test.describe('form page 1', () => {
       await expect(page.locator(getFieldSelector('state', 1))).toHaveValue(person1.state as string);
       await expect(page.locator(getFieldSelector('zip', 1))).toHaveValue(person1.zip as string);
     });
+
+    test('unchecking copy address re-enables address fields without clearing values', async ({ page }) => {
+      await addPerson(page, person1);
+      await page.click(addAnotherPersonButtonSelector);
+
+      // Check the "Copy address from Person One" checkbox
+      const copyCheckbox = page.locator('text=/Copy address from .*/');
+      await copyCheckbox.click();
+
+      const addressField = page.locator(getFieldSelector('address', 1));
+      const cityField = page.locator(getFieldSelector('city', 1));
+      const stateField = page.locator(getFieldSelector('state', 1));
+      const zipField = page.locator(getFieldSelector('zip', 1));
+
+      // Expect address fields to be disabled
+      await expect(addressField).toBeDisabled();
+      await expect(cityField).toBeDisabled();
+      await expect(stateField).toBeDisabled();
+      await expect(zipField).toBeDisabled();
+
+      // Uncheck the copy checkbox
+      await copyCheckbox.click();
+
+      // Verify fields are still enabled and populated
+      await expect(addressField).toBeEnabled();
+      await expect(cityField).toBeEnabled();
+      await expect(stateField).toBeEnabled();
+      await expect(zipField).toBeEnabled();
+
+      await expect(addressField).toHaveValue(person1.address as string);
+      await expect(cityField).toHaveValue(person1.city as string);
+      await expect(stateField).toHaveValue(person1.state as string);
+      await expect(zipField).toHaveValue(person1.zip as string);
+    });
   });
 
-  test('form allows adding multiple people', async ({ page }) => {
-    await addPerson(page, person1);
-    await expect(page.getByRole('button', { name: 'Person One' })).toBeVisible();
+  test.describe('adding multiple people', () => {
+    test('form allows adding multiple people', async ({ page }) => {
+      await addPerson(page, person1);
+      await expect(page.getByRole('button', { name: 'Person One' })).toBeVisible();
 
-    await page.click(addAnotherPersonButtonSelector);
+      await page.click(addAnotherPersonButtonSelector);
 
-    await addSecondPerson(page, person2);
-    await expect(page.getByRole('button', { name: 'Person Two' })).toBeVisible();
+      await addSecondPerson(page, person2);
+      await expect(page.getByRole('button', { name: 'Person Two' })).toBeVisible();
+    });
+
+    test('agreement checkbox is only shown for first person', async ({ page }) => {
+      await addPerson(page, person1);
+      await page.click(addAnotherPersonButtonSelector);
+
+      // Agreement should not be visible for second person
+      await expect(page.locator(getOptionSelector('agreement', 'yes', 1))).not.toBeVisible();
+    });
+
+    test('does not allow adding more than max # of people', async ({ page }) => {
+      await addPerson(page, person1);
+      await page.click(addAnotherPersonButtonSelector);
+      await addSecondPerson(page, person2);
+      await page.click(addAnotherPersonButtonSelector);
+      await addThirdPerson(page, person2);
+      await page.click(addAnotherPersonButtonSelector);
+      await addFourthPerson(page, person2);
+
+      await expect(page.locator(addAnotherPersonButtonSelector)).not.toBeVisible();
+    });
   });
 
   test.describe('people summary', () => {
@@ -432,6 +508,18 @@ test.describe('form page 1', () => {
       await expect(page.locator('text=Name for Roster: Person One')).toBeVisible();
     });
 
+    test('canceling edits to a person retains original data', async ({ page }) => {
+      await addPerson(page, person1);
+
+      await page.getByRole('button', { name: 'Person One' }).click();
+      await page.click('button:has-text("EDIT")');
+
+      await fillField(page, 'first', 'CanceledUpdate');
+      await page.click('button:has-text("CANCEL")');
+
+      await expect(page.getByRole('button', { name: 'Person One' })).toBeVisible();
+    });
+
     test('deletes a person', async ({ page }) => {
       page.on('dialog', dialog => dialog.accept());
 
@@ -461,6 +549,18 @@ test.describe('form page 1', () => {
       // transfers agreement to remaining person
       await page.click('button:has-text("EDIT")');
       await expect(page.locator(getOptionSelector('agreement', 'yes', 0))).toBeChecked();
+    });
+
+    test('deleting a person prompts for confirmation', async ({ page }) => {
+      page.on('dialog', dialog => dialog.dismiss());
+
+      await addPerson(page, person1);
+
+      await page.getByRole('button', { name: 'Person One' }).click();
+      await page.click('button:has-text("DELETE")');
+
+      // person should still be present after dismissing dialog
+      await expect(page.getByRole('button', { name: 'Person One' })).toBeVisible();
     });
   });
 

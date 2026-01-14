@@ -56,3 +56,4 @@ tsconfig.tsbuildinfo
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+/tests/configGenerated.json

@@ -1,6 +1,7 @@
 /// <reference types="vitest" />
 
 import { defineConfig } from 'vite'
+import { writeFileSync } from 'fs';
 import react from '@vitejs/plugin-react-swc'
 
 // https://vitejs.dev/config/
@@ -9,7 +10,15 @@ export default defineConfig({
     sourcemap: true
   },
   plugins: [
-    react()
+    react(),
+    {
+      name: 'export-config',
+      configureServer(server) {
+        server.ssrLoadModule('./src/config/index.tsx').then(({ config }) => {
+          writeFileSync('tests/configGenerated.json', JSON.stringify(config, null, 2));
+        });
+      }
+    }
   ],
   resolve: {
     extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],

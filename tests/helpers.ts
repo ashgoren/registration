@@ -1,4 +1,4 @@
-import { fields } from './config';
+import { getFieldConfig } from './config';
 import type { Page } from '@playwright/test';
 import type { PersonData } from './testData';
 
@@ -25,17 +25,16 @@ export const getErrorLocator = (page: Page, field: string, personIndex = 0) => {
 }
 
 export const fillField = async (page: Page, field: string, value: string | string[], personIndex = 0) => {
-  const config = fields[field];
-  if (config.type === 'text') {
+  const config = getFieldConfig(field);
+  console.log(`Filling field ${field} (type: ${config.type}) with value:`, value);
+  if (['text', 'email', 'pattern', 'address', 'autocomplete'].includes(config.type)) {
     await page.fill(getFieldSelector(field, personIndex), value as string);
   } else if (config.type === 'textarea') {
     await page.fill(getTextareaSelector(field, personIndex), value as string);
-  } else if (config.type === 'checkbox' && config.options) {
+  } else if (config.type === 'checkbox') {
     const values = Array.isArray(value) ? value : [value];
     for (const val of values) {
-      if (config.options.includes(val)) {
-        await page.check(getOptionSelector(field, val, personIndex));
-      }
+      await page.check(getOptionSelector(field, val, personIndex));
     }
   }
 };
@@ -53,3 +52,19 @@ export const addPerson = async (page: Page, data: PersonData, personIndex = 0) =
 
 export const addSecondPerson = async (page: Page, data: PersonData) =>
   await addPerson(page, data, 1);
+
+export const addThirdPerson = async (page: Page, data: PersonData) =>
+  await addPerson(page, data, 2);
+
+export const addFourthPerson = async (page: Page, data: PersonData) =>
+  await addPerson(page, data, 3);
+
+export const navigateToPaymentPage = async (page: Page, people: PersonData[]) => {
+  await page.goto('/');
+  await addPerson(page, people[0]);
+  for (let i = 1; i < people.length; i++) {
+    await page.click(addAnotherPersonButtonSelector);
+    await addPerson(page, people[i], i);
+  }
+  await page.click('button:has-text("NEXT")');
+};
