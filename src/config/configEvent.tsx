@@ -32,7 +32,7 @@ const config = {
   },
 
   nametags: {
-    includePronouns: false,
+    includePronouns: true,
     includeLastName: true
   },
 

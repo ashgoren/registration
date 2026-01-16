@@ -1,11 +1,9 @@
-import { getFieldConfig } from './config';
+import { expect } from '@playwright/test';
+import { getFieldConfig, BUTTON_TEXT } from './config';
 import type { Page } from '@playwright/test';
 import type { PersonData } from './testData';
 
 // form helpers
-
-export const saveButtonSelector = 'button:has-text("SAVE")';
-export const addAnotherPersonButtonSelector = 'button:has-text("ADD ANOTHER PERSON")';
 
 export const getFieldSelector = (field: string, personIndex = 0) => 
   `input[name="people[${personIndex}].${field}"]`;
@@ -23,6 +21,12 @@ export const getErrorLocator = (page: Page, field: string, personIndex = 0) => {
   const formControl = input.locator('xpath=ancestor::div[contains(@class, "MuiFormControl-root")]');
   return formControl.locator('.MuiFormHelperText-root.Mui-error'); 
 }
+
+export const expectFieldError = async (page: Page, field: string, personIndex = 0) =>
+  await expect(getErrorLocator(page, field, personIndex)).toBeVisible();
+
+export const expectNoFieldError = async (page: Page, field: string, personIndex = 0) =>
+  await expect(getErrorLocator(page, field, personIndex)).not.toBeVisible();
 
 export const fillField = async (page: Page, field: string, value: string | string[], personIndex = 0) => {
   const config = getFieldConfig(field);
@@ -47,24 +51,56 @@ export const fillFields = async (page: Page, data: PersonData, personIndex = 0) 
 
 export const addPerson = async (page: Page, data: PersonData, personIndex = 0) => {
   await fillFields(page, data, personIndex);
-  await page.click(saveButtonSelector);
+  await page.getByRole('button', { name: BUTTON_TEXT.SAVE }).click();
 };
 
-export const addSecondPerson = async (page: Page, data: PersonData) =>
-  await addPerson(page, data, 1);
-
-export const addThirdPerson = async (page: Page, data: PersonData) =>
-  await addPerson(page, data, 2);
-
-export const addFourthPerson = async (page: Page, data: PersonData) =>
-  await addPerson(page, data, 3);
+export const addPeople = async (page: Page, people: PersonData[]) => {
+  for (let i = 0; i < people.length; i++) {
+    if (i > 0) {
+      await page.getByRole('button', { name: BUTTON_TEXT.ADD_ANOTHER_PERSON }).click();
+    }
+    await addPerson(page, people[i], i);
+  }
+}
 
 export const navigateToPaymentPage = async (page: Page, people: PersonData[]) => {
   await page.goto('/');
-  await addPerson(page, people[0]);
-  for (let i = 1; i < people.length; i++) {
-    await page.click(addAnotherPersonButtonSelector);
-    await addPerson(page, people[i], i);
+  await addPeople(page, people);
+  await page.getByRole('button', { name: BUTTON_TEXT.NEXT }).click();
+};
+
+// helpers specifically for the payment form
+
+export const calculateFees = (amount: number) =>
+  Number((0.0245 * amount + 0.5).toFixed(2));
+
+export const expectPaymentSummary = async (page: Page, admissionsTotal: number, fees: number = 0, donation: number = 0) => {
+  await expect(page.getByText(`Admissions Total: $${admissionsTotal}`)).toBeVisible();
+  const total = admissionsTotal + fees + donation;
+  
+  if (fees) {
+    await expect(page.getByText(`Covering Fees: $${fees.toFixed(2)}`)).toBeVisible();
+  } else {
+    await expect(page.getByText(`Covering Fees: $${fees.toFixed(2)}`)).not.toBeVisible();
   }
-  await page.click('button:has-text("NEXT")');
+
+  if (donation) {
+    await expect(page.getByText(`Donation: $${donation}`)).toBeVisible();
+  } else {
+    await expect(page.getByText(`Donation: $${donation}`)).not.toBeVisible();
+  }
+
+  await expect(page.getByText(`Total Amount Due: $${fees ? total.toFixed(2) : total}`)).toBeVisible();
+};
+
+export const expectDepositSummary = async (page: Page, depositTotal: number, fees?: number) => {
+  await expect(page.getByText(`Deposit Total: $${depositTotal}`)).toBeVisible();
+  
+  if (fees) {
+    await expect(page.getByText(`Covering Fees: $${fees.toFixed(2)}`)).toBeVisible();
+    await expect(page.getByText(`Total Amount Due: $${(depositTotal + fees).toFixed(2)}`)).toBeVisible();
+  } else {
+    await expect(page.getByText('Covering Fees')).not.toBeVisible();
+    await expect(page.getByText(`Total Amount Due: $${depositTotal}`)).toBeVisible();
+  }
 };
