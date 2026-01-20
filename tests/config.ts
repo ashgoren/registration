@@ -17,7 +17,8 @@ export const PAGE_TEXT = {
 export const PAGE_URLS = {
   REGISTRATION: /\/(registration|)$/,
   PAYMENT: /\/payment$/,
-  CHECKOUT: /\/checkout$/
+  CHECKOUT: /\/checkout$/,
+  CONFIRMATION: /\/confirmation$/
 } as const;
 
 type FieldConfig = typeof config.fields.fieldsConfig;

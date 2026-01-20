@@ -1,26 +1,11 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import config, { BUTTON_TEXT, PAGE_URLS } from './config';
 import { person1, person2 } from './testData';
-import { navigateToPaymentPage, getFieldSelector, addPerson, calculateFees, expectPaymentSummary, expectDepositSummary } from './helpers';
+import { navigateToPaymentPage, getFieldSelector, addPerson, calculateFees, expectPaymentSummary, expectDepositSummary, addDonation } from './helpers';
 
 const { costDefault, costRange: [min, max] } = config.admissions;
 const depositAmount = config.payments.deposit.amount;
 const dueDate = config.payments.paymentDueDate;
-
-const addDonation = async (page: Page, amount: number) => {
-  const paymentInput = page.locator(getFieldSelector('admission'));
-
-  // set admission to max amount
-  await paymentInput.fill(max.toString());
-  await paymentInput.blur();
-
-  // add donation
-  const donationButton = page.getByRole('button', { name: 'YES' });
-  await donationButton.click();
-  const donationField = page.locator('input[name="donation"]');
-  await donationField.fill(amount.toString());
-  await donationField.blur();
-};
 
 test.describe('sliding scale payment form', () => {
   test.skip(config.admissions.mode !== 'sliding-scale', 'Skipping sliding scale payment form tests');

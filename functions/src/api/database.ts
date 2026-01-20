@@ -48,7 +48,8 @@ export const saveFinalOrder = async ({ orderId, order }: {
   const preppedOrder = {
     ...filteredOrder,
     completedAt: FieldValue.serverTimestamp(),
-    status: 'final'
+    status: 'final',
+    email // convenience field for querying
   };
 
   try {

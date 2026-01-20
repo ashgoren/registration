@@ -1,7 +1,9 @@
-import { expect } from '@playwright/test';
-import { getFieldConfig, BUTTON_TEXT } from './config';
-import type { Page } from '@playwright/test';
-import type { PersonData } from './testData';
+import { expect, type Page, type FrameLocator } from '@playwright/test';
+import { type PersonData } from './testData';
+import config, { getFieldConfig, BUTTON_TEXT, PAGE_URLS } from './config';
+import { clearFirestore } from './helpers_firestore';
+
+const { costDefault } = config.admissions;
 
 // form helpers
 
@@ -63,13 +65,14 @@ export const addPeople = async (page: Page, people: PersonData[]) => {
   }
 }
 
+
+// helpers specifically for the payment form
+
 export const navigateToPaymentPage = async (page: Page, people: PersonData[]) => {
   await page.goto('/');
   await addPeople(page, people);
   await page.getByRole('button', { name: BUTTON_TEXT.NEXT }).click();
 };
-
-// helpers specifically for the payment form
 
 export const calculateFees = (amount: number) =>
   Number((0.0245 * amount + 0.5).toFixed(2));
@@ -103,4 +106,60 @@ export const expectDepositSummary = async (page: Page, depositTotal: number, fee
     await expect(page.getByText('Covering Fees')).not.toBeVisible();
     await expect(page.getByText(`Total Amount Due: $${depositTotal}`)).toBeVisible();
   }
+};
+
+export const addDonation = async (page: Page, amount: number) => {
+  const paymentInput = page.locator(getFieldSelector('admission'));
+  const [_min, max] = config.admissions.costRange;
+
+  // set admission to max amount
+  await paymentInput.fill(max.toString());
+  await paymentInput.blur();
+
+  // add donation
+  const donationButton = page.getByRole('button', { name: 'YES' });
+  await donationButton.click();
+  const donationField = page.locator('input[name="donation"]');
+  await donationField.fill(amount.toString());
+  await donationField.blur();
+};
+
+
+// helpers specifically for the checkout form
+
+export const navigateToCheckoutPage = async (page: Page, people: PersonData[]) => {
+  await navigateToPaymentPage(page, people);
+  await page.getByRole('button', { name: BUTTON_TEXT.NEXT }).click();
+};
+
+export const openPaypalCheckoutForm = async (page: Page) => {
+  const paypalFrameWrapper = page.locator('iframe[title="PayPal"]').first();
+  await expect(paypalFrameWrapper).toBeVisible({ timeout: 15000 });
+  const paypalFrame = paypalFrameWrapper.contentFrame();
+  await paypalFrame.getByLabel('Debit or Credit Card').click();
+  const paypalCreditFormWrapper = paypalFrame.locator('iframe[title="paypal_card_form"]').first();
+  await expect(paypalCreditFormWrapper).toBeVisible({ timeout: 15000 });
+  const paypalCreditForm = paypalCreditFormWrapper.contentFrame();
+  await expect(paypalCreditForm.locator('input[id="email"]')).toBeVisible({ timeout: 15000 });
+  return paypalCreditForm;
+};
+
+export const fillAndSubmitPaypalCreditForm = async (iframe: FrameLocator) => {
+  await iframe.locator('input[id="email"]').fill('test-paypal@example.com');
+  await iframe.locator('input[id="credit-card-number"]').fill('4012000077777777');
+  await iframe.locator('input[id="expiry-date"]').fill('12/50');
+  await iframe.locator('input[id="credit-card-security"]').fill('123');
+  await iframe.locator('input[id="billingAddress.givenName"]').fill('Test');
+  await iframe.locator('input[id="billingAddress.familyName"]').fill('User');
+  await iframe.locator('input[id="billingAddress.postcode"]').fill('12345');
+  await iframe.locator('input[id="phone"]').fill('5035551212');
+
+  await iframe.getByRole('button', { name: `Pay $${costDefault}` }).click();
+};
+
+export const submitPaypalOrder = async (page: Page) => {
+  clearFirestore();
+  const paypalCreditForm = await openPaypalCheckoutForm(page);
+  await fillAndSubmitPaypalCreditForm(paypalCreditForm);
+  await expect(page).toHaveURL(PAGE_URLS.CONFIRMATION);
 };
