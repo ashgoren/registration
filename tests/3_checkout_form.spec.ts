@@ -1,8 +1,8 @@
 import { test, expect, type FrameLocator } from '@playwright/test';
-import { navigateToCheckoutPage, getFieldSelector, addDonation, calculateFees, submitPaypalOrder, fillAndSubmitPaypalCreditForm, openPaypalCheckoutForm } from './helpers';
+import { navigateToCheckoutPage, getFieldSelector, addDonation, calculateFees, submitPaypalOrder, fillPaypalCreditForm, fillAndSubmitPaypalCreditForm, openPaypalCheckoutForm, addPerson } from './helpers';
 import { getOrderByEmail } from './helpers_firestore';
 import { interceptAction } from './helper_firebase_intercept';
-import { person1 } from './testData';
+import { person1, person2 } from './testData';
 import config, { BUTTON_TEXT, PAGE_URLS } from './config';
 
 const { costDefault, costRange: [_min, max] } = config.admissions;
@@ -23,9 +23,44 @@ test.describe('Checkout Form', () => {
     await expect(page.getByText(`Phone: ${person1.phone}`)).toBeVisible();
   });
 
+  test('shows order summary with two people', async ({ page }) => {
+    // add second person
+    await page.getByRole('button', { name: BUTTON_TEXT.BACK }).click();
+    await page.getByRole('button', { name: BUTTON_TEXT.BACK }).click();
+    await page.getByRole('button', { name: BUTTON_TEXT.ADD_ANOTHER_PERSON }).click();
+    await addPerson(page, person2, 1);
+
+    // proceed to checkout
+    await page.getByRole('button', { name: BUTTON_TEXT.NEXT }).click();
+    await page.getByRole('button', { name: BUTTON_TEXT.NEXT }).click();
+
+    await expect(page.getByText('Name for roster: Person One')).toBeVisible();
+    await expect(page.getByText(`Email: ${person1.email}`)).toBeVisible();
+    await expect(page.getByText(`Phone: ${person1.phone}`)).toBeVisible();
+
+    await expect(page.getByText('Name for roster: Person Two')).toBeVisible();
+    await expect(page.getByText(`Email: ${person2.email}`)).toBeVisible();
+    await expect(page.getByText(`Phone: ${person2.phone}`)).toBeVisible();
+  });
+
   test('shows payment info', async ({ page }) => {
     await expect(page.getByText('Payment Info')).toBeVisible();
     await expect(page.getByText(`Registration: $${costDefault}`)).toBeVisible();
+  });
+
+  test('shows payment info for two people', async ({ page }) => {
+    // add second person
+    await page.getByRole('button', { name: BUTTON_TEXT.BACK }).click();
+    await page.getByRole('button', { name: BUTTON_TEXT.BACK }).click();
+    await page.getByRole('button', { name: BUTTON_TEXT.ADD_ANOTHER_PERSON }).click();
+    await addPerson(page, person2, 1);
+
+    // proceed to checkout
+    await page.getByRole('button', { name: BUTTON_TEXT.NEXT }).click();
+    await page.getByRole('button', { name: BUTTON_TEXT.NEXT }).click();
+
+    await expect(page.getByText('Payment Info')).toBeVisible();
+    await expect(page.getByText(`Registration: $${costDefault} + $${costDefault} = $${costDefault * 2}`)).toBeVisible();
   });
 
   test('allows going back to payment page', async ({ page }) => {
@@ -152,6 +187,25 @@ test.describe('Checkout Form', () => {
 
         await expect(page).toHaveURL(PAGE_URLS.CONFIRMATION);
       });
+
+      test('allows adding a second registrant after opening the paypal form', async ({ page }) => {
+        await paypalCreditForm.getByRole('button', { name: 'Cancel and go back' }).click();
+        await page.getByRole('button', { name: BUTTON_TEXT.BACK }).click();
+        await page.getByRole('button', { name: BUTTON_TEXT.BACK }).click();
+
+        // add second person
+        await page.getByRole('button', { name: BUTTON_TEXT.ADD_ANOTHER_PERSON }).click();
+        await addPerson(page, person2, 1);
+
+        // proceed to checkout
+        await page.getByRole('button', { name: BUTTON_TEXT.NEXT }).click();
+        await page.getByRole('button', { name: BUTTON_TEXT.NEXT }).click();
+
+        const paypalCreditFormAfterAddingPerson = await openPaypalCheckoutForm(page);
+        await fillPaypalCreditForm(paypalCreditFormAfterAddingPerson);
+        await paypalCreditFormAfterAddingPerson.getByRole('button', { name: `Pay $${costDefault * 2}` }).click();
+        await expect(page).toHaveURL(PAGE_URLS.CONFIRMATION);
+      });
     });
 
     test('saves order to Firestore', async ({ page }) => {
@@ -205,7 +259,6 @@ test.describe('Checkout Form', () => {
         const paypalCreditForm = await openPaypalCheckoutForm(page);
         await fillAndSubmitPaypalCreditForm(paypalCreditForm);
 
-        // This is the critical case - payment succeeded but save failed
         await expect(page.getByText(/payment was processed successfully/i)).toBeVisible();
         await expect(page.getByText(/error updating your registration/i)).toBeVisible();
       });

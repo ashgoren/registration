@@ -136,15 +136,23 @@ export const openPaypalCheckoutForm = async (page: Page) => {
   const paypalFrameWrapper = page.locator('iframe[title="PayPal"]').first();
   await expect(paypalFrameWrapper).toBeVisible({ timeout: 15000 });
   const paypalFrame = paypalFrameWrapper.contentFrame();
-  await paypalFrame.getByLabel('Debit or Credit Card').click();
+  const creditCardButton = paypalFrame.getByLabel('Debit or Credit Card');
+  await expect(creditCardButton).toBeVisible({ timeout: 15000 });
   const paypalCreditFormWrapper = paypalFrame.locator('iframe[title="paypal_card_form"]').first();
-  await expect(paypalCreditFormWrapper).toBeVisible({ timeout: 15000 });
+  
+  // Retry clicking until form appears
+  await expect(async () => {
+    await creditCardButton.click();
+    await expect(paypalCreditFormWrapper).toBeVisible({ timeout: 3000 });
+  }).toPass({ timeout: 30000, intervals: [1000, 2000, 5000] });
+  
   const paypalCreditForm = paypalCreditFormWrapper.contentFrame();
   await expect(paypalCreditForm.locator('input[id="email"]')).toBeVisible({ timeout: 15000 });
+  
   return paypalCreditForm;
 };
 
-export const fillAndSubmitPaypalCreditForm = async (iframe: FrameLocator) => {
+export const fillPaypalCreditForm = async (iframe: FrameLocator) => {
   await iframe.locator('input[id="email"]').fill('test-paypal@example.com');
   await iframe.locator('input[id="credit-card-number"]').fill('4012000077777777');
   await iframe.locator('input[id="expiry-date"]').fill('12/50');
@@ -153,13 +161,24 @@ export const fillAndSubmitPaypalCreditForm = async (iframe: FrameLocator) => {
   await iframe.locator('input[id="billingAddress.familyName"]').fill('User');
   await iframe.locator('input[id="billingAddress.postcode"]').fill('12345');
   await iframe.locator('input[id="phone"]').fill('5035551212');
+}
 
-  await iframe.getByRole('button', { name: `Pay $${costDefault}` }).click();
+export const fillAndSubmitPaypalCreditForm = async (iframe: FrameLocator, amount: number = costDefault) => {
+  await fillPaypalCreditForm(iframe);
+  await iframe.getByRole('button', { name: `Pay $${amount}` }).click();
 };
 
-export const submitPaypalOrder = async (page: Page) => {
+export const submitPaypalOrder = async (page: Page, amount: number = costDefault) => {
   clearFirestore();
   const paypalCreditForm = await openPaypalCheckoutForm(page);
-  await fillAndSubmitPaypalCreditForm(paypalCreditForm);
+  await fillAndSubmitPaypalCreditForm(paypalCreditForm, amount);
   await expect(page).toHaveURL(PAGE_URLS.CONFIRMATION);
+};
+
+
+// confirmation page helpers
+
+export const navigateToConfirmationPage = async (page: Page, people: PersonData[]) => {
+  await navigateToCheckoutPage(page, people);
+  await submitPaypalOrder(page, costDefault * people.length);
 };
