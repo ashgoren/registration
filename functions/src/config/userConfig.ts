@@ -12,7 +12,7 @@ const backendConfig = {
     timestampFormat: { timeZone: 'America/Los_Angeles', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }
   },
   payment: {
-    processor: 'stripe', // stripe|paypal
+    processor: 'paypal', // stripe|paypal
     statementDescriptorSuffix: '' // stripe-only (max 22 chars)
   },
   system: {

@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { StyledLink } from 'components/layouts/SharedStyles';
+// import { StyledLink } from 'components/layouts/SharedStyles';
 import { websiteLink } from 'utils/misc';
 import { STATE_OPTIONS } from './internal/constants';
 import { NAME_VALIDATION, PRONOUNS_VALIDATION, EMAIL_VALIDATION, PHONE_VALIDATION } from './internal/configValidations';
@@ -11,7 +11,7 @@ type FieldType = 'text' | 'email' | 'pattern' | 'address' | 'radio' | 'checkbox'
 export interface FormFieldConfig {
   label?: string | JSX.Element;
   title?: string;
-  type?: FieldType;
+  type: FieldType;
   pattern?: string;
   placeholder?: string;
   options?: { label: string; value: string }[];
@@ -34,6 +34,7 @@ type FieldConfig = { [key: string]: FormFieldConfig };
 // config for all form fields (which may include fields not used in this instance)
 export const fieldsConfig: FieldConfig = {
   first: {
+    type: 'text',
     label: 'First name',
     validation: NAME_VALIDATION.required('Please enter first name.'),
     defaultValue: '',
@@ -43,6 +44,7 @@ export const fieldsConfig: FieldConfig = {
   },
   last: {
     label: 'Last name',
+    type: 'text',
     validation: NAME_VALIDATION.required('Please enter last name.'),
     defaultValue: '',
     width: 6,
@@ -51,12 +53,14 @@ export const fieldsConfig: FieldConfig = {
   },
   pronouns: {
     label: 'Pronouns',
+    type: 'text',
     validation: PRONOUNS_VALIDATION,
     defaultValue: '',
     width: 12
   },
   nametag: {
     label: 'Name for roster', // to handle aggressive autocomplete use 'First name for button' if only want first name
+    type: 'text',
     validation: NAME_VALIDATION.required('Please enter name for roster.'),
     defaultValue: '',
     required: true,
@@ -73,7 +77,7 @@ export const fieldsConfig: FieldConfig = {
     autoComplete: 'email'
   },
   emailConfirmation: {
-    label: 'Re-enter email',
+    label: 'Confirm email',
     type: 'email',
     validation: EMAIL_VALIDATION.required('Please re-enter your email address.').test('email-match', 'Email addresses must match.', function (value) {
       return value?.toLowerCase() === this.parent.email?.toLowerCase();
@@ -106,6 +110,7 @@ export const fieldsConfig: FieldConfig = {
   },
   apartment: {
     label: 'Apt, Suite, etc.',
+    type: 'text',
     validation: Yup.string(),
     defaultValue: '',
     width: 3,
@@ -113,6 +118,7 @@ export const fieldsConfig: FieldConfig = {
   },
   city: {
     label: 'City',
+    type: 'text',
     validation: Yup.string().required('Please enter city.'),
     defaultValue: '',
     width: 5,
@@ -131,6 +137,7 @@ export const fieldsConfig: FieldConfig = {
   },
   zip: {
     label: 'Zip code',
+    type: 'text',
     validation: Yup.string().required('Please enter zip/postal code.'),
     defaultValue: '',
     width: 3,
@@ -139,6 +146,7 @@ export const fieldsConfig: FieldConfig = {
   },
   country: {
     label: 'Country',
+    type: 'text',
     validation: Yup.string(),
     defaultValue: '',
     width: 12,
@@ -382,7 +390,8 @@ export const fieldsConfig: FieldConfig = {
   agreement: {
     type: 'checkbox',
     title: 'Values and Expectations',
-    label: <>Do you agree that everyone you are registering will follow {configBasics.event.title}'s <StyledLink to={websiteLink(configBasics.links.policies.safety)}>values and expectations</StyledLink>?</>,
+    // label: <>Do you agree that everyone you are registering will follow {configBasics.event.title}'s <StyledLink to={websiteLink(configBasics.links.policies.safety)}>values and expectations</StyledLink>?</>,
+    label: `Do you agree that everyone you are registering will follow ${configBasics.event.title}'s values and expectations? ${websiteLink(configBasics.links.policies.safety)}`,
     required: true,
     options: [
       { label: 'Yes', value: 'yes' }
@@ -402,14 +411,17 @@ export const fieldsConfig: FieldConfig = {
     defaultValue: [],
   },
   admission: {
+    type: 'text',
     validation: Yup.number().min(configBasics.admissions.costRange[0]).max(configBasics.admissions.costRange[1]).required(),
     defaultValue: configBasics.admissions.costDefault,
   },
   deposit: {
+    type: 'text',
     validation: Yup.number().min(0),
     defaultValue: 0,
   },
   fees: {
+    type: 'text',
     validation: Yup.number().min(0),
     defaultValue: 0,
   }

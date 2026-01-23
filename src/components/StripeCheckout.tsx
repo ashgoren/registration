@@ -25,13 +25,13 @@ export const StripeCheckout = ({ total }: { total: number }) => {
     <>
       {config.sandboxMode && <TestCardBox number={4242424242424242} />}
       <Elements stripe={stripePromise} options={options}>
-        <StripeCheckoutForm />
+        <StripeCheckoutForm total={total} />
       </Elements>
     </>
   );
 };
 
-function StripeCheckoutForm() {
+function StripeCheckoutForm({ total }: { total: number }) {
   const stripe = useStripe();
   const elements = useElements();
   const { order, updateOrder } = useOrderData();
@@ -122,7 +122,7 @@ function StripeCheckoutForm() {
     <form onSubmit={handleSubmit}>
       <Box sx={{ visibility: processing ? 'hidden' : 'visible', height: processing ? 0 : 'auto' }}>
         <PaymentElement />
-        <Button type='submit' variant='contained' color='success' disabled={!stripe || processing} sx={{ my: 2 }}>Register and submit payment</Button>
+        <Button type='submit' variant='contained' color='success' disabled={!stripe || processing} sx={{ my: 2 }}>Register and submit payment (${total}) </Button>
       </Box>
     </form>
   );

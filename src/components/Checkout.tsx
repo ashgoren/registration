@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { Header, Loading, Error, NavButtons } from 'components/layouts';
 import { StyledPaper, Title } from 'components/layouts/SharedStyles';
 import { formatCurrency } from 'utils/misc';
@@ -84,8 +84,7 @@ export const Checkout = () => {
 
             {!processing &&
               <>
-                <Typography variant='h6' gutterBottom><em>Please confirm the amount shown is correct!</em></Typography>
-                <Title>Amount due: ${formatCurrency(amountToCharge)}</Title>
+                <Title>Amount to be charged: ${formatCurrency(amountToCharge)}</Title>
               </>
 
             }

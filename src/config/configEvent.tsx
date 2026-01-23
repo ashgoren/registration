@@ -32,7 +32,7 @@ const config = {
   },
 
   nametags: {
-    includePronouns: false,
+    includePronouns: true,
     includeLastName: true
   },
 
@@ -67,7 +67,7 @@ const config = {
   },
 
   payments: {
-    processor: 'stripe', // stripe|paypal - also must set in backend config
+    processor: 'paypal', // stripe|paypal - also must set in backend config
     paymentDueDate: 'Example Payment Due Date',
     directPaymentUrl: 'example.com/directpayment', // electronic payment option to pay remaining balance after selecting deposit or check payment
     coverFeesCheckbox: true,
