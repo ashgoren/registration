@@ -248,6 +248,7 @@ npm run set-payment-secrets <PROJECT_ID> paypal prd
 | `index.html` | Site title, metadata description, [og:image](https://ogp.me/) |
 | `public/logo.png` | Optional Navbar logo (≤80px height recommended) |
 | `public/` | favicon files - use a generator, e.g. [favicon-generator](https://realfavicongenerator.net/) |
+| `public/` | robots.txt |
 
 ---
 
