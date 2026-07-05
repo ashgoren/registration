@@ -31,6 +31,12 @@ const config = {
     }
   },
 
+  navbar: {
+    brand: false as string | false, // optional logo image path (e.g. '/logo.png') shown before the title; false to omit
+    accent: false as { light: string; dark: string } | false, // optional override for the navbar's tinted background/border; false to use the theme's primary color
+    links: [] as { label: string; path: string }[], // links to a companion static site (e.g. if using static-site-kit), shown when staticPages.enabled is true
+  },
+
   nametags: {
     includePronouns: true,
     includeLastName: true

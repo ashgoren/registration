@@ -2,7 +2,7 @@ import { fromZonedTime } from 'date-fns-tz';
 import configEvent from '../configEvent';
 import type { PaymentMethod, AdmissionMode } from 'types/payment';
 
-const { productionMode, event, staticPages, registration, nametags, admissions, payments, contacts, links, calendar } = configEvent;
+const { productionMode, event, staticPages, registration, nametags, admissions, payments, contacts, links, navbar, calendar } = configEvent;
 
 const costDefaultMapping: Record<AdmissionMode, number> = {
   'sliding-scale': admissions.slidingScale.costDefault,
@@ -21,6 +21,7 @@ const baseConfig = {
   event,
   contacts,
   links,
+  navbar,
   calendar,
   nametags,
   staticPages,
