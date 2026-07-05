@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { usePageNavigation } from 'hooks/usePageNavigation';
 import { MyStepper } from 'components/layouts';
 import { StyledPaper } from 'components/layouts/SharedStyles';
@@ -17,7 +17,9 @@ export const Header = ({ titleText, children }: { titleText: string; children?: 
       }
 
       {currentPage !== 'confirmation' &&
-        <MyStepper />
+        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+          <MyStepper />
+        </Box>
       }
 
       {children}
