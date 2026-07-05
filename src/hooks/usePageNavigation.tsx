@@ -14,7 +14,7 @@ export const usePageNavigation = () => {
 
   const currentPage = useMemo(() => {
     const pathFinal = location.pathname.split('/').pop() || '';
-    return pathFinal === 'registration' || pathFinal === '' ? 'people' : pathFinal;
+    return pathFinal === '' ? 'people' : pathFinal;
   }, [location.pathname]);
 
   const currentIndex = pages.findIndex((page: { key: string }) => page.key === currentPage);
@@ -44,14 +44,14 @@ export const usePageNavigation = () => {
       }
     }
 
-    navigate(`/registration/${nextPageKey}`);
+    navigate(`/${nextPageKey}`);
   }
 
   const goBack = () => {
     const prevPage = pages[currentIndex - 1];
     if (!prevPage) return;
     logDebug(`Navigating back from ${currentPage} to ${prevPage.key}`);
-    navigate(`/registration/${prevPage.key}`);
+    navigate(`/${prevPage.key}`);
   }
 
   return {

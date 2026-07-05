@@ -2,7 +2,7 @@ import { fromZonedTime } from 'date-fns-tz';
 import configEvent from '../configEvent';
 import type { PaymentMethod, AdmissionMode } from 'types/payment';
 
-const { productionMode, event, staticPages, registration, nametags, admissions, payments, contacts, links, navbar, calendar } = configEvent;
+const { placeholder, event, registration, nametags, admissions, payments, contacts, links, navbar, calendar } = configEvent;
 
 const costDefaultMapping: Record<AdmissionMode, number> = {
   'sliding-scale': admissions.slidingScale.costDefault,
@@ -17,16 +17,15 @@ const costRangeMapping: Record<AdmissionMode, [number, number]> = {
 };
 
 const baseConfig = {
-  productionMode,
+  placeholder,
   event,
   contacts,
   links,
   navbar,
   calendar,
   nametags,
-  staticPages,
   registration,
-  registrationOnly: staticPages.enabled === false,
+  standalone: navbar.links.length === 0,
   payments: {
     ...payments,
     methods: payments.checks.allowed ? [payments.processor as PaymentMethod, 'check' as PaymentMethod] : [payments.processor as PaymentMethod],

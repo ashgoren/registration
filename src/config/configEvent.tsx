@@ -1,5 +1,5 @@
 const config = {
-  productionMode: false,
+  placeholder: false, // when true (and only on the prd env), replaces the registration flow with the Placeholder page
 
   event: {
     title: 'Example Event Title',
@@ -34,17 +34,12 @@ const config = {
   navbar: {
     brand: false as string | false, // optional logo image path (e.g. '/logo.png') shown before the title; false to omit
     accent: false as { light: string; dark: string } | false, // optional override for the navbar's tinted background/border; false to use the theme's primary color
-    links: [] as { label: string; path: string }[], // links to a companion static site (e.g. if using static-site-kit), shown when staticPages.enabled is true
+    links: [] as { label: string; path: string }[], // links to a companion static site (e.g. if using static-site-kit); leave empty for a standalone deployment with no companion site
   },
 
   nametags: {
     includePronouns: true,
     includeLastName: true
-  },
-
-  staticPages: {
-    enabled: false,
-    components: ['Home', 'About', 'Staff', 'Seattle', 'Contact', 'Schedule', 'PaymentExplanation'], // These must exist in src/components/Static
   },
 
   registration: {

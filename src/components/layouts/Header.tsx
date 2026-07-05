@@ -10,7 +10,7 @@ export const Header = ({ titleText, children }: { titleText: string; children?: 
 
   return (
     <StyledPaper>
-      {!config.registrationOnly &&
+      {!config.standalone &&
         <Typography variant='h4' component='h1' align='center' gutterBottom>
           {titleText}
         </Typography>

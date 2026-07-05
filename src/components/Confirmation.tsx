@@ -14,7 +14,7 @@ export const Confirmation = () => {
 
   return (
     <>
-      {!config.registrationOnly &&
+      {!config.standalone &&
         <Header
           titleText = { paymentMethod === 'check'
             ? `${config.event.title} Registration`

@@ -3,30 +3,28 @@ import { AppBar, Toolbar, Box, IconButton, Link, Collapse } from '@mui/material'
 import { useTheme, alpha } from '@mui/material/styles';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import { ColorModeToggle } from './ColorModeToggle';
 import { config } from 'config';
 import { websiteLink } from 'utils/misc';
 
-type NavLink = { label: string; href: string; internal?: boolean };
+type NavLink = { label: string; href: string; current?: boolean };
 
 // matches static-site-kit's default Tailwind `md:` breakpoint, so if this app has a companion
 // static site built with static-site-kit, both navbars collapse to a hamburger at the same width
 const DESKTOP_NAV_QUERY = '@media (min-width:768px)';
 
-// in registration-only deployments (no companion static site) there's nothing to link to
-const navLinks: NavLink[] = config.registrationOnly ? [] : [
+// in standalone deployments (no companion static site) there's nothing to link to
+const navLinks: NavLink[] = config.standalone ? [] : [
   ...config.navbar.links.map(({ label, path }) => ({
     label,
     href: websiteLink(`${config.links.info}${path}`),
   })),
-  // registration route only exists once launched (see identical gate in App.tsx)
-  ...(config.productionMode || config.env !== 'prd') ? [{ label: 'Registration', href: '/registration', internal: true }] : [],
+  { label: 'Registration', href: '/', current: true },
 ];
 
 export const Navbar = () => {
   const theme = useTheme();
-  const location = useLocation();
   const [open, setOpen] = useState(false);
   const accentOverride = config.navbar.accent;
   const accent = accentOverride ? (theme.palette.mode === 'dark' ? accentOverride.dark : accentOverride.light) : theme.palette.primary.main;
@@ -65,7 +63,7 @@ export const Navbar = () => {
         {hasLinks && (
           <Box sx={{ display: 'none', [DESKTOP_NAV_QUERY]: { display: 'flex' }, flex: 1, flexWrap: 'wrap', justifyContent: 'center', columnGap: 3, rowGap: 0.5 }}>
             {navLinks.map((link) => (
-              <NavItem key={link.label} link={link} accent={accent} active={!!link.internal && location.pathname.startsWith(link.href)} />
+              <NavItem key={link.label} link={link} accent={accent} />
             ))}
           </Box>
         )}
@@ -94,7 +92,6 @@ export const Navbar = () => {
                 key={link.label}
                 link={link}
                 accent={accent}
-                active={!!link.internal && location.pathname.startsWith(link.href)}
                 onClick={closeMenu}
               />
             ))}
@@ -108,20 +105,19 @@ export const Navbar = () => {
 interface NavItemProps {
   link: NavLink;
   accent: string;
-  active: boolean;
   onClick?: () => void;
 }
 
-const NavItem = ({ link, accent, active, onClick }: NavItemProps) => {
+const NavItem = ({ link, accent, onClick }: NavItemProps) => {
   const sx = {
-    color: active ? accent : 'inherit',
-    opacity: active ? 1 : 0.6,
-    fontWeight: active ? 600 : 400,
+    color: link.current ? accent : 'inherit',
+    opacity: link.current ? 1 : 0.6,
+    fontWeight: link.current ? 600 : 400,
     transition: 'opacity 0.2s',
     '&:hover': { opacity: 1 },
   };
 
-  return link.internal ? (
+  return link.current ? (
     <Link component={RouterLink} to={link.href} underline='none' onClick={onClick} sx={sx}>{link.label}</Link>
   ) : (
     <Link href={link.href} underline='none' onClick={onClick} sx={sx}>{link.label}</Link>

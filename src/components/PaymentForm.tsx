@@ -12,7 +12,7 @@ import { logDebug } from 'src/logger';
 import { useScrollToTop } from 'hooks/useScrollToTop';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
 import { useOrderData } from 'contexts/OrderDataContext';
-import { PaymentExplanation } from 'components/Static/PaymentExplanation';
+import { PaymentExplanation } from 'components/PaymentExplanation';
 import { PaymentFormDonation } from './PaymentFormDonation';
 import { PaymentFormFees } from './PaymentFormFees';
 import { PaymentFormTotal } from './PaymentFormTotal';
