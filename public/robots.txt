@@ -1,3 +1,5 @@
 # https://www.robotstxt.org/robotstxt.html
+# safe default: blocks all crawling. Overwritten with a permissive robots.txt at build time
+# for VITE_ENV=prd builds only — see the robots-txt plugin in vite.config.ts.
 User-agent: *
-Disallow:
+Disallow: /

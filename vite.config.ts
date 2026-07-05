@@ -18,6 +18,17 @@ export default defineConfig({
           writeFileSync('tests/configGenerated.json', JSON.stringify(config, null, 2));
         });
       }
+    },
+    {
+      name: 'robots-txt',
+      apply: 'build',
+      writeBundle() {
+        // public/robots.txt ships as a safe default that blocks all crawling;
+        // only real production builds get the permissive version.
+        if (process.env.VITE_ENV === 'prd') {
+          writeFileSync('dist/robots.txt', 'User-agent: *\nDisallow:\n');
+        }
+      }
     }
   ],
   resolve: {
