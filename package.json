@@ -6,6 +6,7 @@
     "@docuseal/react": "^1.0.69",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@fontsource/geist": "^5.2.9",
     "@fontsource/roboto": "^5.2.5",
     "@google-cloud/apikeys": "^2.2.0",
     "@googlemaps/js-api-loader": "^1.16.8",

@@ -39,36 +39,55 @@ export const Navbar = () => {
         backgroundColor: alpha(accent, 0.1),
         borderBottom: `1px solid ${alpha(accent, 0.3)}`,
         color: theme.palette.text.primary,
+        fontFamily: '"Geist", sans-serif',
       }}
     >
-      <Toolbar disableGutters sx={{ flexWrap: 'wrap', columnGap: 3, rowGap: 1, px: 3, py: 1.5 }}>
+      <Toolbar
+        disableGutters
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: hasLinks ? 'auto 1fr auto' : '1fr auto',
+          alignItems: 'center',
+          columnGap: 3,
+          rowGap: 1,
+          px: 3,
+          py: 1.5,
+          minHeight: { xs: 0, sm: 0 },
+        }}
+      >
         <Link
           component={RouterLink}
           to='/'
           underline='none'
           sx={{
+            gridColumn: 1,
             display: 'flex',
             alignItems: 'center',
             gap: 1,
             color: 'inherit',
             fontWeight: 600,
             fontSize: '1.125rem',
-            ...(hasLinks ? { flexShrink: 0 } : { flex: 1 }),
+            lineHeight: 1.75 / 1.125,
+            letterSpacing: '-0.025em',
           }}
         >
           {config.navbar.brand && <Box component='img' src={config.navbar.brand} alt='' sx={{ height: 40, flexShrink: 0 }} />}
           <Box sx={hasLinks ? undefined : { flex: 1, textAlign: 'center' }}>{`${config.event.title} Registration`}</Box>
         </Link>
 
+        {/* Centered in column 2 (the 1fr track) so it stays truly centered between the title and
+            controls no matter their width, without overlapping either — matches the companion
+            static site's grid-based Navbar (static-site-kit). Pinned via gridColumn so it doesn't
+            shift into column 3 when hidden below md. */}
         {hasLinks && (
-          <Box sx={{ display: 'none', [DESKTOP_NAV_QUERY]: { display: 'flex' }, flex: 1, flexWrap: 'wrap', justifyContent: 'center', columnGap: 3, rowGap: 0.5 }}>
+          <Box sx={{ gridColumn: 2, display: 'none', [DESKTOP_NAV_QUERY]: { display: 'flex' }, flexWrap: 'wrap', justifyContent: 'center', columnGap: 3, rowGap: 0.5, fontSize: '1rem', lineHeight: 1.5 }}>
             {navLinks.map((link) => (
               <NavItem key={link.label} link={link} accent={accent} />
             ))}
           </Box>
         )}
 
-        <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
+        <Box sx={{ gridColumn: hasLinks ? 3 : 2, display: 'flex', alignItems: 'center' }}>
           <ColorModeToggle />
           {hasLinks && (
             <IconButton
@@ -86,7 +105,7 @@ export const Navbar = () => {
 
       {hasLinks && (
         <Collapse in={open} sx={{ display: 'block', [DESKTOP_NAV_QUERY]: { display: 'none' } }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, px: 3, pb: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, px: 3, pb: 2, fontSize: '1rem', lineHeight: 1.5 }}>
             {navLinks.map((link) => (
               <NavItem
                 key={link.label}
