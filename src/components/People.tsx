@@ -25,8 +25,6 @@ export const People = () => {
   const [editIndex, setEditIndex] = useState(order.people[0].email === '' ? 0 : null);
   const [isNewPerson, setIsNewPerson] = useState(false);
 
-  useWarnBeforeUnload();
-  
   return (
     <Formik
       initialValues={order}
@@ -37,6 +35,7 @@ export const People = () => {
     >
       {({ values, setFieldValue, resetForm, dirty }: FormikProps<Order>) => {
 
+        useWarnBeforeUnload(dirty);
         useBlocker(editIndex !== null && dirty);
 
         const handleAddNew = () => {
