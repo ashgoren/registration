@@ -12,7 +12,7 @@ type TieredPricingEntry = {
   options: PricingOption[];
 };
 
-const tieredPricingMap: Record<AgeGroup, TieredPricingEntry> = {
+export const tieredPricingMap: Record<AgeGroup, TieredPricingEntry> = {
   '0-2': {
     ageLabel: '0-2 yr old',
     options: [
