@@ -22,7 +22,7 @@ type BaseFieldProps = {
   InputProps?: object;
   autoFocus?: boolean;
   suggestions?: readonly { id: string; fullName: string; abbreviation: string; country: string }[];
-  options?: { label: string; value: string }[];
+  options?: { label: string; value: string; disabled?: boolean }[];
 };
 
 type NumericInputProps = {

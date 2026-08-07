@@ -5,7 +5,7 @@ import { Label } from 'components/layouts/SharedStyles';
 import type { RadioGroupProps } from '@mui/material';
 import type { ChangeEvent } from 'react';
 
-type Option = { label: string; value: string; };
+type Option = { label: string; value: string; disabled?: boolean; };
 
 interface RadioButtonsProps extends Omit<RadioGroupProps, 'name' | 'value' | 'children'> {
   name: string;
@@ -38,6 +38,7 @@ export const RadioButtons = memo(({ name, label, options, ...props }: RadioButto
             label={option.label}
             value={option.value}
             labelPlacement='end'
+            disabled={option.disabled}
             control={<Radio />}
           />
         ))}

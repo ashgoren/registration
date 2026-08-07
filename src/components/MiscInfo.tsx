@@ -28,7 +28,10 @@ export const MiscInfo = ({ index }: { index: number }) => {
     : config.fields.miscFields.filter((field: string) => field !== 'agreement');
 
   const firstPersonAgeOptions = fields.includes('age')
-    ? config.fields.fieldsConfig.age.options?.filter(option => option.value === 'adult' || option.value === '13-17')
+    ? config.fields.fieldsConfig.age.options?.map(option => ({
+        ...option,
+        disabled: option.value !== 'adult' && option.value !== '13-17'
+      }))
     : null;
   
   useScrollToTop();
