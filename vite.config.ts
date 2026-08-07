@@ -18,6 +18,8 @@ export default defineConfig({
         if (process.env.VITEST) return;
         server.ssrLoadModule('./src/config/index.tsx').then(({ config }) => {
           writeFileSync('tests/configGenerated.json', JSON.stringify(config, null, 2));
+        }).catch((err) => {
+          console.warn('[export-config] Failed to generate tests/configGenerated.json:', err.message);
         });
       }
     },
