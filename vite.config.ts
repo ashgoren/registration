@@ -1,6 +1,7 @@
 /// <reference types="vitest" />
 
 import { defineConfig } from 'vite'
+import { configDefaults } from 'vitest/config'
 import { writeFileSync } from 'fs';
 import react from '@vitejs/plugin-react-swc'
 
@@ -14,6 +15,7 @@ export default defineConfig({
     {
       name: 'export-config',
       configureServer(server) {
+        if (process.env.VITEST) return;
         server.ssrLoadModule('./src/config/index.tsx').then(({ config }) => {
           writeFileSync('tests/configGenerated.json', JSON.stringify(config, null, 2));
         });
@@ -58,6 +60,7 @@ export default defineConfig({
     setupFiles: './src/setupTests.ts',
     css: true,
     reporters: ['verbose'],
+    exclude: [...configDefaults.exclude, 'tests/**'], // tests/ holds Playwright e2e specs, not Vitest unit tests
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

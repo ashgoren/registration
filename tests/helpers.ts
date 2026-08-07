@@ -169,7 +169,7 @@ export const fillAndSubmitPaypalCreditForm = async (iframe: FrameLocator, amount
 };
 
 export const submitPaypalOrder = async (page: Page, amount: number = costDefault) => {
-  clearFirestore();
+  await clearFirestore();
   const paypalCreditForm = await openPaypalCheckoutForm(page);
   await fillAndSubmitPaypalCreditForm(paypalCreditForm, amount);
   await expect(page).toHaveURL(PAGE_URLS.CONFIRMATION);

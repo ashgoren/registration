@@ -272,6 +272,23 @@ npm run dev # Start frontend dev server
 
 See [scripts/README.md](scripts/README.md) for database and payment processor query tools.
 
+### Testing
+
+`npm test` runs Vitest unit tests (`src/**/*.test.tsx`). The Playwright e2e specs in `tests/` are excluded from this via `vite.config.ts`'s `test.exclude` — they're a separate suite.
+
+To run the e2e suite:
+```bash
+npx playwright install   # first time only, downloads browser binaries
+npm run emulator          # separate terminal - Firebase emulators must be running
+npm run dev                # separate terminal - dev server must be running on :3000
+npx playwright test
+```
+
+> [!IMPORTANT]
+> `tests/helpers_firestore.ts` hardcodes a Firestore project ID (must match your `staging` project in `.firebaserc`) for both the emulator query and the emulator-clear REST call. **After generating a repo from this template, update those two occurrences** — otherwise e2e tests will silently read/write an empty, unrelated project namespace in the emulator (queries return no data, but no error is thrown).
+
+The `paypal` describe block in `tests/3_checkout_form.spec.ts` makes live calls to PayPal's sandbox environment, so it can be flaky under network conditions — a failure there doesn't necessarily indicate a real bug; retry (`npx playwright test --retries=1`) before investigating further.
+
 ---
 
 ## 11. Deployment
