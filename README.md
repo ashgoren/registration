@@ -204,7 +204,7 @@ npm run set-payment-secrets <PROJECT_ID> stripe prd
 <summary><span style="font-size:20px; font-weight:bold">Option B: PayPal</span></summary>
 
 #### Step 8a: Configure PayPal Payment Methods
-- Don't want Venmo? Comment out the venmo line in `configPaypal.jsx`
+- Don't want Venmo? Comment out the venmo line in `src/config/internal/configPaypal.tsx`
 
 #### Step 8b: Create PayPal sandbox accounts & REST API Apps
 > [!IMPORTANT]
@@ -239,12 +239,11 @@ npm run set-payment-secrets <PROJECT_ID> paypal prd
 
 | File | About |
 |------|-------|
-| `functions/config/userConfig.js` | Backend config |
+| `functions/src/config/userConfig.ts` | Backend config |
 | `src/config/` | Frontend config - event, fields, order-summary, theme |
 | `src/templates/` | Email receipt templates |
-| `src/components/Static/` | Static pages (e.g. Home, About, Contact) |
-| `src/components/IntroHeader.jsx` | Registration form header |
-| `src/components/layouts/Navbar.jsx` | Navbar |
+| `src/components/IntroHeader.tsx` | Registration form header |
+| `src/components/layouts/Navbar.tsx` | Navbar |
 | `index.html` | Site title, metadata description, [og:image](https://ogp.me/) |
 | `public/logo.png` | Optional Navbar logo (≤80px height recommended) |
 | `public/` | favicon files - use a generator, e.g. [favicon-generator](https://realfavicongenerator.net/) |
@@ -331,16 +330,15 @@ git checkout -b staging
 - [ ] Confirm Stripe/PayPal production secrets are set in Doppler  
   - **prd_frontend:** `VITE_STRIPE_PUBLISHABLE_KEY` or `VITE_PAYPAL_CLIENT_ID`
   - **prd_backend:** `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET` *or* `PAYPAL_CLIENT_ID` + `PAYPAL_CLIENT_SECRET` + `PAYPAL_WEBHOOK_ID`
-- [ ] Update registration link on homepage (if applicable)
-- [ ] Update `robots.txt` to allow indexing (if sharing direct link)
-- [ ] Set prd.live to true in `configEvent.jsx`
+- [ ] Update registration link on companion site (if applicable)
+- [ ] Set `placeholder` to `false` in `src/config/configEvent.tsx` (only applies when env is prd)
 - [ ] Clear spreadsheet data
 - [ ] Clear staging Firestore data
 - [ ] Clear production Firestore data if needed
 - [ ] Redeploy after any updates to Doppler secrets or source code
 
 ### Waitlist Mode
-- Toggle registration.waitlist_mode flag in _both_ `src/config/configEvent` and `functions/config/userConfig`.
+- Toggle `waitlistMode` in `src/config/configEvent.tsx` and `waitlist_mode` in `functions/src/config/userConfig.ts`.
 
 ### Hibernation (optional)
 For inactive projects:
