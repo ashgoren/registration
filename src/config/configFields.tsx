@@ -65,7 +65,7 @@ export const fieldsConfig: FieldConfig = {
     defaultValue: '',
     required: true,
     width: 12,
-    // autoComplete: 'nickname'
+    autoComplete: configBasics.nametags.includeLastName ? 'name' : 'given-name'
   },
   email: {
     label: 'Email',
