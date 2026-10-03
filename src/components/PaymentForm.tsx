@@ -7,7 +7,7 @@ import { usePageNavigation } from 'hooks/usePageNavigation';
 import { Box, Tab, Tabs } from '@mui/material';
 import { TabPanel, TabContext } from '@mui/lab';
 import { StyledPaper, Title, Paragraph } from 'components/layouts/SharedStyles';
-import { clamp, sanitizeObject } from 'utils/misc';
+import { clamp, sanitizeObject, calculateFees } from 'utils/misc';
 import { logDebug } from 'src/logger';
 import { useScrollToTop } from 'hooks/useScrollToTop';
 import { useWarnBeforeUnload } from 'hooks/useWarnBeforeUnload';
@@ -97,9 +97,7 @@ export const PaymentForm = () => {
           return paymentTab === 'deposit' ? depositTotal : admissionTotal + donationTotal;
         }, [paymentTab, depositTotal, admissionTotal, donationTotal]);
 
-        const fees = useMemo(() => {
-          return (0.0245 * total + 0.5).toFixed(2);
-        }, [total]);
+        const fees = useMemo(() => calculateFees(total, config.payments.processorFees), [total]);
 
         const feesTotal = useMemo(() => {
           return coverFees ? Number(fees) : 0;
@@ -112,7 +110,7 @@ export const PaymentForm = () => {
         useEffect(() => {
           updateOrder({
             total,
-            fees: coverFees ? parseFloat(fees) : 0
+            fees: coverFees ? fees : 0
           });
         }, [total, fees, coverFees, updateOrder]);
 
@@ -166,7 +164,7 @@ export const PaymentForm = () => {
 
                   {config.payments.coverFeesCheckbox &&
                     <PaymentFormFees
-                      fees={Number(fees)}
+                      fees={fees}
                       coverFees={coverFees}
                       setCoverFees={setCoverFees}
                     />

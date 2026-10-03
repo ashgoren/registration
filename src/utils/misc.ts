@@ -15,6 +15,17 @@ export const formatCurrency = (num: string | number) => {
   return Number.isInteger(num) ? num : num.toFixed(2);
 };
 
+// Fee to add so that after the processor takes its cut, exactly `amount` is received.
+// The processor charges its percentage on the full charge (including the added fee itself),
+// so the fee is grossed up rather than computed as `percent * amount + fixed`:
+//   charge - (percent * charge + fixed) = amount  =>  charge = (amount + fixed) / (1 - percent)
+// Rounded up to the cent so rounding never leaves the received amount a penny short.
+// The small epsilon keeps floating-point noise (e.g. 554.0000000001 cents) from rounding up a whole extra cent.
+export const calculateFees = (amount: number, { percent, fixed }: { percent: number; fixed: number }) => {
+  const charge = (amount + fixed) / (1 - percent);
+  return Math.ceil((charge - amount) * 100 - 1e-9) / 100;
+};
+
 export const websiteLink = (link: string) => `https://${link}`;
 export const mailtoLink = (email: string) => `mailto:${email}`;
 

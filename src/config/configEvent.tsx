@@ -72,6 +72,10 @@ const config = {
     paymentDueDate: 'Example Payment Due Date',
     directPaymentUrl: 'example.com/directpayment', // electronic payment option to pay remaining balance after selecting deposit or check payment
     coverFeesCheckbox: true,
+    processorFees: { // per-transaction rate; PayPal standard: 3.49% + $0.49, Stripe standard: 2.9% + $0.30
+      percent: 0.0349,
+      fixed: 0.49
+    },
     showPaymentSummary: true, // show summary of costs in payment section
     deposit: {
       enabled: true,

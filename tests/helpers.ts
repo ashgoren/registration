@@ -74,8 +74,12 @@ export const navigateToPaymentPage = async (page: Page, people: PersonData[]) =>
   await page.getByRole('button', { name: BUTTON_TEXT.NEXT }).click();
 };
 
-export const calculateFees = (amount: number) =>
-  Number((0.0245 * amount + 0.5).toFixed(2));
+// mirrors calculateFees in src/utils/misc.ts
+export const calculateFees = (amount: number) => {
+  const { percent, fixed } = config.payments.processorFees;
+  const charge = (amount + fixed) / (1 - percent);
+  return Math.ceil((charge - amount) * 100 - 1e-9) / 100;
+};
 
 export const expectPaymentSummary = async (page: Page, admissionsTotal: number, fees: number = 0, donation: number = 0) => {
   await expect(page.getByText(`Admissions Total: $${admissionsTotal}`)).toBeVisible();
