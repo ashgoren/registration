@@ -32,9 +32,18 @@ const config = {
   },
 
   navbar: {
-    brand: false as string | false, // optional logo image path (e.g. '/logo.png') shown before the title; false to omit
-    accent: false as { light: string; dark: string } | false, // optional override for the navbar's tinted background/border; false to use the theme's primary color
-    links: [] as { label: string; path: string }[], // links to a companion static site (e.g. if using static-site-kit); leave empty for a standalone deployment with no companion site
+    title: 'Example Event Title Registration', // navbar title text, same as the companion static site's (static-site-kit `title` prop); '' to show only the brand logo
+    shortTitle: '', // abbreviated title shown only at medium widths (768-1023px), where it competes with the links for space; '' to always show the full title
+    brand: '', // logo image path shown before the title (e.g. '/logo.png'); '' for no logo
+    brandWidth: 40, // logo width & height in px, same as the companion static site's brand image `width` & `height` props; scales down proportionally if the screen is too narrow
+    brandHeight: 40,
+    centerLinksOnPage: false, // true centers links on the full navbar width (aligned with centered page content) rather than between the title and controls; can overlap the title if links are long
+    tinted: true, // tint the navbar background with the accent color; false to use the page background
+    // Navbar links, copied as-is from the companion static site's `links` (e.g. { label: 'About', href: '/about' }).
+    // Root-relative hrefs point to pages on the static site (at links.info); full URLs are used unchanged.
+    // Add `current: true` to the link to highlight (e.g. the static site's Registration link).
+    // Leave empty for a standalone deployment with no companion site.
+    links: [] as { label: string; href: string; current?: boolean }[],
   },
 
   nametags: {

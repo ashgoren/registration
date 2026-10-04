@@ -241,13 +241,43 @@ npm run set-payment-secrets <PROJECT_ID> paypal prd
 |------|-------|
 | `functions/src/config/userConfig.ts` | Backend config |
 | `src/config/` | Frontend config - event, fields, order-summary, theme |
+| `src/config/configEvent.tsx` → `navbar` | Navbar title, logo (path & height), and links |
+| `src/config/configTheme.tsx` → `colors` | Page background, text, form card & navbar accent colors (light & dark) |
 | `src/templates/` | Email receipt templates |
 | `src/components/IntroHeader.tsx` | Registration form header |
-| `src/components/layouts/Navbar.tsx` | Navbar |
 | `index.html` | Site title, metadata description, [og:image](https://ogp.me/) |
-| `public/logo.png` | Optional Navbar logo (≤80px height recommended) |
+| `public/` | Navbar logo image (path set in `navbar.brand`) |
 | `public/` | favicon files - use a generator, e.g. [favicon-generator](https://realfavicongenerator.net/) |
 | `public/` | robots.txt |
+
+### Matching a Companion Static Site (optional)
+
+If the event also has a static site built with [static-site-kit](https://github.com/ashgoren/static-site-kit), the registration navbar and page colors can be configured to match it exactly, so the two sites look interchangeable. The navbar layout, breakpoint, spacing, and fonts already mirror static-site-kit's; only the site-specific values need copying across:
+
+| Registration config | Static site source |
+|---------------------|--------------------|
+| `configEvent.tsx` → `navbar.title` | `title` prop on `<Navbar>` in `app/layout.tsx` (`''` if it shows only a logo) |
+| `configEvent.tsx` → `navbar.shortTitle` | `shortTitle` prop (`''` if not set) |
+| `configEvent.tsx` → `navbar.brand` | `src` of the `brand` image on `<Navbar>` (copy the image into `public/`) |
+| `configEvent.tsx` → `navbar.brandWidth` / `brandHeight` | `width` / `height` of the `brand` image |
+| `configEvent.tsx` → `navbar.centerLinksOnPage` | `centerLinksOnPage` prop (`false` if not set) |
+| `configEvent.tsx` → `navbar.tinted` | `tinted` prop (`true` if not set) |
+| `configEvent.tsx` → `navbar.links` | `links` in `site.config.ts`, copied as-is; add `current: true` to the link to highlight (e.g. Registration) |
+| `configEvent.tsx` → `links.info` | `prodApex` in `site.config.ts` |
+| `configTheme.tsx` → `colors.*.background` | `--background-light` / `--background-dark` in `app/globals.css` |
+| `configTheme.tsx` → `colors.*.foreground` | `--foreground-light` / `--foreground-dark` |
+| `configTheme.tsx` → `colors.*.accent` | `--accent-light` / `--accent-dark` |
+
+> [!NOTE]
+> `links.info` is both the domain the navbar links point to and the cookie domain for the light/dark mode setting, so matching `prodApex` keeps the theme choice in sync between the two sites.
+
+> [!NOTE]
+> static-site-kit's `headerImage` prop (a full-width header image in place of the title & logo) isn't supported.
+
+> [!TIP]
+> `colors.*.paper` (form card background) has no static site equivalent - pick a shade that stands out slightly from `background` (e.g. white on an off-white background).
+
+Leave `navbar.links` empty for a standalone deployment with no companion site. Once registration is live, add a Registration entry to the static site's `links` (pointing at this site's URL, or at a static info page that links here), then copy it into `navbar.links` with `current: true`.
 
 ---
 

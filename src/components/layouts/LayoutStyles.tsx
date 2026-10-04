@@ -44,11 +44,15 @@ interface CustomThemeOptions {
 }
   
 const createCustomTheme = ({ mode, palette }: CustomThemeOptions) => {
+  const { background, foreground, paper } = configTheme.colors[mode];
   const theme = createTheme({
     breakpoints,
     palette: {
       mode,
-      ...palette[mode]
+      ...palette[mode],
+      // configTheme.colors overrides the named palette's page colors (sticky still comes from the palette)
+      background: { ...palette[mode].background, default: background, paper },
+      text: { primary: foreground },
     },
   });
   return responsiveFontSizes(theme);
