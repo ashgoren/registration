@@ -1,5 +1,6 @@
 import { logger } from 'firebase-functions/v2';
 import { sendMail } from '../shared/email.js';
+import { reserveReceiptSend } from '../shared/emailThrottle.js';
 import { getConfig } from '../config/internal/config.js';
 
 import type { FirestoreEvent, Change, QueryDocumentSnapshot } from 'firebase-functions/v2/firestore';
@@ -25,6 +26,8 @@ export const sendEmailConfirmationsHandler = async (event: FirestoreEvent<Change
         logger.info(`SKIPPING RECEIPT SEND (TEST DOMAIN): ${email}`);
       } else if (person.email === firstPerson.email && index > 0) {
         logger.info(`SKIPPING RECEIPT SEND (DUPLICATE EMAIL): ${email}`);
+      } else if (!(await reserveReceiptSend())) {
+        logger.warn(`SKIPPING RECEIPT SEND (HOURLY LIMIT REACHED): ${email} (order ${after.id})`);
       } else {
         await sendMail({
           from: EMAIL_FROM,

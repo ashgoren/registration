@@ -53,12 +53,17 @@ const mapOrderToSpreadsheetLines = (order: OrderWithKey) => {
       : personFieldsBuilder;
 
     // Put fields in correct order, replace undefined/null/0 with empty string
-    const line = fieldOrder.map(field => String(personFields[field] || ''));
+    const line = fieldOrder.map(field => escapeFormula(String(personFields[field] || '')));
     lines.push(line);
   });
 
   return lines;
 };
+
+// A leading apostrophe forces the cell to plain text and isn't displayed.
+const FORMULA_TRIGGER_REGEX = /^[=+\-@\t\r]/;
+const escapeFormula = (value: string) =>
+  value !== '-' && FORMULA_TRIGGER_REGEX.test(value) ? `'${value}` : value;
 
 const buildPersonLine = ({ person, order, isPurchaser, people, completedAt, environment }: {
   person: Person;

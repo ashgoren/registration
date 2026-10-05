@@ -3,12 +3,14 @@ import { FieldValue } from 'firebase-admin/firestore';
 import { validFields } from '../shared/fields.js';
 import { createError, ErrorType } from '../shared/errorHandler.js';
 import { ordersCollection, peopleCounterDoc } from '../shared/orders.js';
+import { validateOrder, sanitizeReceipts } from '../shared/validation.js';
 import type { Order } from '../types/order';
 
 export const savePendingOrder = async ({ orderId, order }: {
   orderId: string;
   order: Order
 }) => {
+  validateOrder(order);
   const { email } = order.people[0];
   logger.info(`SAVING PENDING ORDER: ${email}`, order);
 
@@ -39,12 +41,13 @@ export const saveFinalOrder = async ({ orderId, order }: {
   orderId: string;
   order: Order
 }) => {
+  validateOrder(order);
   const { email } = order.people[0];
   logger.info(`SAVING FINAL ORDER: ${email}`, order);
 
   if (!orderId) throw new Error('Missing orderId');
 
-  const filteredOrder = filterObject(order, validFields);
+  const filteredOrder = filterObject(sanitizeReceipts(order), validFields);
   const preppedOrder = {
     ...filteredOrder,
     completedAt: FieldValue.serverTimestamp(),
