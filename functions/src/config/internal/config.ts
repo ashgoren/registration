@@ -14,6 +14,7 @@ interface Config {
   EVENT_TITLE: string;
   EVENT_TITLE_WITH_YEAR: string;
   STRIPE_STATEMENT_DESCRIPTOR_SUFFIX: string;
+  PAYMENT_MINIMUM_AMOUNT: number;
   FIELD_ORDER: string[];
   SHEETS_EMAIL_COLUMN: number;
   SHEETS_KEY_COLUMN: number;
@@ -63,6 +64,7 @@ const baseOptions = {
   EVENT_TITLE: userConfig.event.title,
   EVENT_TITLE_WITH_YEAR: userConfig.event.title_with_year,
   STRIPE_STATEMENT_DESCRIPTOR_SUFFIX: userConfig.payment.statementDescriptorSuffix,
+  PAYMENT_MINIMUM_AMOUNT: userConfig.payment.minimumAmount,
   FIELD_ORDER: userConfig.spreadsheet.fieldOrder,
   SHEETS_EMAIL_COLUMN: userConfig.spreadsheet.fieldOrder.indexOf('email'),
   SHEETS_KEY_COLUMN: 0,

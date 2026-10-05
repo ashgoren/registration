@@ -28,7 +28,8 @@ export type NormalizedPaymentTransaction = {
 
 // On-demand (onRequest) wrapper for matching payments
 export const matchPaymentsOnDemandHandler = async (req: Request, res: Response) => {
-  if (req.get('Authorization') !== getConfig().CLOUD_FUNCTIONS_TRIGGER_TOKEN) {
+  const { CLOUD_FUNCTIONS_TRIGGER_TOKEN } = getConfig();
+  if (!CLOUD_FUNCTIONS_TRIGGER_TOKEN || req.get('Authorization') !== CLOUD_FUNCTIONS_TRIGGER_TOKEN) {
     logger.warn('Unauthorized access attempt to matchPayments function');
     res.status(401).json({ error: 'Unauthorized' });
     return;
