@@ -14,7 +14,8 @@ const backendConfig = {
   },
   payment: {
     processor: 'paypal', // stripe|paypal
-    statementDescriptorSuffix: '' // stripe-only (max 22 chars)
+    statementDescriptorSuffix: '', // stripe-only (max 22 chars)
+    minimumAmount: 50
   },
   system: {
     region: 'us-west1', // leave as 'us-west1' unless Firebase/GCP project was created in another region

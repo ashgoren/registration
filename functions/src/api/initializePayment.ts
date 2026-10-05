@@ -1,3 +1,5 @@
+import { createError, ErrorType } from '../shared/errorHandler.js';
+import { getConfig } from '../config/internal/config.js';
 import type { Order } from '../types/order';
 
 type PaymentParams = {
@@ -43,9 +45,15 @@ const initializePayment = (
   const { total, fees, people: [{ email, first, last }] } = order;
   const paymentProcessorFn = paymentMethod === 'paypal' ? createOrUpdatePaypalOrder : getStripePaymentIntent;
 
+  const amount = Number(total) + Number(fees);
+  const { PAYMENT_MINIMUM_AMOUNT } = getConfig();
+  if (amount < PAYMENT_MINIMUM_AMOUNT) {
+    throw createError(ErrorType.INVALID_AMOUNT, `Payment amount must be at least $${PAYMENT_MINIMUM_AMOUNT}`, { amount, email });
+  }
+
   return paymentProcessorFn({
     id: paymentId,
-    amount: Number(total) + Number(fees),
+    amount,
     idempotencyKey,
     description,
     email,
