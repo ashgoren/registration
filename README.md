@@ -44,6 +44,7 @@ _Simple event registration / admissions sales site_
 ✅ **[Doppler](https://www.doppler.com/)** - Secrets Management  
 ✅ **[Amazon SES](https://aws.amazon.com/ses/)** - Email Delivery  
 ✅ **[Stripe](https://stripe.com/)** or **[PayPal](https://www.paypal.com/)** - Payment Processing  
+☑️ **[DocuSeal](https://www.docuseal.com/)** _(optional)_ - Waivers (Pro plan required for API access)  
 
 ### Required CLI Tools
 
@@ -279,6 +280,19 @@ If the event also has a static site built with [static-site-kit](https://github.
 
 Leave `navbar.links` empty for a standalone deployment with no companion site. Once registration is live, add a Registration entry to the static site's `links` (pointing at this site's URL, or at a static info page that links here), then copy it into `navbar.links` with `current: true`.
 
+### Waivers (optional)
+
+The registrant signs a [DocuSeal](https://www.docuseal.com/) waiver during registration; each additional attendee is emailed a link to sign their own once the order is finalized.
+
+- API access requires a DocuSeal Pro seat ($20/month) plus $0.20 per signed document. Test Mode is free and is used for dev and stg.
+- Create a template with a single `Signer` role and fields named `Full Legal Name`, `Phone`, and `Email`, then enable "Share template with Test Mode" on it.
+- Set `DOCUSEAL_KEY` and `DOCUSEAL_TEMPLATE_ID` in Doppler: the Test Mode API key in `dev_backend` and `stg_backend`, the production key in `prd_backend`.
+- Toggle `showWaiver` in `src/config/configEvent.tsx` and `show_waiver` in `functions/src/config/userConfig.ts` (must match).
+- Update the waiver preview PDF linked from `src/components/Waiver.tsx`.
+
+> [!NOTE]
+> Waiver requests are not sent from the local emulator; stg sends real emails using the Test Mode key.
+
 ---
 
 ## 10. Development 
@@ -360,6 +374,7 @@ git checkout -b staging
 - [ ] Confirm Stripe/PayPal production secrets are set in Doppler  
   - **prd_frontend:** `VITE_STRIPE_PUBLISHABLE_KEY` or `VITE_PAYPAL_CLIENT_ID`
   - **prd_backend:** `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET` *or* `PAYPAL_CLIENT_ID` + `PAYPAL_CLIENT_SECRET` + `PAYPAL_WEBHOOK_ID`
+- [ ] If using waivers: DocuSeal Pro is active, and `prd_backend` has the production `DOCUSEAL_KEY` + `DOCUSEAL_TEMPLATE_ID`
 - [ ] Update registration link on companion site (if applicable)
 - [ ] Set `placeholder` to `false` in `src/config/configEvent.tsx` (only applies when env is prd)
 - [ ] Clear spreadsheet data
@@ -375,6 +390,8 @@ For inactive projects:
 ```bash
 npm run disable-apis   # npm run enable-apis to wake up
 ```
+
+If using waivers, pause DocuSeal Pro once all emailed waivers have been signed (check for pending submissions in DocuSeal), and reactivate it before registration opens.
 
 ### Shutdown (optional)
 > [!IMPORTANT]

@@ -19,6 +19,12 @@ export const Receipt = ({ order, paymentMethod, person, isPurchaser }: {
 }) => {
   useScrollToTop();
 
+  // Additional attendees are emailed a waiver to sign after registration (see sendWaiverRequests)
+  const showWaiverNote = config.registration.showWaiver && !isPurchaser;
+  // Attendees sharing the purchaser's email get no receipt of their own, so the
+  // purchaser's receipt explains the waiver emails that arrive for them
+  const showAttendeeWaiverNote = config.registration.showWaiver && isPurchaser && order.people.length > 1;
+
   let data, template;
   if (paymentMethod === 'waitlist') {
     template = waitlistTemplate;
@@ -41,7 +47,9 @@ export const Receipt = ({ order, paymentMethod, person, isPurchaser }: {
       CHECK_TO: config.payments.checks.payee,
       CHECK_ADDRESS: config.payments.checks.address?.join(', '),
       PAYMENT_DUE_DATE: config.payments.paymentDueDate,
-      DIRECT_PAYMENT_URL: config.payments.directPaymentUrl
+      DIRECT_PAYMENT_URL: config.payments.directPaymentUrl,
+      SHOW_WAIVER_NOTE: showWaiverNote,
+      SHOW_ATTENDEE_WAIVER_NOTE: showAttendeeWaiverNote
     };
   }
 

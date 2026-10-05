@@ -5,7 +5,8 @@ const backendConfig = {
   },
   registration: {
     waitlist_mode: false,
-    waitlist_cutoff: 240
+    waitlist_cutoff: 240,
+    show_waiver: false // must match frontend config; emails DocuSeal waivers to additional attendees
   },
   spreadsheet: {
     fieldOrder: ['key', 'first', 'last', 'nametag', 'pronouns', 'email', 'phone', 'address', 'city', 'state', 'zip', 'country', 'age', 'share', 'allergies', 'carpool', 'bedding', 'volunteer', 'housing', 'roommate', 'misc', 'comments', 'admission', 'donation', 'total', 'deposit', 'fees', 'paid', 'charged', 'status', 'purchaser', 'completedAt', 'paymentId', 'paymentEmail', 'waiver', 'environment'],

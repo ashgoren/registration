@@ -20,6 +20,7 @@ import { stripeWebhookHandler } from './stripe/index.js';
 import { paypalWebhookHandler } from './paypal/index.js';
 import { appendRecordToSpreadsheetHandler } from './automations/google-sheet-sync.js';
 import { sendEmailConfirmationsHandler } from './automations/email-confirmation.js';
+import { sendWaiverRequestsHandler } from './automations/waiver-requests.js';
 import { missingFromSpreadsheetHandler, duplicateEmailsInSpreadsheetHandler } from './scheduled/validateSpreadsheet.js';
 import { emailIncompleteOrdersHandler } from './scheduled/incomplete.js';
 import { matchPaymentsHandler, matchPaymentsOnDemandHandler } from './scheduled/matchPayments.js';
@@ -126,6 +127,11 @@ const onDocumentUpdatedFunctions = [
     handler: sendEmailConfirmationsHandler, // email-confirmation.js
     document: 'orders/{ITEM}',
   },
+  {
+    name: 'sendWaiverRequests',
+    handler: sendWaiverRequestsHandler, // waiver-requests.js
+    document: 'orders/{ITEM}',
+  },
 ];
 
 const onMessagePublishedFunctions = [
@@ -162,6 +168,7 @@ export const {
   firebaseFunctionDispatcher,
   appendRecordToSpreadsheet,
   sendEmailConfirmations,
+  sendWaiverRequests,
   missingFromSpreadsheet,
   duplicateEmailsInSpreadsheet,
   emailIncompleteOrders,

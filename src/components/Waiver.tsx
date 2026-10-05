@@ -23,7 +23,8 @@ export const WaiverWrapper = () => {
   
   const people = order.people || [];
   const isShowingWaiver = selectedPersonIndex !== undefined;
-  const allWaiversComplete = people.every(person => person.waiver);
+  // Only the registrant signs here; additional attendees are emailed a waiver after registration
+  const registrantWaiverComplete = !!people[0]?.waiver;
 
   useBlocker(isShowingWaiver);
 
@@ -89,7 +90,7 @@ export const WaiverWrapper = () => {
           />
           <NavButtons
             back={{ text: 'Back', onClick: () => goBack() }}
-            next={{ text: 'Next', onClick: () => goNext(), disable: !allWaiversComplete }}
+            next={{ text: 'Next', onClick: () => goNext(), disable: !registrantWaiverComplete }}
           />
         </>
       )}
@@ -98,17 +99,14 @@ export const WaiverWrapper = () => {
 };
 
 const PersonList = ({ people, onSelect }: { people: Person[]; onSelect: (idx: number) => void }) => {
+  const [registrant, ...attendees] = people;
+
   return (
     <StyledPaper>
-      {people.some(person => !person.waiver) ? (
+      {!registrant?.waiver ? (
         <>
           <Typography variant='body1' gutterBottom>
-            {people.length === 1 ? (<>
-              Please read and sign the waiver below. It must be completed even if you've attended previously.
-            </>) : (<>
-              Please read and sign your waiver below. It must be completed even if you've attended previously.
-              <strong> Each waiver must be read and signed by the individual attending the event.</strong>
-            </>)}
+            Please read and sign your waiver below. It must be completed even if you've attended previously.
           </Typography>
           <Typography variant='body1' gutterBottom sx={{ mt: 2 }}>
             You may preview the waiver <StyledLink to="/supersonic/supersonic-waiver.pdf">here</StyledLink>, but please sign it electronically below.
@@ -116,19 +114,34 @@ const PersonList = ({ people, onSelect }: { people: Person[]; onSelect: (idx: nu
         </>
       ) : (
         <Typography variant='body1' gutterBottom>
-          Thanks for completing the {people.length === 1 ? 'waiver' : 'waivers'}. Click "Next" to continue.
+          Thanks for completing your waiver. Click "Next" to continue.
         </Typography>
       )}
-      {people.map((person, idx) => (
-        <Box key={idx} sx={{ display: 'flex', justifyContent: 'space-between', my: 4, alignItems: 'center' }}>
-          {person.first} {person.last}
-          {person.waiver ?
+      {attendees.length > 0 && (
+        <Typography variant='body1' gutterBottom sx={{ mt: 2 }}>
+          Each attendee must sign their own waiver. After you complete registration, the other
+          {attendees.length === 1 ? ' attendee' : ' attendees'} will be emailed a link to sign theirs.
+          Please make sure the {attendees.length === 1 ? 'address below is' : 'addresses below are'} correct.
+        </Typography>
+      )}
+      {registrant && (
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', my: 4, alignItems: 'center' }}>
+          {registrant.first} {registrant.last}
+          {registrant.waiver ?
             <Typography color='secondary'>Waiver Completed</Typography>
             :
-            <Button variant='contained' color='secondary' onClick={() => onSelect(idx)}>
+            <Button variant='contained' color='secondary' onClick={() => onSelect(0)}>
               Click to Sign Waiver
             </Button>
           }
+        </Box>
+      )}
+      {attendees.map((person, idx) => (
+        <Box key={idx} sx={{ display: 'flex', justifyContent: 'space-between', my: 4, alignItems: 'center', gap: 2 }}>
+          {person.first} {person.last}
+          <Typography color='text.secondary' sx={{ textAlign: 'right', wordBreak: 'break-word' }}>
+            Waiver will be emailed to {person.email}
+          </Typography>
         </Box>
       ))}
     </StyledPaper>

@@ -21,6 +21,7 @@ interface Config {
   SHEETS_ORDERS_TAB_NAME: string;
   WAITLIST_MODE: boolean;
   WAITLIST_CUTOFF: number;
+  SHOW_WAIVER: boolean;
   TIMESTAMP_FORMAT: Intl.DateTimeFormatOptions;
   
   // Secrets
@@ -69,6 +70,7 @@ const baseOptions = {
   SHEETS_ORDERS_TAB_NAME: 'Orders',
   WAITLIST_MODE: userConfig.registration.waitlist_mode,
   WAITLIST_CUTOFF: userConfig.registration.waitlist_cutoff,
+  SHOW_WAIVER: userConfig.registration.show_waiver,
   TIMESTAMP_FORMAT: userConfig.spreadsheet.timestampFormat
 };
 

@@ -90,6 +90,9 @@ const buildPersonLine = ({ person, order, isPurchaser, people, completedAt, envi
     misc: formatMisc(normalizedPerson),
     share: formatShare(normalizedPerson),
     purchaser: purchaserField,
+    // The purchaser's waiver is the signed document URL from registration; other
+    // attendees are emailed a waiver by the sendWaiverRequests trigger
+    waiver: !isPurchaser && getConfig().SHOW_WAIVER ? 'emailed' : normalizedPerson.waiver,
     completedAt,
     environment
   };

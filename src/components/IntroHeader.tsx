@@ -24,7 +24,7 @@ export const IntroHeader = () => {
           </Typography>
           <Typography variant='body1'>
             Each individual attending must complete their own waiver.
-            If you are registering multiple people, please ensure each person is present to complete their waiver.
+            If you are registering multiple people, each additional attendee will be emailed a waiver to sign.
           </Typography>
         </Alert>
       )}

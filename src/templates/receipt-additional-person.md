@@ -26,6 +26,15 @@ We've received payment for your registration.
 {{/if}}
 {{! <!---- END CHECK PAYMENT SECTION ----> }}
 
+
+{{! <!---- BEGIN WAIVER SECTION ----> }}
+{{#if SHOW_WAIVER_NOTE}}
+
+**Please sign your waiver.** You should also receive a separate email from DocuSeal with a link to sign your waiver. Each attendee must sign their own waiver, even if you've attended previously.
+
+{{/if}}
+{{! <!---- END WAIVER SECTION ----> }}
+
 We look forward to dancing with you at {{EVENT_TITLE}}!
 
 {{! <!---- REGISTRANT INFO SUMMARY GETS INSERTED HERE  ----> }}

@@ -43,6 +43,15 @@
 {{/if}}
 {{! <!---- END CHECK PAYMENT SECTION ----> }}
 
+
+{{! <!---- BEGIN WAIVER SECTION ----> }}
+{{#if SHOW_ATTENDEE_WAIVER_NOTE}}
+
+Each additional attendee will receive a separate email from DocuSeal with a link to sign their own waiver.
+
+{{/if}}
+{{! <!---- END WAIVER SECTION ----> }}
+
 We look forward to dancing with you at {{EVENT_TITLE}}!
 
 {{! <!---- ORDER SUMMARY GETS INSERTED HERE  ----> }}
