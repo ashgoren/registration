@@ -374,6 +374,7 @@ git checkout -b staging
 - [ ] Confirm Stripe/PayPal production secrets are set in Doppler  
   - **prd_frontend:** `VITE_STRIPE_PUBLISHABLE_KEY` or `VITE_PAYPAL_CLIENT_ID`
   - **prd_backend:** `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET` *or* `PAYPAL_CLIENT_ID` + `PAYPAL_CLIENT_SECRET` + `PAYPAL_WEBHOOK_ID`
+- [ ] Update the production Stripe/PayPal webhook to this project: `https://<REGION>-<PROJECT_ID>.cloudfunctions.net/stripeWebhook` (or `/paypalWebhook`)
 - [ ] If using waivers: DocuSeal Pro is active, and `prd_backend` has the production `DOCUSEAL_KEY` + `DOCUSEAL_TEMPLATE_ID`
 - [ ] Update registration link on companion site (if applicable)
 - [ ] Set `placeholder` to `false` in `src/config/configEvent.tsx` (only applies when env is prd)
