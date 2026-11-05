@@ -52,6 +52,16 @@ export default defineConfig({
       types: "/src/types",
     },
   },
+  ssr: {
+    resolve: {
+      // Node 22.12+ resolves `require()` calls to ESM builds via the "module-sync"
+      // condition, so CJS entry points that re-export another package (like
+      // react-router-dom's index.js) lose those named exports when imported
+      // from ESM. Resolving externalized deps to their ESM entry instead keeps
+      // the export-config plugin's ssrLoadModule call working.
+      externalConditions: ['module-sync'],
+    },
+  },
   server: {
     port: 3000,
     open: true,

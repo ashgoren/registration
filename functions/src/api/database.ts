@@ -22,6 +22,14 @@ export const savePendingOrder = async ({ orderId, order }: {
     status: 'pending'
   };
 
+  // Only a pending order may be replaced. Overwriting a final one would set it back to pending, so the next
+  // saveFinalOrder would fire the pending-to-final triggers again: a second set of sheet rows, receipts, and
+  // waiver requests, plus a second people-counter increment. The frontend never re-saves a confirmed order
+  // (the confirmation page locks the tab's flow), so this only catches stale or replayed requests.
+  if (orderId && (await ordersCollection.doc(orderId).get()).data()?.status === 'final') {
+    throw createError(ErrorType.ALREADY_SUBMITTED, 'Order already submitted', { orderId, email });
+  }
+
   try {
     if (orderId) {
       await ordersCollection.doc(orderId).set(preppedOrder);

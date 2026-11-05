@@ -38,7 +38,7 @@ export const sendWaiverRequestsHandler = async (event: FirestoreEvent<Change<Que
 
   if (!attendees.length) return;
 
-  const results = await sendWaiverRequests({ orderId: after.id, attendees });
+  const results = await sendWaiverRequests({ orderId: after.id, purchaserFirst: people[0].first, attendees });
 
   results
     .filter(({ result }) => result.status === 'fulfilled')

@@ -20,7 +20,12 @@ const ProtectedRoute = ({ pageKey, children }: { pageKey: string; children: Reac
   const pageKeyIndex = config.navigation.pages.findIndex((page: { key: string }) => page.key === pageKey);
   const furthestPageIndex = config.navigation.pages.findIndex((page: { key: string }) => page.key === furthestPageReached);
 
-  if (pageKeyIndex > furthestPageIndex || (furthestPageReached === 'confirmation' && pageKey !== 'confirmation')) {
+  // The payment pages are only part of the paid flow. In waitlist mode they aren't in the flow's pages
+  // (index -1, which never counts as past furthestPageReached), so they'd otherwise open from a typed URL
+  // and take a payment that skips the waitlist.
+  const isPaymentPageOutsideFlow = pageKeyIndex === -1 && (pageKey === 'payment' || pageKey === 'checkout');
+
+  if (isPaymentPageOutsideFlow || pageKeyIndex > furthestPageIndex || (furthestPageReached === 'confirmation' && pageKey !== 'confirmation')) {
     logDebug(`Redirecting from ${pageKey} to ${furthestPageReached}`);
     return <Navigate to={`/${furthestPageReached}`} replace={true} />;
   }
