@@ -9,8 +9,8 @@ Run local Firebase emulators for functions, firestore, auth, and hosting: `npm r
 ## Start Firebase functions shell
 Execute emulated Firebase functions from local shell: `npm run functions-shell`
 
-## Enable/Disable APIs
-Enable or disable Google Cloud APIs for project: `npm run enable-apis <PROJECT_ID>` / `npm run disable-apis <PROJECT_ID>`
+## Pause/Resume Between Events
+Delete deployed functions, disable the Places/Maps APIs, and disable the deploy workflow for a project between events: `npm run pause <PROJECT_ID>` / `npm run resume <PROJECT_ID>`. See [Between Events](../README.md#between-events) in the main README.
 
 ## Match Payments
 Verify each Firestore order has a matching Stripe/PayPal transaction and vice versa:

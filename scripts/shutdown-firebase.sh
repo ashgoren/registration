@@ -19,8 +19,10 @@ npm run terraform-destroy-prd
 echo "✅ Destroyed terraform resources"
 
 # Delete firebase functions
-firebase functions:delete $(firebase functions:list -P ${STAGING_PROJECT_ID} --json | jq -r '.result.[].id' | tr '\n' ' ') -f
-firebase functions:delete $(firebase functions:list -P ${PROJECT_ID} --json | jq -r '.result.[].id' | tr '\n' ' ') -f
+# -P is needed on the delete as well as the list: without it the delete targets the
+# .firebaserc default project (staging) regardless of which project was listed.
+firebase functions:delete $(firebase functions:list -P ${STAGING_PROJECT_ID} --json | jq -r '.result.[].id' | tr '\n' ' ') -P ${STAGING_PROJECT_ID} -f
+firebase functions:delete $(firebase functions:list -P ${PROJECT_ID} --json | jq -r '.result.[].id' | tr '\n' ' ') -P ${PROJECT_ID} -f
 echo "✅ Deleted firebase functions"
 
 # Delete firestore database

@@ -386,11 +386,27 @@ git checkout -b staging
 ### Waitlist Mode
 - Toggle `waitlistMode` in `src/config/configEvent.tsx` and `waitlist_mode` in `functions/src/config/userConfig.ts`.
 
-### Hibernation (optional)
-For inactive projects:
+### Between Events
+Once registration closes, set `placeholder` to `true` in `src/config/configEvent.tsx` and deploy so production serves the placeholder page. After that deploy finishes, pause the project:
+
 ```bash
-npm run disable-apis   # npm run enable-apis to wake up
+npm run pause <PROJECT_ID>
 ```
+
+This works on both the production and staging projects:
+- **Deletes all deployed Cloud Functions.** They are the only publicly callable backend. Firestore rules deny all client access, and Cloud Build, Eventarc, and Cloud Scheduler can't be triggered from outside.
+- **Disables the Places and Maps APIs.** The autocomplete API key is visible in the frontend bundle, and its referrer restriction can be spoofed outside a browser.
+- **Disables the deploy workflow.** Every push to `main`/`staging` deploys functions, so the next commit would otherwise quietly recreate them. Pushes made while paused don't deploy at all, including the frontend.
+
+Firebase Hosting keeps serving the placeholder, Firestore data is kept, and Terraform resources are untouched.
+
+To resume before the next event:
+```bash
+npm run resume <PROJECT_ID>
+```
+This re-enables the APIs and the deploy workflow. Functions come back on the next deploy, from a push or from `gh workflow run firebase-hosting-merge.yml --ref main`. The exception is `secret-manager-cleanup`, which Terraform manages: recreate it with `npm run terraform-stg` and `npm run terraform-prd`.
+
+Consider also disabling the payment provider webhook endpoints (Stripe/PayPal dashboard), since they point at the deleted functions.
 
 If using waivers, pause DocuSeal Pro once all emailed waivers have been signed (check for pending submissions in DocuSeal), and reactivate it before registration opens.
 
