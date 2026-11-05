@@ -23,11 +23,11 @@ export const usePageNavigation = () => {
     const nextPage = pages[currentIndex + 1];
     if (!nextPage) return;
     
-    let nextPageKey = pages[currentIndex + 1].key;
-    setFurthestPageReached(nextPageKey);
+    let nextPageKey: string = pages[currentIndex + 1].key;
     logDebug(`Navigating from ${currentPage} to ${nextPageKey}`);
-    
+
     // Choose betwen payment and waitlist based on people threshold
+    let redirectedToWaitlist = false;
     if (nextPageKey === 'payment') {
       setIsNavigating(true);
       try {
@@ -35,6 +35,7 @@ export const usePageNavigation = () => {
         logDebug(`thresholdReached: ${thresholdReached}, totalPeople: ${totalPeople}`);
         if (thresholdReached) {
           nextPageKey = 'waitlist';
+          redirectedToWaitlist = true;
         }
       } catch (error) {
         logDebug('Error checking people threshold', { error });
@@ -43,6 +44,12 @@ export const usePageNavigation = () => {
         setIsNavigating(false);
       }
     }
+
+    // Recorded only once the destination is known. When the cutoff redirects to the waitlist, payment was
+    // never reached, so it stays out of reach of ProtectedRoute (no typing /payment to get past the cutoff).
+    // The waitlist page isn't part of the payment flow's pages, so it isn't recorded either: as the furthest
+    // page it would have no index, and ProtectedRoute would bounce every earlier page to it.
+    if (!redirectedToWaitlist) setFurthestPageReached(nextPageKey);
 
     navigate(`/${nextPageKey}`);
   }

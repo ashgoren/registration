@@ -63,8 +63,9 @@ export const createWaiverSubmission = async (data: WaiverPerson) => {
 
 // Email flow: DocuSeal emails each additional attendee their own signing link.
 // The template has a single 'Signer' role, so each person gets a separate submission.
-export const sendWaiverRequests = async ({ orderId, attendees }: {
+export const sendWaiverRequests = async ({ orderId, purchaserFirst, attendees }: {
   orderId: string;
+  purchaserFirst: string; // named in the email so attendees recognize who registered them
   attendees: { person: Person; index: number }[];
 }) => {
   const { DOCUSEAL_TEMPLATE_ID, EVENT_TITLE, EMAIL_FROM, EMAIL_REPLY_TO, IS_EMULATOR } = getConfig();
@@ -88,7 +89,7 @@ export const sendWaiverRequests = async ({ orderId, attendees }: {
       message: {
         subject: `${EVENT_TITLE} waiver`,
         body: `Hi ${first},\n\n` +
-          `Someone registered you for ${EVENT_TITLE}. ` +
+          `${purchaserFirst} registered you for ${EVENT_TITLE}. ` +
           `Each attendee must sign their own waiver. Please read and sign yours here:\n\n` +
           `{{submitter.link}}\n\n` +
           `Thank you!`

@@ -14,10 +14,15 @@ export const useOrderFinalization = () => {
   const finalizeOrder = useCallback(async ({ orderId, paymentId, paymentEmail, charged }:
     { orderId: string; paymentId: string; paymentEmail?: string; charged: number }
   ) => {
+    // A waitlist entry gets the waitlist receipt whatever payment method is selected: when the event fills
+    // mid-registration, the waitlist page is reached from the payment flow, where paymentMethod is still the
+    // payment default (only waitlistMode starts it out as 'waitlist')
+    const receiptPaymentMethod = paymentId === 'waitlist' ? 'waitlist' : paymentMethod;
+
     const appendReceiptsToOrder = (order: Order) => {
       const peopleWithReceipts = order.people.map((person, i) => {
         const isPurchaser = i === 0;
-        const receipt = <Receipt order={order} paymentMethod={paymentMethod} person={person} isPurchaser={isPurchaser} />;
+        const receipt = <Receipt order={order} paymentMethod={receiptPaymentMethod} person={person} isPurchaser={isPurchaser} />;
         const htmlReceipt = renderToStaticMarkup(receipt);
         if (isPurchaser) setReceipt(htmlReceipt); // for displaying on confirmation page
         return { ...person, receipt: htmlReceipt };

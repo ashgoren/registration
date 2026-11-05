@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, Checkbox, FormControlLabel, Alert } from '@mui/material';
 import { Loading, Error, NavButtons } from 'components/layouts';
 import { StyledPaper, Paragraph } from 'components/layouts/SharedStyles';
@@ -14,15 +15,15 @@ import { config } from 'config';
 
 export const Waitlist = () => {
   const { order, updateOrder } = useOrderData();
-  const { error, setError, processing, setProcessing, processingMessage, setProcessingMessage } = useOrderFlow();
+  const { error, setError, processing, setProcessing, processingMessage, setProcessingMessage, setFurthestPageReached } = useOrderFlow();
   const { savePendingOrder, isSaving } = useOrderSaving();
   const { finalizeOrder } = useOrderFinalization();
   const { goBack } = usePageNavigation();
+  const navigate = useNavigate();
   const [ready, setReady] = useState(config.env === 'dev');
   const [confirmed, setConfirmed] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
 
-  useWarnBeforeUnload(!submitted);
+  useWarnBeforeUnload();
 
   setTimeout(() => {
     setReady(true);
@@ -40,8 +41,11 @@ export const Waitlist = () => {
       updateOrder({ paymentId, charged });
       await finalizeOrder({ orderId, paymentId, charged });
       logDebug('Final order saved successfully');
-      setSubmitted(true);
       setProcessing(false);
+      // Ends on the confirmation page like the paid flows, which locks the flow there: going back to edit and
+      // resubmit would re-save this now-final order, which savePendingOrder refuses
+      setFurthestPageReached('confirmation');
+      navigate('/confirmation', { replace: true });
     } catch (error: unknown) { // instance of HttpsError from backend or other error
       logErrorDebug('Error saving pending order:', error);
       const { code, message } = error as { code?: string; message?: string };
@@ -60,7 +64,7 @@ export const Waitlist = () => {
     <>
       <StyledPaper>
         <Typography variant='h4' align='center' mt={1} mb={3}>
-          {submitted ? 'Success!' : 'Waitlist Sign-up'}
+          Waitlist Sign-up
         </Typography>
 
         {!config.registration.waitlistMode &&
@@ -77,7 +81,7 @@ export const Waitlist = () => {
 
         {error && <Box sx={{ mb: 4 }}><Error /></Box>}
 
-        {ready && !submitted && !processing &&
+        {ready && !processing &&
           <>
             {!confirmed &&
               <Paragraph sx={{ my: 4 }}>
@@ -101,16 +105,9 @@ export const Waitlist = () => {
             }
           </>
         }
-
-        {submitted &&
-          <Box sx={{ textAlign: 'center', my: 4 }}>
-            <Typography variant='h5' my={2} sx={{ fontWeight: 'bold' }}>You have been added to the waitlist.</Typography>
-            <Typography variant='body1'>We will notify you if a spot becomes available.</Typography>
-          </Box>
-        }
       </StyledPaper>
 
-      {!submitted && !processing &&
+      {!processing &&
         <NavButtons
           back={{ text: 'Back', onClick: goBack }}
         />

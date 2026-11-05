@@ -14,7 +14,8 @@ export const ErrorType = {
   DATABASE_SAVE: 'DATABASE_SAVE',
   DATABASE_READ: 'DATABASE_READ',
   EXTERNAL_API: 'EXTERNAL_API',
-  PERMISSION_DENIED: 'PERMISSION_DENIED'
+  PERMISSION_DENIED: 'PERMISSION_DENIED',
+  ALREADY_SUBMITTED: 'ALREADY_SUBMITTED'
 } as const;
 type ErrorTypeKey = keyof typeof ErrorType;
 
@@ -55,7 +56,8 @@ const errorMapping: Record<ErrorTypeKey, { code: ErrorCodeValue; message?: strin
   [ErrorType.DATABASE_SAVE]: { code: ErrorCode.INTERNAL, message: 'Error saving order' },
   [ErrorType.DATABASE_READ]: { code: ErrorCode.INTERNAL, message: 'Error reading order(s)' },
   [ErrorType.EXTERNAL_API]: { code: ErrorCode.UNAVAILABLE, message: 'Error communicating with DocuSeal API' },
-  [ErrorType.PERMISSION_DENIED]: { code: ErrorCode.PERMISSION_DENIED }
+  [ErrorType.PERMISSION_DENIED]: { code: ErrorCode.PERMISSION_DENIED },
+  [ErrorType.ALREADY_SUBMITTED]: { code: ErrorCode.FAILED_PRECONDITION, message: 'This registration has already been submitted' }
 };
 
 export interface CustomError extends Error {

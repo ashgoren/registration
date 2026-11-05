@@ -60,6 +60,12 @@ resource "google_project_iam_member" "firebasehosting_admin" {
   depends_on = [google_firebase_hosting_site.default]
 }
 
+resource "google_project_iam_member" "firebase_deploy_serviceusage" {
+  project = var.project_id
+  role    = "roles/serviceusage.serviceUsageConsumer"
+  member  = "serviceAccount:${google_service_account.firebase_deploy.email}"
+}
+
 resource "github_actions_environment_secret" "firebase_service_account" {
   repository      = var.github_repo
   environment     = terraform.workspace
