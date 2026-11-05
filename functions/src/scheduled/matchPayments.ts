@@ -60,8 +60,10 @@ const matchPayments = async ({ skipEmail }: { skipEmail?: boolean } = {}) => {
   logger.info(`matchPayments triggered for event: ${PAYMENT_DESCRIPTION}`);
 
   // get final orders from db
+  // Check and waitlist orders have no electronic payment to match. Left in, every one of them would be
+  // reported as an extra database order, burying any real mismatches in the results.
   const finalOrders = await getOrders({ pending: false });
-  const orders = finalOrders.filter(order => order.paymentId && order.paymentId !== 'check');
+  const orders = finalOrders.filter(order => order.paymentId && !['check', 'waitlist'].includes(order.paymentId));
 
   // get list of payments from paypal or stripe
   const transactions = PAYMENT_PROCESSOR === 'paypal'

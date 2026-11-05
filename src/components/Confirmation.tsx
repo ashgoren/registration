@@ -10,7 +10,19 @@ export const Confirmation = () => {
   const { receipt, order } = useOrderData();
   const { paymentMethod } = useOrderPayment();
 
-  if (!receipt) throw new Error('No receipt found in order data context');
+  // The order is already saved by the time this page renders, so a missing receipt (e.g. cleared session
+  // storage) only means there's nothing to display here. A plain message avoids showing the router's
+  // generic error screen for an order that actually went through.
+  if (!receipt) {
+    return (
+      <StyledPaper>
+        <Paragraph>
+          We're sorry, but we could not find your receipt text.
+          Please contact {config.contacts.tech} for assistance if you believe this is an error.
+        </Paragraph>
+      </StyledPaper>
+    );
+  }
 
   // Waitlist sign-ups end here too, unpaid. Read from paymentId rather than paymentMethod, which stays at
   // its payment default when the waitlist cutoff sends someone to the waitlist outside waitlist mode.
